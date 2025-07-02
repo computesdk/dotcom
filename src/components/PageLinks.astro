@@ -1,0 +1,32 @@
+---
+// PageLinks.astro
+// A standalone component for navigation links
+
+interface Props {
+  links: Array<{
+    href: string;
+    text: string;
+  }>;
+}
+
+const { links = [
+  { href: "/about", text: "About" },
+  { href: "/docs", text: "Documentation" },
+  { href: "/blog", text: "Blog" },
+  { href: "/pricing", text: "Pricing" },
+  { href: "/contact", text: "Contact" }
+] } = Astro.props;
+---
+
+<div class="flex flex-wrap justify-center gap-6 text-sm text-gray-500 dark:text-gray-400 py-12 border-t border-gray-100 dark:border-gray-700">
+  {
+    links.map(link => (
+      <a 
+        href={link.href} 
+        class="hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+      >
+        {link.text}
+      </a>
+    ))
+  }
+</div>
