@@ -3,6 +3,8 @@ import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 import Hero from '../components/Hero.astro';
 import FounderMessage from '../components/FounderMessage.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import Footer from '../components/Footer.astro';
 // Import the logo image
 const logoPath = '/images/hv_main_logo.png';
 ---
@@ -18,19 +20,14 @@ const logoPath = '/images/hv_main_logo.png';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   </head>
-  <body class="min-h-screen bg-white">
+  <body class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+    <ThemeToggle client:load />
     <!-- <Navbar client:load logo={logoPath} /> -->
-    <main>
-      <Hero logo={logoPath} />
+    <main class="dark:bg-gray-900">
+      <Hero logo={logoPath} darkLogo="/images/C.png" />
       <FounderMessage />
     </main>
 
-    <footer class="bg-gray-50 mt-20">
-      <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <p class="text-center text-sm text-gray-500">
-          &copy; 2023 ComputeSDK. All rights reserved.
-        </p>
-      </div>
-    </footer>
+    <Footer />
   </body>
 </html>

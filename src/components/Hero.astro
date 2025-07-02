@@ -1,19 +1,28 @@
 ---
 // Hero.astro
-const { logo, title = 'ComputeSDK' } = Astro.props;
+const { logo, darkLogo = '/images/C.png', title = 'ComputeSDK' } = Astro.props;
 ---
 
-<section class="py-20 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-7xl mx-auto ml-24 flex flex-col items-start justify-start">
+<section class="py-20 px-4 sm:px-6 lg:px-8 dark:bg-gray-900 transition-colors duration-200">
+  <div class="max-w-7xl mx-auto lg:ml-24 flex flex-col items-center justify-center lg:items-start lg:justify-start">
     <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+      <!-- Light mode image (hidden in dark mode) -->
       <img 
         src={logo}
         alt="ComputeSDK Logo" 
-        class="h-12 w-auto"
+        class="h-12 w-auto dark:hidden"
         width="48"
         height="48"
       />
-      <h1 class="text-4xl md:text-2xl font-bold text-gray-900 text-left font-mono">
+      <!-- Dark mode image (hidden in light mode) -->
+      <img 
+        src={darkLogo}
+        alt="ComputeSDK Logo" 
+        class="h-12 w-auto hidden dark:block"
+        width="48"
+        height="48"
+      />
+      <h1 class="text-4xl md:text-2xl font-bold text-gray-900 dark:text-white text-left font-mono">
         {title}
       </h1>
     </div>
