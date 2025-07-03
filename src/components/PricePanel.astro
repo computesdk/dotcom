@@ -1,0 +1,50 @@
+---
+// PricePanel.astro - A panel that shows pricing and purchase information
+---
+
+<div class="h-full w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl shadow-xl overflow-y-auto">
+    <div class="p-6 space-y-6">
+        <div class="text-center mb-2">
+            <div class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">One-time payment of</div>
+            <div class="text-4xl font-bold text-gray-900 dark:text-white">$998</div>
+        </div>
+        <div>
+            <h2 class="text-2xl font-bold mb-2">What's included?</h2>
+            <ul class="space-y-3 text-gray-700 dark:text-gray-300">
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    The code (system requirements)
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Easy installation (8-minute video)
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Free updates to any 1.x version
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Bare bones support included
+                </li>
+            </ul>
+        </div>
+
+        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold mb-3">How do we get it?</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">After you purchase, we'll email you a private download link that includes everything you need.</p>
+            
+            <button class="w-full py-3 bg-gray-700 hover:bg-gray-800 text-white font-medium rounded-lg transition-colors">
+                Checkout
+            </button>
+        </div>
+    </div>
+</div>
