@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  text: string;
+  titleClass?: string;
+  textClass?: string;
+  containerClass?: string;
+}
+
+const {
+  title,
+  text,
+  titleClass = "text-3xl font-semibold text-gray-900 dark:text-white",
+  textClass = "mt-2 text-2xl text-gray-600 dark:text-gray-300",
+  containerClass = "",
+} = Astro.props;
+---
+
+<div class={`${containerClass} space-y-6`}>
+  {title && <h2 class={titleClass}>{title}</h2>}
+  {text && <p class={textClass}>{text}</p>}
+</div>

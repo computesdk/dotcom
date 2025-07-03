@@ -1,0 +1,52 @@
+---
+interface Props {
+  text: string;
+  className?: string;
+}
+
+const { text, className = "" } = Astro.props;
+// Split the text into the first sentence and the rest
+const sentenceEnd = text.match(/[.!?]\s/);
+const firstSentence =
+  sentenceEnd && sentenceEnd.index !== undefined
+    ? text.substring(0, sentenceEnd.index + 1)
+    : text;
+const restText =
+  sentenceEnd && sentenceEnd.index !== undefined
+    ? text.substring(sentenceEnd.index + 1)
+    : "";
+---
+
+<div class={`bullet-text ${className}`}>
+  <div class="bullet"></div>
+  <div class="content text-2xl">
+    <strong>{firstSentence}</strong>{restText}
+  </div>
+</div>
+
+<style>
+  .bullet-text {
+    position: relative;
+    padding-left: 1.5rem;
+    margin: 1.25rem 0;
+  }
+
+  .bullet {
+    position: absolute;
+    left: 0;
+    top: 1em;
+    width: 6px;
+    height: 6px;
+    background-color: currentColor;
+    border-radius: 50%;
+  }
+
+  .content {
+    line-height: 1.6;
+  }
+
+  /* Add small space after bold text */
+  .content strong {
+    margin-right: 0.25rem;
+  }
+</style>

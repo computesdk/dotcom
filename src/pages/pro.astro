@@ -8,9 +8,52 @@ import Footer from "../components/Footer.astro";
 import PageLinks from "../components/PageLinks.astro";
 import ProNavbar from "../components/ProNavbar.astro";
 import Screenshot from "../components/Screenshot.astro";
+import ProTextBlock from "../components/ProTextBlock.astro";
+import VideoEmbed from "../components/VideoEmbed.astro";
+import BulletText from "../components/BulletText.astro";
+import Table from "../components/Table.astro";
+import FAQ from "../components/FAQ.astro";
+
+// Table data
+const resourceData = [
+  { users: "250", ram: "2GB", cpu: "1CPU" },
+  { users: "1,000", ram: "8GB", cpu: "4CPU" },
+  { users: "5,000", ram: "32GB", cpu: "16CPU" },
+  { users: "10,000", ram: "64GB", cpu: "32CPU" },
+];
+
+const columns = [
+  { key: "users", header: "Concurrent Users", align: "center" },
+  { key: "ram", header: "RAM", align: "center" },
+  { key: "cpu", header: "CPU", align: "center" },
+];
+
+// FAQ data
+const faqItems = [
+  {
+    question: "What is Compute SDK?",
+    answer:
+      "Compute SDK is a powerful framework that enables developers to build and deploy scalable, high-performance applications with ease. It provides a simple yet powerful API for handling complex computations and distributed systems.",
+  },
+  {
+    question: "How does the pricing work?",
+    answer:
+      "Our pricing is based on the resources you use. We offer flexible plans that scale with your needs, from small projects to enterprise-level applications. You only pay for what you use with no hidden fees.",
+  },
+  {
+    question: "Is there a free tier?",
+    answer:
+      "Yes! We offer a generous free tier that includes enough resources to get started and build small applications. You can upgrade at any time as your needs grow.",
+  },
+  {
+    question: "How do I get support?",
+    answer:
+      "We provide comprehensive documentation, community forums, and email support for all users. Enterprise plans include priority support with guaranteed response times.",
+  },
+];
 ---
 
-<body class="flex h-screen flex-col">
+<body class="flex h-screen flex-col font-sans">
   <!-- Navbar with fixed positioning -->
   <div class="fixed left-0 right-0 top-0 z-50">
     <ProNavbar />
@@ -19,119 +62,70 @@ import Screenshot from "../components/Screenshot.astro";
   <!-- Main content area -->
   <div class="flex flex-1 px-32 pt-16">
     <!-- Left section (2/3 width, scrollable) -->
-    <div class="scrollbar-hide h-[calc(100vh-4rem)] w-2/3 overflow-y-auto">
-      <div class="pt-20 text-2xl">
+    <div class="scrollbar-hide h-[calc(100vh-4rem)] w-2/3 overflow-x-visible">
+      <div class="pb-10 pt-20 text-2xl">
         <ProHero />
       </div>
 
-      <!-- Screenshot with partial left extension and right margin -->
-      <div class="relative mt-4 w-[calc(100%-3rem)]">
+      <!-- Screenshot with full left extension -->
+      <div class="relative -ml-8 w-full">
         <Screenshot
           src="/images/windsurf_screenshot.png"
           alt="Terminal showing ComputeSDK in action"
-          class="w-full"
+          className="w-full"
+        />
+      </div>
+      <div class="pb-10 pt-20">
+        <ProTextBlock
+          title="What is ComputeSDK Pro?"
+          text="As our apps grow in complexity, we found that we needed more tools to make it easy for you and your team to access all the tools you need to host our operator and easily access all the compute resources your app needs. So we built the software we see needed for teams across industries, tech stacks, use cases, and organizations of all sizes."
+        />
+      </div>
+      <div class="pb-10 pt-10">
+        <ProTextBlock
+          title="Why ComputeSDK Pro?"
+          text="Tools make teams more productive. If your team is building an app that uses compute, a tool that allows them to focus on the what while easily levarging a tool to assist with the how... you have the recipe for better result from an energized team."
+        />
+      </div>
+      <div class="relative -ml-8 w-full">
+        <VideoEmbed
+          vimeoUrl="https://vimeo.com/144059847"
+          title="Demo Video"
+          className="mt-8"
+        />
+      </div>
+      <div class="relative -ml-6 w-full pt-10">
+        <BulletText
+          text="Tools make teams more productive. If your team is building an app that uses compute, a tool that allows them to focus on the what while easily levarging a tool to assist with the how... you have the recipe for better result from an energized team."
+        />
+      </div>
+      <div class="relative -ml-6 w-full">
+        <BulletText
+          text="This is an example of a nother bullet point. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod. Do you want to hear a joke? Why did the math book look sad? Because it had too many problems."
         />
       </div>
 
-      <!-- Rest of the content -->
-      <div>
-        <div class="space-y-4">
-          <div>
-            <h2 class="text-xl font-semibold">Section 1</h2>
-            <p class="mt-2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
-              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="text-xl font-semibold">Section 2</h2>
-            <p class="mt-2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
-              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="text-xl font-semibold">Section 3</h2>
-            <p class="mt-2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
-              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="text-xl font-semibold">Section 4</h2>
-            <p class="mt-2">
-              L orem ipsum dolor sit amet consectetur adipisicing elit.
-              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
-              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
-              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
-              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
-              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Quisquam, quod.
-            </p>
-          </div>
-        </div>
+      <div class="mt-12">
+        <Table
+          columns={columns}
+          data={resourceData}
+          className="mt-8 max-w-2xl"
+          headerClassName="bg-gray-50 dark:bg-gray-800"
+          rowClassName="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+        />
       </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-12">
+        <FAQ
+          faqs={faqItems}
+          title="Frequently asked questions"
+          className="space-y-12"
+          questionClassName="text-xl"
+          answerClassName="text-lg"
+        />
+      </div>
+
       <Footer />
     </div>
 
