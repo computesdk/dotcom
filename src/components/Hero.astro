@@ -1,55 +1,71 @@
 ---
 // Hero.astro
-const { logo, darkLogo = '/images/hv_main_logo_1.svg', title = 'ComputeSDK' } = Astro.props;
+const {
+  logo,
+  darkLogo = "/images/hv_main_logo_1.svg",
+  title = "ComputeSDK",
+} = Astro.props;
 ---
 
-<section class="flex justify-start">
-  <!-- Original layout - stacked on mobile, row on desktop -->
-  <div class="hidden md:flex flex-col items-center justify-center lg:items-start lg:justify-start">
-    <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+<section class="relative py-24 sm:py-16">
+  <div class="mx-auto max-w-7xl">
+    <!-- Desktop layout - logo and nav in one row -->
+    <div class="flex items-center justify-between">
+      <!-- Logo container -->
+      <div class="flex items-center">
+        <!-- Light mode image (hidden in dark mode) -->
+        <img
+          src={logo}
+          alt="ComputeSDK Logo"
+          class="h-12 w-auto dark:hidden"
+          width="48"
+          height="48"
+        />
+        <!-- Dark mode image (hidden in light mode) -->
+        <img
+          src={darkLogo}
+          alt="ComputeSDK Logo"
+          class="hidden h-12 w-auto dark:block"
+          width="48"
+          height="48"
+        />
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="flex items-center gap-6">
+        <a
+          href="/pro"
+          class="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+        >
+          Pro
+        </a>
+        <a
+          href="/docs"
+          class="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+        >
+          Docs
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile layout - single line, smaller text -->
+    <div class="mt-4 flex items-center justify-center gap-3 md:hidden">
       <!-- Light mode image (hidden in dark mode) -->
-      <img 
+      <img
         src={logo}
-        alt="ComputeSDK Logo" 
-        class="h-6 md:h-12 w-auto dark:hidden"
+        alt="ComputeSDK Logo"
+        class="h-12 w-auto dark:hidden"
         width="24"
         height="24"
       />
       <!-- Dark mode image (hidden in light mode) -->
-      <img 
+      <img
         src={darkLogo}
-        alt="ComputeSDK Logo" 
-        class="h-6 md:h-12 w-auto hidden dark:block"
+        alt="ComputeSDK Logo"
+        class="hidden h-12 w-auto dark:block"
         width="24"
         height="24"
       />
-      <!-- <h1 class="text-4xl md:text-2xl font-bold text-gray-900 dark:text-white text-left font-mono">
-        {title}
-      </h1> -->
     </div>
-  </div>
-  
-  <!-- Mobile layout - single line, smaller text -->
-  <div class="md:hidden flex items-center justify-center gap-3">
-    <!-- Light mode image (hidden in dark mode) -->
-    <img 
-      src={logo}
-      alt="ComputeSDK Logo" 
-      class="h-12 w-auto dark:hidden"
-      width="24"
-      height="24"
-    />
-    <!-- Dark mode image (hidden in light mode) -->
-    <img 
-      src={darkLogo}
-      alt="ComputeSDK Logo" 
-      class="h-12 w-auto hidden dark:block"
-      width="24"
-      height="24"
-    />
-    <!-- <h1 class="text-xl font-bold text-gray-900 dark:text-white font-mono">
-      {title}
-    </h1> -->
-  </div>
   </div>
 </section>

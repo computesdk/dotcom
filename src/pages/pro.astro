@@ -13,6 +13,7 @@ import VideoEmbed from "../components/VideoEmbed.astro";
 import BulletText from "../components/BulletText.astro";
 import Table from "../components/Table.astro";
 import FAQ from "../components/FAQ.astro";
+import Video from "../components/Video.astro";
 
 // Table data
 const resourceData = [
@@ -114,9 +115,12 @@ const faqItems = [
           rowClassName="hover:bg-gray-50 dark:hover:bg-gray-800/50"
         />
       </div>
+      <div class="relative -ml-8 mt-20 w-full">
+        <Video src="/videos/demo.mp4" title="Demo Video" className="mt-8" />
+      </div>
 
       <!-- FAQ Section -->
-      <div class="mt-12">
+      <div id="faq-section" class="mt-24">
         <FAQ
           faqs={faqItems}
           title="Frequently asked questions"
@@ -131,9 +135,29 @@ const faqItems = [
 
     <!-- Price Panel Overlay -->
     <div
-      class="fixed right-0 top-4 z-[60] flex h-auto w-1/3 items-start justify-end pr-24"
+      class="fixed right-0 top-4 z-[60] flex h-auto w-1/3 flex-col items-end pr-24"
     >
       <PricePanel />
+      <div
+        class="mx-auto mt-6 w-full max-w-xs rounded-lg p-4 text-sm text-gray-600 shadow-sm dark:bg-gray-800/80 dark:text-gray-300"
+      >
+        <p class="mb-2">
+          Please review all
+          <a
+            href="#faq-section"
+            onclick="document.getElementById('faq-section').scrollIntoView({behavior: 'smooth'}); return false;"
+            class="cursor-pointer font-extrabold text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+          >
+            FAQs.
+          </a> before making a purchase. If you have more questions, feel free to
+          <a
+            href="mailto:email@computesdk.com"
+            class="font-extrabold text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+          >
+            contact us.
+          </a>
+        </p>
+      </div>
     </div>
   </div>
 

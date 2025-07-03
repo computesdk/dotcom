@@ -12,7 +12,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Reddit Mono', 'sans-serif'],
+        sans: ['sans-serif'],
         // or as a custom name
         'reddit-mono': ['Reddit Mono', 'monospace'],
       },
