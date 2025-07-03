@@ -1,0 +1,162 @@
+---
+// plus.
+import "../styles/global.css";
+import ProHero from "../components/ProHero.astro";
+import PricePanel from "../components/PricePanel.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import Footer from "../components/Footer.astro";
+import PageLinks from "../components/PageLinks.astro";
+import ProNavbar from "../components/ProNavbar.astro";
+import Screenshot from "../components/Screenshot.astro";
+---
+
+<body class="flex h-screen flex-col">
+  <!-- Navbar with fixed positioning -->
+  <div class="fixed left-0 right-0 top-0 z-50">
+    <ProNavbar />
+  </div>
+
+  <!-- Main content area -->
+  <div class="flex flex-1 px-32 pt-16">
+    <!-- Left section (2/3 width, scrollable) -->
+    <div class="scrollbar-hide h-[calc(100vh-4rem)] w-2/3 overflow-y-auto">
+      <div class="pt-20 text-2xl">
+        <ProHero />
+      </div>
+
+      <!-- Screenshot with partial left extension and right margin -->
+      <div class="relative mt-4 w-[calc(100%-3rem)]">
+        <Screenshot
+          src="/images/windsurf_screenshot.png"
+          alt="Terminal showing ComputeSDK in action"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Rest of the content -->
+      <div>
+        <div class="space-y-4">
+          <div>
+            <h2 class="text-xl font-semibold">Section 1</h2>
+            <p class="mt-2">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
+              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
+              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
+              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
+              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
+              dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-semibold">Section 2</h2>
+            <p class="mt-2">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
+              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
+              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
+              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
+              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
+              dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-semibold">Section 3</h2>
+            <p class="mt-2">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
+              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
+              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
+              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
+              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
+              dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-semibold">Section 4</h2>
+            <p class="mt-2">
+              L orem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
+              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
+              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
+              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quod. Lorem ipsum dolor sit amet consectetur adipisicing
+              elit. Quisquam, quod. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Quisquam, quod. Lorem ipsum dolor
+              sit amet consectetur adipisicing elit. Quisquam, quod. Lorem ipsum
+              dolor sit amet consectetur adipisicing elit. Quisquam, quod. Lorem
+              ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+              quod. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Quisquam, quod.
+            </p>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+
+    <!-- Price Panel Overlay -->
+    <div
+      class="fixed right-0 top-4 z-[60] flex h-auto w-1/3 items-start justify-end pr-24"
+    >
+      <PricePanel />
+    </div>
+  </div>
+
+  <style>
+    /* Custom scrollbar for the left panel */
+    .overflow-y-auto::-webkit-scrollbar {
+      width: 6px;
+    }
+    .overflow-y-auto::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    .overflow-y-auto::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
+    }
+    .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</body>

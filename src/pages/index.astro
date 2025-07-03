@@ -1,39 +1,55 @@
 ---
-import '../styles/global.css';
-import Navbar from '../components/Navbar.astro';
-import Hero from '../components/Hero.astro';
-import FounderMessage from '../components/FounderMessage.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
-import Footer from '../components/Footer.astro';
-import PageLinks from '../components/PageLinks.astro';
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+import Hero from "../components/Hero.astro";
+import FounderMessage from "../components/FounderMessage.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import Footer from "../components/Footer.astro";
+import PageLinks from "../components/PageLinks.astro";
 // Import the logo image
-const logoPath = '/images/hv_main_logo.svg';
+const logoPath = "/images/hv_main_logo.svg";
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="ComputeSDK - Powerful computing solutions for developers" />
+    <meta
+      name="description"
+      content="ComputeSDK - Powerful computing solutions for developers"
+    />
     <title>ComputeSDK</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Reddit+Mono:wght@200..900&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
-    <div class="max-w-5xl mx-auto px-6 sm:px-6 lg:px-24 pt-12 pb-4">
+  <body
+    class="min-h-screen bg-white transition-colors duration-200 dark:bg-gray-900"
+  >
+    <div class="mx-auto max-w-5xl px-6 pb-4 pt-12 sm:px-6 lg:px-24">
       <Hero logo={logoPath} darkLogo="/images/hv_main_logo_1.svg" />
       <!-- <Navbar client:load logo={logoPath} /> -->
       <main>
         <FounderMessage />
       </main>
-      <div class="flex justify-between items-center md:py-12 py-4 border-t border-gray-100 dark:border-gray-700">
-        <PageLinks links={[
-          { href: "/plus", text: "Plus" },
-          { href: "/docs", text: "Docs" },
-          { href: "/contact", text: "Contact" }
-        ]} />
+      <div
+        class="flex items-center justify-between border-t border-gray-100 py-4 dark:border-gray-700 md:py-12"
+      >
+        <PageLinks
+          links={[
+            { href: "/plus", text: "Plus" },
+            { href: "/docs", text: "Docs" },
+            { href: "/contact", text: "Contact" },
+          ]}
+        />
         <ThemeToggle client:load />
       </div>
       <!-- <Footer /> -->

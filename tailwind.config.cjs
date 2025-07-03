@@ -11,6 +11,11 @@ module.exports = {
           950: '#030712',
         },
       },
+      fontFamily: {
+        sans: ['Reddit Mono', 'sans-serif'],
+        // or as a custom name
+        'reddit-mono': ['Reddit Mono', 'monospace'],
+      },
     },
   },
   plugins: [],

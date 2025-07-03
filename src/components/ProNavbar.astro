@@ -1,0 +1,44 @@
+---
+// PlusNavbar.astro - A navigation bar specifically for the Plus page
+const { logo = "/images/hv_main_logo.svg" } = Astro.props;
+---
+
+<header class="w-full border-b border-gray-200 bg-white">
+  <div class="w-full max-w-[66.666667%] px-20 py-4">
+    <div class="flex w-full items-center justify-between">
+      <!-- Logo -->
+      <a
+        href="/"
+        class="flex items-center space-x-3 transition-opacity hover:opacity-80"
+      >
+        <img
+          src={logo}
+          alt="ComputeSDK Logo"
+          class="h-8 w-auto"
+          width="32"
+          height="32"
+        />
+        <!-- <span class="ml-4 mr-2 text-xl font-bold text-gray-500">/</span> -->
+        <span class="font-mono text-xl font-bold text-gray-900 dark:text-white"
+          >/Pro</span
+        >
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden items-center justify-end space-x-8 md:flex">
+        <a
+          href="#docs"
+          class="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+          >Docs</a
+        >
+        <a
+          href="#contact"
+          class="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+          >Contact</a
+        >
+      </nav>
+
+      <!-- Mobile menu button would go here -->
+    </div>
+  </div>
+</header>
