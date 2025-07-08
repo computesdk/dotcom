@@ -1,0 +1,208 @@
+---
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Documentation | ComputeSDK";
+const description =
+  "Comprehensive documentation for ComputeSDK - Get started, API reference, and guides.";
+
+// Sample documentation structure
+const docsSections = [
+  {
+    title: "Getting Started",
+    slug: "getting-started",
+    pages: [
+      { title: "Introduction", slug: "introduction" },
+      { title: "Installation", slug: "installation" },
+      { title: "Quick Start", slug: "quick-start" },
+    ],
+  },
+  {
+    title: "Guides",
+    slug: "guides",
+    pages: [
+      { title: "Authentication", slug: "authentication" },
+      { title: "API Usage", slug: "api-usage" },
+      { title: "Best Practices", slug: "best-practices" },
+    ],
+  },
+  {
+    title: "API Reference",
+    slug: "api-reference",
+    pages: [
+      { title: "Endpoints", slug: "endpoints" },
+      { title: "Parameters", slug: "parameters" },
+      { title: "Responses", slug: "responses" },
+    ],
+  },
+];
+
+// Get the current page from URL params
+const { url } = Astro;
+const currentPage = url.searchParams.get("page") || "introduction";
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/images/hv_main_logo.svg" />
+    <link rel="mask-icon" href="/images/hv_main_logo.svg" color="#000000" />
+    <link rel="apple-touch-icon" href="/images/hv_main_logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body
+    class="flex min-h-screen flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"
+  >
+    <Navbar />
+
+    <div class="flex flex-1 pt-16">
+      <!-- Sidebar Navigation -->
+      <aside
+        class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 overflow-y-auto border-r border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+      >
+        <div class="p-4">
+          <h2 class="mb-4 px-2 text-lg font-semibold">Documentation</h2>
+          <nav>
+            {
+              docsSections.map((section) => (
+                <div data-key={section.slug} class="mb-6">
+                  <h3 class="mb-2 px-2 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    {section.title}
+                  </h3>
+                  <ul class="space-y-1">
+                    {section.pages.map((page) => (
+                      <li data-key={page.slug}>
+                        <a
+                          href={`?page=${page.slug}`}
+                          class={`block rounded-md px-3 py-2 text-sm ${
+                            currentPage === page.slug
+                              ? "bg-blue-50 font-medium text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                              : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                          }`}
+                        >
+                          {page.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 pl-64">
+        <div class="mx-auto max-w-4xl p-8">
+          {
+            currentPage === "introduction" && (
+              <div>
+                <h1 class="mb-6 text-3xl font-bold">Introduction</h1>
+                <div class="prose dark:prose-invert max-w-none">
+                  <p class="mb-6 text-lg text-gray-600 dark:text-gray-300">
+                    Welcome to the ComputeSDK documentation. This guide will
+                    help you get started with our powerful computing platform.
+                  </p>
+                  <h2>What is ComputeSDK?</h2>
+                  <p>
+                    ComputeSDK is a powerful computing platform that allows you
+                    to run complex computations in the cloud with ease.
+                  </p>
+                </div>
+              </div>
+            )
+          }
+
+          {
+            currentPage === "installation" && (
+              <div>
+                <h1 class="mb-6 text-3xl font-bold">Installation</h1>
+                <div class="prose dark:prose-invert max-w-none">
+                  <h2>Prerequisites</h2>
+                  <ul>
+                    <li>Node.js 16+</li>
+                    <li>npm or yarn</li>
+                  </ul>
+
+                  <h2>Install via npm</h2>
+                  <pre class="overflow-x-auto rounded-md bg-gray-100 p-4 dark:bg-gray-800">
+                    <code>npm install @computesdk/sdk</code>
+                  </pre>
+
+                  <h2>Install via yarn</h2>
+                  <pre class="overflow-x-auto rounded-md bg-gray-100 p-4 dark:bg-gray-800">
+                    <code>yarn add @computesdk/sdk</code>
+                  </pre>
+                </div>
+              </div>
+            )
+          }
+
+          {
+            currentPage === "authentication" && (
+              <div>
+                <h1 class="mb-6 text-3xl font-bold">Authentication</h1>
+                <div class="prose dark:prose-invert max-w-none">
+                  <p>
+                    To use ComputeSDK, you'll need to authenticate your requests
+                    with an API key.
+                  </p>
+
+                  <h2>Getting Your API Key</h2>
+                  <p>
+                    Sign in to your dashboard and navigate to the API Keys
+                    section to generate a new key.
+                  </p>
+
+                  <h2>Using the API Key</h2>
+                  <pre class="overflow-x-auto rounded-md bg-gray-100 p-4 dark:bg-gray-800">
+                    <code>{`{
+                        "headers": {
+                            "Authorization": "Bearer YOUR_API_KEY"
+                        }
+                    }`}</code>
+                  </pre>
+                </div>
+              </div>
+            )
+          }
+
+          {/* Add more page content conditionally based on currentPage */}
+
+          {
+            !["introduction", "installation", "authentication"].includes(
+              currentPage,
+            ) && (
+              <div class="py-20 text-center">
+                <h2 class="mb-4 text-2xl font-semibold">Page Not Found</h2>
+                <p class="text-gray-600 dark:text-gray-400">
+                  The requested documentation page could not be found.
+                </p>
+                <a
+                  href="?page=introduction"
+                  class="mt-4 inline-block text-blue-500 hover:underline"
+                >
+                  Back to Introduction →
+                </a>
+              </div>
+            )
+          }
+        </div>
+      </main>
+    </div>
+
+    <Footer />
+  </body>
+</html>
