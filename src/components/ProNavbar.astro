@@ -1,9 +1,14 @@
 ---
 // PlusNavbar.astro - A navigation bar specifically for the Plus page
-const { logo = "/images/hv_main_logo.svg" } = Astro.props;
+const {
+  logo = "/images/hv_main_logo.svg",
+  darkLogo = "/images/hv_main_logo_1.svg",
+} = Astro.props;
 ---
 
-<header class="w-full border-b border-gray-200 bg-white font-sans">
+<header
+  class="w-full border-b border-gray-200 bg-white/90 font-sans backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900/80"
+>
   <div class="w-full max-w-[66.666667%] py-4 pl-32 pr-20">
     <div class="flex w-full items-center justify-between">
       <!-- Logo -->
@@ -14,12 +19,21 @@ const { logo = "/images/hv_main_logo.svg" } = Astro.props;
         <img
           src={logo}
           alt="ComputeSDK Logo"
-          class="h-8 w-auto"
+          class="block h-8 w-auto dark:hidden"
+          width="32"
+          height="32"
+        />
+        <img
+          src={darkLogo}
+          alt="ComputeSDK Logo"
+          class="hidden h-8 w-auto dark:block"
           width="32"
           height="32"
         />
         <!-- <span class="ml-4 mr-2 text-xl font-bold text-gray-500">/</span> -->
-        <span class="text-xl font-bold text-gray-900 dark:text-white">Pro</span>
+        <span class="text-xl font-bold text-gray-900 dark:text-white"
+          >Operator</span
+        >
       </a>
 
       <!-- Navigation Links -->
