@@ -3,7 +3,7 @@
 const { logo = "/images/hv_main_logo.svg" } = Astro.props;
 ---
 
-<header class="w-full border-b border-gray-200 bg-white">
+<header class="w-full border-b border-gray-200 bg-white font-sans">
   <div class="w-full max-w-[66.666667%] py-4 pl-32 pr-20">
     <div class="flex w-full items-center justify-between">
       <!-- Logo -->
@@ -19,15 +19,13 @@ const { logo = "/images/hv_main_logo.svg" } = Astro.props;
           height="32"
         />
         <!-- <span class="ml-4 mr-2 text-xl font-bold text-gray-500">/</span> -->
-        <span class="font-mono text-xl font-bold text-gray-900 dark:text-white"
-          >/Pro</span
-        >
+        <span class="text-xl font-bold text-gray-900 dark:text-white">Pro</span>
       </a>
 
       <!-- Navigation Links -->
       <nav class="hidden items-center justify-end space-x-8 md:flex">
         <a
-          href="#docs"
+          href="/docs"
           class="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
           >Docs</a
         >

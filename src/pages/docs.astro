@@ -1,94 +1,46 @@
 ---
-import "../styles/global.css";
-import Navbar from "../components/Navbar.astro";
+import Layout from "../layouts/Layout.astro";
 import Footer from "../components/Footer.astro";
+import { docsSections } from "../data/docs/sections";
+import { getContent } from "../data/docs/content";
+import DocsHeader from "../components/DocsHeader.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
 
-const title = "Documentation | ComputeSDK";
-const description =
-  "Comprehensive documentation for ComputeSDK - Get started, API reference, and guides.";
+const { slug } = Astro.params;
+const currentPage = slug || "introduction";
 
-// Sample documentation structure
-const docsSections = [
-  {
-    title: "Getting Started",
-    slug: "getting-started",
-    pages: [
-      { title: "Introduction", slug: "introduction" },
-      { title: "Installation", slug: "installation" },
-      { title: "Quick Start", slug: "quick-start" },
-    ],
-  },
-  {
-    title: "Guides",
-    slug: "guides",
-    pages: [
-      { title: "Authentication", slug: "authentication" },
-      { title: "API Usage", slug: "api-usage" },
-      { title: "Best Practices", slug: "best-practices" },
-    ],
-  },
-  {
-    title: "API Reference",
-    slug: "api-reference",
-    pages: [
-      { title: "Endpoints", slug: "endpoints" },
-      { title: "Parameters", slug: "parameters" },
-      { title: "Responses", slug: "responses" },
-    ],
-  },
-];
-
-// Get the current page from URL params
-const { url } = Astro;
-const currentPage = url.searchParams.get("page") || "introduction";
+// Get content for the current page
+const content = getContent("", currentPage);
 ---
 
-<!doctype html>
-<html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
-    <link rel="icon" type="image/svg+xml" href="/images/hv_main_logo.svg" />
-    <link rel="mask-icon" href="/images/hv_main_logo.svg" color="#000000" />
-    <link rel="apple-touch-icon" href="/images/hv_main_logo.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
+<Layout title="Documentation | ComputeSDK">
+  <div class="min-h-screen bg-white dark:bg-gray-900">
+    <DocsHeader />
 
-  <body
-    class="flex min-h-screen flex-col bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"
-  >
-    <Navbar />
-
-    <div class="flex flex-1 pt-16">
+    <div class="mx-auto flex max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Sidebar Navigation -->
-      <aside
-        class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 overflow-y-auto border-r border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+      <div
+        class="hidden w-64 shrink-0 border-r border-gray-200 dark:border-gray-800 md:block"
       >
-        <div class="p-4">
-          <h2 class="mb-4 px-2 text-lg font-semibold">Documentation</h2>
+        <div
+          class="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto py-6 pr-4"
+        >
           <nav>
             {
               docsSections.map((section) => (
-                <div data-key={section.slug} class="mb-6">
-                  <h3 class="mb-2 px-2 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <div data-key={section.slug} class="mb-8">
+                  <h3 class="mb-2 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     {section.title}
                   </h3>
                   <ul class="space-y-1">
                     {section.pages.map((page) => (
                       <li data-key={page.slug}>
                         <a
-                          href={`?page=${page.slug}`}
+                          href={`/docs/${page.slug}`}
                           class={`block rounded-md px-3 py-2 text-sm ${
                             currentPage === page.slug
-                              ? "bg-blue-50 font-medium text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                              : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                              ? "bg-blue-50 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400"
+                              : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                           }`}
                         >
                           {page.title}
@@ -101,108 +53,207 @@ const currentPage = url.searchParams.get("page") || "introduction";
             }
           </nav>
         </div>
-      </aside>
+      </div>
 
       <!-- Main Content -->
-      <main class="flex-1 pl-64">
-        <div class="mx-auto max-w-4xl p-8">
-          {
-            currentPage === "introduction" && (
-              <div>
-                <h1 class="mb-6 text-3xl font-bold">Introduction</h1>
-                <div class="prose dark:prose-invert max-w-none">
-                  <p class="mb-6 text-lg text-gray-600 dark:text-gray-300">
-                    Welcome to the ComputeSDK documentation. This guide will
-                    help you get started with our powerful computing platform.
-                  </p>
-                  <h2>What is ComputeSDK?</h2>
-                  <p>
-                    ComputeSDK is a powerful computing platform that allows you
-                    to run complex computations in the cloud with ease.
-                  </p>
+      <main
+        class="min-w-0 flex-1 border-gray-200 dark:border-gray-800 lg:border-l"
+      >
+        <div
+          class="prose prose-gray dark:prose-invert max-w-none overflow-y-auto px-4 py-8 lg:px-8"
+        >
+          <div class="mx-auto max-w-3xl">
+            {
+              content ? (
+                content.content.map((node, index) => {
+                  switch (node.type) {
+                    case "h1":
+                      return (
+                        <h1
+                          id={node.id}
+                          class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl"
+                        >
+                          {node.text}
+                        </h1>
+                      );
+                    case "h2":
+                      return (
+                        <h2
+                          id={node.id}
+                          class="mt-10 scroll-mt-20 text-2xl font-semibold text-gray-800 dark:text-gray-200"
+                        >
+                          {node.text}
+                        </h2>
+                      );
+                    case "h3":
+                      return (
+                        <h3
+                          id={node.id}
+                          class="mt-8 scroll-mt-20 text-xl font-semibold text-gray-800 dark:text-gray-200"
+                        >
+                          {node.text}
+                        </h3>
+                      );
+                    case "p":
+                      return (
+                        <p class="mt-4 text-base leading-7 text-gray-600 dark:text-gray-300">
+                          {node.text}
+                        </p>
+                      );
+                    case "ul":
+                      return (
+                        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600 dark:text-gray-300">
+                          {node.items.map((item, i) => (
+                            <li data-key={i} class="text-base leading-7">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      );
+                    case "code":
+                      return (
+                        <pre
+                          class={`language-${node.language} mt-4 overflow-x-auto rounded-lg bg-gray-50 p-4 dark:bg-gray-800`}
+                        >
+                          <code class={`language-${node.language} text-sm`}>
+                            {node.code}
+                          </code>
+                        </pre>
+                      );
+                    case "table":
+                      return (
+                        <div class="mt-6 overflow-hidden overflow-x-auto">
+                          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead>
+                              <tr>
+                                {node.headers.map((header) => (
+                                  <th data-key={header}>{header}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {node.rows.map((row, i) => (
+                                <tr data-key={i}>
+                                  {row.map((cell, j) => (
+                                    <td data-key={j}>{cell}</td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      );
+                    default:
+                      return null;
+                  }
+                })
+              ) : (
+                <div class="py-12 text-center">
+                  <h1>Page not found</h1>
+                  <p>The requested documentation page could not be found.</p>
+                  <a
+                    href="/docs"
+                    class="text-blue-600 hover:underline dark:text-blue-400"
+                  >
+                    Go to documentation home
+                  </a>
                 </div>
-              </div>
-            )
-          }
-
-          {
-            currentPage === "installation" && (
-              <div>
-                <h1 class="mb-6 text-3xl font-bold">Installation</h1>
-                <div class="prose dark:prose-invert max-w-none">
-                  <h2>Prerequisites</h2>
-                  <ul>
-                    <li>Node.js 16+</li>
-                    <li>npm or yarn</li>
-                  </ul>
-
-                  <h2>Install via npm</h2>
-                  <pre class="overflow-x-auto rounded-md bg-gray-100 p-4 dark:bg-gray-800">
-                    <code>npm install @computesdk/sdk</code>
-                  </pre>
-
-                  <h2>Install via yarn</h2>
-                  <pre class="overflow-x-auto rounded-md bg-gray-100 p-4 dark:bg-gray-800">
-                    <code>yarn add @computesdk/sdk</code>
-                  </pre>
-                </div>
-              </div>
-            )
-          }
-
-          {
-            currentPage === "authentication" && (
-              <div>
-                <h1 class="mb-6 text-3xl font-bold">Authentication</h1>
-                <div class="prose dark:prose-invert max-w-none">
-                  <p>
-                    To use ComputeSDK, you'll need to authenticate your requests
-                    with an API key.
-                  </p>
-
-                  <h2>Getting Your API Key</h2>
-                  <p>
-                    Sign in to your dashboard and navigate to the API Keys
-                    section to generate a new key.
-                  </p>
-
-                  <h2>Using the API Key</h2>
-                  <pre class="overflow-x-auto rounded-md bg-gray-100 p-4 dark:bg-gray-800">
-                    <code>{`{
-                        "headers": {
-                            "Authorization": "Bearer YOUR_API_KEY"
-                        }
-                    }`}</code>
-                  </pre>
-                </div>
-              </div>
-            )
-          }
-
-          {/* Add more page content conditionally based on currentPage */}
-
-          {
-            !["introduction", "installation", "authentication"].includes(
-              currentPage,
-            ) && (
-              <div class="py-20 text-center">
-                <h2 class="mb-4 text-2xl font-semibold">Page Not Found</h2>
-                <p class="text-gray-600 dark:text-gray-400">
-                  The requested documentation page could not be found.
-                </p>
-                <a
-                  href="?page=introduction"
-                  class="mt-4 inline-block text-blue-500 hover:underline"
-                >
-                  Back to Introduction →
-                </a>
-              </div>
-            )
-          }
+              )
+            }
+          </div>
         </div>
       </main>
-    </div>
 
-    <Footer />
-  </body>
-</html>
+      <!-- Table of Contents -->
+      {
+        content &&
+          content.content.some((node) => node.type.startsWith("h2")) && (
+            <div class="hidden w-64 shrink-0 border-l border-gray-200 dark:border-gray-800 lg:block">
+              <div class="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto px-4 py-8">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  On this page
+                </h3>
+                <nav class="mt-4 space-y-2">
+                  {content.content
+                    .filter(
+                      (
+                        node,
+                      ): node is {
+                        type: "h2" | "h3";
+                        text: string;
+                        id?: string;
+                      } =>
+                        node.type.startsWith("h2") ||
+                        node.type.startsWith("h3"),
+                    )
+                    .map((heading) => (
+                      <a
+                        href={`#${heading.id || ""}`}
+                        class={`block text-sm ${
+                          heading.type === "h2"
+                            ? "font-medium text-gray-900 dark:text-white"
+                            : "ml-4 text-gray-500 dark:text-gray-400"
+                        } hover:text-blue-600 dark:hover:text-blue-400`}
+                      >
+                        {heading.text}
+                      </a>
+                    ))}
+                </nav>
+              </div>
+            </div>
+          )
+      }
+    </div>
+  </div>
+  <footer
+    class="mt-auto w-full border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900"
+  >
+    <div class="mx-auto max-w-7xl px-6 py-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div class="flex-1">
+          <Footer>
+            <ThemeToggle />
+          </Footer>
+        </div>
+      </div>
+    </div>
+  </footer>
+</Layout>
+
+<style>
+  .prose {
+    max-width: 100%;
+  }
+
+  .prose pre {
+    @apply overflow-x-auto rounded-lg bg-gray-50 p-4 dark:bg-gray-800;
+  }
+
+  .prose code {
+    @apply rounded bg-gray-100 px-1.5 py-0.5 text-sm text-gray-800 dark:bg-gray-800 dark:text-gray-200;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .prose table {
+    @apply min-w-full divide-y divide-gray-200 dark:divide-gray-700;
+  }
+
+  .prose th {
+    @apply px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400;
+  }
+
+  .prose td {
+    @apply whitespace-nowrap px-6 py-4 text-sm text-gray-700 dark:text-gray-300;
+  }
+
+  .prose tr {
+    @apply hover:bg-gray-50 dark:hover:bg-gray-800/50;
+  }
+
+  .prose a {
+    @apply text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300;
+  }
+</style>

@@ -35,26 +35,32 @@ const logoPath = "/images/hv_main_logo.svg";
     />
   </head>
   <body
-    class="min-h-screen bg-white transition-colors duration-200 dark:bg-gray-900"
+    class="flex min-h-screen flex-col bg-white transition-colors duration-200 dark:bg-gray-900"
   >
-    <div class="mx-auto max-w-5xl px-6 pb-4 pt-12 sm:px-6 lg:px-24">
-      <Hero logo={logoPath} darkLogo="/images/hv_main_logo_1.svg" />
-      <main>
-        <FounderMessage />
-      </main>
-      <div
-        class="flex items-center justify-between border-t border-gray-100 py-4 dark:border-gray-700 sm:py-4 md:py-2"
-      >
-        <!-- <PageLinks
-          links={[
-            { href: "/plus", text: "Plus" },
-            { href: "/docs", text: "Docs" },
-            { href: "/contact", text: "Contact" },
-          ]}
-        /> -->
-        <Footer />
-        <ThemeToggle client:load />
+    <div class="flex-grow">
+      <div class="mx-auto max-w-5xl px-6 pt-12 sm:px-6 lg:px-24">
+        <Hero logo={logoPath} darkLogo="/images/hv_main_logo_1.svg" />
+        <main>
+          <FounderMessage />
+        </main>
       </div>
     </div>
+
+    <!-- Full width footer -->
+    <footer
+      class="mt-auto w-full border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900"
+    >
+      <div class="mx-auto px-6 py-4 sm:px-6 lg:px-8">
+        <div
+          class="flex flex-col items-center justify-between gap-4 sm:flex-row"
+        >
+          <div class="flex-1">
+            <Footer>
+              <ThemeToggle />
+            </Footer>
+          </div>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
