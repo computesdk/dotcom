@@ -14,7 +14,7 @@ const { title, description } = Astro.props;
     <div class="flex h-16 items-center justify-between">
       <!-- Left side: Logo + Docs -->
       <div class="flex items-center">
-        <a href="/" class="flex items-center">
+        <a href="/docs" class="flex items-center">
           <img
             src="/images/hv_main_logo.svg"
             alt="ComputeSDK Logo"
@@ -29,16 +29,21 @@ const { title, description } = Astro.props;
       <!-- Right side: Navigation links -->
       <nav class="flex items-center space-x-6">
         <a
-          href="/pro"
+          href="/"
+          class="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
+          >Welcome</a
+        >
+        <a
+          href="/operator"
           class="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
         >
           Operator
         </a>
         <a
-          href="mailto:contact@computesdk.com"
+          href="/docs"
           class="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
         >
-          Contact
+          Docs
         </a>
       </nav>
     </div>
