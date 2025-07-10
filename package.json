@@ -10,8 +10,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "postinstall": "sharp --install"
+    "format:check": "prettier --check ."
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",
