@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "postinstall": "sharp --install"
   },
   "repository": {
     "type": "git",
@@ -27,7 +28,8 @@
   "dependencies": {
     "@astrojs/markdown-component": "^1.0.5",
     "@astrojs/mdx": "^4.3.0",
-    "astro": "^5.10.2"
+    "astro": "^5.10.2",
+    "sharp": "^0.34.3"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
