@@ -1,0 +1,140 @@
+---
+import { useEffect, useRef } from "react";
+import { createRoot } from "react-dom/client";
+
+// This component will be hydrated on the client to extract headings
+const Outline = () => {
+  const [headings, setHeadings] = React.useState<
+    { id: string; text: string; level: number }[]
+  >([]);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const activeId = useRef<string | null>(null);
+
+  useEffect(() => {
+    // Find all heading elements in the main content
+    const article = document.querySelector("article");
+    if (!article) return;
+
+    const headingElements = Array.from(
+      article.querySelectorAll("h2, h3, h4"),
+    ) as HTMLElement[];
+
+    const headingData = headingElements.map((heading) => ({
+      id:
+        heading.id ||
+        heading.textContent?.toLowerCase().replace(/\s+/g, "-") ||
+        "",
+      text: heading.textContent || "",
+      level: parseInt(heading.tagName.substring(1)),
+    }));
+
+    setHeadings(headingData);
+
+    // Set up intersection observer to highlight active section in TOC
+    const handleObserver = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        const id = entry.target.id;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
+          activeId.current = id;
+          setHeadings((current) => [...current]); // Trigger re-render
+        }
+      });
+    };
+
+    observer.current = new IntersectionObserver(handleObserver, {
+      rootMargin: "0px 0px -80% 0px",
+      threshold: 0.1,
+    });
+
+    headingElements.forEach((element) => observer.current?.observe(element));
+
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, []);
+
+  if (headings.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="sticky top-24 space-y-2">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        On this page
+      </h3>
+      <nav className="space-y-2 text-sm">
+        {headings.map((heading) => (
+          <a
+            key={heading.id}
+            href={`#${heading.id}`}
+            className={`block transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+              activeId.current === heading.id
+                ? "font-medium text-blue-600 dark:text-blue-400"
+                : "text-gray-600 dark:text-gray-400"
+            } ${heading.level === 3 ? "pl-4" : heading.level === 4 ? "pl-8" : ""}`}
+          >
+            {heading.text}
+          </a>
+        ))}
+      </nav>
+    </div>
+  );
+};
+
+// Client-side hydration
+if (import.meta.hot) {
+  import.meta.hot.on("astro:after-swap", () => {
+    const container = document.getElementById("docs-outline");
+    if (container) {
+      const root = createRoot(container);
+      root.render(<Outline />);
+    }
+  });
+}
+---
+
+<div id="docs-outline" class="[&>div]:h-full">
+  <Outline client:load />
+</div>
+
+<style>
+  /* Smooth scrolling for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Style for the sticky sidebar */
+  @media (min-width: 1280px) {
+    aside {
+      position: sticky;
+      top: 6rem;
+      height: calc(100vh - 8rem);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: theme("colors.gray.300") transparent;
+    }
+
+    .dark aside {
+      scrollbar-color: theme("colors.gray.600") transparent;
+    }
+
+    aside::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    aside::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    aside::-webkit-scrollbar-thumb {
+      background-color: theme("colors.gray.300");
+      border-radius: 2px;
+    }
+
+    .dark aside::-webkit-scrollbar-thumb {
+      background-color: theme("colors.gray.600");
+    }
+  }
+</style>

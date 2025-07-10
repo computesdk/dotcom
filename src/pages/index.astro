@@ -37,9 +37,10 @@ const logoPath = "/images/hv_main_logo.svg";
   <body
     class="flex min-h-screen flex-col bg-white transition-colors duration-200 dark:bg-gray-900"
   >
+    <Navbar pageTitle="ComputeSDK" />
     <div class="flex-grow">
-      <div class="mx-auto max-w-5xl px-6 pt-12 sm:px-6 lg:px-24">
-        <Hero logo={logoPath} darkLogo="/images/hv_main_logo_1.svg" />
+      <div class="mx-auto max-w-5xl px-6 pt-24 sm:px-6 lg:px-24">
+        <!-- <Hero logo={logoPath} darkLogo="/images/hv_main_logo_1.svg" /> -->
         <main>
           <FounderMessage />
         </main>
@@ -47,20 +48,10 @@ const logoPath = "/images/hv_main_logo.svg";
     </div>
 
     <!-- Full width footer -->
-    <footer
-      class="mt-auto w-full border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900"
-    >
-      <div class="mx-auto max-w-5xl px-6 py-4 sm:px-6 lg:px-24">
-        <div
-          class="flex flex-col items-center justify-between gap-4 sm:flex-row"
-        >
-          <div class="flex-1">
-            <Footer>
-              <ThemeToggle />
-            </Footer>
-          </div>
-        </div>
-      </div>
+    <footer>
+      <Footer>
+        <ThemeToggle />
+      </Footer>
     </footer>
   </body>
 </html>

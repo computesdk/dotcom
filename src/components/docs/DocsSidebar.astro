@@ -1,0 +1,63 @@
+---
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+// Navigation items
+const navItems = [
+  {
+    title: "Getting Started",
+    items: [
+      { title: "Introduction", path: "/docs/getting-started/introduction" },
+      { title: "Installation", path: "/docs/getting-started/installation" },
+      { title: "Quick Start", path: "/docs/getting-started/quick-start" },
+    ],
+  },
+  {
+    title: "API Reference",
+    items: [
+      { title: "Core API", path: "/docs/api/core" },
+      { title: "Configuration", path: "/docs/api/configuration" },
+      { title: "Advanced", path: "/docs/api/advanced" },
+    ],
+  },
+  {
+    title: "Guides",
+    items: [
+      { title: "Best Practices", path: "/docs/guides/best-practices" },
+      { title: "Examples", path: "/docs/guides/examples" },
+      { title: "Troubleshooting", path: "/docs/guides/troubleshooting" },
+    ],
+  },
+];
+---
+
+<nav class="space-y-8">
+  {
+    navItems.map((section) => (
+      <div key={section.title} class="space-y-2">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          {section.title}
+        </h3>
+        <ul class="space-y-1">
+          {section.items.map((item) => (
+            <li key={item.path}>
+              <a
+                href={item.path}
+                class={`block rounded-md px-3 py-2 text-sm transition-colors ${
+                  currentPath.startsWith(item.path)
+                    ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-900/50 dark:text-blue-400"
+                    : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                }`}
+              >
+                {item.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</nav>

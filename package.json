@@ -25,6 +25,8 @@
   },
   "homepage": "https://github.com/computesdk/landing#readme",
   "dependencies": {
+    "@astrojs/markdown-component": "^1.0.5",
+    "@astrojs/mdx": "^4.3.0",
     "astro": "^5.10.2"
   },
   "devDependencies": {

@@ -1,49 +1,65 @@
 ---
 // Navbar.astro
-const { logo = "/images/hv_main_logo.png" } = Astro.props;
+const {
+  logo = "/images/hv_main_logo.svg",
+  darkLogo = "/images/hv_main_logo_1.svg",
+  pageTitle = "",
+} = Astro.props;
 ---
 
 <header
-  class="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-sm transition-colors duration-200 dark:border-gray-700 dark:bg-gray-900/95"
+  class="fixed z-50 w-full border-b border-gray-200 bg-gray-50/80 font-sans backdrop-blur-sm dark:border-gray-800 dark:bg-gray-900/80"
 >
-  <div class="container mx-auto px-4 sm:px-6 lg:px-32">
-    <div class="flex h-32 items-center justify-between">
-      <div class="flex items-center space-x-3">
+  <div class="mx-auto px-12 py-4">
+    <div class="flex w-full items-center justify-between">
+      <!-- Logo -->
+      <a href="/" class="flex items-center transition-opacity hover:opacity-80">
         <img
           src={logo}
           alt="ComputeSDK Logo"
-          class="h-8 w-auto"
+          class="block h-8 w-auto dark:hidden"
           width="32"
           height="32"
         />
-        <span class="font-mono text-xl font-bold text-gray-900 dark:text-white"
-          >ComputeSDK</span
-        >
-      </div>
-      <nav class="hidden items-center space-x-8 md:flex">
+        <img
+          src={darkLogo}
+          alt="ComputeSDK Logo"
+          class="hidden h-8 w-auto dark:block"
+          width="32"
+          height="32"
+        />
+        {
+          pageTitle && (
+            <span class="ml-3 text-xl font-semibold text-gray-900 dark:text-white">
+              {pageTitle}
+            </span>
+          )
+        }
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden items-center justify-end space-x-8 md:flex">
         <a
-          href="#features"
-          class="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-          >Features</a
+          href="/"
+          class="text-md font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+          >Welcome</a
         >
         <a
-          href="#pricing"
-          class="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-          >Pricing</a
+          href="/operator"
+          class="text-md font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+          >Operator</a
         >
         <a
-          href="#docs"
-          class="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-          >Documentation</a
-        >
-        <a
-          href="#contact"
-          class="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors duration-200 hover:bg-gray-50 dark:border-gray-300 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white"
-          >Get Started</a
+          href="/docs/under-construction"
+          class="text-md font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+          >Docs</a
         >
       </nav>
+
+      <!-- Mobile menu button -->
       <button
-        class="p-2 text-gray-500 transition-colors duration-200 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white md:hidden"
+        class="p-2 text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white md:hidden"
+        id="mobile-menu-button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

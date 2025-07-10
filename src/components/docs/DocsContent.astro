@@ -1,0 +1,47 @@
+---
+import { getCollection } from "astro:content";
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+// Get all docs entries
+const allDocs = await getCollection("docs");
+
+// Find the current doc based on the path
+const currentDoc = allDocs.find(
+  (doc) => doc.slug === currentPath.replace(/^\/docs\//, ""),
+);
+
+// If no doc found, use a default not found message
+if (!currentDoc) {
+  throw new Error(`Document not found for path: ${currentPath}`);
+}
+
+// Get the content component
+const { Content } = await currentDoc.render();
+---
+
+<article class="prose dark:prose-invert max-w-none">
+  <Content />
+</article>
+
+<style>
+  .prose {
+    --tw-prose-headings: theme("colors.gray.900");
+    --tw-prose-body: theme("colors.gray.700");
+    --tw-prose-links: theme("colors.blue.600");
+    --tw-prose-code: theme("colors.gray.900");
+    --tw-prose-code-bg: theme("colors.gray.100");
+  }
+
+  .dark .prose {
+    --tw-prose-headings: theme("colors.gray.100");
+    --tw-prose-body: theme("colors.gray.300");
+    --tw-prose-links: theme("colors.blue.400");
+    --tw-prose-code: theme("colors.gray.100");
+    --tw-prose-code-bg: theme("colors.gray.800");
+  }
+</style>
