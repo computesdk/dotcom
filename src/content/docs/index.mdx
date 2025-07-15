@@ -5,8 +5,8 @@ template: splash
 hero:
   tagline: The primitives you've been missing
   image:
-    light: ../../assets/Compute.svg
-    dark: ../../assets/Compute.svg
+    light: ../../assets/compute_code_light.svg
+    dark: ../../assets/compute_code_dark.svg
     width: 600
     height: 400
   actions:
@@ -24,13 +24,13 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ## Next steps
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
+	<Card title="Update content" icon="npm">
 		Edit `src/content/docs/index.mdx` to see this page change.
 	</Card>
-	<Card title="Add new content" icon="add-document">
+	<Card title="Add new content" icon="rocket">
 		Add Markdown or MDX files to `src/content/docs` to create new pages.
 	</Card>
-	<Card title="Configure your site" icon="setting">
+	<Card title="Configure your site" icon="seti:todo">
 		Edit your `sidebar` and other config in `astro.config.mjs`.
 	</Card>
 	<Card title="Read the docs" icon="open-book">
@@ -38,6 +38,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 	</Card>
 </CardGrid>
 
+<div class="pt-24 text-gray-600 dark:text-gray-300 text-2xl">
 <p>All of a sudden everyone is a coder now.</p>
 
 <p>
@@ -62,10 +63,14 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
           learned or are learning to code by vibe coding.
         </p>
 
-<p class="font-semibold">
+</div>
+
+<div  class="font-bold text-gray-900 dark:text-white text-2xl py-2">
+<p>
           Compressing complexity is more important than ever.
         </p>
-
+	</div>
+<div class="text-gray-600 dark:text-gray-300 text-2xl">
 <p>
           These next sets of coders don't want to fiddle with Terraform, CDK, or
           some vendor's docs. The next set of coders want to build even more
@@ -84,9 +89,14 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 		 Additionally, we're rolling our own Kubernetes Operator so that anyone
           can self-host without missing out on magical experiences.
         </p>
+	</div>
 <div class="pt-6">
-          <p class="font-semibold text-gray-900 dark:text-white">
+<div class="font-semibold text-gray-900 dark:text-white text-2xl">
+          <p >
             Garrison Snelling
           </p>
-          <p class="text-gray-600 dark:text-gray-300">Founder, ComputeSDK</p>
-        </div>
+		  </div>
+		  <div class="text-gray-600 dark:text-gray-300 text-2xl">
+          <p>Founder, ComputeSDK</p>
+		  </div>
+		  </div>
