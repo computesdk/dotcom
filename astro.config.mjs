@@ -17,6 +17,7 @@ export default defineConfig({
           },
 		  customCss: [
 			'./src/styles/global.css',
+			'./src/styles/custom.css',
 		  ],
           plugins: [starlightThemeNova({
               nav: [
