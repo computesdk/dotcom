@@ -1,22 +1,32 @@
 /* src/styles/custom.css */
-:root {
-    /* Example: Adjust top/bottom padding of the hero */
-    /* These values are approximate, you'll need to inspect Starlight's Hero.astro */
-    --sl-hero-padding-y: 2rem; /* Default might be larger, e.g., 4rem or 6rem */
-    --sl-hero-padding-x: 1rem; /* Default might be larger */
+  /* `splash` template > top heading text + container */
+  body:not(:has(#starlight__sidebar)) .content-panel:has(h1#_top) {
+    display: none;
   }
   
-  /* If the above variables don't work, you might need to target the class directly */
-  .hero {
-    padding-block: 2rem !important; /* Adjust top/bottom padding */
-    padding-inline: 1rem !important; /* Adjust left/right padding */
-    /* You might also need to adjust gap or other flex properties */
-    gap: 1rem !important; /* If the hero uses gap for spacing */
+  body:not(:has(#starlight__sidebar)) .content-panel {
+    border: none;
   }
-  
-  /* For specific breakpoints, like large screens */
-  @media (min-width: 50rem) { /* Starlight's 'lg' breakpoint is often 50rem */
-    .hero {
-      padding-block: 3rem !important; /* Example: more padding on large screens */
-    }
+
+  /* Remove Starlight container padding */
+  .sl-container {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
+
+  .sl-markdown-content pre:not(:where(.not-content *)) {
+    border: none;
+  }
+
+  .sl-markdown-content code:not(:where(.not-content *)) {
+    border: none;
+  }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
+    padding: 0 !important;
+}

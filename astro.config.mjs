@@ -7,29 +7,37 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark'
+      }
+    },
+  },
   integrations: [
       starlight({
-          title: 'Compute',
-		  favicon: './src/assets/hv_main_logo_light.svg',	
-          logo: {
+        title: 'Compute',
+		    favicon: './src/assets/hv_main_logo_light.svg',	
+        logo: {
               light: './src/assets/hv_main_logo_light.svg',
               dark: './src/assets/hv_main_logo_dark.svg',
           },
-		  customCss: [
-			'./src/styles/global.css',
-			'./src/styles/custom.css',
-		  ],
-          plugins: [starlightThemeNova({
-              nav: [
-                  {
-                    label: 'Docs',
-                    href: '/guides/getting-started',
-                  },
-                  {
-                    label: 'Operator',
-                    href: '/operator',
-                  },
-              ],
+		    customCss: [
+			    './src/styles/global.css',
+			    './src/styles/custom.css',
+		    ],
+        plugins: [starlightThemeNova({
+          nav: [
+              {
+                label: 'Docs',
+                href: '/guides/getting-started',
+              },
+              {
+                label: 'Server',
+                href: '/server',
+              },
+            ],
             })],
           social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
           sidebar: [
