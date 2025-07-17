@@ -4,7 +4,9 @@ interface Props {
 }
 
 const { id } = Astro.props;
+import SignatureCard from './SignatureCard.astro';
 ---
+
 
 <div id={id} class="px-6 py-6 pt-36 pb-12 lg:px-8">
     <div class="mx-auto max-w-3xl text-base/7 text-gray-700 dark:text-gray-300">
@@ -36,10 +38,5 @@ const { id } = Astro.props;
         <p>Additionally, we're rolling our own Kubernetes Operator so that anyone
             can self-host without missing out on magical experiences.</p>
         
-            <div class="font-semibold text-gray-900 dark:text-white text-xl mt-6">
-                <p >
-                  Garrison Snelling
-                </p>
-                <p class="text-gray-600 dark:text-gray-300 text-sm">Founder, ComputeSDK</p>
-       </div>   
+        <SignatureCard /> 
 </div>

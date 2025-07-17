@@ -28,18 +28,18 @@ export default defineConfig({
 			    './src/styles/custom.css',
 		    ],
         plugins: [starlightThemeNova({
-          nav: [
-              {
-                label: 'Docs',
-                href: '/guides/getting-started',
-              },
-              {
-                label: 'Server',
-                href: '/server',
-              },
-            ],
-            })],
-          social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+          // nav: [
+          //     {
+          //       label: 'Docs',
+          //       href: '/guides/getting-started',
+          //     },
+          //     {
+          //       label: 'Server',
+          //       href: '/server',
+          //     },
+          //   ],
+             })],
+          social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],
           sidebar: [
               {
                   label: 'Guides',
