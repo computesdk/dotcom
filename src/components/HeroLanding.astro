@@ -1,18 +1,13 @@
 ---
 const codeExample = `
-async function fetchData<T>(url: string): Promise<ApiResponse<T>> {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(\`HTTP error! Status: \${response.status}\`);
-    }
-    const data: T = await response.json();
-    return { data, statusCode: response.status };
-  } catch (error: any) {
-    console.error("Error fetching data:", error);
-    return { data: null as T, statusCode: 500, message: error.message };
-  }
-}
+import { ComputeSDK } from 'computesdk';
+
+// Automatically detects and uses the first available provider
+const sandbox = ComputeSDK.createSandbox();
+
+const result = await sandbox.runCode('print("Hello World!")');
+
+await sandbox.kill();
 `
 
 import { Code } from 'astro:components';
@@ -20,32 +15,39 @@ import { Code } from 'astro:components';
 
 <div class="bg-white dark:bg-[var(--sl-color-bg)]">
     <div class="relative isolate overflow-hidden bg-gradient-to-b from-indigo-100/20 dark:from-[var(--sl-color-bg)]">
-      <div class="pb-24 pt-10 sm:pb-32 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:px-24 lg:py-12">
+      <div class="pb-24 pt-10 sm:pb-32 lg:grid lg:grid-cols-2 lg:gap-x-12 lg:px-12 lg:py-12">
         <div class="px-6 lg:px-0 lg:pt-4">
           <div class="mx-auto max-w-2xl">
-            <div class="max-w-lg">
+            <div class="">
               <!-- <img class="h-11" src="/hv_main_logo_light.svg" alt="Compute Logo" /> -->
               <div class="mt-8 sm:mt-16 lg:mt-16">
-                <a href="#founder-letter" class="inline-flex space-x-6 no-underline">
+                <a href="https://twitter.com/computesdk/status/1748214565272696896" target="_blank" class="inline-flex space-x-6 no-underline">
                   <span class="rounded-full bg-indigo-600/10 dark:bg-indigo-300/20 px-3 py-1 text-sm/6 font-semibold text-indigo-600 dark:text-white ring-1 ring-inset ring-indigo-600/10">What's new</span>
                   <span class="inline-flex items-center space-x-2 text-sm/6 font-medium text-gray-600 dark:text-gray-400">
-                    <span>Just shipped v0.1.0</span>
+                    <span>Read the thread: Announcing @ComputeSDK</span>
                     <svg class="size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
                       <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                     </svg>
                   </span>
                 </a>
               </div>
-              <h1 class="mt-10 text-pretty text-5xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-7xl">Compute SDK</h1>
-              <p class="mt-8 text-pretty text-lg font-medium text-gray-500 dark:text-gray-400 sm:text-xl/8">Compute SDK is built to work seamlessly with the cloud providers in your stack</p>
+              <h1 class="mt-10 text-pretty text-5xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-7xl">Embedded Compute for Your Apps</h1>
+              <p class="mt-8 text-pretty text-lg font-medium text-gray-500 dark:text-gray-400 sm:text-xl/8">A developer-first primitive to embed compute into your app, agent, or network with the ability to connect directly from the browser.</p>
               <div class="mt-10 flex items-center gap-x-6">
-                <a href="/guides/getting-started/" class="no-underline rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white dark:text-whitw shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:hover:bg-indigo-500">Documentation</a>
-                <a href="/server" class="no-underline text-sm/6 font-semibold text-gray-900 dark:text-gray-400">ComputeSDK Server <span aria-hidden="true">→</span></a>
+                <!-- <a href="/guides/getting-started/" class="no-underline rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white dark:text-whitw shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:hover:bg-indigo-500">Documentation</a>
+                <a href="/server" class="no-underline text-sm/6 font-semibold text-gray-900 dark:text-gray-400">ComputeSDK Server <span aria-hidden="true">→</span></a> -->
+                <a href="https://github.com/computesdk" target="_blank" class="no-underline rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white dark:text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:hover:bg-indigo-500">Get Started</a>
+                <a href="https://github.com/computesdk" target="_blank" class="no-underline flex items-center gap-2 rounded-md bg-gray-100 dark:bg-gray-800 px-3.5 py-2.5 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm hover:bg-gray-200 dark:hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.699 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+                  </svg>
+                  GitHub
+                </a>
               </div>
             </div>
           </div>
         </div>
-        <div class="mt-20 sm:mt-24 md:mx-auto md:max-w-2xl lg:mx-0 lg:mt-0 lg:w-screen">
+        <div class="mt-16 md:mx-auto md:max-w-2xl lg:my-auto lg:w-screen 2xl:pt-12">
             <div class="absolute inset-y-0 right-1/2 -z-10 -mr-10 w-[200%] skew-x-[-30deg] bg-white dark:bg-[var(--sl-color-bg)] shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 dark:ring-[var(--sl-color-bg)] md:-mr-20 lg:-mr-36" aria-hidden="true"></div>
             <div class="shadow-lg md:rounded-3xl">
               <div class="bg-indigo-500 [clip-path:inset(0)] md:[clip-path:inset(0_round_theme(borderRadius.3xl))]">
@@ -55,11 +57,11 @@ import { Code } from 'astro:components';
                     <div class="w-screen overflow-hidden rounded-tl-xl bg-gray-800">
                     <div class="flex bg-gray-800/40 ring-1 ring-white/5 dark:ring-[var(--sl-color-bg)]">
                         <div class="-mb-px flex items-center text-sm/6 font-medium text-gray-400">
-                            <div class="flex h-full items-center justify-center border-b border-r border-b-white/20 border-r-white/10 bg-white/5 px-4 py-2 text-white">NotificationSetting.jsx</div>
-                            <div class="flex h-full justify-center border-r border-gray-600/10 px-4 py-2">App.jsx</div>
+                            <!-- <div class="flex h-full items-center justify-center border-b border-r border-b-white/20 border-r-white/10 bg-white/5 px-4 py-2 text-white">index.jsx</div> -->
+                            <div class="flex h-full justify-center border-r border-gray-600/10 px-4 py-2">index.jsx</div>
                         </div>
                     </div>
-                    <div class="px-6 pb-6 pt-6">
+                    <div class="px-6 pb-12">
                         <Code code={codeExample} lang="typescript" />
                     </div>
                   </div>
