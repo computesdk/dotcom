@@ -8,6 +8,11 @@
     border: none;
   }
 
+  /* Hide footer when there's no sidebar */
+  body:not(:has(#starlight__sidebar)) footer.sl-flex.astro-3yyafb3n {
+    display: none;
+  }
+
   /* Remove Starlight container padding */
   .sl-container {
     max-width: 100% !important;

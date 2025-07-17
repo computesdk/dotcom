@@ -18,7 +18,7 @@ export default defineConfig({
   integrations: [
       starlight({
         title: 'Compute',
-		    favicon: './src/assets/hv_main_logo_light.svg',	
+		    favicon: '/hv_main_logo_light.svg',	
         logo: {
               light: './src/assets/hv_main_logo_light.svg',
               dark: './src/assets/hv_main_logo_dark.svg',
