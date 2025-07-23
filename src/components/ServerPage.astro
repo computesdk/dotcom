@@ -1,12 +1,11 @@
 ---
 import PricePanel from './PricePanel.astro';
-import IconColumn from './IconColumn.astro';
-import LogoCloud from './LogoCloud.astro';
 import HeroServer from './HeroServer.astro';
 import FAQ from './FAQ.astro';
 import Screenshot from './Screenshot.astro';
 import Video from './Video.astro';
 import CodeBlock from './CodeBlock.astro';
+import ListColumn from './ListColumn.astro';
 ---
 
 <div class="flex min-h-full flex-col">
@@ -18,7 +17,7 @@ import CodeBlock from './CodeBlock.astro';
 
     <main class="flex-1">
       <HeroServer />
-      <IconColumn />
+      <ListColumn />
       <Screenshot />
       <CodeBlock />
       <Video src="/SampleVideo.mp4" poster="" title="See it in action" />
