@@ -40,3 +40,13 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
     display: flex !important;
 }
 
+.nova-header-actions-lg {
+  display: flex !important;
+}
+
+/* Hide anchor tags in .nova-header-actions-lg on mobile */
+@media (max-width: 767px) {
+  .nova-header-actions-lg a {
+    display: none !important;
+  }
+}
