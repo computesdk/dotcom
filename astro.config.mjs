@@ -17,7 +17,7 @@ export default defineConfig({
   },
   integrations: [
       starlight({
-        title: 'Compute',
+        title: 'ComputeSDK',
 		    favicon: '/hv_main_logo_light.svg',	
         logo: {
               light: './src/assets/hv_main_logo_light.svg',
@@ -31,7 +31,7 @@ export default defineConfig({
           nav: [
               {
                 label: 'Docs',
-                href: '/guides/getting-started',
+                href: '/start/quick-start',
               },
               {
                 label: 'Server',
@@ -41,16 +41,23 @@ export default defineConfig({
              })],
           social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],
           sidebar: [
+              { label: 'Examples', link: 'https://github.com/computesdk/computesdk/tree/main/examples', attrs: { target: '_blank' } },
+              { label: 'Server', link: '/server' },
               {
-                  label: 'Guides',
-                  items: [
-                      // Each item here is one entry in the navigation menu.
-                      { label: 'Example Guide', slug: 'guides/example' },
-                  ],
+                  label: 'Getting Started',
+                  autogenerate: { directory: 'start' },
               },
               {
-                  label: 'Reference',
-                  autogenerate: { directory: 'reference' },
+                  label: 'Providers',
+                  autogenerate: { directory: 'providers' },
+              },
+              {
+                  label: 'Frameworks',
+                  autogenerate: { directory: 'frameworks' },
+              },
+              {
+                  label: 'Components',
+                  autogenerate: { directory: 'components' },
               },
           ],
       }),
