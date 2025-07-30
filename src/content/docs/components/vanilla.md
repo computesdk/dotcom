@@ -5,17 +5,17 @@ sidebar:
     order: 4
 ---
 
-### ComputeSDK + Vanilla JavaScript Integration Guide
+#### ComputeSDK + Vanilla JavaScript Integration Guide
 Deploy secure, cloud-sandboxed compute operations and filesystem tasks with ComputeSDK in any vanilla JavaScript project. This guide uses a classic Node.js server (e.g., Express) for backend compute and a static HTML+JS frontend as your UI.
 
-#### Key Principles
+### Key Principles
 All ComputeSDK logic must run in Node.js (server-side). Never import ComputeSDK into client (browser) scripts.
 
 Frontend interacts with ComputeSDK via HTTP API endpoints.
 
 Provider credentials (API keys/tokens) are stored as environment vars on the server.
 
-#### Install ComputeSDK and Provider(s)
+### Install ComputeSDK and Provider(s)
 In your Node.js server project:
 
 ```bash
@@ -23,7 +23,7 @@ npm install computesdk
 npm install @computesdk/vercel     # For Vercel provider
 npm install @computesdk/e2b        # Or E2B, etc.
 ```
-#### Set Environment Variables
+### Set Environment Variables
 Add your ComputeSDK provider credentials to a .env file or host environment (never in frontend code):
 
 ```text
@@ -36,7 +36,7 @@ E2B_API_KEY=your_e2b_api_key
 ```
 Load these using dotenv in your Node server, if desired.
 
-#### Create Backend API Endpoints
+### Create Backend API Endpoints
 Create an HTTP endpoint that uses ComputeSDK—for example, with Express:
 
 ```js
@@ -67,7 +67,7 @@ app.listen(3000, () => {
   console.log('API server running on http://localhost:3000');
 });
 ```
-#### Simple Static Frontend
+### Simple Static Frontend
 Serve a static HTML page that fetches results from your API endpoint:
 
 ```html
@@ -112,7 +112,7 @@ console.log("Hello from ComputeSDK!")</textarea>
 ```
 Serve this static page either from your Express app or any static file server (ensure CORS is handled if not same origin).
 
-#### Filesystem Example
+### Filesystem Example
 To perform file operations (read/write) in a sandbox, add another API endpoint to your server:
 
 ```js
@@ -134,7 +134,7 @@ with open('/sandbox/hello.txt') as f:
 ```
 Call this from the frontend with a similar fetch pattern.
 
-#### Auto-detect Provider (Optional)
+### Auto-detect Provider (Optional)
 For environments with multiple possible sandboxes, the server can let ComputeSDK auto-select:
 
 ```js
@@ -150,7 +150,7 @@ app.post('/api/auto-provider', async (req, res) => {
   }
 });
 ```
-#### Security & Best Practices
+### Security & Best Practices
 Never import ComputeSDK in the browser—server only!
 
 Never expose sandbox provider keys to the client or bundle.
@@ -161,7 +161,7 @@ Display errors to the user and log for troubleshooting.
 
 Sanitize user code before sending to avoid abuse.
 
-#### Troubleshooting
+### Troubleshooting
 API not working? Check server logs, CORS settings, and env var configuration.
 
 Provider/auth errors? Validate provider credentials and package installation.

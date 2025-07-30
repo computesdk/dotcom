@@ -5,13 +5,13 @@ sidebar:
     order: 2
 ---
 
-### ComputeSDK E2B Provider Documentation
+#### ComputeSDK E2B Provider Documentation
 This guide provides detailed information on how to install, configure, and use the E2B provider within ComputeSDK. The E2B provider allows you to execute code in secure, isolated sandboxed environments powered by E2B's infrastructure, all while maintaining the consistent ComputeSDK interface.
 
-#### Overview
+### Overview
 The @computesdk/e2b package integrates ComputeSDK with the E2B code execution platform. This allows you to leverage E2B's robust sandboxing capabilities, including support for various runtimes and comprehensive filesystem operations, through a familiar ComputeSDK API.
 
-#### Installation
+### Installation
 To use the E2B provider, you need to install its dedicated package in addition to the core ComputeSDK.
 
 ```bash
@@ -24,7 +24,7 @@ If you haven't already, also install the core SDK:
 npm install computesdk
 ```
 
-#### Provider Setup
+### Provider Setup
 To authenticate with E2B, you must set your E2B API key as an environment variable. ComputeSDK's E2B provider will automatically pick this up.
 
 ```bash
@@ -33,7 +33,7 @@ export E2B_API_KEY=your_e2b_api_key
 
 Replace your_e2b_api_key with your actual API key obtained from E2B.
 
-#### Usage
+### Usage
 You can use the E2B provider either through ComputeSDK's auto-detection mechanism (if E2B_API_KEY is set and E2B is the first available provider) or by explicitly initializing it.
 
 #### Explicit Initialization
@@ -58,7 +58,7 @@ template: (Optional) Specifies the sandbox template to use (e.g., 'python', 'nod
 
 timeout: (Optional) Sets the maximum execution time for the sandbox in milliseconds. Defaults to 5 minutes (300,000 ms).
 
-#### Examples
+### Examples
 Here are some practical examples demonstrating the use of the E2B provider for code execution and filesystem operations.
 
 #### Data Science with E2B
@@ -95,7 +95,7 @@ console.log(result.stdout);
 await sandbox.kill();
 ```
 
-#### Filesystem Operations with E2B
+### Filesystem Operations with E2B
 This example demonstrates how to create directories, write files, execute a script that reads and writes files, and then list the contents of a directory, all within the E2B sandbox.
 
 ```typescript

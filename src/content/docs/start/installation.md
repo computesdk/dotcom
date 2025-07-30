@@ -3,11 +3,11 @@ title: Installation
 description: Install ComputeSDK
 ---
 
-### Installation Guide
+#### Installation Guide
 
 This guide provides detailed instructions on how to install the ComputeSDK core package and its various provider packages. Proper installation ensures you can leverage ComputeSDK's unified abstraction layer for secure, sandboxed code execution across multiple cloud providers.
 
-#### Core SDK Installation
+### Core SDK Installation
 
 The ComputeSDK core package provides the fundamental ComputeSDK class and the executeSandbox utility function, along with common interfaces and error types. It's the first step for any ComputeSDK project.
 
@@ -17,7 +17,7 @@ To install the core SDK, run the following command in your project directory:
 npm install computesdk
 ```
 
-#### Provider Package Installation
+### Provider Package Installation
 
 ComputeSDK is designed to be modular. You only need to install the provider packages for the cloud compute services you intend to use. This keeps your project's dependencies lean and relevant.
 

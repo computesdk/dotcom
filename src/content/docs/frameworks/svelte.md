@@ -4,7 +4,7 @@ description: ComputeSDK for Svelte
 sidebar:
     order: 3
 ---
-### ComputeSDK + SvelteKit Integration
+#### ComputeSDK + SvelteKit Integration
 Bring secure, sandboxed server-side code execution to your SvelteKit apps with ComputeSDK. Use it to power AI, dynamic analytics, code execution, and more—with cloud-based sandboxes that keep your infrastructure safe.
 
 #### Why Use ComputeSDK in SvelteKit?
@@ -16,7 +16,7 @@ Cloud Filesystem: Perform file operations within secure sandboxes.
 
 Easy API Calls: Expose compute capabilities via SvelteKit endpoints, and safely invoke from the frontend.
 
-#### Installing the SDK
+### Installation
 Install the ComputeSDK core package and any provider you want (use only providers you’ll need—examples here use Vercel and E2B):
 
 ```bash
@@ -70,7 +70,7 @@ export async function GET() {
   }
 }
 ```
-#### Filesystem Example
+### Filesystem Example
 Reading/writing files in the sandbox is easy, and keeps operations isolated:
 
 ```typescript

@@ -5,13 +5,13 @@ sidebar:
     order: 4
 ---
 
-### ComputeSDK Cloudflare Provider Documentation
+#### ComputeSDK Cloudflare Provider Documentation
 This guide provides detailed information on how to install, configure, and use the Cloudflare provider within ComputeSDK. The Cloudflare provider allows you to execute code in secure, isolated sandboxed environments on Cloudflare's infrastructure, particularly leveraging Cloudflare Workers and Durable Objects, all while maintaining the consistent ComputeSDK interface.
 
 #### Overview
 The @computesdk/cloudflare package integrates ComputeSDK with Cloudflare Workers and Durable Objects. This enables you to run sandboxed code directly on Cloudflare's edge network, benefiting from low latency and Cloudflare's robust infrastructure. This integration is particularly suited for applications already deployed on Cloudflare or those requiring edge-based execution.
 
-#### Installation
+### Installation
 To use the Cloudflare provider, you need to install its dedicated package in addition to the core ComputeSDK.
 
 ```bash
@@ -24,22 +24,20 @@ If you haven't already, also install the core SDK:
 npm install computesdk
 ```
 
-#### Provider Setup
+### Provider Setup
 The Cloudflare provider typically operates within a Cloudflare Workers environment and requires a Durable Object binding to manage the sandbox state. You'll need to configure this in your wrangler.toml file and pass the Durable Object binding to the provider in your Worker code.
 
-##### wrangler.toml Configuration
+### wrangler.toml Configuration
 Add a Durable Object binding to your wrangler.toml file. This defines the Durable Object that the ComputeSDK Cloudflare provider will use to manage sandboxes.
 
-# wrangler.toml
-
-# ... other configurations for your Worker ...
+#### wrangler.toml ... other configurations for your Worker ...
 
 [[durable_objects.bindings]]
 name = "Sandbox" # This name must match the 'env.Sandbox' binding in your Worker code
 class_name = "ComputeSandboxDurableObject" # The name of the Durable Object class you'll define
 script_name = "your-worker-script-name" # The name of your Worker script (usually your project name)
 
-##### Durable Object Implementation (Worker Code)
+### Durable Object Implementation (Worker Code)
 You'll need to define the ComputeSandboxDurableObject class within your Cloudflare Worker. This class will handle the actual sandbox logic. A basic skeleton for this Durable Object is shown below. Note: The full implementation of the Durable Object logic is beyond the scope of this client-side documentation but is crucial for the provider to function.
 
 ```typescript
@@ -89,7 +87,7 @@ export default {
 };
 ```
 
-##### Client-Side Configuration
+### Client-Side Configuration
 In your client-side application, you pass the env.Sandbox Durable Object binding (which is available in your Worker's fetch handler) to the Cloudflare provider.
 
 ```typescript
@@ -118,13 +116,13 @@ runtime: (Optional) Specifies the runtime environment for the Cloudflare sandbox
 
 timeout: (Optional) Sets the maximum execution time for the sandbox in milliseconds. Defaults to 5 minutes (300,000 ms).
 
-#### Usage
+### Usage
 You can use the Cloudflare provider by explicitly initializing it as shown above. Auto-detection for Cloudflare typically requires a deployed Worker environment.
 
-#### Examples
+### Examples
 Here are some practical examples demonstrating the use of the Cloudflare provider for code execution and filesystem operations.
 
-##### Executing Python Code on Cloudflare
+#### Executing Python Code on Cloudflare
 This example shows how to execute a simple Python script within the Cloudflare sandbox and retrieve its output.
 
 ```typescript
@@ -145,7 +143,7 @@ console.log(result.stdout);
 await sandbox.kill();
 ```
 
-##### Executing Node.js Code on Cloudflare
+#### Executing Node.js Code on Cloudflare
 This example demonstrates executing a Node.js script within the Cloudflare sandbox.
 
 ```typescript
@@ -165,7 +163,7 @@ console.log(result.stdout);
 await sandbox.kill();
 ```
 
-##### Filesystem Operations with Cloudflare
+### Filesystem Operations with Cloudflare
 The sandbox.filesystem interface works identically across all providers, including Cloudflare. This example shows basic file operations.
 
 ```typescript

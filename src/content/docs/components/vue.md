@@ -5,17 +5,17 @@ sidebar:
     order: 2
 ---
 
-### ComputeSDK + Vue.js Integration Guide
+#### ComputeSDK + Vue.js Integration Guide
 ComputeSDK enables you to execute code and perform filesystem operations in secure, isolated sandboxes using various cloud providers. For Vue.js, all ComputeSDK logic must execute on the server (Node.js)—not in client-side Vue code. This keeps provider credentials secure and leverages server resources for code execution.
 
-#### Key Principles
+### Key Principles
 Server-Only ComputeSDK: Never import or use ComputeSDK in client-side (browser) Vue code.
 
 API-Driven Integration: Use Vue components to interact (via fetch/AJAX) with backend API endpoints that invoke ComputeSDK logic.
 
 Environment Variables: Store your provider credentials (e.g., API keys) securely in your backend.
 
-#### Installation
+### Installation
 Install the core SDK and required provider(s):
 
 ```bash
@@ -24,7 +24,7 @@ npm install @computesdk/vercel      # For Vercel provider
 npm install @computesdk/e2b         # For E2B provider, etc.
 ```
 
-#### Backend API Example (Node/Express, Vite, or Vercel/Nuxt server)
+### Backend API Example (Node/Express, Vite, or Vercel/Nuxt server)
 Create an API endpoint (e.g., /api/run-code) that uses ComputeSDK to execute code.
 
 ```typescript
@@ -52,7 +52,7 @@ export default router;
 ```
 You can also use serverless functions or Nuxt/Nuxt3 server routes as your API controller.
 
-#### Vue Component Example (Composition API)
+### Vue Component Example (Composition API)
 Use your Vue component to POST code to the backend and display the results:
 
 ```vue
@@ -94,7 +94,7 @@ async function runSandbox() {
 </template>
 ```
 
-#### Filesystem Operations Example
+### Filesystem Operations Example
 Add endpoints to perform file read/write in the sandbox (backend):
 
 ```typescript
@@ -125,7 +125,7 @@ with open('/sandbox/hello.txt') as f:
 ```
 Call this endpoint from your Vue code just as in the previous example.
 
-#### Provider Auto-detection
+### Provider Auto-detection
 If you want the server to pick the best available provider based on environment variables:
 
 ```typescript

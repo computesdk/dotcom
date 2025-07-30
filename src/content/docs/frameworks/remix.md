@@ -5,7 +5,7 @@ sidebar:
     order: 5
 ---
 
-### ComputeSDK + Remix Integration
+#### ComputeSDK + Remix Integration
 Use ComputeSDK in your Remix apps to run secure, isolated code execution and filesystem operations within cloud sandboxes. This is ideal for dynamic backend workflows such as AI-powered compute, user code execution, or data processing—all abstracted via a consistent API that supports multiple cloud providers.
 
 #### Why Use ComputeSDK in Remix?
@@ -19,7 +19,7 @@ Type-safe and modular: Use with TypeScript and install only providers you need.
 
 Fits Remix's server-centric architecture: Integrates cleanly into Remix loaders, actions, or API routes.
 
-#### Installation
+### Installation
 Install the ComputeSDK core and relevant provider packages:
 
 ```bash
@@ -32,7 +32,7 @@ npm install @computesdk/vercel
 npm install @computesdk/e2b
 ```
 
-#### Environment Variables Setup
+### Environment Variables Setup
 Configure your provider API credentials in environment variables. Add them to .env (or your platform's environment settings):
 
 Vercel Provider
@@ -87,8 +87,8 @@ export const loader: LoaderFunction = async () => {
     await sandbox.kill();
   }
 };
-
-#### Filesystem Operations Example
+```
+### Filesystem Operations Example
 You can read, write, and manage files within the sandbox filesystem during your Loaders or Actions:
 
 ```typescript
@@ -123,7 +123,7 @@ export const loader: LoaderFunction = async () => {
   }
 };
 ```
-#### Calling Sandbox Endpoints from Remix UI
+### Calling Sandbox Endpoints from Remix UI
 Fetch the results from your Sandbox API loader or action from your React components using Remix data hooks or native fetch:
 
 ```tsx
@@ -150,7 +150,7 @@ export default function SandboxOutput() {
 }
 ```
 
-#### Provider Auto-detection
+### Provider Auto-detection
 Use ComputeSDK’s auto-detection to select an available provider based on your environment variables:
 
 ```typescript
@@ -170,7 +170,7 @@ export const loader: LoaderFunction = async () => {
 };
 ```
 
-#### Best Practices
+### Best Practices
 Server-only usage: Never import or use ComputeSDK in client-side code.
 
 Always kill sandboxes: Call await sandbox.kill() to free resources.
@@ -181,7 +181,7 @@ Secure environment variables: Store API keys securely and do not expose them to 
 
 Provider limits: Be aware of provider-specific rate limits and timeout settings.
 
-#### Troubleshooting
+### Troubleshooting
 Sandbox not executing code: Verify environment variables and provider package installation.
 
 API keys missing: Ensure .env entries are correct and environment is refreshed.

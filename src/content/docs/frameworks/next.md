@@ -5,7 +5,7 @@ sidebar:
     order: 1
 ---
 
-### Why Use ComputeSDK with Next.js?
+#### Why Use ComputeSDK with Next.js?
 Secure Sandboxed Execution: Safely run untrusted or dynamic code from your API routes.
 
 Consistent API: Develop provider-agnostic features that work across Vercel, E2B, and others.
@@ -75,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 ```
 Tip: This pattern is ideal for running user-provided code or workflows that must not run in your Next.js server environment.
 
-#### Filesystem Example in an API Route
+### Filesystem Example in an API Route
 You can work with files in the sandbox, totally isolated from your Next.js server:
 
 ```typescript

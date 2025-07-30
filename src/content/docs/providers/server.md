@@ -5,7 +5,7 @@ sidebar:
     order: 1
 ---
 
-### ComputeSDK Proprietary Server for Cloud Integration
+#### ComputeSDK Proprietary Server for Cloud Integration
 ComputeSDK offers a powerful proprietary server solution designed to provide a secure and efficient bridge for executing code within your existing AWS, Azure, and Google Cloud Platform (GCP) environments. This server acts as a dedicated ComputeSDK provider, allowing you to leverage your cloud infrastructure while maintaining the unified API and sandboxing benefits of ComputeSDK.
 
 #### Overview
@@ -21,7 +21,7 @@ Cost Optimization: Optimize resource usage by running sandboxes directly on your
 
 The server abstracts the underlying cloud provider specifics, presenting a consistent ComputeSDK interface for execute, filesystem operations, and more.
 
-#### Installation and Setup
+### Installation and Setup
 Setting up the ComputeSDK Proprietary Server involves deploying the server application within your chosen cloud environment (AWS, Azure, or GCP) and then configuring your client-side ComputeSDK to connect to it.
 
 #### 1. Server Deployment
@@ -79,7 +79,7 @@ API Keys/Credentials: For specific operations or fallback mechanisms, you might 
 
 Resource Tags/Labels: Configure the server to tag or label the provisioned resources for easier management and cost tracking within your cloud.
 
-#### AWS Integration
+### AWS Integration
 On the server-side, the proprietary server will use your AWS credentials (typically via IAM roles assigned to the EC2 instance running the server) to:
 
 Launch EC2 instances or Fargate tasks for sandboxing.
@@ -88,7 +88,7 @@ Manage security groups and network configurations.
 
 Interact with S3 for filesystem operations.
 
-#### Azure Integration
+### Azure Integration
 For Azure, the server will leverage Managed Identities or Service Principals to:
 
 Provision Azure Container Instances (ACI) or Virtual Machines.
@@ -97,7 +97,7 @@ Configure network security groups.
 
 Interact with Azure Blob Storage for filesystem operations.
 
-#### Google Cloud Platform (GCP) Integration
+### Google Cloud Platform (GCP) Integration
 On GCP, the server will use Service Accounts to:
 
 Create Google Compute Engine (GCE) instances or Cloud Run jobs.
@@ -106,7 +106,7 @@ Manage VPC networks and firewall rules.
 
 Interact with Google Cloud Storage for filesystem operations.
 
-#### Examples
+### Examples
 Here's how you might use the proprietary server with different runtimes, assuming your server is configured to support them and connect to the respective cloud backends:
 
 Executing Python on AWS (via Proprietary Server)

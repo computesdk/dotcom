@@ -5,13 +5,13 @@ sidebar:
     order: 3
 ---
 
-### ComputeSDK Vercel Provider Documentation
+#### ComputeSDK Vercel Provider Documentation
 This guide provides detailed information on how to install, configure, and use the Vercel provider within ComputeSDK. The Vercel provider allows you to execute code in secure, isolated sandboxed environments on Vercel's infrastructure, all while maintaining the consistent ComputeSDK interface.
 
 #### Overview
 The @computesdk/vercel package integrates ComputeSDK with Vercel's serverless functions, allowing you to leverage Vercel's platform for sandboxed code execution. This is particularly useful for projects already deployed on Vercel or those that benefit from Vercel's ecosystem.
 
-#### Installation
+### Installation
 To use the Vercel provider, you need to install its dedicated package in addition to the core ComputeSDK.
 
 ```bash
@@ -24,7 +24,7 @@ If you haven't already, also install the core SDK:
 npm install computesdk
 ```
 
-#### Provider Setup
+### Provider Setup
 To authenticate with Vercel, you must set your Vercel API token, team ID, and project ID as environment variables. ComputeSDK's Vercel provider will automatically pick these up.
 
 ```bash
@@ -39,7 +39,7 @@ VERCEL_TEAM_ID: The ID of the Vercel team associated with your project. This is 
 
 VERCEL_PROJECT_ID: The ID of the Vercel project where your sandbox functions will be deployed. This is also found in your Vercel dashboard URL.
 
-#### Usage
+### Usage
 You can use the Vercel provider either through ComputeSDK's auto-detection mechanism (if Vercel environment variables are set and Vercel is the first available provider) or by explicitly initializing it.
 
 #### Explicit Initialization
@@ -64,7 +64,7 @@ runtime: (Optional) Specifies the runtime environment for the Vercel function. C
 
 timeout: (Optional) Sets the maximum execution time for the Vercel function in milliseconds. Defaults to 5 minutes (300,000 ms).
 
-#### Examples
+### Examples
 Here are some practical examples demonstrating the use of the Vercel provider for code execution and filesystem operations.
 
 #### Executing Node.js Code on Vercel
@@ -100,7 +100,7 @@ console.log(result.stdout);
 await sandbox.kill();
 ```
 
-#### Filesystem Operations with Vercel
+### Filesystem Operations with Vercel
 The sandbox.filesystem interface works identically across all providers, including Vercel. This example shows basic file operations.
 
 ```typescript

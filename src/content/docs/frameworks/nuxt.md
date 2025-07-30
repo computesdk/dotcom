@@ -5,7 +5,7 @@ sidebar:
     order: 2
 ---
 
-### ComputeSDK + Nuxt.js Integration
+#### ComputeSDK + Nuxt.js Integration
 Use ComputeSDK in your Nuxt backend to run secure, sandboxed code and perform isolated file operations on cloud providers like E2B, Vercel, and Cloudflare. This allows you to build AI-powered, code-executing, or analytics-heavy features in your Nuxt app—without managing your own isolated runtime infrastructure.
 
 #### Why Use ComputeSDK in Nuxt.js?
@@ -17,7 +17,7 @@ Consistent developer experience: Type-safe, promise-based, and easy to use with 
 
 Portable logic: Filesystem operations (“/tmp”, etc.) run in the cloud sandbox, not on your server.
 
-#### Installation
+### Installation
 Install ComputeSDK core, plus your desired providers:
 
 ```bash
@@ -41,7 +41,7 @@ E2B_API_KEY=your_e2b_api_key
 ```
 Nuxt 3 loads these via runtimeConfig, and they’re available in server context.
 
-#### Basic Usage in Nuxt Server Routes
+### Basic Usage in Nuxt Server Routes
 Use ComputeSDK in your server endpoints for backend-only execution.
 
 Example: /server/api/sandbox-example.ts
@@ -109,7 +109,7 @@ with open('/workspace/message.txt') as f:
   }
 });
 ```
-#### Using ComputeSDK with Nuxt’s Composables and Actions
+### Using ComputeSDK with Nuxt’s Composables and Actions
 You can wrap ComputeSDK logic in composables for use in server-side actions or composable utilities.
 
 ```typescript
@@ -142,7 +142,7 @@ export default defineEventHandler(async (event) => {
   return { output: result.stdout };
 });
 ```
-#### Calling From the Client
+### Calling From the Client
 Your app’s frontend or Vue components call these server routes normally:
 
 ```html
@@ -157,7 +157,7 @@ async function runSandbox() {
   <button @click="runSandbox">Run Cloud Sandbox</button>
 </template>
 ```
-#### Provider Auto-detection
+### Provider Auto-detection
 Let ComputeSDK pick the best provider based on your configured environment:
 
 ```typescript
@@ -173,14 +173,14 @@ export default defineEventHandler(async () => {
 });
 ```
 
-#### Deployment Notes
+### Deployment Notes
 Set secrets in platform-native ways (e.g., Vercel/Netlify/Render, etc. dashboard).
 
 Never expose your provider credentials to the browser.
 
 Allocate sandbox resources and timeouts based on your provider limits.
 
-#### Troubleshooting
+### Troubleshooting
 Cannot import in client code: ComputeSDK is server-only; always use on backend/server routes.
 
 Keys not loading?: Make sure .env keys match environment variable names, and restart dev server if you change them.

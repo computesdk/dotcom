@@ -5,17 +5,17 @@ sidebar:
     order: 3
 ---
 
-### ComputeSDK + Svelte: Component Integration
+#### ComputeSDK + Svelte: Component Integration
 ComputeSDK brings multi-cloud, secure sandboxed code execution and filesystem operations to your Svelte apps. By pairing Svelte components with backend endpoints powered by ComputeSDK, you can create dynamic, compute-rich user experiences without exposing secrets or breaking client/server boundaries.
 
-#### Key Principles
+### Key Principles
 Server-only execution: All ComputeSDK usage must remain on the backend (Node.js/SvelteKit endpoints, server routes, or serverless functions). Do not import ComputeSDK or provider modules in Svelte client code.
 
 Component-driven UX: Svelte components interact with backend ComputeSDK endpoints via HTTP (fetch/AJAX) to trigger compute tasks and retrieve results.
 
 Type safety: Full support for TypeScript in both backend and component layers.
 
-#### Install ComputeSDK and Providers
+### Install ComputeSDK and Providers
 ```bash
 npm install computesdk
 npm install @computesdk/vercel      # For Vercel provider
@@ -33,7 +33,7 @@ E2B_API_KEY=your_e2b_api_key
 ```
 In SvelteKit, access secrets securely using $env/static/private or $env/dynamic/private.
 
-#### Create a Compute Endpoint (Server Route)
+### Create a Compute Endpoint (Server Route)
 Define a SvelteKit server route (or use Express if not using SvelteKit) for compute operations.
 
 ```typescript
@@ -54,7 +54,7 @@ export async function POST({ request }) {
   }
 }
 ```
-#### Svelte Component: Dynamic Code Runner
+### Svelte Component: Dynamic Code Runner
 Your Svelte component interacts exclusively with the backend endpoint.
 
 ```svelte
@@ -87,7 +87,7 @@ Your Svelte component interacts exclusively with the backend endpoint.
 </button>
 <pre>{output}</pre>
 ```
-#### Filesystem Example with Svelte UI
+### Filesystem Example with Svelte UI
 ```typescript
 // src/routes/api/fs-demo/+server.ts
 import { json } from '@sveltejs/kit';
@@ -109,7 +109,7 @@ with open('/sandbox/hello.txt') as f:
   }
 }
 ```
-#### Svelte component to use this endpoint:
+### Svelte component to use this endpoint:
 ```svelte
 <script lang="ts">
   import { ref } from 'svelte';
@@ -132,7 +132,7 @@ with open('/sandbox/hello.txt') as f:
 </button>
 <pre>{output}</pre>
 ```
-#### Provider Auto-detection Pattern
+### Provider Auto-detection Pattern
 Your server endpoints may let ComputeSDK auto-select the best available provider:
 ```typescript
 // src/routes/api/auto-provider/+server.ts
@@ -149,7 +149,7 @@ export async function POST({ request }) {
   }
 }
 ```
-#### Security and Best Practices
+### Security and Best Practices
 Never import ComputeSDK in Svelte client code.
 
 Never expose API credentials.
@@ -160,7 +160,7 @@ Sanitize all user code before executing to prevent resource abuse.
 
 Call await sandbox.kill() after each execution to free resources.
 
-#### Troubleshooting
+### Troubleshooting
 Errors or missing output: Check server logs and endpoint code; ensure API keys are loaded and correct.
 
 Provider/package not found: Check dependencies and environment.

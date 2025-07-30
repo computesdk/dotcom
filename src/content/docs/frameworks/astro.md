@@ -5,7 +5,7 @@ sidebar:
     order: 4
 ---
 
-### ComputeSDK + Astro Integration
+#### ComputeSDK + Astro Integration
 Easily add secure, cloud-sandboxed code execution and filesystem operations to your Astro site backends using ComputeSDK. This is perfect for building AI, analytics, data-processing tools, and dynamic features while keeping your infrastructure secure.
 
 #### Why Use ComputeSDK with Astro?
@@ -17,7 +17,7 @@ Virtual Filesystem: Perform file read/write in the sandbox; data never touches y
 
 Server-first Model: Leverage Astro’s API endpoints for all compute and file tasks.
 
-#### Installation
+### Installation
 Install the core SDK and whichever providers you’ll use:
 
 ```bash
@@ -26,7 +26,7 @@ npm install @computesdk/vercel    # For Vercel
 npm install @computesdk/e2b       # For E2B
 ```
 
-#### Environment Setup
+### Environment Setup
 Set your provider API credentials in an .env file at your project root:
 
 ```text
@@ -39,7 +39,7 @@ E2B_API_KEY=your_e2b_api_key
 ```
 Important: Never commit or expose these secrets—Astro server endpoints access them via import.meta.env.
 
-#### Using ComputeSDK in Astro Endpoints
+### Using ComputeSDK in Astro Endpoints
 Astro endpoints (in src/pages/api/) are used for all server-side logic. Here’s how to build a basic endpoint:
 
 Example: /src/pages/api/sandbox-example.ts
@@ -71,7 +71,7 @@ export const GET: APIRoute = async () => {
 };
 ```
 
-#### Filesystem Example
+### Filesystem Example
 Read and write files entirely in the sandbox filesystem, isolated from your deployment:
 
 ```typescript
@@ -98,7 +98,7 @@ with open('/sandbox/greet.txt') as f:
   }
 };
 ```
-#### Calling Compute Endpoints from Astro UI
+### Calling Compute Endpoints from Astro UI
 Call your API endpoints from your Astro or integrated UI components (React, Svelte, Vue, Solid, etc.)—here’s a plain Astro example:
 
 ```text
@@ -118,7 +118,7 @@ async function runSandbox() {
 <pre>{output}</pre>
 ```
 
-#### Auto-detecting Provider
+### Auto-detecting Provider
 You may let ComputeSDK auto-select a configured provider:
 
 ```typescript
@@ -134,7 +134,7 @@ export const GET: APIRoute = async () => {
 };
 ```
 
-#### Deployment & Security
+### Deployment & Security
 Do NOT use ComputeSDK in browser/client code—only in server-only API endpoints.
 
 Secrets should be managed through Astro’s environment variables and NEVER exposed publicly.
@@ -143,7 +143,7 @@ Always call .kill() to clean up sandbox resources.
 
 Each provider has its own limits—see the provider status in the ComputeSDK docs.
 
-#### Troubleshooting
+### Troubleshooting
 Cannot import in Astro components? Only use in /api/ endpoints or SSR code.
 
 Secrets not loaded? Check .env values and rebuild/restart your server.

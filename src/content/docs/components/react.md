@@ -5,17 +5,17 @@ sidebar:
     order: 1
 ---
 
-### ComputeSDK + React.js: Component Usage Guide
+#### ComputeSDK + React.js: Component Usage Guide
 ComputeSDK enables seamless code execution and filesystem operations in isolated sandboxes across multiple cloud providers, making it ideal for powering dynamic React applications that need to run computation-heavy, code, or AI workflows securely.
 
-#### Key Principles
+### Key Principles
 All ComputeSDK code must run on the server. Never import uses of ComputeSDK (or include its provider keys) into browser/client bundles.
 
 React components interact with ComputeSDK via API endpoints. Build components that fetch data/results from your Node.js backend which invokes the ComputeSDK.
 
 Provider credentials (API keys, tokens) live in your backend environment variables.
 
-#### Example Architecture
+### Example Architecture
 Backend: API endpoints (e.g., Express, Next.js API routes, or any Node server) handle ComputeSDK calls.
 
 Frontend: React UI components fetch results or trigger operations via HTTP requests to these endpoints.
@@ -112,7 +112,7 @@ React component sends file content to /api/save-file.
 
 API endpoint receives content, uses sandbox.filesystem.writeFile/readFile, and returns result.
 
-#### Security and Best Practices
+### Security and Best Practices
 Never expose ComputeSDK or provider packages in your React (browser) bundle.
 
 Always kill sandboxes after use.
@@ -121,7 +121,7 @@ Propagate and display errors clearly in the React UI for user feedback and debug
 
 Sanitize all user input before executing it in a sandbox.
 
-#### Summary
+### Summary
 All access to ComputeSDK should occur on the server, with React components acting as smart clients via API.
 
 React enables dynamic UIs powered by secure, ephemeral compute on any provider supported by ComputeSDK.
