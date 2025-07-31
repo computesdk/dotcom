@@ -6,6 +6,11 @@ import Screenshot from './Screenshot.astro';
 import Video from './Video.astro';
 import CodeBlock from './CodeBlock.astro';
 import ListColumn from './ListColumn.astro';
+import Qs from './Qs.astro';
+import K8Screenshot from './K8Screenshot.astro';
+import ApiScreenshot from './ApiScreenshot.astro';
+import SecurityScreenshot from './SecurityScreenshot.astro';
+import InstallCode from './InstallCode.astro';
 ---
 
 <div class="flex min-h-full flex-col">
@@ -17,11 +22,14 @@ import ListColumn from './ListColumn.astro';
 
     <main class="flex-1">
       <HeroServer />
+      <Qs />
+      <K8Screenshot />
+      <ApiScreenshot />
+      <SecurityScreenshot />
       <ListColumn />
-      <Screenshot />
-      <CodeBlock />
-      <Video src="/SampleVideo.mp4" poster="" title="See it in action" />
+      <InstallCode />
       <FAQ />
+      <!-- <Video src="/SampleVideo.mp4" poster="" title="See it in action" /> -->
     </main>
 
     {/* Desktop PricePanel - shown on lg screens and up */}
