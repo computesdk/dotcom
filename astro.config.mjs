@@ -31,12 +31,23 @@ export default defineConfig({
           nav: [
               {
                 label: 'Docs',
-                href: '/start/quick-start',
+                href: '/start/introduction',
               },
               // {
               //   label: 'Server',
               //   href: '/server',
-              // },
+              {
+                label:'Providers',
+                href: '/providers/daytona'
+              },
+              {
+                label:'Frameworks',
+                href: '/frameworks/next'
+              },
+              {
+                label:'SDK Reference',
+                href: '/reference/'
+              },
             ],
              })],
           social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],

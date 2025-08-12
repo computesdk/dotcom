@@ -1,6 +1,8 @@
 ---
 title: Installation
 description: Install ComputeSDK and set up providers
+sidebar:
+    order: 3
 ---
 
 ## Installation

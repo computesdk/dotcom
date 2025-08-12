@@ -2,7 +2,7 @@
 title: Quick Start
 description: Get up and running with ComputeSDK
 sidebar:
-    order: 1
+    order: 2
 ---
 
 ## Quick Start
