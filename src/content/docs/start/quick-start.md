@@ -1,16 +1,13 @@
 ---
 title: Quick Start
-description: Get going with ComputeSDK
+description: Get up and running with ComputeSDK
 sidebar:
     order: 1
 ---
 
-#### Welcome 
-Welcome to the ComputeSDK Quick Start Guide! This page will help you get up and running with ComputeSDK, providing a unified way to execute code in secure, isolated sandboxed environments across various cloud providers.
+## Quick Start
 
-ComputeSDK offers a consistent TypeScript interface for code execution, abstracting away the complexities of different cloud compute providers like E2B, Vercel, Cloudflare, and Fly.io.
-
-To begin, you'll need to install the core ComputeSDK package and any provider-specific packages you plan to use. You only need to install the providers you intend to use.
+Welcome to ComputeSDK! This guide will get you up and running with secure, isolated code execution across multiple cloud providers using a unified TypeScript interface.
 
 ### Installation
 
@@ -19,73 +16,148 @@ To begin, you'll need to install the core ComputeSDK package and any provider-sp
 npm install computesdk
 
 # Provider packages (install only what you need)
-npm install @computesdk/e2b
-npm install @computesdk/vercel
-npm install @computesdk/cloudflare
-npm install @computesdk/fly
+npm install @computesdk/e2b        # E2B provider
+npm install @computesdk/vercel     # Vercel provider  
+npm install @computesdk/daytona    # Daytona provider
 
+# Frontend integration (optional)
+npm install @computesdk/ui         # React hooks and utilities
 ```
 
-### Auto-detection
-
-ComputeSDK's auto-detection feature simplifies usage by automatically identifying and utilizing the first available provider based on your environment variables. This is the recommended way to get started for most use cases.
+### Basic Usage
 
 ```typescript
-import { ComputeSDK } from 'computesdk';
-
-// Automatically detects and uses the first available provider
-const sandbox = ComputeSDK.createSandbox();
-
-const result = await sandbox.execute('print("Hello World!")');
-console.log(result.stdout);
-
-// It's good practice to kill the sandbox when you're done with it
-await sandbox.kill();
-```
-
-### Manual selection
-
-While auto-detection is convenient, you might sometimes need to explicitly specify a provider. This is useful when you have specific requirements for a particular cloud environment or want to ensure a certain provider is used.
-
-```typescript
+import { compute } from 'computesdk';
 import { e2b } from '@computesdk/e2b';
-import { executeSandbox } from 'computesdk';
 
-// Execute code using the E2B provider specifically
-const result = await executeSandbox({
-  sandbox: e2b(), // Initialize the E2B provider
-  code: 'print("Hello from E2B!")'
+// Set default provider
+compute.setConfig({ 
+  provider: e2b({ apiKey: process.env.E2B_API_KEY }) 
 });
 
+// Create a sandbox
+const sandbox = await compute.sandbox.create({});
+
+// Execute code
+const result = await sandbox.runCode('print("Hello World!")');
+console.log(result.stdout); // "Hello World!"
+
+// Clean up
+await compute.sandbox.destroy(sandbox.sandboxId);
+```
+
+### Provider-Specific Setup
+
+#### E2B - Full Development Environment
+
+```typescript
+import { compute } from 'computesdk';
+import { e2b } from '@computesdk/e2b';
+
+compute.setConfig({ 
+  provider: e2b({ apiKey: process.env.E2B_API_KEY }) 
+});
+
+const sandbox = await compute.sandbox.create({});
+
+// Execute Python with data science libraries
+const result = await sandbox.runCode(`
+import pandas as pd
+import numpy as np
+
+data = {'A': [1, 2, 3], 'B': [4, 5, 6]}
+df = pd.DataFrame(data)
+print(df)
+print(f"Sum: {df.sum().sum()}")
+`);
+
 console.log(result.stdout);
 ```
 
-### Filesystem
-
-ComputeSDK provides a comprehensive sandbox.filesystem interface that allows you to perform common file and directory operations within your sandboxed environment, regardless of the underlying cloud provider.
+#### Vercel - Serverless Execution
 
 ```typescript
-import { ComputeSDK } from 'computesdk';
+import { compute } from 'computesdk';
+import { vercel } from '@computesdk/vercel';
 
-const sandbox = ComputeSDK.createSandbox();
+compute.setConfig({ 
+  provider: vercel({ runtime: 'node' }) 
+});
 
-// Create a directory
-await sandbox.filesystem.mkdir('/app/data');
+const sandbox = await compute.sandbox.create({});
 
-// Write content to a file
-await sandbox.filesystem.writeFile('/app/data/message.txt', 'This is a test message.');
+// Execute Node.js or Python
+const result = await sandbox.runCode(`
+console.log('Node.js version:', process.version);
+console.log('Hello from Vercel!');
+`);
 
-// Read content from the file
-const content = await sandbox.filesystem.readFile('/app/data/message.txt');
-console.log('File content:', content);
-
-// List directory contents
-const entries = await sandbox.filesystem.readdir('/app/data');
-console.log('Directory entries:', entries.map(e => e.name));
-
-await sandbox.kill();
+console.log(result.stdout);
 ```
 
-### Error handling
+#### Daytona - Development Workspaces
 
-Robust error handling is built into ComputeSDK. You can catch specific error types to manage issues like execution failures, timeouts, or authentication problems.
+```typescript
+import { compute } from 'computesdk';
+import { daytona } from '@computesdk/daytona';
+
+compute.setConfig({ 
+  provider: daytona({ apiKey: process.env.DAYTONA_API_KEY }) 
+});
+
+const sandbox = await compute.sandbox.create({});
+
+// Execute in development workspace
+const result = await sandbox.runCode(`
+print('Hello from Daytona!')
+import sys
+print(f'Python version: {sys.version}')
+`);
+
+console.log(result.stdout);
+```
+
+### Filesystem Operations
+
+```typescript
+// Write file
+await sandbox.filesystem.writeFile('/tmp/hello.py', 'print("Hello")');
+
+// Read file
+const content = await sandbox.filesystem.readFile('/tmp/hello.py');
+
+// Create directory
+await sandbox.filesystem.mkdir('/tmp/mydir');
+
+// List directory
+const files = await sandbox.filesystem.readdir('/tmp');
+
+// Check if exists
+const exists = await sandbox.filesystem.exists('/tmp/hello.py');
+
+// Remove file/directory
+await sandbox.filesystem.remove('/tmp/hello.py');
+```
+
+### Shell Commands
+
+```typescript
+// Run shell command
+const result = await sandbox.runCommand('ls', ['-la']);
+console.log(result.stdout);
+
+// With different working directory
+const result2 = await sandbox.runCommand('pwd', [], { cwd: '/tmp' });
+```
+
+### Error Handling
+
+```typescript
+try {
+  const sandbox = await compute.sandbox.create({});
+  const result = await sandbox.runCode('invalid code');
+} catch (error) {
+  console.error('Execution failed:', error.message);
+  // Handle specific error types as needed
+}
+```

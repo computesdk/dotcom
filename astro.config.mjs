@@ -33,16 +33,16 @@ export default defineConfig({
                 label: 'Docs',
                 href: '/start/quick-start',
               },
-              {
-                label: 'Server',
-                href: '/server',
-              },
+              // {
+              //   label: 'Server',
+              //   href: '/server',
+              // },
             ],
              })],
           social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],
           sidebar: [
               { label: 'Examples', link: 'https://github.com/computesdk/computesdk/tree/main/examples', attrs: { target: '_blank' } },
-              { label: 'Server', link: '/server' },
+              // { label: 'Server', link: '/server' },
               {
                   label: 'Getting Started',
                   autogenerate: { directory: 'start' },
@@ -56,8 +56,8 @@ export default defineConfig({
                   autogenerate: { directory: 'frameworks' },
               },
               {
-                  label: 'Components',
-                  autogenerate: { directory: 'components' },
+                  label: 'SDK Reference',
+                  autogenerate: { directory: 'reference' },
               },
           ],
       }),

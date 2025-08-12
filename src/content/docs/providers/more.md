@@ -2,7 +2,7 @@
 title: More
 description: Open Source - add more providers!
 sidebar:
-    order: 5
+    order: 4
 ---
 
 #### Open Source
@@ -11,8 +11,7 @@ We welcome contributions to the Compute SDK! If you have a provider you'd like t
 
 ### Providers
 
-- [Server](/providers/server)
+- [Daytona](/providers/daytona)
 - [E2B](/providers/e2b)
 - [Vercel](/providers/vercel)
-- [Cloudflare](/providers/cloudflare)
 - [More](/providers/more)
