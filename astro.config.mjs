@@ -36,17 +36,6 @@ export default defineConfig({
                 label: 'Docs',
                 href: '/start/introduction',
               },
-              // {
-              //   label: 'Server',
-              //   href: '/server',
-              // {
-              //   label:'Providers',
-              //   href: '/providers/daytona'
-              // },
-              // {
-              //   label:'Frameworks',
-              //   href: '/frameworks/next'
-              // },
               {
                 label:'Contact',
                 href: '/contact'
@@ -55,7 +44,7 @@ export default defineConfig({
                 label:'Blog',
                 href: '/blog'
               },
-              ],
+            ],
              }),
              starlightBlog()],
           sidebar: [
