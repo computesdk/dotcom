@@ -1,0 +1,36 @@
+---
+import { Code } from 'astro:components'
+---
+
+<div class="my-8 mx-auto max-w-7xl px-6 lg:px-8 dark:bg-[var(--sl-color-bg)]">
+    <h2 class="text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl dark:text-white">Some Killer Code</h2>
+  <Code code={`import { executeSandbox } from 'computesdk';
+import { e2b } from '@computesdk/e2b';
+import { vercel } from '@computesdk/vercel';
+import { cloudflare } from '@computesdk/cloudflare';
+
+// Try different providers for different use cases
+const providers = [
+  { name: 'E2B', provider: e2b() },
+  { name: 'Vercel', provider: vercel() },
+  { name: 'Cloudflare', provider: cloudflare({ env }) }
+];
+
+for (const { name, provider } of providers) {
+  try {
+    const result = await executeSandbox({
+      sandbox: provider,
+      code: 'print("Hello from ' + name + '!")'
+    });
+    console.log(\`\${name}:\`, result.stdout);
+  } catch (error) {
+    console.error(\`\${name} failed:\`, error.message);
+  }
+}`} 
+  lang="javascript" 
+  theme="github-dark" 
+  wrap
+  class="rounded-lg shadow-lg p-6"
+  style="font-size: 0.9em;"
+/>
+</div>

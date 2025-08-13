@@ -1,0 +1,40 @@
+---
+import PricePanel from './PricePanel.astro';
+import HeroServer from './HeroServer.astro';
+import FAQ from './FAQ.astro';
+import Screenshot from './Screenshot.astro';
+import Video from './Video.astro';
+import CodeBlock from './CodeBlock.astro';
+import ListColumn from './ListColumn.astro';
+import Qs from './Qs.astro';
+import K8Screenshot from './K8Screenshot.astro';
+import ApiScreenshot from './ApiScreenshot.astro';
+import SecurityScreenshot from './SecurityScreenshot.astro';
+import InstallCode from './InstallCode.astro';
+---
+
+<div class="flex min-h-full flex-col">
+  <div class="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 sm:px-6 lg:flex-row lg:px-8">
+    {/* Mobile PricePanel - shown on small screens */}
+    <div class="lg:hidden mt-8">
+      <PricePanel />
+    </div>
+
+    <main class="flex-1">
+      <HeroServer />
+      <Qs />
+      <K8Screenshot />
+      <ApiScreenshot />
+      <SecurityScreenshot />
+      <ListColumn />
+      <InstallCode />
+      <FAQ />
+      <!-- <Video src="/SampleVideo.mp4" poster="" title="See it in action" /> -->
+    </main>
+
+    {/* Desktop PricePanel - shown on lg screens and up */}
+    <aside class="hidden lg:ml-12 lg:sticky lg:top-8 lg:block lg:w-96 lg:shrink-0">
+      <PricePanel />
+    </aside>
+  </div>
+</div>

@@ -17,7 +17,7 @@ export default defineConfig({
   },
   integrations: [
       starlight({
-        title: 'Compute',
+        title: 'ComputeSDK',
 		    favicon: '/hv_main_logo_light.svg',	
         logo: {
               light: './src/assets/hv_main_logo_light.svg',
@@ -28,28 +28,46 @@ export default defineConfig({
 			    './src/styles/custom.css',
 		    ],
         plugins: [starlightThemeNova({
-          // nav: [
-          //     {
-          //       label: 'Docs',
-          //       href: '/guides/getting-started',
-          //     },
-          //     {
-          //       label: 'Server',
-          //       href: '/server',
-          //     },
-          //   ],
+          nav: [
+              {
+                label: 'Docs',
+                href: '/start/introduction',
+              },
+              // {
+              //   label: 'Server',
+              //   href: '/server',
+              {
+                label:'Providers',
+                href: '/providers/daytona'
+              },
+              {
+                label:'Frameworks',
+                href: '/frameworks/next'
+              },
+              {
+                label:'SDK Reference',
+                href: '/reference/'
+              },
+            ],
              })],
           social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],
           sidebar: [
+              { label: 'Examples', link: 'https://github.com/computesdk/computesdk/tree/main/examples', attrs: { target: '_blank' } },
+              // { label: 'Server', link: '/server' },
               {
-                  label: 'Guides',
-                  items: [
-                      // Each item here is one entry in the navigation menu.
-                      { label: 'Example Guide', slug: 'guides/example' },
-                  ],
+                  label: 'Getting Started',
+                  autogenerate: { directory: 'start' },
               },
               {
-                  label: 'Reference',
+                  label: 'Providers',
+                  autogenerate: { directory: 'providers' },
+              },
+              {
+                  label: 'Frameworks',
+                  autogenerate: { directory: 'frameworks' },
+              },
+              {
+                  label: 'SDK Reference',
                   autogenerate: { directory: 'reference' },
               },
           ],

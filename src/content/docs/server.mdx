@@ -1,92 +1,12 @@
 ---
-title: Operator
-description: One operator to rule them all.
+title: Server
+description: Server by Compute SDK.
 template: splash
 
 ---
 
-import PricePanel from '../../components/PricePanel.astro';
-import { Card, CardGrid } from '@astrojs/starlight/components';
-import { Code, CodeTabItem, CodeTabs, CodeFile } from 'starlight-theme-nova/components'
+import ServerPage from '../../components/ServerPage.astro';
+import Footer from '../../components/Footer.astro';
 
-export const exampleCode = `go build -o bin/api ./cmd/api`;
-export const fileName = 'main.go';
-export const highlights = ['file', 'bin', 'api'];
-
-      {/* Price Panel */}
-      <div class="lg:hidden">
-        <PricePanel />
-      </div>
-
-<div class="relative">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="lg:flex lg:items-start lg:gap-12">
-      {/* Main content */}
-      <div class="lg:flex-1 lg:min-w-0">
-        <section class="prose dark:prose-invert max-w-none">
-          
-          <div class="my-8">
-            <h2>Features</h2>
-            <CardGrid>
-              <Card title="Check this out">
-                Interesting content you want to highlight.
-              </Card>
-              <Card title="Other feature">
-                More information you want to share.
-              </Card>
-              <Card title="Check this out">
-                Interesting content you want to highlight.
-              </Card>
-              <Card title="Other feature">
-                More information you want to share.
-              </Card>
-            </CardGrid>
-          </div>
-
-          <h2>Sample Image</h2>
-          <div class="my-8">
-            ![Project structure code](../../assets/project_structure_light.png)
-          </div>
-
-
-          <h2>Example Code</h2>
-
-          <div class="my-8">
-            <Code lang="go" code={exampleCode} title={fileName} mark={highlights} />
-          </div>
-    
-          <h2>Example Code Tabs</h2>
-
-          <div class="my-8">
-            <CodeTabs>
-            <CodeTabItem
-                label="main.go"
-                lang="go"
-                code={`go build -o bin/api ./cmd/api`}
-            />
-            <CodeTabItem
-                label="main.ts"
-                lang="ts"
-                code={`function (): void {\n  console.log('Hello, TS!')\n}`}
-            />
-            </CodeTabs>
-          </div>
-
-          <h2>Example Code Block</h2>
-          <div class="my-8">
-            <CodeFile path="package.json" />
-          </div>
-
-        </section>
-      </div>
-
-      {/* Price Panel */}
-      <div class="hidden lg:block lg:sticky lg:top-8 lg:self-start mt-8 lg:mt-0 lg:w-80">
-        <PricePanel />
-      </div>
-    </div>
-  </div>
-</div>
-
-
-{/* Styling is now in global.css */}
+<ServerPage />
+<Footer />

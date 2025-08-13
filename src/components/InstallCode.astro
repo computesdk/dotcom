@@ -1,0 +1,15 @@
+---
+import { Code } from 'astro:components'
+---
+
+<div class="my-8 mx-auto max-w-7xl prose-xl bg-white dark:bg-[var(--sl-color-bg)] py-2 px-6 lg:px-8">
+    <h2>Deployment</h2>
+    <p>Our platform is designed for simple Kubernetes deployment. Use our CLI to get up and running in minutes, or deploy manually with Helm charts if you prefer full control.</p>
+    <Code code={`# Install via our CLI (recommended)
+    npm create compute`}
+    lang="bash"
+    theme="github-dark"
+    wrap
+    />
+    <p>The platform runs on any Kubernetes cluster - on-premises, cloud (EKS, GKE, AKS), or managed services. Our CLI automatically configures ingress, monitoring, and security policies. But if you're technically sophisticated, you can also customize the entire deployment to fit your existing infrastructure.</p>
+</div>
