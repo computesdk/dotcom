@@ -1,13 +1,22 @@
 ---
 const codeExample = `
-import { ComputeSDK } from 'computesdk';
+import { compute } from 'computesdk';
+import { provider } from '@computesdk/provider';
 
-// Automatically detects and uses the first available provider
-const sandbox = ComputeSDK.createSandbox();
+// Set default provider
+compute.setConfig({ 
+  provider: provider({ apiKey: process.env.PROVIDER_API_KEY }) 
+});
 
+// Create a sandbox
+const sandbox = await compute.sandbox.create({});
+
+// Execute code
 const result = await sandbox.runCode('print("Hello World!")');
+console.log(result.stdout); // "Hello World!"
 
-await sandbox.kill();
+// Clean up
+await compute.sandbox.destroy(sandbox.sandboxId);
 `
 
 import { Code } from 'astro:components';
