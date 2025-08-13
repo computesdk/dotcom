@@ -1,13 +1,22 @@
 ---
 const codeExample = `
-import { ComputeSDK } from 'computesdk';
+import { compute } from 'computesdk';
+import { provider } from '@computesdk/provider';
 
-// Automatically detects and uses the first available provider
-const sandbox = ComputeSDK.createSandbox();
+// Set default provider
+compute.setConfig({ 
+  provider: provider({ apiKey: process.env.PROVIDER_API_KEY }) 
+});
 
+// Create a sandbox
+const sandbox = await compute.sandbox.create({});
+
+// Execute code
 const result = await sandbox.runCode('print("Hello World!")');
+console.log(result.stdout); // "Hello World!"
 
-await sandbox.kill();
+// Clean up
+await compute.sandbox.destroy(sandbox.sandboxId);
 `
 
 import { Code } from 'astro:components';
@@ -21,10 +30,10 @@ import { Code } from 'astro:components';
             <div class="">
               <!-- <img class="h-11" src="/hv_main_logo_light.svg" alt="Compute Logo" /> -->
               <div class="mt-8 sm:mt-16 lg:mt-16">
-                <a href="https://x.com/HeyGarrison/status/1914444226261139719" target="_blank" class="flex flex-col space-y-2 sm:flex-row sm:space-x-6 sm:space-y-0 no-underline">
+                <a href="/blog/announcement/" target="_blank" class="flex flex-col space-y-2 sm:flex-row sm:space-x-6 sm:space-y-0 no-underline">
                   <span class="w-fit rounded-full bg-emerald-600/10 dark:bg-emerald-300/30 px-3 py-1 text-sm/6 font-semibold text-emerald-800 dark:text-white ring-1 ring-inset ring-emerald-600/10">What's new</span>
                   <span class="inline-flex items-center space-x-2 text-sm/6 font-medium text-gray-600 dark:text-gray-400">
-                    <span>Read the thread: Announcing @ComputeSDK</span>
+                    <span>Read the post: Announcing ComputeSDK</span>
                     <svg class="size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
                       <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                     </svg>

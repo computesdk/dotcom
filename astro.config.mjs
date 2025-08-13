@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeNova from 'starlight-theme-nova';
+import starlightBlog from 'starlight-blog'
 
 import tailwindcss from '@tailwindcss/vite';
 
@@ -27,7 +28,9 @@ export default defineConfig({
 			    './src/styles/global.css',
 			    './src/styles/custom.css',
 		    ],
-        plugins: [starlightThemeNova({
+        social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],
+        plugins: 
+        [starlightThemeNova({
           nav: [
               {
                 label: 'Docs',
@@ -36,21 +39,25 @@ export default defineConfig({
               // {
               //   label: 'Server',
               //   href: '/server',
+              // {
+              //   label:'Providers',
+              //   href: '/providers/daytona'
+              // },
+              // {
+              //   label:'Frameworks',
+              //   href: '/frameworks/next'
+              // },
               {
-                label:'Providers',
-                href: '/providers/daytona'
+                label:'Contact',
+                href: '/contact'
               },
               {
-                label:'Frameworks',
-                href: '/frameworks/next'
+                label:'Blog',
+                href: '/blog'
               },
-              {
-                label:'SDK Reference',
-                href: '/reference/'
-              },
-            ],
-             })],
-          social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],
+              ],
+             }),
+             starlightBlog()],
           sidebar: [
               { label: 'Examples', link: 'https://github.com/computesdk/computesdk/tree/main/examples', attrs: { target: '_blank' } },
               // { label: 'Server', link: '/server' },
