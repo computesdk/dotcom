@@ -1,5 +1,5 @@
 ---
-title: Introducing ComputeSDK: A free and open-source toolkit for running other people's code in your applications.
+title: "Introducing ComputeSDK: A free and open-source toolkit for running other people's code in your applications"
 date: 2025-08-13
 ---
 
