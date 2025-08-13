@@ -32,4 +32,4 @@ Interested in contributing to ComputeSDK? We welcome contributions of all kinds:
 
 ## Business Inquiries
 
-For business partnerships, enterprise support, or other commercial inquiries, please reach out at garrison@hey.com, or book a quick call with our team <a href="https://cal.com/heygarrison/15min" target="_blank" rel="noopener noreferrer">here</a>.
+For business partnerships, enterprise support, or other commercial inquiries, please reach out at garrison@computesdk.com, or book a quick call with our CEO (he loves meeting new people) <a href="https://cal.com/heygarrison/15min" target="_blank" rel="noopener noreferrer">here</a>.
