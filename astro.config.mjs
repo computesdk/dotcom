@@ -85,7 +85,7 @@ export default defineConfig({
             })],
           sidebar: [
               { label: 'Examples', link: 'https://github.com/computesdk/computesdk/tree/main/examples', attrs: { target: '_blank' } },
-              { label: 'LLM.txt', link: '/llm-docs' },
+              { label: 'LLM Documentation', link: '/llm-docs' },
               // { label: 'Server', link: '/server' },
               {
                   label: 'Getting Started',
@@ -101,7 +101,16 @@ export default defineConfig({
               },
               {
                   label: 'SDK Reference',
-                  autogenerate: { directory: 'reference' },
+                  items: [
+                      { label: 'Overview', link: '/reference/' },
+                      { label: 'UI Package', link: '/reference/ui' },
+                      { label: 'Configuration', link: '/reference/configuration' },
+                      { label: 'Code Execution', link: '/reference/code-execution' },
+                      { label: 'Sandbox Management', link: '/reference/sandbox-management' },
+                      { label: 'Filesystem', link: '/reference/filesystem' },
+                      { label: 'Terminal', link: '/reference/terminal' },
+                      { label: 'API Integration', link: '/reference/api-integration' },
+                  ],
               },
           ],
       }),

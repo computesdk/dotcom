@@ -202,9 +202,9 @@ export default function CodeExecutor() {
 }
 ```
 
-### With React Hook
+### With Client-side Method
 
-Use the `@computesdk/ui` package for React hooks:
+Use the `@computesdk/ui` package for client-side methods:
 
 ```bash
 npm install @computesdk/ui
