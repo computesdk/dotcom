@@ -101,7 +101,16 @@ export default defineConfig({
               },
               {
                   label: 'SDK Reference',
-                  autogenerate: { directory: 'reference' },
+                  items: [
+                      { label: 'Overview', link: '/reference/' },
+                      { label: 'UI Package', link: '/reference/ui' },
+                      { label: 'Configuration', link: '/reference/configuration' },
+                      { label: 'Code Execution', link: '/reference/code-execution' },
+                      { label: 'Sandbox Management', link: '/reference/sandbox-management' },
+                      { label: 'Filesystem', link: '/reference/filesystem' },
+                      { label: 'Terminal', link: '/reference/terminal' },
+                      { label: 'API Integration', link: '/reference/api-integration' },
+                  ],
               },
           ],
       }),
