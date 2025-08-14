@@ -85,7 +85,7 @@ export default defineConfig({
             })],
           sidebar: [
               { label: 'Examples', link: 'https://github.com/computesdk/computesdk/tree/main/examples', attrs: { target: '_blank' } },
-              { label: 'LLM Documentation', link: '/llm-docs' },
+              { label: 'LLM.txt', link: '/llm-docs' },
               // { label: 'Server', link: '/server' },
               {
                   label: 'Getting Started',
