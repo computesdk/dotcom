@@ -3,8 +3,6 @@ title: "Introducing ComputeSDK: A free and open-source toolkit for running other
 date: 2025-08-13
 ---
 
-# Introducing ComputeSDK: A free and open-source toolkit for running other people's code in your applications.
-
 I'm excited to share something we've been building that addresses a fundamental challenge in modern application development.
 
 As applications increasingly need to execute user-submitted or dynamically generated code, developers face a critical challenge: running untrusted code is hard and vastly different from running your own code.
