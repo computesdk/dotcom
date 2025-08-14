@@ -16,7 +16,7 @@ const result = await sandbox.runCode('print("Hello World!")');
 console.log(result.stdout); // "Hello World!"
 
 // Clean up
-await compute.sandbox.destroy(sandbox.sandboxId);
+await sandbox.destroy();
 `
 
 import { Code } from 'astro:components';
