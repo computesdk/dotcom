@@ -1,0 +1,317 @@
+---
+interface Props {
+  title: string;
+  date: Date;
+  description?: string;
+  tags?: string[];
+}
+
+const { title, date, description, tags } = Astro.props as Props;
+---
+
+<main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Breadcrumb -->
+  <nav class="mb-8">
+    <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+        <a href="/blog" class="hover:text-brand dark:hover:text-brand-light transition-colors">
+          ← Back to Blog
+        </a>
+      </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="mb-12">
+    <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+      {title}
+    </h1>
+    
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+      <time class="text-gray-500 dark:text-gray-400 text-lg">
+        {new Date(date).toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}
+      </time>
+    </div>
+    
+    {description && (
+      <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+        {description}
+      </p>
+    )}
+    
+    {tags && tags.length > 0 && (
+      <div class="flex flex-wrap gap-2">
+        {tags.map((tag: string) => (
+          <span class="px-3 py-1 bg-emerald-50/70 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-md text-sm font-medium">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </header>
+
+  <!-- Article Content -->
+  <article class="blog-content">
+    <slot />
+  </article>
+
+  <!-- Article Footer -->
+  <footer class="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
+    <div class="flex items-center justify-between">
+      <a 
+        href="/blog" 
+        class="inline-flex items-center text-brand dark:text-brand-light font-light hover:underline group"
+      >
+        <svg class="mr-1 w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Blog
+      </a>
+      
+      <div class="flex items-center space-x-4">
+        <a 
+            href="/blog/rss.xml" 
+            class="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+            target="_blank"
+            >
+            <svg 
+                class="w-5 h-5 mr-2" 
+                fill="currentColor" 
+                viewBox="0 0 20 20"
+            >
+                <!-- Dot -->
+                <circle cx="4" cy="16" r="2"></circle>
+                <!-- Small arc -->
+                <path d="M4 10a6 6 0 016 6" stroke="currentColor" stroke-width="2" fill="none"/>
+                <!-- Large arc -->
+                <path d="M4 4a12 12 0 0112 12" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+            </a>
+
+      </div>
+    </div>
+  </footer>
+</main>
+
+<style>
+  /* Enhanced typography for blog content */
+  .blog-content {
+    line-height: 1.75;
+  }
+
+  .blog-content h1,
+  .blog-content h2,
+  .blog-content h3,
+  .blog-content h4,
+  .blog-content h5,
+  .blog-content h6 {
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.25;
+    color: #111827;
+  }
+
+  .dark .blog-content h1,
+  .dark .blog-content h2,
+  .dark .blog-content h3,
+  .dark .blog-content h4,
+  .dark .blog-content h5,
+  .dark .blog-content h6 {
+    color: #f9fafb;
+  }
+
+  .blog-content h2 {
+    font-size: 1.875rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+  }
+
+  .dark .blog-content h2 {
+    border-bottom-color: #374151;
+  }
+
+  .blog-content h3 {
+    font-size: 1.5rem;
+  }
+
+  .blog-content h4 {
+    font-size: 1.25rem;
+  }
+
+  .blog-content p {
+    margin-bottom: 1.5rem;
+    color: #374151;
+  }
+
+  .dark .blog-content p {
+    color: #d1d5db;
+  }
+
+  .blog-content ul,
+  .blog-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .blog-content li {
+    margin-bottom: 0.5rem;
+    color: #374151;
+  }
+
+  .dark .blog-content li {
+    color: #d1d5db;
+  }
+
+  .blog-content ul {
+    list-style-type: disc;
+  }
+
+  .blog-content ol {
+    list-style-type: decimal;
+  }
+
+  .blog-content ul ul {
+    list-style-type: circle;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-content a {
+    color: #19874d;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .blog-content a:hover {
+    text-decoration: underline;
+    color: #14532d;
+  }
+
+  .dark .blog-content a {
+    color: #4ade80;
+  }
+
+  .dark .blog-content a:hover {
+    color: #86efac;
+  }
+
+  .blog-content pre {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .dark .blog-content pre {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+  }
+
+  .blog-content code {
+    background-color: #f1f5f9;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.875rem;
+    color: #1e293b;
+  }
+
+  .dark .blog-content code {
+    background-color: #334155;
+    color: #e2e8f0;
+  }
+
+  .blog-content pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    color: inherit;
+  }
+
+  .blog-content blockquote {
+    border-left: 4px solid #19874d;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #6b7280;
+    background-color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.25rem;
+  }
+
+  .dark .blog-content blockquote {
+    border-left-color: #4ade80;
+    background-color: #1f2937;
+    color: #9ca3af;
+  }
+
+  .blog-content hr {
+    border: none;
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 3rem 0;
+  }
+
+  .dark .blog-content hr {
+    background-color: #374151;
+  }
+
+  .blog-content strong {
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .dark .blog-content strong {
+    color: #f9fafb;
+  }
+
+  .blog-content em {
+    font-style: italic;
+  }
+
+  .blog-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .blog-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+
+  .blog-content th,
+  .blog-content td {
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem;
+    text-align: left;
+  }
+
+  .dark .blog-content th,
+  .dark .blog-content td {
+    border-color: #374151;
+  }
+
+  .blog-content th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .dark .blog-content th {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+</style>
