@@ -31,6 +31,12 @@ npm install @computesdk/vercel
 # Daytona provider - Development workspaces
 npm install @computesdk/daytona
 
+# Modal provider - GPU-accelerated Python workloads
+npm install @computesdk/modal
+
+# CodeSandbox provider - Collaborative sandboxes
+npm install @computesdk/codesandbox
+
 # Frontend integration (optional)
 npm install @computesdk/ui
 ```
@@ -65,4 +71,21 @@ Daytona provides development workspace environments:
 
 ```bash
 export DAYTONA_API_KEY=your_daytona_api_key_here
+```
+
+### Modal - GPU-Accelerated Python Workloads
+
+Modal provides serverless cloud compute with GPU support:
+
+```bash
+export MODAL_TOKEN_ID=your_modal_token_id_here
+export MODAL_TOKEN_SECRET=your_modal_token_secret_here
+```
+
+### CodeSandbox - Collaborative Sandboxes
+
+CodeSandbox provides collaborative development environments:
+
+```bash
+export CSB_API_KEY=your_codesandbox_api_key_here
 ```
