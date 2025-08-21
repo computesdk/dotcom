@@ -14,11 +14,11 @@ const tags = Array.from(
 ).sort();
 ---
 
-<div class="bg-white py-24 sm:py-32">
+<div class="bg-white dark:bg-[var(--sl-color-bg)] py-24 sm:py-32">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
     <div class="mx-auto max-w-2xl lg:mx-0">
-      <h2 class="text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl">From the blog</h2>
-      <p class="mt-2 text-lg/8 text-gray-600">Stay up to date with ComputeSDK's latest news and updates.</p>
+      <h2 class="text-4xl font-semibold tracking-tight text-pretty text-gray-900 dark:text-white sm:text-5xl">From the blog</h2>
+      <p class="mt-2 text-lg/8 text-gray-600 dark:text-gray-400">Stay up to date with ComputeSDK's latest news and updates.</p>
     </div>
     <div class="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
       {sorted.map((post) => (
@@ -38,14 +38,14 @@ const tags = Array.from(
             )}
           </div>
           <div class="group relative grow">
-            <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
+            <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-400">
               <a href={`/blog/${post.slug}/`} class="no-underline">
                 <span class="absolute inset-0"></span>
                 {post.data.title}
               </a>
             </h3>
             {post.data.description && (
-              <p class="mt-5 line-clamp-3 text-sm/6 text-gray-600">
+              <p class="mt-5 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400">
                 {post.data.description}
               </p>
             )}
@@ -53,13 +53,13 @@ const tags = Array.from(
           <div class="relative mt-8 flex items-center gap-x-4 justify-self-end">
             <img src={post.data.image} alt="" class="size-10 rounded-full bg-gray-50" />
             <div class="text-sm/6 mt-0 items-center gap-y-2">
-              <p class="font-semibold text-gray-900">
+              <p class="font-semibold text-gray-900 dark:text-white">
                 <a href="#" class="no-underline">
                   <span class="absolute inset-0"></span>
                   {post.data.author}
                 </a>
               </p>
-              <p class="text-gray-600 mt-0">{post.data.role}</p>
+              <p class="text-gray-600 mt-0 dark:text-gray-400">{post.data.role}</p>
             </div>
           </div>
         </article>
