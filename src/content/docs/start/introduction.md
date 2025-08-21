@@ -7,11 +7,11 @@ sidebar:
 
 # What is ComputeSDK?
 
-ComputeSDK is a free and open-source toolkit for running other people's code in your applications. Think of it as the "AI SDK for compute" - providing a consistent TypeScript interface whether you're using E2B, Vercel, or Daytona.
+ComputeSDK is a free and open-source toolkit for running other people's code in your applications. Think of it as the "AI SDK for compute" - providing a consistent TypeScript interface whether you're using E2B, Vercel, Daytona, Modal, or CodeSandbox.
 
 ## Why ComputeSDK?
 
-- 🔄 **Provider-agnostic** - Switch between E2B, Vercel, Daytona and more (coming soon) without code changes
+- 🔄 **Provider-agnostic** - Switch between E2B, Vercel, Daytona, Modal, CodeSandbox and more without code changes
 - 🛡️ **Security-first** - Isolated sandboxes protect your infrastructure
 - ⚡ **Developer experience** - Simple, TypeScript-native API
 - 🌍 **Production-ready** - Used by teams building the next generation of developer tools
@@ -26,7 +26,7 @@ ComputeSDK is a free and open-source toolkit for running other people's code in 
 
 ## Features
 
-- 🚀 **Multi-provider support** - E2B, Vercel, Daytona
+- 🚀 **Multi-provider support** - E2B, Vercel, Daytona, Modal, CodeSandbox
 - 📁 **Filesystem operations** - Read, write, create directories across providers
 - 🖥️ **Terminal support** - Interactive PTY terminals (E2B)
 - ⚡ **Command execution** - Run shell commands directly
@@ -48,7 +48,7 @@ compute.setConfig({
 });
 
 // Create a sandbox
-const sandbox = await compute.sandbox.create({});
+const sandbox = await compute.sandbox.create();
 
 // Execute code
 const result = await sandbox.runCode('print("Hello World!")');

@@ -1,7 +1,21 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, z } from 'astro:content';
 import { docsLoader } from '@astrojs/starlight/loaders';
 import { docsSchema } from '@astrojs/starlight/schema';
 import { blogSchema } from 'starlight-blog/schema'
+
+const blog = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    date: z.string().transform((str) => new Date(str)),
+    author: z.string().default('ComputeSDK Team'),
+    role: z.string().default('Developer'),
+    image: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    featured: z.boolean().optional(),
+  }),
+});
 
 export const collections = {
 	docs: defineCollection({ loader: docsLoader(), 
@@ -9,4 +23,5 @@ export const collections = {
 			extend: (context) => blogSchema(context)
 		}) 
 	}),
+	blog,
 };

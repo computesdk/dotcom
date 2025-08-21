@@ -38,7 +38,7 @@ compute.setConfig({
 });
 
 // Create sandbox
-const sandbox = await compute.sandbox.create({});
+const sandbox = await compute.sandbox.create();
 
 // Execute Python code
 const result = await sandbox.runCode(`
@@ -263,7 +263,7 @@ export async function POST(request: Request) {
 ### Data Science Workflow
 
 ```typescript
-const sandbox = await compute.sandbox.create({});
+const sandbox = await compute.sandbox.create();
 
 // Create project structure
 await sandbox.filesystem.mkdir('/analysis');
@@ -329,7 +329,7 @@ console.log('Chart created:', chartExists);
 ### Interactive Terminal Session
 
 ```typescript
-const sandbox = await compute.sandbox.create({});
+const sandbox = await compute.sandbox.create();
 
 // Create interactive Python terminal
 const terminal = await sandbox.terminal.create({

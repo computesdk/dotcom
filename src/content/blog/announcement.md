@@ -1,6 +1,12 @@
 ---
-title: "Introducing ComputeSDK: A free and open-source toolkit for running other people's code in your applications"
-date: 2025-08-13
+title: "Introducing ComputeSDK"
+description: "A free and open-source toolkit for running other people's code in your applications"
+date: "2025-08-13"
+tags: [computesdk, developer-tools, ai]
+author: "Garrison Snelling"
+role: "Founder, ComputeSDK"
+image: "/Garrison-Snelling-sq.jpeg"
+featured: true
 ---
 
 I'm excited to share something we've been building that addresses a fundamental challenge in modern application development.

@@ -23,7 +23,7 @@ compute.setConfig({
 });
 
 // 2. Create sandbox
-const sandbox = await compute.sandbox.create({});
+const sandbox = await compute.sandbox.create();
 
 // 3. Execute operations
 const result = await sandbox.runCode('print("Hello World!")');

@@ -13,9 +13,24 @@ module.exports = {
           dark: '#14532d',
         },
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.gray.700'),
+            a: {
+              color: theme('colors.brand.DEFAULT'),
+              '&:hover': {
+                color: theme('colors.brand.dark'),
+              },
+            },
+          },
+        },
+      }),
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
   corePlugins: {
     preflight: true,
   },
