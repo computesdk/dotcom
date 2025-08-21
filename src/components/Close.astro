@@ -1,0 +1,24 @@
+---
+import { Code } from 'astro:components';
+---
+<div class="prose-xl bg-white dark:bg-[var(--sl-color-bg)] py-2 px-6 lg:px-8">
+    <div>
+        <div>
+            <h2>Getting started</h2>
+            <p>Ready to transform your compute environments into interactive development workspaces? Get your API key, install the CLI, and launch your first Sidekick instance in under a minute.</p>
+        </div>
+
+    </div>
+
+  <Code code={`
+    # Install the CLI 
+    $ npm install -g sidekick 
+    # Set your API key (get one from your dashboard) 
+    $ export SIDEKICK_API_KEY=your_api_key_here 
+    # Launch in your compute environment 
+    $ sidekick launch 
+    # Start developing in real-time 
+    ✅ WebSocket API ready at wss://your-env.com/ws 
+    ✅ Usage tracking enabled for your account
+    `} lang="bash" />
+</div>
