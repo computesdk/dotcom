@@ -5,7 +5,7 @@ import { provider } from '@computesdk/provider';
 
 // Set default provider
 compute.setConfig({ 
-  provider: provider({ apiKey: process.env.PROVIDER_API_KEY }) 
+  defaultProvider: provider({ apiKey: process.env.PROVIDER_API_KEY }) 
 });
 
 // Create a sandbox
