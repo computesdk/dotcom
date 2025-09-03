@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeNova from 'starlight-theme-nova';
 import starlightLlmsTxt from 'starlight-llms-txt'
-import tailwind from '@astrojs/tailwind';
+import tailwindcss from '@tailwindcss/vite';
 
 import sitemap from '@astrojs/sitemap';
 
@@ -18,7 +18,7 @@ export default defineConfig({
       }
     },
   },
-  integrations: [tailwind(), starlight({
+  integrations: [starlight({
     title: 'ComputeSDK',
 		    favicon: '/hv_main_logo_light.ico',	
     logo: {
@@ -114,5 +114,7 @@ export default defineConfig({
       ],
   }), sitemap()],
 
-
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });
