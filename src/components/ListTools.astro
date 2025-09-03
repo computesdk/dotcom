@@ -1,0 +1,28 @@
+
+---
+import { Code } from 'astro:components';
+---
+<div class="prose-xl bg-white dark:bg-[var(--sl-color-bg)] py-24 px-6 lg:px-8">
+  <h2>Your tools get direct VM access</h2>
+  <p>The breakthrough is simple: your local development tools can connect directly to any compute environment. Your IDE, debugger, terminal, or custom scripts - they all get real-time access to the actual VM where your code runs.</p>
+  <ul>
+    <li><strong>Use your existing tools. </strong> VS Code, IntelliJ, terminal scripts - everything works exactly like local development.</li>
+    <li><strong>Real-time collaboration.</strong> Multiple developers can connect their tools to the same environment simultaneously.</li>
+    <li><strong>Build integrations easily.</strong> Your CI/CD, monitoring, or custom tooling can connect to any environment with a simple WebSocket.</li>
+    <li><strong>Debug in production.</strong> Debug in production. Connect your debugger directly to production VMs for live troubleshooting.</li>
+  </ul>
+  <Code code={`  # Your local tools connect directly to the VM: 
+  code --remote wss://prod-vm.com/ws 
+  # VS Code 
+  remote curl wss://staging.com/ws/files 
+  # API access 
+  wscat -c wss://dev.com/ws/terminal 
+  # Terminal access 
+  # No special clients, no proprietary protocols`} lang="bash" />
+  <p>Yes, and they're all different for each platform. SSH here, proprietary dashboard there, custom CLI somewhere else. That inconsistency slows you down and creates friction when working across multiple providers. Plus, most cloud platforms give you static deployments - you deploy, hope for the best, and debug from logs.</p>
+
+  <p>Sidekick gives you the same powerful, interactive development experience everywhere. One API, one workflow, unlimited compute providers.</p>
+</div>
+
+ 
+ 

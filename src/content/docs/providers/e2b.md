@@ -34,7 +34,7 @@ import { e2b } from '@computesdk/e2b';
 
 // Set as default provider
 compute.setConfig({ 
-  provider: e2b({ apiKey: process.env.E2B_API_KEY }) 
+  defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
 });
 
 // Create sandbox
@@ -75,7 +75,7 @@ const provider = e2b({
 });
 
 // Use with compute singleton
-const sandbox = await compute.sandbox.create({ provider });
+const sandbox = await compute.sandbox.create({ defaultProvider: provider });
 ```
 
 ## Configuration

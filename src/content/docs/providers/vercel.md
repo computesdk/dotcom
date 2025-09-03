@@ -52,7 +52,7 @@ import { vercel } from '@computesdk/vercel';
 
 // Set as default provider
 compute.setConfig({ 
-  provider: vercel({ runtime: 'node' }) 
+  defaultProvider: vercel({ runtime: 'node' }) 
 });
 
 // Create sandbox
@@ -85,7 +85,7 @@ const provider = vercel({
 });
 
 // Use with compute singleton
-const sandbox = await compute.sandbox.create({ provider });
+const sandbox = await compute.sandbox.create({ defaultProvider: provider });
 ```
 
 ## Configuration

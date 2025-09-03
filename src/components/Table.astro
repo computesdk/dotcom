@@ -1,0 +1,60 @@
+<div class="prose-xl bg-white dark:bg-[var(--sl-color-bg)] py-24 px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl">
+      <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+          <h2 class="font-semibold text-gray-900 dark:text-white">API Overview</h2>
+          <p class="text-gray-700 dark:text-gray-300">Sidekick provides a comprehensive REST API with WebSocket support for real-time operations:</p>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 flow-root overflow-hidden">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <table class="w-full text-left">
+          <thead class="bg-white dark:bg-gray-900">
+            <tr>
+              <th scope="col" class="relative isolate py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                Feature
+                <div class="absolute inset-y-0 right-0 -z-10 w-full border-b border-b-gray-200 dark:border-b-white/15"></div>
+              </th>
+              <th scope="col" class="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell dark:text-white">Endpoint</th>
+              <th scope="col" class="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 md:table-cell dark:text-white">Real-time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="relative py-4 pr-3 text-sm font-medium text-gray-900 dark:text-white">
+                File Operations
+                <div class="absolute bottom-0 right-0 h-px w-full bg-gray-100 dark:bg-white/10"></div>
+              </td>
+              <td class="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell dark:text-gray-400">GET/POST/PUT/DELETE /files</td>
+              <td class="hidden px-3 py-4 text-sm text-gray-500 md:table-cell dark:text-gray-400">✅ Live updates</td>
+            </tr>
+            <tr>
+              <td class="relative py-4 pr-3 text-sm font-medium text-gray-900 dark:text-white">
+                Terminal Management
+                <div class="absolute bottom-0 right-0 h-px w-full bg-gray-100 dark:bg-white/10"></div>
+              </td>
+              <td class="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell dark:text-gray-400">POST /terminals, /execute</td>
+              <td class="hidden px-3 py-4 text-sm text-gray-500 md:table-cell dark:text-gray-400">✅ PTY sessions</td>
+            </tr>
+            <tr>
+              <td class="relative py-4 pr-3 text-sm font-medium text-gray-900 dark:text-white">
+                File Watching
+                <div class="absolute bottom-0 right-0 h-px w-full bg-gray-100 dark:bg-white/10"></div>
+              </td>
+              <td class="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell dark:text-gray-400">GET/POST/DELETE /watchers</td>
+              <td class="hidden px-3 py-4 text-sm text-gray-500 md:table-cell dark:text-gray-400">✅ Change notifications</td>
+            </tr>
+            <tr>
+              <td class="relative py-4 pr-3 text-sm font-medium text-gray-900 dark:text-white">
+                Signal Broadcasting
+                <div class="absolute bottom-0 right-0 h-px w-full bg-gray-100 dark:bg-white/10"></div>
+              </td>
+              <td class="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell dark:text-gray-400">POST /signals/*</td>
+              <td class="hidden px-3 py-4 text-sm text-gray-500 md:table-cell dark:text-gray-400">✅ Port & status signals</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

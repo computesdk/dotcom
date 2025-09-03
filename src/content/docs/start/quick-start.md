@@ -34,7 +34,7 @@ import { e2b } from '@computesdk/e2b';
 
 // Set default provider
 compute.setConfig({ 
-  provider: e2b({ apiKey: process.env.E2B_API_KEY }) 
+  defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
 });
 
 // Create a sandbox
@@ -57,7 +57,7 @@ import { compute } from 'computesdk';
 import { e2b } from '@computesdk/e2b';
 
 compute.setConfig({ 
-  provider: e2b({ apiKey: process.env.E2B_API_KEY }) 
+  defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
 });
 
 const sandbox = await compute.sandbox.create();
@@ -83,7 +83,7 @@ import { compute } from 'computesdk';
 import { vercel } from '@computesdk/vercel';
 
 compute.setConfig({ 
-  provider: vercel({ runtime: 'node' }) 
+  defaultProvider: vercel({ runtime: 'node' }) 
 });
 
 const sandbox = await compute.sandbox.create();
@@ -104,7 +104,7 @@ import { compute } from 'computesdk';
 import { daytona } from '@computesdk/daytona';
 
 compute.setConfig({ 
-  provider: daytona({ apiKey: process.env.DAYTONA_API_KEY }) 
+  defaultProvider: daytona({ apiKey: process.env.DAYTONA_API_KEY }) 
 });
 
 const sandbox = await compute.sandbox.create();
@@ -126,7 +126,7 @@ import { compute } from 'computesdk';
 import { modal } from '@computesdk/modal';
 
 compute.setConfig({ 
-  provider: modal({ 
+  defaultProvider: modal({ 
     tokenId: process.env.MODAL_TOKEN_ID,
     tokenSecret: process.env.MODAL_TOKEN_SECRET 
   }) 
@@ -159,7 +159,7 @@ import { compute } from 'computesdk';
 import { codesandbox } from '@computesdk/codesandbox';
 
 compute.setConfig({ 
-  provider: codesandbox({ 
+  defaultProvider: codesandbox({ 
     apiKey: process.env.CSB_API_KEY 
   }) 
 });

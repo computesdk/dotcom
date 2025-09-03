@@ -96,7 +96,7 @@ export default defineEventHandler(async (event) => {
     
     // Set provider
     compute.setConfig({ 
-      provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
+      defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
     })
     
     // Create sandbox and execute code
@@ -220,7 +220,7 @@ export default defineEventHandler(async (event) => {
   const { getProvider } = useComputeProvider()
   const { code, runtime } = await readBody(event)
   
-  compute.setConfig({ provider: getProvider() })
+  compute.setConfig({ defaultProvider: getProvider() })
   
   const sandbox = await compute.sandbox.create({})
   try {
@@ -242,7 +242,7 @@ export default defineEventHandler(async (event) => {
   const { csvData } = await readBody(event)
   
   compute.setConfig({ 
-    provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
+    defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
   })
   
   const sandbox = await compute.sandbox.create({})

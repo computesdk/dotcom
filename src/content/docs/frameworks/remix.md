@@ -97,7 +97,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     
     // Set provider
     compute.setConfig({ 
-      provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
+      defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
     });
     
     // Create sandbox and execute code
@@ -147,7 +147,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   try {
     compute.setConfig({ 
-      provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
+      pdefaultProvider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
     });
     
     const sandbox = await compute.sandbox.create({});
@@ -760,7 +760,7 @@ export const withSandbox = async <T>(
   provider: any,
   callback: (sandbox: any) => Promise<T>
 ): Promise<T> => {
-  const sandbox = await compute.sandbox.create({ provider });
+  const sandbox = await compute.sandbox.create({ defaultProvider: provider });
   
   try {
     return await callback(sandbox);

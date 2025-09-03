@@ -34,7 +34,7 @@ import { codesandbox } from '@computesdk/codesandbox';
 
 // Set as default provider
 compute.setConfig({ 
-  provider: codesandbox({ apiKey: process.env.CSB_API_KEY }) 
+  defaultProvider: codesandbox({ apiKey: process.env.CSB_API_KEY }) 
 });
 
 // Create sandbox
@@ -90,7 +90,7 @@ const provider = codesandbox({
 });
 
 // Use with compute singleton
-const sandbox = await compute.sandbox.create({ provider });
+const sandbox = await compute.sandbox.create({ defaultProvider: provider });
 ```
 
 ## Configuration

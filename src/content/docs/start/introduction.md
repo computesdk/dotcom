@@ -44,7 +44,7 @@ import { e2b } from '@computesdk/e2b';
 
 // Set default provider
 compute.setConfig({ 
-  provider: e2b({ apiKey: process.env.E2B_API_KEY }) 
+  deafultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
 });
 
 // Create a sandbox

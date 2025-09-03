@@ -25,7 +25,7 @@ import { daytona } from '@computesdk/daytona';
 
 // Set as default provider
 compute.setConfig({ 
-  provider: daytona({ apiKey: process.env.DAYTONA_API_KEY }) 
+  defaultProvider: daytona({ apiKey: process.env.DAYTONA_API_KEY }) 
 });
 
 // Create sandbox
@@ -51,7 +51,7 @@ const provider = daytona({
 });
 
 // Use with compute singleton
-const sandbox = await compute.sandbox.create({ provider });
+const sandbox = await compute.sandbox.create({ defaultProvider: provider });
 ```
 
 ## Configuration

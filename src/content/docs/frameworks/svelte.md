@@ -95,7 +95,7 @@ export const POST = async ({ request }) => {
     
     // Set provider
     compute.setConfig({ 
-      provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
+      defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
     });
     
     // Create sandbox and execute code
@@ -250,7 +250,7 @@ export const actions = {
 
     try {
       compute.setConfig({ 
-        provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
+        defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
       });
       
       const sandbox = await compute.sandbox.create({});
@@ -321,7 +321,7 @@ export const POST = async ({ request }) => {
     const { csvData } = await request.json();
     
     compute.setConfig({ 
-      provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
+      deafultProvider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
     });
     
     const sandbox = await compute.sandbox.create({});

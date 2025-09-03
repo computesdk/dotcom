@@ -37,7 +37,7 @@ import { modal } from '@computesdk/modal';
 
 // Set as default provider
 compute.setConfig({ 
-  provider: modal({ 
+  defaultProvider: modal({ 
     tokenId: process.env.MODAL_TOKEN_ID,
     tokenSecret: process.env.MODAL_TOKEN_SECRET
   }) 
@@ -85,7 +85,7 @@ const provider = modal({
 });
 
 // Use with compute singleton
-const sandbox = await compute.sandbox.create({ provider });
+const sandbox = await compute.sandbox.create({ defaultProvider: provider });
 ```
 
 ## Configuration
