@@ -20,7 +20,52 @@ export default defineConfig({
   },
   integrations: [starlight({
     title: 'ComputeSDK',
-		    favicon: '/hv_main_logo_light.ico',	
+		    favicon: '/favicon.ico',
+    head: [
+      {
+        tag: 'link',
+        attrs: {
+          rel: 'icon',
+          type: 'image/x-icon',
+          href: '/favicon.ico',
+        },
+      },
+      {
+        tag: 'link',
+        attrs: {
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '16x16',
+          href: '/favicon-16x16.png',
+        },
+      },
+      {
+        tag: 'link',
+        attrs: {
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '32x32',
+          href: '/favicon-32x32.png',
+        },
+      },
+      {
+        tag: 'link',
+        attrs: {
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '96x96',
+          href: '/favicon-96x96.png',
+        },
+      },
+      {
+        tag: 'link',
+        attrs: {
+          rel: 'apple-touch-icon',
+          sizes: '96x96',
+          href: '/favicon-96x96.png',
+        },
+      },
+    ],	
     logo: {
           light: './src/assets/hv_main_logo_light.svg',
           dark: './src/assets/hv_main_logo_dark.svg',
