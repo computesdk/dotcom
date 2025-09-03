@@ -87,6 +87,13 @@ export default defineConfig({
           content: 'ComputeSDK',
         },
       },
+      {
+        tag: 'meta',
+        attrs: {
+          name: 'google-site-verification',
+          content: 'VEcg5NwgU_sHsQHc78Qeho6-F54Zv1oQTqJSGgISOkc',
+        },
+      },
     ],	
     logo: {
           light: './src/assets/hv_main_logo_light.svg',
