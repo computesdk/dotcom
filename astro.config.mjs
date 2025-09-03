@@ -3,13 +3,13 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeNova from 'starlight-theme-nova';
 import starlightLlmsTxt from 'starlight-llms-txt'
-import tailwindcss from '@tailwindcss/vite';
+import tailwind from '@astrojs/tailwind';
 
 import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://computesdk.com/',
+  site: 'https://www.computesdk.com/',
   markdown: {
     shikiConfig: {
       themes: {
@@ -18,9 +18,9 @@ export default defineConfig({
       }
     },
   },
-  integrations: [starlight({
+  integrations: [tailwind(), starlight({
     title: 'ComputeSDK',
-		    favicon: '/hv_main_logo_light.svg',	
+		    favicon: '/hv_main_logo_light.ico',	
     logo: {
           light: './src/assets/hv_main_logo_light.svg',
           dark: './src/assets/hv_main_logo_dark.svg',
@@ -114,7 +114,5 @@ export default defineConfig({
       ],
   }), sitemap()],
 
-  vite: {
-    plugins: [tailwindcss()],
-  },
+
 });
