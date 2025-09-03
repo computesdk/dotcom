@@ -34,6 +34,14 @@ export default defineConfig({
         tag: 'link',
         attrs: {
           rel: 'icon',
+          type: 'image/svg+xml',
+          href: '/hv_main_logo_light.svg',
+        },
+      },
+      {
+        tag: 'link',
+        attrs: {
+          rel: 'icon',
           type: 'image/png',
           sizes: '16x16',
           href: '/favicon-16x16.png',
@@ -63,6 +71,27 @@ export default defineConfig({
           rel: 'apple-touch-icon',
           sizes: '96x96',
           href: '/favicon-96x96.png',
+        },
+      },
+      {
+        tag: 'meta',
+        attrs: {
+          name: 'apple-mobile-web-app-title',
+          content: 'ComputeSDK',
+        },
+      },
+      {
+        tag: 'meta',
+        attrs: {
+          name: 'application-name',
+          content: 'ComputeSDK',
+        },
+      },
+      {
+        tag: 'meta',
+        attrs: {
+          name: 'google-site-verification',
+          content: 'VEcg5NwgU_sHsQHc78Qeho6-F54Zv1oQTqJSGgISOkc',
         },
       },
     ],	
