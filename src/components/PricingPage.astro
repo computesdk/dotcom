@@ -1,4 +1,7 @@
 ---
+import FAQ from "./FAQ.astro";
+import FAQCol from "./FAQCol.astro";
+
 ---
 <div class="relative isolate bg-white dark:bg-gray-900 px-6 py-24 sm:py-32 lg:px-8">
     <div aria-hidden="true" class="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl">
@@ -43,7 +46,7 @@
              TypeScript support
            </li>
          </ul>
-        <a href="https://buy.polar.sh/polar_cl_7kppmQMXd5cjk9iCiNv0XZkSSI1mCbCFei0JE0mLchM" target="_blank" aria-describedby="tier-free" class="mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-emerald-600 ring-1 ring-inset ring-emerald-200 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:mt-10">Get started today</a>
+        <a href="https://buy.polar.sh/polar_cl_7kppmQMXd5cjk9iCiNv0XZkSSI1mCbCFei0JE0mLchM" target="_blank" aria-describedby="tier-free" class="mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-emerald-600 ring-1 ring-inset ring-emerald-200 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:mt-10 no-underline">Get started today</a>
       </div>
       <div class="relative rounded-3xl bg-gray-900 p-8 shadow-2xl ring-1 ring-gray-900/10 sm:p-10">
         <h3 id="tier-enterprise" class="text-base/7 font-semibold text-emerald-400">Premium</h3>
@@ -90,28 +93,9 @@
              Health monitoring with built-in status endpoints
            </li>
          </ul>
-        <a href="https://buy.polar.sh/polar_cl_7kppmQMXd5cjk9iCiNv0XZkSSI1mCbCFei0JE0mLchM" target="_blank" aria-describedby="tier-premium" class="mt-8 block rounded-md bg-emerald-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 sm:mt-10">Get started today</a>
+        <a href="https://buy.polar.sh/polar_cl_7kppmQMXd5cjk9iCiNv0XZkSSI1mCbCFei0JE0mLchM" target="_blank" aria-describedby="tier-premium" class="mt-8 block rounded-md bg-emerald-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 sm:mt-10 no-underline">Get started today</a>
       </div>
     </div>
-    <div class="mx-auto mt-20 max-w-2xl text-center">
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Have questions?</h3>
-        <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Email or book a call with us</p>
-        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-            href="https://cal.com/heygarrison" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="px-6 min-w-[12rem] py-3 bg-emerald-600 dark:bg-emerald-500 text-white font-medium rounded-md hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors no-underline"
-          >
-            Book a Call
-          </a>
-            <a 
-            href="mailto:email@computesdk.com" 
-            class="px-6 min-w-[12rem] py-3 border border-emerald-600 text-emerald-600 font-medium rounded-md hover:font-bold dark:hover:font-bold dark:hover:text-emerald-400 dark:text-white dark:hover:bg-transparent transition-colors no-underline"
-          >
-            Email Us
-          </a>
-        </div>
-      </div>
+    <FAQCol />
   </div>
   

@@ -108,24 +108,24 @@ export default defineConfig({
     [starlightThemeNova({
       nav: [
           {
-            label:'Pricing',
-            href: '/pricing'
-          },
-          {
             label:'Features',
             href: '/features'
+          },  
+          {
+            label:'Pricing',
+            href: '/pricing'
           },
           {
             label: 'Docs',
             href: '/docs/start/introduction',
           },
           {
-            label:'Contact',
-            href: '/contact'
-          },
-          {
             label:'Blog',
             href: '/blog'
+          },
+          {
+            label:'Contact',
+            href: '/contact'
           },
         ],
          }),
