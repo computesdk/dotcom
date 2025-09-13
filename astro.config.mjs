@@ -188,7 +188,13 @@ export default defineConfig({
       ],
   }), sitemap()],
 
+  server: {
+    host: true,
+  },
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      host: true,
+    },
   },
 });
