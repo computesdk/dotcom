@@ -107,14 +107,14 @@ export default defineConfig({
     plugins: 
     [starlightThemeNova({
       nav: [
-          {
-            label:'Features',
-            href: '/features'
-          },  
-          {
-            label:'Pricing',
-            href: '/pricing'
-          },
+          // {
+          //   label:'Features',
+          //   href: '/features'
+          // },  
+          // {
+          //   label:'Pricing',
+          //   href: '/pricing'
+          // },
           {
             label: 'Docs',
             href: '/docs/start/introduction',
