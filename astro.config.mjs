@@ -18,6 +18,9 @@ export default defineConfig({
       }
     },
   },
+  redirects: {
+    '/docs': '/docs/start/introduction'
+  },
   integrations: [starlight({
     title: 'ComputeSDK',
 		    favicon: '/favicon.ico',
