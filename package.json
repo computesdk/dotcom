@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
+    "start": "serve dist -l 4321",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
@@ -16,6 +16,7 @@
     "@astrojs/starlight-tailwind": "^4.0.1",
     "@tailwindcss/vite": "^4.1.11",
     "astro": "^5.6.1",
+    "serve": "^14.2.5",
     "sharp": "^0.34.2",
     "starlight-blog": "^0.24.0",
     "starlight-llms-txt": "^0.6.0",

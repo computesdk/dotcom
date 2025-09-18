@@ -196,7 +196,16 @@ export default defineConfig({
       ],
   }), sitemap()],
 
+  server: {
+    host: true,
+  },
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      host: true,
+    },
+    preview: {
+      allowedHosts: ['com-production-86d3.up.railway.app', '.railway.app'],
+    },
   },
 });
