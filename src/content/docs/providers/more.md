@@ -2,7 +2,7 @@
 title: More
 description: Open Source - add more providers!
 sidebar:
-    order: 4
+    order: 7
 ---
 
 #### Open Source
@@ -11,7 +11,9 @@ We welcome contributions to the Compute SDK! If you have a provider you'd like t
 
 ### Providers
 
+- [Blaxel](/providers/blaxel)
+- [CodeSandbox](/providers/codesandbox)
 - [Daytona](/providers/daytona)
 - [E2B](/providers/e2b)
+- [Modal](/providers/modal)
 - [Vercel](/providers/vercel)
-- [More](/providers/more)

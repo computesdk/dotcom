@@ -2,7 +2,7 @@
 title: Daytona
 description: Execute code in Daytona development workspaces
 sidebar:
-    order: 1
+    order: 3
 ---
 
 # @computesdk/daytona

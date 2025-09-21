@@ -2,7 +2,7 @@
 title: E2B
 description: Execute code in secure E2B sandboxes with full filesystem and terminal support
 sidebar:
-    order: 2
+    order: 4
 ---
 
 # @computesdk/e2b

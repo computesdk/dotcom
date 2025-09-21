@@ -2,7 +2,7 @@
 title: Modal
 description: Execute code in serverless Modal sandboxes with full Python support and GPU acceleration
 sidebar:
-    order: 4
+    order: 5
 ---
 
 # @computesdk/modal

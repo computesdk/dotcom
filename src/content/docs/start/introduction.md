@@ -7,11 +7,11 @@ sidebar:
 
 # What is ComputeSDK?
 
-ComputeSDK is a free and open-source toolkit for running other people's code in your applications. Think of it as the "AI SDK for compute" - providing a consistent TypeScript interface whether you're using E2B, Vercel, Daytona, Modal, or CodeSandbox.
+ComputeSDK is a free and open-source toolkit for running other people's code in your applications. Think of it as the "AI SDK for compute" - providing a consistent TypeScript interface whether you're using Blaxel, E2B, Vercel, Daytona, Modal, or CodeSandbox.
 
 ## Why ComputeSDK?
 
-- 🔄 **Provider-agnostic** - Switch between E2B, Vercel, Daytona, Modal, CodeSandbox and more without code changes
+- 🔄 **Provider-agnostic** - Switch between Blaxel, E2B, Vercel, Daytona, Modal, CodeSandbox and more without code changes
 - 🛡️ **Security-first** - Isolated sandboxes protect your infrastructure
 - ⚡ **Developer experience** - Simple, TypeScript-native API
 - 🌍 **Production-ready** - Used by teams building the next generation of developer tools
@@ -26,7 +26,7 @@ ComputeSDK is a free and open-source toolkit for running other people's code in 
 
 ## Features
 
-- 🚀 **Multi-provider support** - E2B, Vercel, Daytona, Modal, CodeSandbox
+- 🚀 **Multi-provider support** - Blaxel, E2B, Vercel, Daytona, Modal, CodeSandbox
 - 📁 **Filesystem operations** - Read, write, create directories across providers
 - 🖥️ **Terminal support** - Interactive PTY terminals (E2B)
 - ⚡ **Command execution** - Run shell commands directly
@@ -40,11 +40,14 @@ ComputeSDK is a free and open-source toolkit for running other people's code in 
 
 ```typescript
 import { compute } from 'computesdk';
-import { e2b } from '@computesdk/e2b';
+import { blaxel } from '@computesdk/blaxel';
 
 // Set default provider
 compute.setConfig({ 
-  deafultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
+  provider: blaxel({ 
+    apiKey: process.env.BLAXEL_API_KEY,
+    workspace: process.env.BLAXEL_WORKSPACE 
+  }) 
 });
 
 // Create a sandbox

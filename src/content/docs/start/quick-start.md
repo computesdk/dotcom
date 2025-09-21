@@ -16,6 +16,7 @@ Welcome to ComputeSDK! This guide will get you up and running with secure, isola
 npm install computesdk
 
 # Provider packages (install only what you need)
+npm install @computesdk/blaxel        # Blaxel provider
 npm install @computesdk/e2b        # E2B provider
 npm install @computesdk/vercel     # Vercel provider  
 npm install @computesdk/daytona    # Daytona provider
@@ -30,11 +31,14 @@ npm install @computesdk/ui         # React hooks and utilities
 
 ```typescript
 import { compute } from 'computesdk';
-import { e2b } from '@computesdk/e2b';
+import { blaxel } from '@computesdk/blaxel';
 
 // Set default provider
 compute.setConfig({ 
-  defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
+  defaultProvider: blaxel({ 
+    apiKey: process.env.BLAXEL_API_KEY,
+    workspace: process.env.BLAXEL_WORKSPACE 
+  }) 
 });
 
 // Create a sandbox
@@ -49,6 +53,41 @@ await compute.sandbox.destroy(sandbox.sandboxId);
 ```
 
 ### Provider-Specific Setup
+
+### Blaxel - AI-Generated Code Execution
+
+Blaxel provides intelligent code execution with AI assistance:
+
+```bash
+export BLAXEL_API_KEY=your_blaxel_api_key_here
+export BLAXEL_WORKSPACE=your_workspace_here
+```
+
+```typescript
+import { compute } from 'computesdk';
+import { blaxel } from '@computesdk/blaxel';
+
+compute.setConfig({ 
+  defaultProvider: blaxel({ 
+    apiKey: process.env.BLAXEL_API_KEY,
+    workspace: process.env.BLAXEL_WORKSPACE
+  }) 
+});
+
+const sandbox = await compute.sandbox.create({});
+
+// Execute code with AI assistance
+const result = await sandbox.runCode(`
+print("Hello from Blaxel!")
+# Your code can leverage AI capabilities
+import json
+data = {"message": "AI-powered execution"}
+print(json.dumps(data, indent=2))
+`);
+
+console.log(result.stdout);
+```
+
 
 #### E2B - Full Development Environment
 
