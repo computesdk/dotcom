@@ -7,7 +7,7 @@ sidebar:
 
 # @computesdk/blaxel
 
-Blaxel provider for ComputeSDK - Execute code in secure Blaxel cloud sandboxes with 25ms cold starts and real-time preview URLs.
+Blaxel provider for ComputeSDK - Execute code in secure Blaxel sandboxes with 25ms cold starts and real-time preview URLs.
 
 ## Installation
 
