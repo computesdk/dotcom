@@ -1,15 +1,13 @@
 ---
-title: Modal
-description: Execute code in serverless Modal sandboxes with full Python support and GPU acceleration
+title: "Modal"
+description: ""
 sidebar:
-    order: 4
+  order: 5
 ---
 
-# @computesdk/modal
+# Modal
 
-Modal provider for ComputeSDK - Execute code in serverless Modal sandboxes with full Python support and GPU acceleration.
-
-> **✅ Full Implementation:** This provider uses Modal's official JavaScript SDK (v0.3.16) with complete real API integration. All code execution, filesystem operations, and command execution are implemented using actual Modal Sandbox APIs.
+Modal provider for ComputeSDK - Execute code with GPU support for machine learning workloads.
 
 ## Installation
 
@@ -17,26 +15,16 @@ Modal provider for ComputeSDK - Execute code in serverless Modal sandboxes with 
 npm install @computesdk/modal
 ```
 
-## Setup
-
-1. Get your Modal API credentials from [modal.com](https://modal.com/)
-2. Set the environment variables:
-
-```bash
-export MODAL_TOKEN_ID=your_token_id_here
-export MODAL_TOKEN_SECRET=your_token_secret_here
-```
-
 ## Usage
 
 ### With ComputeSDK
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { modal } from '@computesdk/modal';
 
 // Set as default provider
-compute.setConfig({ 
+const compute = createCompute({ 
   defaultProvider: modal({ 
     tokenId: process.env.MODAL_TOKEN_ID,
     tokenSecret: process.env.MODAL_TOKEN_SECRET
@@ -46,27 +34,12 @@ compute.setConfig({
 // Create sandbox
 const sandbox = await compute.sandbox.create();
 
-// Execute Python code with GPU acceleration
-const result = await sandbox.runCode(`
-import torch
-import numpy as np
+// Get instance
+const instance = sandbox.getInstance();
 
-# Check if CUDA is available
-print(f"CUDA available: {torch.cuda.is_available()}")
-if torch.cuda.is_available():
-    print(f"GPU device: {torch.cuda.get_device_name()}")
-
-# Create tensor operations
-x = torch.randn(1000, 1000)
-if torch.cuda.is_available():
-    x = x.cuda()
-
-y = torch.matmul(x, x.T)
-print(f"Result shape: {y.shape}")
-print(f"Mean: {y.mean().item():.4f}")
-`);
-
-console.log(result.stdout);
+// Execute code
+const result = await sandbox.runCode('print("Hello from Modal!")');
+console.log(result.stdout); // "Hello from Modal!"
 
 // Clean up
 await compute.sandbox.destroy(sandbox.sandboxId);
@@ -79,13 +52,13 @@ import { modal } from '@computesdk/modal';
 
 // Create provider
 const provider = modal({ 
-  tokenId: 'your_token_id',
-  tokenSecret: 'your_token_secret',
-  timeout: 600000 // 10 minutes
+  tokenId: 'your-token-id',
+  tokenSecret: 'your-token-secret',
+  gpu: 'T4'  // GPU type for ML workloads
 });
 
 // Use with compute singleton
-const sandbox = await compute.sandbox.create({ defaultProvider: provider });
+const sandbox = await compute.sandbox.create({ provider });
 ```
 
 ## Configuration
@@ -93,235 +66,158 @@ const sandbox = await compute.sandbox.create({ defaultProvider: provider });
 ### Environment Variables
 
 ```bash
-export MODAL_TOKEN_ID=your_token_id_here
-export MODAL_TOKEN_SECRET=your_token_secret_here
+export MODAL_TOKEN_ID=your_modal_token_id_here
+export MODAL_TOKEN_SECRET=your_modal_token_secret_here
 ```
 
 ### Configuration Options
 
 ```typescript
 interface ModalConfig {
-  /** Modal API token ID - if not provided, will use MODAL_TOKEN_ID env var */
+  /** Modal token ID - if not provided, will use MODAL_TOKEN_ID env var */
   tokenId?: string;
-  /** Modal API token secret - if not provided, will use MODAL_TOKEN_SECRET env var */
+  /** Modal token secret - if not provided, will use MODAL_TOKEN_SECRET env var */
   tokenSecret?: string;
-  /** Default runtime environment */
-  runtime?: 'python' | 'node';
+  /** GPU type for ML workloads */
+  gpu?: 'T4' | 'A10G' | 'A100';
+  /** CPU count */
+  cpu?: number;
+  /** Memory allocation in GB */
+  memory?: number;
   /** Execution timeout in milliseconds */
   timeout?: number;
-  /** Modal environment (sandbox or main) */
-  environment?: string;
+  /** Custom image for the environment */
+  image?: string;
 }
 ```
-
-## Features
-
-- ✅ **Code Execution** - Real Python code execution using Modal Sandbox.exec()
-- ✅ **Command Execution** - Real shell command execution in Modal containers
-- ✅ **Filesystem Operations** - Real file system access via Modal open() and exec() APIs
-- ✅ **Serverless Scaling** - Automatic scaling to thousands of containers
-- ✅ **GPU Support** - Easy GPU access with Modal's native GPU support
-- ✅ **Full Modal Integration** - Complete real implementation using Modal JavaScript SDK
-
-## Implementation Status
-
-This provider uses Modal's **official JavaScript SDK** (v0.3.16) with **complete real API integration**:
-
-✅ **Real Modal SDK Integration** - Uses the official `modal` npm package  
-✅ **Authentication** - Full Modal API token handling with initializeClient()  
-✅ **Sandbox Management** - Real create, connect, and destroy Modal sandboxes  
-✅ **Code Execution** - Real Python execution using Modal Sandbox.exec()  
-✅ **Filesystem Operations** - Real file operations using Modal open() API with fallbacks  
-✅ **Command Execution** - Real shell command execution in Modal containers  
-✅ **Status Monitoring** - Real sandbox status using Modal poll() API  
-
-### Current Status
-- **Package**: Uses `modal@0.3.16` from npm
-- **Authentication**: Fully implemented with MODAL_TOKEN_ID/MODAL_TOKEN_SECRET
-- **Core Structure**: Complete ComputeSDK provider interface
-- **Execution**: **Real Modal API calls** for all operations
-- **Filesystem**: Dual approach using Modal file API + command fallbacks
-- **Error Handling**: Comprehensive error handling with Modal-specific errors
-
-### Production Ready
-This provider is **production ready** with real Modal API integration:
-1. ✅ Real code execution via Modal Sandbox.exec()
-2. ✅ Real filesystem operations via Modal open() + command fallbacks
-3. ✅ Real command execution in Modal containers
-4. ✅ Real sandbox lifecycle management
-5. ✅ Comprehensive error handling and stream management
 
 ## API Reference
 
 ### Code Execution
 
 ```typescript
-// Execute Python code with real Modal Sandbox.exec()
+// Execute Python code with GPU support
 const result = await sandbox.runCode(`
 import torch
 import numpy as np
 
-# Check GPU availability
+print(f"PyTorch version: {torch.__version__}")
 print(f"CUDA available: {torch.cuda.is_available()}")
-if torch.cuda.is_available():
-    print(f"GPU: {torch.cuda.get_device_name()}")
 
-# Create tensor operations
-x = torch.randn(1000, 1000).cuda() if torch.cuda.is_available() else torch.randn(1000, 1000)
-y = torch.matmul(x, x.T)
-print(f"Result shape: {y.shape}")
+if torch.cuda.is_available():
+    print(f"GPU device: {torch.cuda.get_device_name()}")
+    print(f"GPU memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
+
+# Simple tensor operations on GPU
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+x = torch.randn(1000, 1000, device=device)
+y = torch.randn(1000, 1000, device=device)
+z = torch.matmul(x, y)
+
+print(f"Computed matrix multiplication on {device}")
+print(f"Result shape: {z.shape}")
 `, 'python');
 
-console.log(result.stdout); // Real output from Modal sandbox
-console.log(result.stderr); // Real errors if any
-console.log(result.exitCode); // Real exit code
+// Machine learning workflow
+const result = await sandbox.runCode(`
+import torch
+import torch.nn as nn
+import numpy as np
 
-// Auto-detection (defaults to Python for Modal)
-const result = await sandbox.runCode('print("Hello from real Modal sandbox!")');
+# Simple neural network
+class SimpleNet(nn.Module):
+    def __init__(self):
+        super(SimpleNet, self).__init__()
+        self.fc1 = nn.Linear(10, 50)
+        self.fc2 = nn.Linear(50, 1)
+        self.relu = nn.ReLU()
+    
+    def forward(self, x):
+        x = self.relu(self.fc1(x))
+        return self.fc2(x)
+
+# Create model and move to GPU if available
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = SimpleNet().to(device)
+
+print(f"Model created on {device}")
+print(f"Total parameters: {sum(p.numel() for p in model.parameters())}")
+`);
 ```
 
 ### Command Execution
 
 ```typescript
-// List files using real Modal exec()
-const result = await sandbox.runCommand('ls', ['-la']);
-console.log(result.stdout); // Real directory listing
+// Install additional packages
+const result = await sandbox.runCommand('pip', ['install', 'transformers', 'datasets']);
 
-// Install packages in real Modal container
-const result = await sandbox.runCommand('pip', ['install', 'transformers', 'torch']);
-console.log(result.stdout); // Real pip installation output
-
-// Run ML training script in Modal
-const result = await sandbox.runCommand('python', ['train.py', '--epochs', '10']);
-console.log(result.stdout); // Real training output
-
-// System commands with real GPU info
+// Check GPU status
 const result = await sandbox.runCommand('nvidia-smi');
-console.log(result.stdout); // Real GPU information from Modal
+
+// Run Python scripts
+const result = await sandbox.runCommand('python', ['train_model.py']);
 ```
 
 ### Filesystem Operations
 
 ```typescript
-// Write files using real Modal file API
-await sandbox.filesystem.writeFile('/app/train.py', `
+// Write training script
+await sandbox.filesystem.writeFile('/workspace/train.py', `
 import torch
 import torch.nn as nn
+import torch.optim as optim
 
-class SimpleModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.linear = nn.Linear(10, 1)
-    
-    def forward(self, x):
-        return self.linear(x)
-
-model = SimpleModel()
-print("Model created successfully!")
+# Your ML training code here
+print("Training script created")
 `);
 
-// Read real file content from Modal sandbox
-const content = await sandbox.filesystem.readFile('/app/train.py');
-console.log(content); // Actual file content from Modal
+// Read model file
+const modelCode = await sandbox.filesystem.readFile('/workspace/model.py');
 
-// Create directories in real Modal filesystem
-await sandbox.filesystem.mkdir('/app/data');
-await sandbox.filesystem.mkdir('/app/models');
+// Create directories for ML project
+await sandbox.filesystem.mkdir('/workspace/data');
+await sandbox.filesystem.mkdir('/workspace/models');
+await sandbox.filesystem.mkdir('/workspace/logs');
 
-// List real directory contents from Modal
-const files = await sandbox.filesystem.readdir('/app');
-console.log(files); // Real file listing with metadata
+// List files
+const files = await sandbox.filesystem.readdir('/workspace');
 
-// Check real file existence in Modal
-const exists = await sandbox.filesystem.exists('/app/train.py');
-console.log('File exists:', exists); // true if file actually exists
+// Check if model exists
+const exists = await sandbox.filesystem.exists('/workspace/model.pth');
 
-// Remove files from real Modal filesystem
-await sandbox.filesystem.remove('/app/temp_file.txt');
+// Remove temporary files
+await sandbox.filesystem.remove('/workspace/temp_data.pkl');
 ```
 
 ### Sandbox Management
 
 ```typescript
-// Get sandbox info
+// Get sandbox info (including GPU allocation)
 const info = await sandbox.getInfo();
-console.log(info.id, info.provider, info.status);
+console.log(info.id, info.provider, info.gpu, info.memory);
 
-// List all sandboxes (Modal Apps)
-const sandboxes = await compute.sandbox.list(provider);
+// List all sandboxes
+const sandboxes = await compute.sandbox.list();
 
-// Get existing sandbox by ID
-const existing = await compute.sandbox.getById(provider, 'app-id');
+// Get existing sandbox
+const existing = await compute.sandbox.getById('sandbox-id');
 
 // Destroy sandbox
-await compute.sandbox.destroy(provider, 'app-id');
+await compute.sandbox.destroy('sandbox-id');
 ```
-
-## Modal-Specific Features
-
-### GPU Acceleration
-
-```typescript
-// Modal automatically handles GPU allocation
-const result = await sandbox.runCode(`
-import torch
-print(f"CUDA available: {torch.cuda.is_available()}")
-
-# Use GPU if available
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = model.to(device)
-`);
-```
-
-### Serverless Scaling
-
-```typescript
-// Modal automatically scales based on demand
-// No configuration needed - just execute code
-const results = await Promise.all([
-  sandbox.runCode(task1),
-  sandbox.runCode(task2),
-  sandbox.runCode(task3)
-]);
-```
-
-### Container Images
-
-```typescript
-// Modal supports custom container images
-const provider = modal({
-  tokenId: process.env.MODAL_TOKEN_ID,
-  tokenSecret: process.env.MODAL_TOKEN_SECRET,
-  // Custom image configuration would be specified here
-});
-```
-
-## Runtime Detection
-
-The provider defaults to Python runtime for Modal's strengths:
-
-**Python indicators:**
-- `print(` statements
-- `import` statements  
-- `def` function definitions
-- Python-specific syntax (`f"`, `__`, etc.)
-
-**Default:** Python (Modal's primary runtime)
 
 ## Error Handling
 
 ```typescript
 try {
-  const result = await sandbox.runCode('invalid python code');
+  const result = await sandbox.runCode('invalid code');
 } catch (error) {
-  if (error.message.includes('Missing Modal API credentials')) {
-    console.error('Set MODAL_TOKEN_ID and MODAL_TOKEN_SECRET environment variables');
+  if (error.message.includes('CUDA out of memory')) {
+    console.error('GPU memory insufficient - reduce batch size');
   } else if (error.message.includes('authentication failed')) {
-    console.error('Check your Modal API credentials');
+    console.error('Check your MODAL_TOKEN_ID and MODAL_TOKEN_SECRET');
   } else if (error.message.includes('quota exceeded')) {
     console.error('Modal usage limits reached');
-  } else if (error.message.includes('Syntax error')) {
-    console.error('Code has syntax errors');
   }
 }
 ```
@@ -339,7 +235,8 @@ export async function POST(request: Request) {
     request,
     provider: modal({ 
       tokenId: process.env.MODAL_TOKEN_ID,
-      tokenSecret: process.env.MODAL_TOKEN_SECRET
+      tokenSecret: process.env.MODAL_TOKEN_SECRET,
+      gpu: 'T4'
     })
   });
 }
@@ -347,419 +244,381 @@ export async function POST(request: Request) {
 
 ## Examples
 
-### Machine Learning Pipeline
+### Machine Learning Training
 
 ```typescript
-const sandbox = await compute.sandbox.create();
-
-// Create ML project structure
-await sandbox.filesystem.mkdir('/ml-project');
-await sandbox.filesystem.mkdir('/ml-project/data');
-await sandbox.filesystem.mkdir('/ml-project/models');
-
-// Write training script
-const trainScript = `
-import torch
-import torch.nn as nn
-import numpy as np
-from torch.utils.data import DataLoader, TensorDataset
-
-# Generate sample data
-X = torch.randn(1000, 10)
-y = torch.randn(1000, 1)
-
-# Create dataset
-dataset = TensorDataset(X, y)
-dataloader = DataLoader(dataset, batch_size=32)
-
-# Define model
-class SimpleModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.linear = nn.Linear(10, 1)
-    
-    def forward(self, x):
-        return self.linear(x)
-
-# Train model
-model = SimpleModel()
-criterion = nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters())
-
-for epoch in range(10):
-    for batch_x, batch_y in dataloader:
-        optimizer.zero_grad()
-        outputs = model(batch_x)
-        loss = criterion(outputs, batch_y)
-        loss.backward()
-        optimizer.step()
-    
-    print(f"Epoch {epoch+1}, Loss: {loss.item():.4f}")
-
-# Save model
-torch.save(model.state_dict(), '/ml-project/models/model.pt')
-print("Model saved!")
-`;
-
-await sandbox.filesystem.writeFile('/ml-project/train.py', trainScript);
-
-// Run training
 const result = await sandbox.runCode(`
-import subprocess
-result = subprocess.run(['python', '/ml-project/train.py'], 
-                       capture_output=True, text=True)
-print(result.stdout)
-if result.stderr:
-    print("Errors:", result.stderr)
-`);
-
-console.log(result.stdout);
-
-// Verify model was saved
-const modelExists = await sandbox.filesystem.exists('/ml-project/models/model.pt');
-console.log('Model saved:', modelExists);
-```
-
-### GPU-Accelerated Inference
-
-```typescript
-const sandbox = await compute.sandbox.create();
-
-// GPU inference example
-const result = await sandbox.runCode(`
-import torch
-import torch.nn as nn
-import time
-
-# Check GPU availability
-print(f"CUDA available: {torch.cuda.is_available()}")
-if torch.cuda.is_available():
-    print(f"GPU: {torch.cuda.get_device_name()}")
-    device = torch.device('cuda')
-else:
-    device = torch.device('cpu')
-
-# Create large model for inference
-class LargeModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.layers = nn.Sequential(
-            nn.Linear(1000, 2000),
-            nn.ReLU(),
-            nn.Linear(2000, 1000),
-            nn.ReLU(),
-            nn.Linear(1000, 100)
-        )
-    
-    def forward(self, x):
-        return self.layers(x)
-
-# Initialize model and move to GPU
-model = LargeModel().to(device)
-model.eval()
-
-# Create test data
-batch_size = 64
-input_data = torch.randn(batch_size, 1000).to(device)
-
-# Run inference
-start_time = time.time()
-with torch.no_grad():
-    outputs = model(input_data)
-
-inference_time = time.time() - start_time
-print(f"Inference completed in {inference_time:.4f} seconds")
-print(f"Output shape: {outputs.shape}")
-print(f"Device: {outputs.device}")
-`);
-
-console.log(result.stdout);
-```
-
-### Distributed Processing
-
-```typescript
-// Process multiple tasks in parallel
-const tasks = [
-  'task1_data.json',
-  'task2_data.json', 
-  'task3_data.json'
-];
-
-const results = await Promise.all(
-  tasks.map(async (taskFile) => {
-    const sandbox = await compute.sandbox.create();
-    
-    return await sandbox.runCode(`
-import json
-import numpy as np
-
-# Load task data
-with open('/data/${taskFile}', 'r') as f:
-    data = json.load(f)
-
-# Process data (example: statistical analysis)
-values = np.array(data['values'])
-results = {
-    'task': '${taskFile}',
-    'mean': float(values.mean()),
-    'std': float(values.std()),
-    'min': float(values.min()),
-    'max': float(values.max()),
-    'count': len(values)
-}
-
-print(json.dumps(results))
-`);
-  })
-);
-
-results.forEach(result => {
-  const taskResult = JSON.parse(result.stdout);
-  console.log(`Task ${taskResult.task}: mean=${taskResult.mean:.2f}`);
-});
-```
-
-### Deep Learning Training Pipeline
-
-```typescript
-const sandbox = await compute.sandbox.create();
-
-// Create comprehensive training environment
-await sandbox.filesystem.mkdir('/training');
-await sandbox.filesystem.mkdir('/training/data');
-await sandbox.filesystem.mkdir('/training/models');
-await sandbox.filesystem.mkdir('/training/logs');
-
-// Write advanced training script
-const advancedTrainingScript = `
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import numpy as np
 from torch.utils.data import DataLoader, TensorDataset
-import torch.nn.functional as F
-import json
-import time
-from datetime import datetime
 
-# Set device
+print("🤖 Machine Learning Training on GPU")
+print("=" * 50)
+
+# Check GPU availability
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(f"Training on device: {device}")
+print(f"Using device: {device}")
 
-# Generate more complex synthetic data
-def generate_data(n_samples=10000, n_features=784, n_classes=10):
-    X = torch.randn(n_samples, n_features)
-    # Create some structure in the data
-    y = (X[:, :10].sum(dim=1) > 0).long() % n_classes
-    return X, y
+if torch.cuda.is_available():
+    print(f"GPU: {torch.cuda.get_device_name()}")
+    print(f"Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
 
-X_train, y_train = generate_data(8000)
-X_val, y_val = generate_data(2000)
+# Generate synthetic dataset
+np.random.seed(42)
+torch.manual_seed(42)
+
+# Binary classification problem
+n_samples = 10000
+n_features = 20
+
+X = torch.randn(n_samples, n_features)
+# Create non-linear relationship
+y = (X[:, 0] * X[:, 1] + X[:, 2]**2 > 0).float().unsqueeze(1)
+
+# Split data
+train_size = int(0.8 * n_samples)
+X_train, X_test = X[:train_size], X[train_size:]
+y_train, y_test = y[:train_size], y[train_size:]
+
+print(f"Training samples: {len(X_train)}")
+print(f"Test samples: {len(X_test)}")
 
 # Create data loaders
 train_dataset = TensorDataset(X_train, y_train)
-val_dataset = TensorDataset(X_val, y_val)
+test_dataset = TensorDataset(X_test, y_test)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=32)
 
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)
-
-# Define a more complex model
+# Define model
 class MLPClassifier(nn.Module):
-    def __init__(self, input_size, hidden_sizes, num_classes, dropout=0.2):
-        super().__init__()
-        layers = []
-        prev_size = input_size
-        
-        for hidden_size in hidden_sizes:
-            layers.extend([
-                nn.Linear(prev_size, hidden_size),
-                nn.ReLU(),
-                nn.Dropout(dropout)
-            ])
-            prev_size = hidden_size
-        
-        layers.append(nn.Linear(prev_size, num_classes))
-        self.network = nn.Sequential(*layers)
+    def __init__(self, input_size, hidden_size=64):
+        super(MLPClassifier, self).__init__()
+        self.network = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(hidden_size, 1),
+            nn.Sigmoid()
+        )
     
     def forward(self, x):
         return self.network(x)
 
 # Initialize model
-model = MLPClassifier(784, [512, 256, 128], 10).to(device)
-criterion = nn.CrossEntropyLoss()
+model = MLPClassifier(n_features).to(device)
+criterion = nn.BCELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.7)
 
-# Training loop with validation
-training_history = {'train_loss': [], 'val_loss': [], 'val_acc': []}
-num_epochs = 25
+print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
 
-print(f"Starting training for {num_epochs} epochs...")
-start_time = time.time()
-
+# Training loop
+num_epochs = 10
 for epoch in range(num_epochs):
-    # Training phase
     model.train()
-    train_loss = 0.0
+    train_loss = 0
+    correct = 0
+    total = 0
     
-    for batch_x, batch_y in train_loader:
-        batch_x, batch_y = batch_x.to(device), batch_y.to(device)
+    for batch_X, batch_y in train_loader:
+        batch_X, batch_y = batch_X.to(device), batch_y.to(device)
         
         optimizer.zero_grad()
-        outputs = model(batch_x)
+        outputs = model(batch_X)
         loss = criterion(outputs, batch_y)
         loss.backward()
         optimizer.step()
         
         train_loss += loss.item()
+        predicted = (outputs > 0.5).float()
+        total += batch_y.size(0)
+        correct += (predicted == batch_y).sum().item()
     
-    # Validation phase
+    train_acc = 100 * correct / total
+    
+    # Evaluation
     model.eval()
-    val_loss = 0.0
+    test_correct = 0
+    test_total = 0
+    
+    with torch.no_grad():
+        for batch_X, batch_y in test_loader:
+            batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+            outputs = model(batch_X)
+            predicted = (outputs > 0.5).float()
+            test_total += batch_y.size(0)
+            test_correct += (predicted == batch_y).sum().item()
+    
+    test_acc = 100 * test_correct / test_total
+    
+    print(f"Epoch {epoch+1}/{num_epochs}: Train Acc: {train_acc:.2f}%, Test Acc: {test_acc:.2f}%")
+
+print("\\n✅ Training completed!")
+print(f"Final test accuracy: {test_acc:.2f}%")
+
+# Save model
+torch.save(model.state_dict(), '/workspace/model.pth')
+print("Model saved to /workspace/model.pth")
+`);
+
+console.log(result.stdout);
+```
+
+### Computer Vision with GPU
+
+```typescript
+const result = await sandbox.runCode(`
+import torch
+import torchvision
+import torchvision.transforms as transforms
+import torch.nn as nn
+import numpy as np
+from PIL import Image
+
+print("🖼️ Computer Vision with GPU")
+print("=" * 40)
+
+# Check GPU
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f"Device: {device}")
+
+# Create synthetic image data (since we don't have real dataset)
+def create_synthetic_images(num_images=1000, size=(3, 32, 32)):
+    """Create synthetic RGB images"""
+    images = torch.randn(num_images, *size)
+    # Create labels (10 classes like CIFAR-10)
+    labels = torch.randint(0, 10, (num_images,))
+    return images, labels
+
+# Generate data
+print("Generating synthetic image dataset...")
+train_images, train_labels = create_synthetic_images(8000)
+test_images, test_labels = create_synthetic_images(2000)
+
+print(f"Train images: {train_images.shape}")
+print(f"Test images: {test_images.shape}")
+
+# Simple CNN model
+class SimpleCNN(nn.Module):
+    def __init__(self, num_classes=10):
+        super(SimpleCNN, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 32, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(32, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(64, 128, 3, padding=1),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool2d((4, 4))
+        )
+        
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(128 * 4 * 4, 256),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(256, num_classes)
+        )
+    
+    def forward(self, x):
+        x = self.features(x)
+        x = self.classifier(x)
+        return x
+
+# Initialize model
+model = SimpleCNN().to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+print(f"\\nModel created with {sum(p.numel() for p in model.parameters()):,} parameters")
+
+# Training
+num_epochs = 5
+batch_size = 64
+
+for epoch in range(num_epochs):
+    model.train()
+    running_loss = 0.0
     correct = 0
     total = 0
     
+    # Mini-batch training
+    for i in range(0, len(train_images), batch_size):
+        batch_images = train_images[i:i+batch_size].to(device)
+        batch_labels = train_labels[i:i+batch_size].to(device)
+        
+        optimizer.zero_grad()
+        outputs = model(batch_images)
+        loss = criterion(outputs, batch_labels)
+        loss.backward()
+        optimizer.step()
+        
+        running_loss += loss.item()
+        _, predicted = torch.max(outputs.data, 1)
+        total += batch_labels.size(0)
+        correct += (predicted == batch_labels).sum().item()
+    
+    train_acc = 100 * correct / total
+    
+    # Test evaluation
+    model.eval()
+    test_correct = 0
+    test_total = 0
+    
     with torch.no_grad():
-        for batch_x, batch_y in val_loader:
-            batch_x, batch_y = batch_x.to(device), batch_y.to(device)
-            outputs = model(batch_x)
-            loss = criterion(outputs, batch_y)
-            val_loss += loss.item()
+        for i in range(0, len(test_images), batch_size):
+            batch_images = test_images[i:i+batch_size].to(device)
+            batch_labels = test_labels[i:i+batch_size].to(device)
             
-            _, predicted = torch.max(outputs.data, 1)
-            total += batch_y.size(0)
-            correct += (predicted == batch_y).sum().item()
+            outputs = model(batch_images)
+            _, predicted = torch.max(outputs, 1)
+            test_total += batch_labels.size(0)
+            test_correct += (predicted == batch_labels).sum().item()
     
-    # Calculate averages
-    train_loss /= len(train_loader)
-    val_loss /= len(val_loader)
-    val_acc = 100 * correct / total
+    test_acc = 100 * test_correct / test_total
     
-    # Update learning rate
-    scheduler.step()
-    
-    # Store history
-    training_history['train_loss'].append(train_loss)
-    training_history['val_loss'].append(val_loss)
-    training_history['val_acc'].append(val_acc)
-    
-    # Print progress
-    if (epoch + 1) % 5 == 0:
-        print(f"Epoch [{epoch+1}/{num_epochs}]")
-        print(f"  Train Loss: {train_loss:.4f}")
-        print(f"  Val Loss: {val_loss:.4f}")
-        print(f"  Val Accuracy: {val_acc:.2f}%")
-        print(f"  LR: {scheduler.get_last_lr()[0]:.6f}")
+    print(f"Epoch {epoch+1}: Train Acc: {train_acc:.2f}%, Test Acc: {test_acc:.2f}%")
 
-training_time = time.time() - start_time
-print(f"\\nTraining completed in {training_time:.2f} seconds")
-print(f"Final validation accuracy: {training_history['val_acc'][-1]:.2f}%")
+print("\\n✅ Computer vision training completed!")
 
-# Save model and training history
-torch.save({
-    'model_state_dict': model.state_dict(),
-    'optimizer_state_dict': optimizer.state_dict(),
-    'training_history': training_history,
-    'model_config': {
-        'input_size': 784,
-        'hidden_sizes': [512, 256, 128],
-        'num_classes': 10,
-        'dropout': 0.2
-    },
-    'final_accuracy': training_history['val_acc'][-1]
-}, '/training/models/mlp_classifier.pt')
-
-# Save training log
-log_data = {
-    'timestamp': datetime.now().isoformat(),
-    'device': str(device),
-    'num_epochs': num_epochs,
-    'training_time': training_time,
-    'final_accuracy': training_history['val_acc'][-1],
-    'best_accuracy': max(training_history['val_acc']),
-    'training_history': training_history
-}
-
-with open('/training/logs/training_log.json', 'w') as f:
-    json.dump(log_data, f, indent=2)
-
-print("\\nModel and logs saved successfully!")
-print(f"Best validation accuracy: {max(training_history['val_acc']):.2f}%")
-`;
-
-await sandbox.filesystem.writeFile('/training/train_advanced.py', advancedTrainingScript);
-
-// Run the advanced training
-console.log('Starting advanced ML training pipeline...');
-const trainingResult = await sandbox.runCode(`
-import subprocess
-import sys
-
-# Run the training script
-result = subprocess.run([sys.executable, '/training/train_advanced.py'], 
-                       capture_output=True, text=True, cwd='/training')
-print(result.stdout)
-if result.stderr:
-    print("STDERR:", result.stderr)
-print(f"Exit code: {result.returncode}")
+# GPU memory info
+if torch.cuda.is_available():
+    print(f"\\n📊 GPU Memory Usage:")
+    print(f"Allocated: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
+    print(f"Cached: {torch.cuda.memory_reserved() / 1e9:.2f} GB")
 `);
 
-console.log(trainingResult.stdout);
-
-// Check results
-const logExists = await sandbox.filesystem.exists('/training/logs/training_log.json');
-const modelExists = await sandbox.filesystem.exists('/training/models/mlp_classifier.pt');
-
-console.log('Training log saved:', logExists);
-console.log('Model saved:', modelExists);
-
-if (logExists) {
-  const logContent = await sandbox.filesystem.readFile('/training/logs/training_log.json');
-  const logData = JSON.parse(logContent);
-  console.log('\\nTraining Summary:');
-  console.log(`Final Accuracy: ${logData.final_accuracy.toFixed(2)}%`);
-  console.log(`Best Accuracy: ${logData.best_accuracy.toFixed(2)}%`);
-  console.log(`Training Time: ${logData.training_time.toFixed(2)} seconds`);
-  console.log(`Device: ${logData.device}`);
-}
+console.log(result.stdout);
 ```
 
-## Provider Comparison
+### Natural Language Processing
 
-| Feature | Modal | E2B | CodeSandbox | Vercel |
-|---------|--------|-----|-------------|--------|
-| **Primary Runtime** | Python | Python/Node | Node/Python | Node/Python |
-| **GPU Support** | ✅ Easy | ❌ | ❌ | ❌ |
-| **Auto Scaling** | ✅ Thousands | ❌ | ❌ | ✅ |
-| **ML/AI Focus** | ✅ Optimized | ✅ | ❌ | ❌ |
-| **Pricing Model** | Pay-per-use | Per sandbox | Per sandbox | Per execution |
-| **Filesystem** | ✅ | ✅ | ✅ | Limited |
-| **Container Images** | ✅ Custom | ✅ | ✅ Templates | ❌ |
+```typescript
+const result = await sandbox.runCode(`
+import torch
+import torch.nn as nn
+import numpy as np
+from collections import Counter
+import re
 
-## Best Practices
+print("🔤 Natural Language Processing with GPU")
+print("=" * 50)
 
-1. **Resource Management**: Modal automatically manages resources, but destroy sandboxes when done
-2. **Error Handling**: Use try-catch blocks for robust error handling  
-3. **GPU Utilization**: Modal provides easy GPU access - leverage it for ML workloads
-4. **Parallel Processing**: Use Modal's natural scaling for parallel tasks
-5. **Container Images**: Use Modal's pre-built ML images for faster startup
-6. **API Security**: Never commit API credentials to version control
-7. **Cost Optimization**: Be mindful of GPU usage for cost management
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f"Device: {device}")
 
-## Limitations
+# Sample text data
+texts = [
+    "Natural language processing is fascinating",
+    "Machine learning models can understand text",
+    "Deep learning transforms how we process language",
+    "Neural networks excel at text classification",
+    "GPU acceleration makes training faster",
+    "Transformers revolutionized NLP applications",
+    "Text analysis requires careful preprocessing",
+    "Language models learn from vast datasets"
+]
 
-- **Runtime Focus**: Primarily Python-focused (Modal's strength)
-- **Network Access**: Subject to Modal's networking policies
-- **Billing**: Pay-per-use Modal pricing applies
-- **Regional Availability**: Limited to Modal's supported regions
-- **Cold Starts**: Initial container startup time for new functions
+labels = [1, 1, 1, 1, 0, 1, 0, 1]  # Binary sentiment: 1=positive, 0=neutral
 
-## Support
+print(f"Dataset: {len(texts)} texts")
 
-- [Modal Documentation](https://modal.com/docs)
-- [ComputeSDK Issues](https://github.com/computesdk/computesdk/issues)
-- [Modal Community](https://modal.com/slack)
+# Simple tokenization and vocabulary
+def tokenize(text):
+    return re.findall(r'\\b\\w+\\b', text.lower())
 
-## License
+# Build vocabulary
+all_tokens = []
+for text in texts:
+    all_tokens.extend(tokenize(text))
 
-MIT
+vocab = {word: i for i, word in enumerate(set(all_tokens))}
+vocab_size = len(vocab)
+print(f"Vocabulary size: {vocab_size}")
+
+# Convert texts to sequences
+def text_to_sequence(text, vocab, max_len=20):
+    tokens = tokenize(text)
+    sequence = [vocab.get(token, 0) for token in tokens]
+    # Pad or truncate
+    if len(sequence) < max_len:
+        sequence.extend([0] * (max_len - len(sequence)))
+    else:
+        sequence = sequence[:max_len]
+    return sequence
+
+sequences = [text_to_sequence(text, vocab) for text in texts]
+X = torch.tensor(sequences, dtype=torch.long)
+y = torch.tensor(labels, dtype=torch.float32)
+
+print(f"Input shape: {X.shape}")
+
+# Simple LSTM model for text classification
+class TextLSTM(nn.Module):
+    def __init__(self, vocab_size, embed_dim=64, hidden_dim=32):
+        super(TextLSTM, self).__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_dim)
+        self.lstm = nn.LSTM(embed_dim, hidden_dim, batch_first=True)
+        self.classifier = nn.Linear(hidden_dim, 1)
+        self.sigmoid = nn.Sigmoid()
+    
+    def forward(self, x):
+        embedded = self.embedding(x)  # (batch, seq_len, embed_dim)
+        lstm_out, (hidden, _) = self.lstm(embedded)
+        # Use last hidden state
+        output = self.classifier(hidden[-1])  # (batch, 1)
+        return self.sigmoid(output)
+
+# Initialize model
+model = TextLSTM(vocab_size + 1).to(device)  # +1 for padding token
+criterion = nn.BCELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+
+print(f"Model parameters: {sum(p.numel() for p in model.parameters())}")
+
+# Training (on small dataset, so many epochs)
+X, y = X.to(device), y.to(device).unsqueeze(1)
+
+num_epochs = 100
+for epoch in range(num_epochs):
+    model.train()
+    optimizer.zero_grad()
+    
+    outputs = model(X)
+    loss = criterion(outputs, y)
+    loss.backward()
+    optimizer.step()
+    
+    if (epoch + 1) % 20 == 0:
+        model.eval()
+        with torch.no_grad():
+            predictions = model(X)
+            predicted = (predictions > 0.5).float()
+            accuracy = (predicted == y).float().mean()
+            print(f"Epoch {epoch+1}: Loss: {loss.item():.4f}, Accuracy: {accuracy.item():.2f}")
+
+print("\\n✅ NLP training completed!")
+
+# Test on new text
+test_text = "GPU acceleration improves deep learning performance"
+test_sequence = text_to_sequence(test_text, vocab)
+test_tensor = torch.tensor([test_sequence], dtype=torch.long).to(device)
+
+model.eval()
+with torch.no_grad():
+    prediction = model(test_tensor)
+    sentiment = "Positive" if prediction.item() > 0.5 else "Neutral"
+    
+print(f"\\nTest prediction:")
+print(f"Text: '{test_text}'")
+print(f"Sentiment: {sentiment} (confidence: {prediction.item():.3f})")
+`);
+
+console.log(result.stdout);
+```

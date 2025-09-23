@@ -1,13 +1,13 @@
 ---
-title: CodeSandbox
-description: Execute code in secure CodeSandbox environments with full filesystem and development environment support
+title: "Codesandbox"
+description: ""
 sidebar:
-    order: 3
+  order: 2
 ---
 
-# @computesdk/codesandbox
+# Codesandbox
 
-CodeSandbox provider for ComputeSDK - Execute code in secure, isolated CodeSandbox environments with full filesystem and development environment support.
+CodeSandbox provider for ComputeSDK - Execute code in web-based development environments.
 
 ## Installation
 
@@ -15,63 +15,28 @@ CodeSandbox provider for ComputeSDK - Execute code in secure, isolated CodeSandb
 npm install @computesdk/codesandbox
 ```
 
-## Setup
-
-1. Get your CodeSandbox API key from [codesandbox.io/t/api](https://codesandbox.io/t/api)
-2. Set the environment variable:
-
-```bash
-export CSB_API_KEY=your_api_key_here
-```
-
 ## Usage
 
 ### With ComputeSDK
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { codesandbox } from '@computesdk/codesandbox';
 
 // Set as default provider
-compute.setConfig({ 
-  defaultProvider: codesandbox({ apiKey: process.env.CSB_API_KEY }) 
+const compute = createCompute({ 
+  defaultProvider: codesandbox({ apiKey: process.env.CODESANDBOX_API_KEY }) 
 });
 
 // Create sandbox
 const sandbox = await compute.sandbox.create();
 
-// Execute JavaScript/Node.js code
-const result = await sandbox.runCode(`
-const message = "Hello from CodeSandbox!";
-console.log(message);
+// Get instance
+const instance = sandbox.getInstance();
 
-const data = { users: 3, tasks: 15 };
-console.log(JSON.stringify(data, null, 2));
-`);
-
-console.log(result.stdout);
-// Output:
-// Hello from CodeSandbox!
-// {
-//   "users": 3,
-//   "tasks": 15
-// }
-
-// Execute Python code
-const pythonResult = await sandbox.runCode(`
-import json
-data = {"framework": "CodeSandbox", "language": "Python"}
-print(json.dumps(data, indent=2))
-print(f"Running in: {data['framework']}")
-`, 'python');
-
-console.log(pythonResult.stdout);
-// Output:
-// {
-//   "framework": "CodeSandbox",
-//   "language": "Python"
-// }
-// Running in: CodeSandbox
+// Execute code
+const result = await sandbox.runCode('console.log("Hello from CodeSandbox!")');
+console.log(result.stdout); // "Hello from CodeSandbox!"
 
 // Clean up
 await compute.sandbox.destroy(sandbox.sandboxId);
@@ -84,13 +49,12 @@ import { codesandbox } from '@computesdk/codesandbox';
 
 // Create provider
 const provider = codesandbox({ 
-  apiKey: 'your_api_key',
-  templateId: 'universal', // Optional: specify template
-  timeout: 600000 // 10 minutes
+  apiKey: 'your-api-key',
+  template: 'react'
 });
 
 // Use with compute singleton
-const sandbox = await compute.sandbox.create({ defaultProvider: provider });
+const sandbox = await compute.sandbox.create({ provider });
 ```
 
 ## Configuration
@@ -98,137 +62,118 @@ const sandbox = await compute.sandbox.create({ defaultProvider: provider });
 ### Environment Variables
 
 ```bash
-export CSB_API_KEY=your_api_key_here
+export CODESANDBOX_API_KEY=your_codesandbox_api_key_here
 ```
 
 ### Configuration Options
 
 ```typescript
-interface CodesandboxConfig {
-  /** CodeSandbox API key - if not provided, will use CSB_API_KEY env var */
+interface CodeSandboxConfig {
+  /** CodeSandbox API key - if not provided, will use CODESANDBOX_API_KEY env var */
   apiKey?: string;
-  /** Template to use for new sandboxes (defaults to universal template) */
-  templateId?: string;
-  /** Default runtime environment */
-  runtime?: 'python' | 'node';
+  /** Project template to use */
+  template?: 'react' | 'vue' | 'angular' | 'nextjs' | 'node' | 'vanilla';
   /** Execution timeout in milliseconds */
   timeout?: number;
+  /** Enable public access to sandbox */
+  publicAccess?: boolean;
+  /** Base URL for CodeSandbox API */
+  baseUrl?: string;
 }
 ```
-
-## Features
-
-- ✅ **Code Execution** - Python and Node.js runtime support
-- ✅ **Command Execution** - Run shell commands in sandbox
-- ✅ **Filesystem Operations** - Full file system access via CodeSandbox API
-- ✅ **Template Support** - Create sandboxes from custom templates
-- ✅ **Auto Runtime Detection** - Automatically detects Python vs Node.js
-- ✅ **Development Environment** - Full development setup with package managers
-- ✅ **Persistence** - Files persist across hibernation/resume cycles
-- ✅ **Snapshot/Resume** - Fast sandbox restoration from snapshots
 
 ## API Reference
 
 ### Code Execution
 
 ```typescript
-// Execute Node.js code
+// Execute JavaScript code
 const result = await sandbox.runCode(`
-const fs = require('fs');
-const data = { timestamp: Date.now() };
-console.log('Processing data:', JSON.stringify(data));
-`);
+const data = { message: "Hello from JavaScript", timestamp: Date.now() };
+console.log(JSON.stringify(data));
+`, 'javascript');
 
-// Execute Python code  
+// Execute TypeScript code  
 const result = await sandbox.runCode(`
-import datetime
-import json
+interface Message {
+  text: string;
+  timestamp: number;
+}
 
-data = {'timestamp': datetime.datetime.now().isoformat()}
-print('Processing data:', json.dumps(data))
-`, 'python');
+const message: Message = {
+  text: "Hello from TypeScript",
+  timestamp: Date.now()
+};
+
+console.log(JSON.stringify(message));
+`, 'typescript');
 
 // Auto-detection (based on code patterns)
-const result = await sandbox.runCode('print("Auto-detected as Python")');
+const result = await sandbox.runCode('console.log("Auto-detected as JavaScript")');
 ```
 
 ### Command Execution
 
 ```typescript
-// List files
-const result = await sandbox.runCommand('ls', ['-la']);
-
-// Install Node.js packages
+// Install npm packages
 const result = await sandbox.runCommand('npm', ['install', 'lodash']);
 
-// Install Python packages
-const result = await sandbox.runCommand('pip', ['install', 'requests']);
+// Run npm scripts
+const result = await sandbox.runCommand('npm', ['run', 'build']);
 
-// Run development server
-const result = await sandbox.runCommand('npm', ['run', 'dev']);
+// Start development server
+const result = await sandbox.runCommand('npm', ['start']);
 ```
 
 ### Filesystem Operations
 
 ```typescript
 // Write file
-await sandbox.filesystem.writeFile('/project/workspace/app.js', `
-const express = require('express');
-const app = express();
-
-app.get('/', (req, res) => {
-  res.json({ message: 'Hello from CodeSandbox!' });
-});
-
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
-});
-`);
+await sandbox.filesystem.writeFile('/src/App.js', 'export default function App() { return <h1>Hello</h1>; }');
 
 // Read file
-const content = await sandbox.filesystem.readFile('/project/workspace/package.json');
+const content = await sandbox.filesystem.readFile('/src/App.js');
 
 // Create directory
-await sandbox.filesystem.mkdir('/project/workspace/src');
+await sandbox.filesystem.mkdir('/src/components');
 
 // List directory contents
-const files = await sandbox.filesystem.readdir('/project/workspace');
+const files = await sandbox.filesystem.readdir('/src');
 
 // Check if file exists
-const exists = await sandbox.filesystem.exists('/project/workspace/app.js');
+const exists = await sandbox.filesystem.exists('/src/App.js');
 
 // Remove file or directory
-await sandbox.filesystem.remove('/project/workspace/temp.txt');
+await sandbox.filesystem.remove('/src/App.js');
 ```
 
 ### Sandbox Management
 
 ```typescript
-// Get sandbox info
+// Get sandbox info (including live preview URL)
 const info = await sandbox.getInfo();
-console.log(info.id, info.provider, info.status);
+console.log(info.id, info.provider, info.url);
 
-// Resume existing sandbox
-const existing = await compute.sandbox.getById(provider, 'sandbox-id');
+// List all sandboxes
+const sandboxes = await compute.sandbox.list();
 
-// Hibernate sandbox (saves state)
-await compute.sandbox.destroy(provider, 'sandbox-id'); // Actually hibernates
+// Get existing sandbox
+const existing = await compute.sandbox.getById('sandbox-id');
 
-// Note: CodeSandbox doesn't support listing all sandboxes
-// Each sandbox is managed individually
+// Destroy sandbox
+await compute.sandbox.destroy('sandbox-id');
 ```
 
 ## Runtime Detection
 
 The provider automatically detects the runtime based on code patterns:
 
-**Python indicators:**
-- `print(` statements
-- `import` statements  
-- `def` function definitions
-- Python-specific syntax (`f"`, `__`, etc.)
+**TypeScript indicators:**
+- `interface`, `type` declarations
+- TypeScript-specific syntax (`:`, `<T>`, etc.)
+- `.ts` or `.tsx` file extensions
 
-**Default:** Node.js for all other cases
+**Default:** JavaScript for all other cases
 
 ## Error Handling
 
@@ -236,16 +181,12 @@ The provider automatically detects the runtime based on code patterns:
 try {
   const result = await sandbox.runCode('invalid code');
 } catch (error) {
-  if (error.message.includes('Missing CodeSandbox API key')) {
-    console.error('Set CSB_API_KEY environment variable');
-  } else if (error.message.includes('Invalid CodeSandbox API key format')) {
-    console.error('Check your CodeSandbox API key format');
-  } else if (error.message.includes('authentication failed')) {
-    console.error('Check your CodeSandbox API key');
-  } else if (error.message.includes('quota exceeded')) {
-    console.error('CodeSandbox usage limits reached');
-  } else if (error.message.includes('Syntax error')) {
+  if (error.message.includes('Syntax error')) {
     console.error('Code has syntax errors');
+  } else if (error.message.includes('authentication failed')) {
+    console.error('Check your CODESANDBOX_API_KEY');
+  } else if (error.message.includes('template not found')) {
+    console.error('Invalid template specified');
   }
 }
 ```
@@ -261,326 +202,323 @@ import { codesandbox } from '@computesdk/codesandbox';
 export async function POST(request: Request) {
   return handleComputeRequest({
     request,
-    provider: codesandbox({ apiKey: process.env.CSB_API_KEY })
+    provider: codesandbox({ apiKey: process.env.CODESANDBOX_API_KEY })
   });
 }
 ```
 
 ## Examples
 
-### Full-Stack Web Application
+### React Application
 
 ```typescript
-const sandbox = await compute.sandbox.create();
+// Create React sandbox
+const sandbox = await compute.sandbox.create({
+  options: { template: 'react' }
+});
 
-// Create project structure
-await sandbox.filesystem.mkdir('/project/workspace/src');
-await sandbox.filesystem.mkdir('/project/workspace/public');
+// Create a custom component
+await sandbox.filesystem.writeFile('/src/UserCard.js', `
+import React from 'react';
 
-// Create package.json
-const packageJson = {
-  "name": "my-app",
-  "version": "1.0.0",
-  "scripts": {
-    "dev": "node server.js",
-    "build": "echo 'Build complete'"
+function UserCard({ user }) {
+  return (
+    <div style={{
+      border: '1px solid #ddd',
+      borderRadius: '8px',
+      padding: '16px',
+      margin: '8px 0',
+      backgroundColor: '#f9f9f9'
+    }}>
+      <h3>{user.name}</h3>
+      <p>Email: {user.email}</p>
+      <p>Role: {user.role}</p>
+    </div>
+  );
+}
+
+export default UserCard;
+`);
+
+// Update App.js
+await sandbox.filesystem.writeFile('/src/App.js', `
+import React from 'react';
+import UserCard from './UserCard';
+
+const users = [
+  { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Developer' },
+  { id: 2, name: 'Bob Smith', email: 'bob@example.com', role: 'Designer' },
+  { id: 3, name: 'Charlie Brown', email: 'charlie@example.com', role: 'Manager' }
+];
+
+function App() {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+      <h1>Team Directory</h1>
+      <p>Built with ComputeSDK + CodeSandbox</p>
+      {users.map(user => (
+        <UserCard key={user.id} user={user} />
+      ))}
+    </div>
+  );
+}
+
+export default App;
+`);
+
+// Get the live preview URL
+const info = await sandbox.getInfo();
+console.log('Live preview:', info.url);
+```
+
+### Vue.js Application
+
+```typescript
+// Create Vue sandbox
+const sandbox = await compute.sandbox.create({
+  options: { template: 'vue' }
+});
+
+// Create a Vue component
+await sandbox.filesystem.writeFile('/src/components/TodoList.vue', `
+<template>
+  <div class="todo-app">
+    <h2>Todo List</h2>
+    <div class="add-todo">
+      <input 
+        v-model="newTodo" 
+        @keyup.enter="addTodo"
+        placeholder="Add a new todo..."
+      />
+      <button @click="addTodo">Add</button>
+    </div>
+    <ul class="todo-list">
+      <li 
+        v-for="todo in todos" 
+        :key="todo.id"
+        :class="{ completed: todo.completed }"
+      >
+        <input 
+          type="checkbox" 
+          v-model="todo.completed"
+        />
+        <span>{{ todo.text }}</span>
+        <button @click="removeTodo(todo.id)">×</button>
+      </li>
+    </ul>
+    <p>{{ completedCount }}/{{ todos.length }} completed</p>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'TodoList',
+  data() {
+    return {
+      newTodo: '',
+      todos: [
+        { id: 1, text: 'Learn Vue.js', completed: true },
+        { id: 2, text: 'Build with ComputeSDK', completed: false },
+        { id: 3, text: 'Deploy to CodeSandbox', completed: false }
+      ]
+    }
   },
-  "dependencies": {
-    "express": "^4.18.0",
-    "cors": "^2.8.5"
+  computed: {
+    completedCount() {
+      return this.todos.filter(todo => todo.completed).length;
+    }
+  },
+  methods: {
+    addTodo() {
+      if (this.newTodo.trim()) {
+        this.todos.push({
+          id: Date.now(),
+          text: this.newTodo.trim(),
+          completed: false
+        });
+        this.newTodo = '';
+      }
+    },
+    removeTodo(id) {
+      this.todos = this.todos.filter(todo => todo.id !== id);
+    }
   }
-};
+}
+</script>
 
-await sandbox.filesystem.writeFile(
-  '/project/workspace/package.json', 
-  JSON.stringify(packageJson, null, 2)
-);
+<style scoped>
+.todo-app {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.add-todo {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.todo-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.completed span {
+  text-decoration: line-through;
+  color: #888;
+}
+</style>
+`);
+
+// Update main App.vue
+await sandbox.filesystem.writeFile('/src/App.vue', `
+<template>
+  <div id="app">
+    <h1>Vue.js + ComputeSDK</h1>
+    <TodoList />
+  </div>
+</template>
+
+<script>
+import TodoList from './components/TodoList.vue'
+
+export default {
+  name: 'App',
+  components: {
+    TodoList
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 20px;
+}
+</style>
+`);
+
+console.log('Vue.js app created successfully!');
+```
+
+### Node.js API
+
+```typescript
+// Create Node.js sandbox
+const sandbox = await compute.sandbox.create({
+  options: { template: 'node' }
+});
 
 // Create Express server
-await sandbox.filesystem.writeFile('/project/workspace/server.js', `
+await sandbox.filesystem.writeFile('/index.js', `
 const express = require('express');
 const cors = require('cors');
-const app = express();
 
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
 
-// API endpoint
-app.get('/api/data', (req, res) => {
-  res.json({
-    message: 'Hello from CodeSandbox API!',
-    timestamp: new Date().toISOString(),
-    environment: 'CodeSandbox'
+// Sample data
+const products = [
+  { id: 1, name: 'Laptop', price: 999.99, category: 'Electronics' },
+  { id: 2, name: 'Mouse', price: 29.99, category: 'Electronics' },
+  { id: 3, name: 'Book', price: 19.99, category: 'Education' }
+];
+
+// Routes
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'ComputeSDK API Server',
+    endpoints: ['/api/products', '/api/products/:id']
   });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(\`Server running on port \${PORT}\`);
+app.get('/api/products', (req, res) => {
+  const { category } = req.query;
+  let result = products;
+  
+  if (category) {
+    result = products.filter(p => p.category.toLowerCase() === category.toLowerCase());
+  }
+  
+  res.json({ products: result, total: result.length });
+});
+
+app.get('/api/products/:id', (req, res) => {
+  const product = products.find(p => p.id === parseInt(req.params.id));
+  
+  if (!product) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+  
+  res.json(product);
+});
+
+app.listen(port, () => {
+  console.log(\`Server running on port \${port}\`);
 });
 `);
 
-// Create HTML file
-await sandbox.filesystem.writeFile('/project/workspace/public/index.html', `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CodeSandbox App</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        button { padding: 10px 20px; margin: 10px 0; }
-        #output { background: #f5f5f5; padding: 20px; margin: 20px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>CodeSandbox Demo App</h1>
-        <button onclick="fetchData()">Fetch API Data</button>
-        <div id="output"></div>
-    </div>
-    
-    <script>
-        async function fetchData() {
-            try {
-                const response = await fetch('/api/data');
-                const data = await response.json();
-                document.getElementById('output').innerHTML = 
-                    '<h3>API Response:</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
-            } catch (error) {
-                document.getElementById('output').innerHTML = 
-                    '<h3>Error:</h3><pre>' + error.message + '</pre>';
-            }
-        }
-    </script>
-</body>
-</html>
-`);
+// Update package.json
+const packageJson = {
+  name: 'computesdk-api',
+  version: '1.0.0',
+  main: 'index.js',
+  scripts: {
+    start: 'node index.js'
+  },
+  dependencies: {
+    express: '^4.18.0',
+    cors: '^2.8.5'
+  }
+};
+
+await sandbox.filesystem.writeFile('/package.json', JSON.stringify(packageJson, null, 2));
 
 // Install dependencies
-console.log('Installing dependencies...');
-const installResult = await sandbox.runCommand('npm', ['install'], {
-  cwd: '/project/workspace'
-});
-console.log(installResult.stdout);
+await sandbox.runCommand('npm', ['install']);
 
-// Start the server (in background)
-console.log('Starting server...');
-const serverResult = await sandbox.runCommand('npm', ['run', 'dev'], {
-  cwd: '/project/workspace',
-  timeout: 5000 // Run for 5 seconds then continue
-});
-
-console.log('Server started:', serverResult.stdout);
+console.log('Node.js API server created successfully!');
 ```
 
-### Data Processing Pipeline
+### Package Management
 
 ```typescript
-const sandbox = await compute.sandbox.create();
+// Install popular packages
+await sandbox.runCommand('npm', ['install', 'lodash', 'axios', 'date-fns']);
 
-// Create data processing project
-await sandbox.filesystem.mkdir('/project/workspace/data-pipeline');
-await sandbox.filesystem.mkdir('/project/workspace/data-pipeline/input');
-await sandbox.filesystem.mkdir('/project/workspace/data-pipeline/output');
+// Install dev dependencies
+await sandbox.runCommand('npm', ['install', '--save-dev', 'jest', 'eslint']);
 
-// Create sample data
-const csvData = `id,name,age,department,salary
-1,Alice Johnson,28,Engineering,75000
-2,Bob Smith,34,Marketing,65000
-3,Carol Davis,29,Engineering,80000
-4,David Wilson,42,Sales,70000
-5,Eva Brown,31,Engineering,85000`;
-
-await sandbox.filesystem.writeFile('/project/workspace/data-pipeline/input/employees.csv', csvData);
-
-// Create Python data processing script
-const pythonScript = `
-import pandas as pd
-import json
-import os
-from datetime import datetime
-
-# Read the data
-df = pd.read_csv('/project/workspace/data-pipeline/input/employees.csv')
-
-print("Original data:")
-print(df)
-print(f"\\nTotal employees: {len(df)}")
-
-# Process data
-summary = {
-    'total_employees': len(df),
-    'departments': df['department'].unique().tolist(),
-    'avg_salary_by_dept': df.groupby('department')['salary'].mean().to_dict(),
-    'avg_age': df['age'].mean(),
-    'salary_stats': {
-        'min': df['salary'].min(),
-        'max': df['salary'].max(),
-        'median': df['salary'].median()
-    },
-    'processed_at': datetime.now().isoformat()
-}
-
-print("\\nSummary statistics:")
-for key, value in summary.items():
-    if key != 'processed_at':
-        print(f"{key}: {value}")
-
-# Save processed data
-output_dir = '/project/workspace/data-pipeline/output'
-
-# Save summary as JSON
-with open(f'{output_dir}/summary.json', 'w') as f:
-    json.dump(summary, f, indent=2, default=str)
-
-# Save high earners (>70k)
-high_earners = df[df['salary'] > 70000]
-high_earners.to_csv(f'{output_dir}/high_earners.csv', index=False)
-
-# Save department summary
-dept_summary = df.groupby('department').agg({
-    'salary': ['mean', 'count'],
-    'age': 'mean'
-}).round(2)
-dept_summary.to_csv(f'{output_dir}/department_summary.csv')
-
-print(f"\\nProcessing complete! Files saved to {output_dir}")
-print(f"High earners: {len(high_earners)} employees")
-`;
-
-await sandbox.filesystem.writeFile('/project/workspace/data-pipeline/process.py', pythonScript);
-
-// Run the data processing
-console.log('Running data processing pipeline...');
+// Test the installed packages
 const result = await sandbox.runCode(`
-import os
-os.chdir('/project/workspace/data-pipeline')
-exec(open('process.py').read())
+const _ = require('lodash');
+const axios = require('axios');
+
+console.log('Lodash version:', _.VERSION);
+console.log('Axios available:', typeof axios);
+
+// Test lodash functionality
+const numbers = [1, 2, 3, 4, 5];
+const doubled = _.map(numbers, n => n * 2);
+console.log('Original:', numbers);
+console.log('Doubled:', doubled);
+console.log('Sum:', _.sum(doubled));
 `);
 
 console.log(result.stdout);
-
-// Read the results
-const summary = await sandbox.filesystem.readFile('/project/workspace/data-pipeline/output/summary.json');
-console.log('\\nProcessing Summary:', JSON.parse(summary));
-
-// Check output files
-const outputFiles = await sandbox.filesystem.readdir('/project/workspace/data-pipeline/output');
-console.log('\\nGenerated files:', outputFiles);
 ```
-
-### Interactive Development Environment
-
-```typescript
-const sandbox = await compute.sandbox.create();
-
-// Set up a Node.js project with live reloading
-await sandbox.filesystem.mkdir('/project/workspace/dev-env');
-
-// Create package.json with nodemon for live reloading
-const packageJson = {
-  "name": "dev-environment",
-  "version": "1.0.0",
-  "scripts": {
-    "dev": "nodemon app.js",
-    "start": "node app.js"
-  },
-  "dependencies": {
-    "express": "^4.18.0",
-    "nodemon": "^2.0.0"
-  }
-};
-
-await sandbox.filesystem.writeFile(
-  '/project/workspace/dev-env/package.json',
-  JSON.stringify(packageJson, null, 2)
-);
-
-// Create initial app
-let version = 1;
-const createApp = (version) => `
-const express = require('express');
-const app = express();
-
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Hello from Development Environment!',
-    version: ${version},
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.get('/api/status', (req, res) => {
-  res.json({
-    status: 'running',
-    uptime: process.uptime(),
-    version: ${version}
-  });
-});
-
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(\`[v${version}] Server running on port \${PORT}\`);
-});
-`;
-
-await sandbox.filesystem.writeFile('/project/workspace/dev-env/app.js', createApp(version));
-
-// Install dependencies
-console.log('Setting up development environment...');
-const installResult = await sandbox.runCommand('npm', ['install'], {
-  cwd: '/project/workspace/dev-env'
-});
-
-console.log('Dependencies installed:', installResult.success);
-
-// Start development server
-console.log('Starting development server...');
-const startResult = await sandbox.runCommand('npm', ['run', 'dev'], {
-  cwd: '/project/workspace/dev-env',
-  timeout: 3000 // Let it start up
-});
-
-// Simulate live development - make changes to the app
-for (let i = 2; i <= 4; i++) {
-  console.log(`\\nUpdating app to version ${i}...`);
-  
-  await sandbox.filesystem.writeFile('/project/workspace/dev-env/app.js', createApp(i));
-  
-  // Give nodemon time to restart
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  console.log(`App updated to version ${i} - nodemon should auto-restart`);
-}
-
-console.log('\\nDevelopment simulation complete!');
-```
-
-## Best Practices
-
-1. **Resource Management**: Use hibernation instead of destroying sandboxes to preserve state
-2. **Error Handling**: Use try-catch blocks for robust error handling
-3. **Timeouts**: Set appropriate timeouts for long-running tasks
-4. **File Organization**: Organize files in `/project/workspace/` directory
-5. **Template Usage**: Use appropriate templates for your project type
-6. **API Key Security**: Never commit API keys to version control
-7. **Snapshot Management**: Leverage CodeSandbox's snapshot/resume capabilities
-
-## Limitations
-
-- **Memory Limits**: Subject to CodeSandbox sandbox memory constraints
-- **Network Access**: Limited outbound network access in some plans
-- **Execution Time**: Subject to CodeSandbox timeout limits
-- **Template Dependency**: Sandbox behavior depends on chosen template
-
-## Support
-
-- [CodeSandbox Documentation](https://codesandbox.io/docs/sdk)
-- [ComputeSDK Issues](https://github.com/computesdk/computesdk/issues)
-- [CodeSandbox Support](https://codesandbox.io/support)
-
-## License
-
-MIT

@@ -1,11 +1,9 @@
 ---
-title: Astro
-description: Use ComputeSDK in Astro applications
-sidebar:
-    order: 4
+title: "Astro"
+description: ""
 ---
 
-# ComputeSDK + Astro
+# Astro
 
 Use ComputeSDK to execute code in secure sandboxes from your Astro API endpoints.
 
@@ -97,7 +95,7 @@ export const POST: APIRoute = async ({ request }) => {
     
     // Set provider
     compute.setConfig({ 
-      defaultProvider: e2b({ apiKey: import.meta.env.E2B_API_KEY! }) 
+      provider: e2b({ apiKey: import.meta.env.E2B_API_KEY! }) 
     });
     
     // Create sandbox and execute code
@@ -361,7 +359,7 @@ export const POST: APIRoute = async ({ request }) => {
     const { csvData } = await request.json();
     
     compute.setConfig({ 
-      defaultProvider: e2b({ apiKey: import.meta.env.E2B_API_KEY! }) 
+      provider: e2b({ apiKey: import.meta.env.E2B_API_KEY! }) 
     });
     
     const sandbox = await compute.sandbox.create({});
@@ -621,6 +619,106 @@ print(json.dumps(result))
 };
 ```
 
+### Server-Side Rendering with Data
+
+```astro
+---
+// src/pages/ssr-demo.astro
+import { compute } from 'computesdk';
+import { e2b } from '@computesdk/e2b';
+
+let data;
+let error;
+
+try {
+  compute.setConfig({ 
+    provider: e2b({ apiKey: import.meta.env.E2B_API_KEY! }) 
+  });
+  
+  const sandbox = await compute.sandbox.create({});
+  
+  // Generate data on the server
+  const result = await sandbox.runCode(`
+import json
+import random
+
+# Generate sample data
+products = []
+for i in range(5):
+    products.append({
+        'id': i + 1,
+        'name': f'Product {i + 1}',
+        'price': round(random.uniform(10, 100), 2),
+        'category': random.choice(['Electronics', 'Books', 'Clothing'])
+    })
+
+print(json.dumps(products))
+  `);
+  
+  data = JSON.parse(result.stdout);
+  await compute.sandbox.destroy(sandbox.sandboxId);
+} catch (err) {
+  error = err.message;
+}
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SSR Demo</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Server-Side Rendered Data</h1>
+    
+    {error ? (
+      <div class="error">
+        Error: {error}
+      </div>
+    ) : (
+      <div class="products">
+        {data.map((product) => (
+          <div class="product-card">
+            <h3>{product.name}</h3>
+            <p>Category: {product.category}</p>
+            <p>Price: ${product.price}</p>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+  
+  <style>
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    
+    .product-card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1rem;
+      background: #f9f9f9;
+    }
+    
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 1rem;
+      border-radius: 4px;
+    }
+  </style>
+</body>
+</html>
+```
+
 ## Best Practices
 
 ### 1. Environment Variables
@@ -703,6 +801,135 @@ export const withSandbox = async <T>(
     await compute.sandbox.destroy(sandbox.sandboxId);
   }
 };
+```
+
+### 5. Reusable Components
+
+```astro
+---
+// src/components/CodeEditor.astro
+const { initialCode = 'print("Hello World!")', id = 'code-editor' } = Astro.props;
+---
+
+<div class="code-editor" id={id}>
+  <div class="toolbar">
+    <select class="runtime-select">
+      <option value="python">Python</option>
+      <option value="node">Node.js</option>
+    </select>
+    <button class="execute-btn">Execute Code</button>
+  </div>
+  
+  <textarea class="code-input" rows="10">{initialCode}</textarea>
+  
+  <div class="output-container" style="display: none;">
+    <h4>Output:</h4>
+    <pre class="output"></pre>
+  </div>
+</div>
+
+<script define:vars={{ id }}>
+  const editor = document.getElementById(id);
+  const executeBtn = editor.querySelector('.execute-btn');
+  const codeInput = editor.querySelector('.code-input');
+  const runtimeSelect = editor.querySelector('.runtime-select');
+  const outputContainer = editor.querySelector('.output-container');
+  const outputPre = editor.querySelector('.output');
+
+  executeBtn.addEventListener('click', async () => {
+    const code = codeInput.value;
+    const runtime = runtimeSelect.value;
+    
+    if (!code.trim()) return;
+
+    executeBtn.disabled = true;
+    executeBtn.textContent = 'Executing...';
+    outputContainer.style.display = 'none';
+
+    try {
+      const response = await fetch('/api/compute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'compute.sandbox.runCode',
+          code,
+          runtime
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        outputPre.textContent = data.result.stdout;
+      } else {
+        outputPre.textContent = `Error: ${data.error}`;
+      }
+      
+      outputContainer.style.display = 'block';
+    } catch (error) {
+      outputPre.textContent = `Error: ${error.message}`;
+      outputContainer.style.display = 'block';
+    } finally {
+      executeBtn.disabled = false;
+      executeBtn.textContent = 'Execute Code';
+    }
+  });
+</script>
+
+<style>
+  .code-editor {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem;
+    background: white;
+  }
+  
+  .toolbar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .runtime-select, .execute-btn {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .execute-btn {
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .execute-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .code-input {
+    width: 100%;
+    font-family: 'Courier New', monospace;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }
+  
+  .output-container {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+  
+  .output {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0;
+  }
+</style>
 ```
 
 ## Configuration

@@ -19,7 +19,7 @@ export default defineConfig({
     },
   },
   redirects: {
-    '/docs': '/docs/start/introduction'
+    '/docs': '/docs/getting-started/introduction'
   },
   integrations: [starlight({
     title: 'ComputeSDK',
@@ -120,7 +120,7 @@ export default defineConfig({
           // },
           {
             label: 'Docs',
-            href: '/docs/start/introduction',
+            href: '/docs/getting-started/introduction',
           },
           {
             label:'Blog',

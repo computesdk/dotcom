@@ -1,15 +1,13 @@
 ---
-title: Installation
-description: Install ComputeSDK and set up providers
-sidebar:
-    order: 3
+title: "Installation"
+description: ""
 ---
 
-## Installation
+# Installation
 
 ComputeSDK provides a unified abstraction layer for executing code in secure, isolated sandboxed environments across multiple cloud providers.
 
-### Core SDK
+## Core SDK
 
 Install the core ComputeSDK package:
 
@@ -17,7 +15,7 @@ Install the core ComputeSDK package:
 npm install computesdk
 ```
 
-### Provider Packages
+## Provider Packages
 
 ComputeSDK is modular - install only the providers you need:
 
@@ -89,3 +87,4 @@ CodeSandbox provides collaborative development environments:
 ```bash
 export CSB_API_KEY=your_codesandbox_api_key_here
 ```
+

@@ -1,11 +1,11 @@
 ---
-title: Daytona
-description: Execute code in Daytona development workspaces
+title: "Daytona"
+description: ""
 sidebar:
-    order: 1
+  order: 3
 ---
 
-# @computesdk/daytona
+# Daytona
 
 Daytona provider for ComputeSDK - Execute code in Daytona development workspaces.
 
@@ -20,16 +20,19 @@ npm install @computesdk/daytona
 ### With ComputeSDK
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { daytona } from '@computesdk/daytona';
 
 // Set as default provider
-compute.setConfig({ 
+const compute = createCompute({ 
   defaultProvider: daytona({ apiKey: process.env.DAYTONA_API_KEY }) 
 });
 
 // Create sandbox
 const sandbox = await compute.sandbox.create();
+
+// Get instance
+const instance = sandbox.getInstance();
 
 // Execute code
 const result = await sandbox.runCode('print("Hello from Daytona!")');
@@ -51,7 +54,7 @@ const provider = daytona({
 });
 
 // Use with compute singleton
-const sandbox = await compute.sandbox.create({ defaultProvider: provider });
+const sandbox = await compute.sandbox.create({ provider });
 ```
 
 ## Configuration
@@ -72,15 +75,10 @@ interface DaytonaConfig {
   runtime?: 'python' | 'node';
   /** Execution timeout in milliseconds */
   timeout?: number;
+  /** Base URL for Daytona API */
+  baseUrl?: string;
 }
 ```
-
-## Features
-
-- ✅ **Code Execution** - Python and Node.js runtime support
-- ✅ **Command Execution** - Run shell commands in workspace
-- ✅ **Filesystem Operations** - Full file system access
-- ✅ **Auto Runtime Detection** - Automatically detects Python vs Node.js
 
 ## API Reference
 
@@ -147,13 +145,13 @@ const info = await sandbox.getInfo();
 console.log(info.id, info.provider, info.status);
 
 // List all sandboxes
-const sandboxes = await compute.sandbox.list(provider);
+const sandboxes = await compute.sandbox.list();
 
 // Get existing sandbox
-const existing = await compute.sandbox.getById(provider, 'sandbox-id');
+const existing = await compute.sandbox.getById('sandbox-id');
 
 // Destroy sandbox
-await compute.sandbox.destroy(provider, 'sandbox-id');
+await compute.sandbox.destroy('sandbox-id');
 ```
 
 ## Runtime Detection
@@ -251,4 +249,55 @@ with open('/workspace/result.json', 'w') as f:
 // Read result
 const resultData = await sandbox.filesystem.readFile('/workspace/result.json');
 console.log(JSON.parse(resultData));
+```
+
+### Development Workspace
+
+```typescript
+// Setup project structure
+await sandbox.filesystem.mkdir('/workspace/project');
+await sandbox.filesystem.mkdir('/workspace/project/src');
+await sandbox.filesystem.mkdir('/workspace/project/data');
+
+// Create configuration
+const config = {
+  name: "Data Analysis Project",
+  version: "1.0.0",
+  dependencies: ["pandas", "numpy"]
+};
+
+await sandbox.filesystem.writeFile(
+  '/workspace/project/config.json',
+  JSON.stringify(config, null, 2)
+);
+
+// Install dependencies
+await sandbox.runCommand('pip', ['install'] + config.dependencies);
+
+// Create and run analysis script
+const analysisCode = `
+import json
+import pandas as pd
+
+# Load config
+with open('/workspace/project/config.json', 'r') as f:
+    config = json.load(f)
+
+print(f"Project: {config['name']}")
+
+# Generate sample data
+data = pd.DataFrame({
+    'id': range(1, 101),
+    'value': [i * 2 for i in range(1, 101)]
+})
+
+# Save data
+data.to_csv('/workspace/project/data/sample.csv', index=False)
+print(f"Generated {len(data)} records")
+`;
+
+await sandbox.filesystem.writeFile('/workspace/project/src/analyze.py', analysisCode);
+
+const result = await sandbox.runCode('python /workspace/project/src/analyze.py');
+console.log(result.stdout);
 ```

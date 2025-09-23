@@ -1,15 +1,13 @@
 ---
-title: Quick Start
-description: Get up and running with ComputeSDK
-sidebar:
-    order: 2
+title: "Quick Start"
+description: ""
 ---
 
-## Quick Start
+# Quick Start
 
 Welcome to ComputeSDK! This guide will get you up and running with secure, isolated code execution across multiple cloud providers using a unified TypeScript interface.
 
-### Installation
+## Installation
 
 ```bash
 # Core SDK
@@ -26,19 +24,22 @@ npm install @computesdk/codesandbox # CodeSandbox provider
 npm install @computesdk/ui         # React hooks and utilities
 ```
 
-### Basic Usage
+## Basic Usage
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { e2b } from '@computesdk/e2b';
 
 // Set default provider
-compute.setConfig({ 
+const compute = createCompute({ 
   defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
 });
 
 // Create a sandbox
 const sandbox = await compute.sandbox.create();
+
+// Get instance
+const instance = sandbox.getInstance();
 
 // Execute code
 const result = await sandbox.runCode('print("Hello World!")');
@@ -48,19 +49,22 @@ console.log(result.stdout); // "Hello World!"
 await compute.sandbox.destroy(sandbox.sandboxId);
 ```
 
-### Provider-Specific Setup
+## Provider-Specific Setup
 
-#### E2B - Full Development Environment
+### E2B - Full Development Environment
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { e2b } from '@computesdk/e2b';
 
-compute.setConfig({ 
+const compute = createCompute({ 
   defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
 });
 
 const sandbox = await compute.sandbox.create();
+
+// Get instance
+const instance = sandbox.getInstance();
 
 // Execute Python with data science libraries
 const result = await sandbox.runCode(`
@@ -76,17 +80,20 @@ print(f"Sum: {df.sum().sum()}")
 console.log(result.stdout);
 ```
 
-#### Vercel - Serverless Execution
+### Vercel - Serverless Execution
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { vercel } from '@computesdk/vercel';
 
-compute.setConfig({ 
+const compute = createCompute({ 
   defaultProvider: vercel({ runtime: 'node' }) 
 });
 
 const sandbox = await compute.sandbox.create();
+
+// Get instance
+const instance = sandbox.getInstance();
 
 // Execute Node.js or Python
 const result = await sandbox.runCode(`
@@ -97,17 +104,20 @@ console.log('Hello from Vercel!');
 console.log(result.stdout);
 ```
 
-#### Daytona - Development Workspaces
+### Daytona - Development Workspaces
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { daytona } from '@computesdk/daytona';
 
-compute.setConfig({ 
+const compute = createCompute({ 
   defaultProvider: daytona({ apiKey: process.env.DAYTONA_API_KEY }) 
 });
 
 const sandbox = await compute.sandbox.create();
+
+// Get instance
+const instance = sandbox.getInstance();
 
 // Execute in development workspace
 const result = await sandbox.runCode(`
@@ -119,13 +129,13 @@ print(f'Python version: {sys.version}')
 console.log(result.stdout);
 ```
 
-#### Modal - GPU-Accelerated Python Workloads
+### Modal - GPU-Accelerated Python Workloads
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { modal } from '@computesdk/modal';
 
-compute.setConfig({ 
+const compute = createCompute({ 
   defaultProvider: modal({ 
     tokenId: process.env.MODAL_TOKEN_ID,
     tokenSecret: process.env.MODAL_TOKEN_SECRET 
@@ -133,6 +143,9 @@ compute.setConfig({
 });
 
 const sandbox = await compute.sandbox.create();
+
+// Get instance
+const instance = sandbox.getInstance();
 
 // Execute GPU-accelerated Python workloads
 const result = await sandbox.runCode(`
@@ -152,19 +165,22 @@ else:
 console.log(result.stdout);
 ```
 
-#### CodeSandbox - Collaborative Sandboxes
+### CodeSandbox - Collaborative Sandboxes
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { codesandbox } from '@computesdk/codesandbox';
 
-compute.setConfig({ 
+const compute = createCompute({ 
   defaultProvider: codesandbox({ 
     apiKey: process.env.CSB_API_KEY 
   }) 
 });
 
 const sandbox = await compute.sandbox.create();
+
+// Get instance
+const instance = sandbox.getInstance();
 
 // Execute in collaborative environment
 const result = await sandbox.runCode(`
@@ -178,7 +194,7 @@ console.log(JSON.stringify(data, null, 2));
 console.log(result.stdout);
 ```
 
-### Filesystem Operations
+## Filesystem Operations
 
 ```typescript
 // Write file
@@ -200,7 +216,7 @@ const exists = await sandbox.filesystem.exists('/tmp/hello.py');
 await sandbox.filesystem.remove('/tmp/hello.py');
 ```
 
-### Shell Commands
+## Shell Commands
 
 ```typescript
 // Run shell command
@@ -211,7 +227,7 @@ console.log(result.stdout);
 const result2 = await sandbox.runCommand('pwd', [], { cwd: '/tmp' });
 ```
 
-### Error Handling
+## Error Handling
 
 ```typescript
 try {
@@ -222,3 +238,4 @@ try {
   // Handle specific error types as needed
 }
 ```
+
