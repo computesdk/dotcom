@@ -1,23 +1,9 @@
 ---
-<<<<<<< HEAD:src/content/docs/docs/providers/blaxel.md
 title: "Blaxel"
 description: ""
 sidebar:
   order: 1
 ---
-
-# Blaxel
-
-Blaxel provider for ComputeSDK 
-
-=======
-title: Blaxel
-description: Execute code and commands in secure Blaxel sandboxes with 25ms cold starts and real-time preview URLs
-sidebar:
-    order: 1
----
-
->>>>>>> origin/main:src/content/docs/providers/blaxel.md
 # @computesdk/blaxel
 
 Blaxel provider for ComputeSDK - Execute code in secure Blaxel sandboxes with 25ms cold starts and real-time preview URLs.
