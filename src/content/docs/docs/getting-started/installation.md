@@ -20,6 +20,9 @@ npm install computesdk
 ComputeSDK is modular - install only the providers you need:
 
 ```bash
+# Blaxel provider - AI-generated code execution
+npm install @computesdk/blaxel
+
 # E2B provider - Full development environment
 npm install @computesdk/e2b
 
@@ -40,6 +43,15 @@ npm install @computesdk/ui
 ```
 
 ## Provider Setup
+
+### Blaxel - AI-generated code execution
+
+Blaxel provides intelligent code execution with AI assistance:
+
+```bash
+export BLAXEL_API_KEY=your_blaxel_api_key_here
+export BLAXEL_WORKSPACE=your_workspace_here
+```
 
 ### E2B - Full Development Environment
 

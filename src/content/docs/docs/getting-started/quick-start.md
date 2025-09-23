@@ -14,6 +14,7 @@ Welcome to ComputeSDK! This guide will get you up and running with secure, isola
 npm install computesdk
 
 # Provider packages (install only what you need)
+npm install @computesdk/blaxel        # Blaxel provider
 npm install @computesdk/e2b        # E2B provider
 npm install @computesdk/vercel     # Vercel provider  
 npm install @computesdk/daytona    # Daytona provider
