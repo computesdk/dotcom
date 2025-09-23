@@ -2,7 +2,7 @@
 title: CodeSandbox
 description: Execute code in secure CodeSandbox environments with full filesystem and development environment support
 sidebar:
-    order: 3
+    order: 2
 ---
 
 # @computesdk/codesandbox

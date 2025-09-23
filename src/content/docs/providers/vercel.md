@@ -2,7 +2,7 @@
 title: Vercel
 description: Execute Node.js and Python code in secure Vercel sandboxes
 sidebar:
-    order: 3
+    order: 6
 ---
 
 # @computesdk/vercel
