@@ -15,7 +15,6 @@ Use ComputeSDK to execute code in secure sandboxes from your Astro API endpoints
 npm install computesdk
 
 # Provider packages (install what you need)
-npm install @computesdk/blaxel     # Blaxel provider
 npm install @computesdk/e2b        # E2B provider
 npm install @computesdk/vercel     # Vercel provider  
 npm install @computesdk/daytona    # Daytona provider
@@ -26,10 +25,6 @@ npm install @computesdk/daytona    # Daytona provider
 Create a `.env` file and add your provider credentials:
 
 ```bash
-# Blaxel (get from app.blaxel.ai)
-BLAXEL_API_KEY=blaxel_your_api_key_here
-BLAXEL_WORKSPACE=your_workspace_here
-
 # E2B (get from e2b.dev)
 E2B_API_KEY=e2b_your_api_key_here
 

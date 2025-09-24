@@ -4,7 +4,8 @@ description: ""
 sidebar:
   order: 1
 ---
-# @computesdk/blaxel
+
+# Blaxel
 
 Blaxel provider for ComputeSDK - Execute code in secure Blaxel sandboxes with 25ms cold starts and real-time preview URLs.
 
@@ -19,11 +20,11 @@ npm install @computesdk/blaxel
 ### With ComputeSDK
 
 ```typescript
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { blaxel } from '@computesdk/blaxel';
 
-// Set as default provider
-compute.setConfig({ 
+// Create compute instance
+const compute = createCompute({ 
   provider: blaxel({ 
     apiKey: process.env.BLAXEL_API_KEY,
     workspace: process.env.BLAXEL_WORKSPACE 
