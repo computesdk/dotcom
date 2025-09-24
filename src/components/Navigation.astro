@@ -1,0 +1,84 @@
+---
+// Navigation component for homepage
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+  <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a href="/" class="flex items-center space-x-2 no-underline">
+          <img class="h-8 w-auto" src="/hv_main_logo_light.svg" alt="ComputeSDK" />
+        </a>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-8">
+          <a href="/docs/start/introduction" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 px-3 py-2 text-sm font-medium no-underline transition-colors">
+            Docs
+          </a>
+          <a href="/pricing" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 px-3 py-2 text-sm font-medium no-underline transition-colors">
+            Pricing
+          </a>
+          <a href="/contact" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 px-3 py-2 text-sm font-medium no-underline transition-colors">
+            Contact
+          </a>
+          <a href="/blog" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 px-3 py-2 text-sm font-medium no-underline transition-colors">
+            Blog
+          </a>
+          <a href="https://github.com/computesdk/computesdk" target="_blank" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 px-3 py-2 text-sm font-medium no-underline transition-colors">
+            GitHub
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500" aria-controls="mobile-menu" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu md:hidden hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 dark:border-gray-700">
+        <a href="/docs/start/introduction" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 block px-3 py-2 text-base font-medium no-underline transition-colors">
+          Docs
+        </a>
+        <a href="/pricing" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 block px-3 py-2 text-base font-medium no-underline transition-colors">
+          Pricing
+        </a>
+        <a href="/contact" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 block px-3 py-2 text-base font-medium no-underline transition-colors">
+          Contact
+        </a>
+        <a href="/blog" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 block px-3 py-2 text-base font-medium no-underline transition-colors">
+          Blog
+        </a>
+        <a href="https://github.com/computesdk/computesdk" target="_blank" class="text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 block px-3 py-2 text-base font-medium no-underline transition-colors">
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Mobile menu toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', function() {
+        const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+        mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
+        mobileMenu.classList.toggle('hidden');
+      });
+    }
+  });
+</script>

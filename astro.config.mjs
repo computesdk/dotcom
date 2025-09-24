@@ -18,6 +18,9 @@ export default defineConfig({
       }
     },
   },
+  redirects: {
+    '/docs': '/docs/getting-started/introduction'
+  },
   integrations: [starlight({
     title: 'ComputeSDK',
 		    favicon: '/favicon.ico',
@@ -107,17 +110,25 @@ export default defineConfig({
     plugins: 
     [starlightThemeNova({
       nav: [
+          // {
+          //   label:'Features',
+          //   href: '/features'
+          // },  
+          // {
+          //   label:'Pricing',
+          //   href: '/pricing'
+          // },
           {
             label: 'Docs',
-            href: '/start/introduction',
-          },
-          {
-            label:'Contact',
-            href: '/contact'
+            href: '/docs/getting-started/introduction',
           },
           {
             label:'Blog',
             href: '/blog'
+          },
+          {
+            label:'Contact',
+            href: '/contact'
           },
         ],
          }),
@@ -126,28 +137,28 @@ export default defineConfig({
           description: 'A secure, local-first SDK that allows you to run code in isolated sandbox environments',
           details: 'ComputeSDK provides a unified interface for executing code across multiple cloud providers and local environments. Perfect for AI applications, educational platforms, and any system requiring secure code execution.',
           customSets: [
-            {
-              label: 'Getting Started',
-              description: 'Essential documentation for new users',
-              paths: ['start/**']
-            },
-            {
-              label: 'SDK Reference',
-              description: 'Complete API reference and technical documentation',
-              paths: ['reference/**']
-            },
-            {
-              label: 'Provider Integration',
-              description: 'Documentation for supported cloud providers',
-              paths: ['providers/**']
-            },
-            {
-              label: 'Framework Guides',
-              description: 'Integration guides for popular frameworks',
-              paths: ['frameworks/**']
-            }
+             {
+               label: 'Getting Started',
+               description: 'Essential documentation for new users',
+               paths: ['docs/start/**']
+             },
+             {
+               label: 'SDK Reference',
+               description: 'Complete API reference and technical documentation',
+               paths: ['docs/reference/**']
+             },
+             {
+               label: 'Provider Integration',
+               description: 'Documentation for supported cloud providers',
+               paths: ['docs/providers/**']
+             },
+             {
+               label: 'Framework Guides',
+               description: 'Integration guides for popular frameworks',
+               paths: ['docs/frameworks/**']
+             }
           ],
-          promote: ['start/introduction*', 'start/quick-start*', 'reference/index*'],
+           promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
           exclude: ['contact*'],
           minify: {
             note: true,
@@ -158,31 +169,31 @@ export default defineConfig({
         })],
       sidebar: [
           { label: 'Examples', link: 'https://github.com/computesdk/computesdk/tree/main/examples', attrs: { target: '_blank' } },
-          { label: 'LLM Documentation', link: '/llm-docs' },
+          { label: 'LLM Documentation', link: '/docs/llm-docs' },
           // { label: 'Server', link: '/server' },
           {
               label: 'Getting Started',
-              autogenerate: { directory: 'start' },
+              autogenerate: { directory: 'docs/start' },
           },
           {
               label: 'Providers',
-              autogenerate: { directory: 'providers' },
+              autogenerate: { directory: 'docs/providers' },
           },
           {
               label: 'Frameworks',
-              autogenerate: { directory: 'frameworks' },
+              autogenerate: { directory: 'docs/frameworks' },
           },
           {
               label: 'SDK Reference',
               items: [
-                  { label: 'Overview', link: '/reference/' },
-                  { label: 'UI Package', link: '/reference/ui' },
-                  { label: 'Configuration', link: '/reference/configuration' },
-                  { label: 'Code Execution', link: '/reference/code-execution' },
-                  { label: 'Sandbox Management', link: '/reference/sandbox-management' },
-                  { label: 'Filesystem', link: '/reference/filesystem' },
-                  { label: 'Terminal', link: '/reference/terminal' },
-                  { label: 'API Integration', link: '/reference/api-integration' },
+                  { label: 'Overview', link: '/docs/reference/' },
+                  { label: 'UI Package', link: '/docs/reference/ui' },
+                  { label: 'Configuration', link: '/docs/reference/configuration' },
+                  { label: 'Code Execution', link: '/docs/reference/code-execution' },
+                  { label: 'Sandbox Management', link: '/docs/reference/sandbox-management' },
+                  { label: 'Filesystem', link: '/docs/reference/filesystem' },
+                  { label: 'Terminal', link: '/docs/reference/terminal' },
+                  { label: 'API Integration', link: '/docs/reference/api-integration' },
               ],
           },
       ],

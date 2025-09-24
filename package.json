@@ -7,13 +7,15 @@
     "start": "serve dist -l 4321",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "sync:docs": "node scripts/fetchDocs.js"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.5.0",
     "@astrojs/starlight": "^0.34.6",
     "@astrojs/starlight-tailwind": "^4.0.1",
+    "@octokit/rest": "^22.0.0",
     "@tailwindcss/vite": "^4.1.11",
     "astro": "^5.6.1",
     "serve": "^14.2.5",
