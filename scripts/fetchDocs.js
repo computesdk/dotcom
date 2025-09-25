@@ -32,10 +32,10 @@ function ensureFrontmatter(markdown, fileName, repoPath, orderIndex = null) {
 
   let frontmatter = `---\ntitle: "${title}"\ndescription: ""`;
   
-  // Add sidebar order for providers directory
-  if (repoPath.includes('providers') && orderIndex !== null) {
-    frontmatter += `\nsidebar:\n  order: ${orderIndex}`;
-  }
+// Add sidebar order for providers and getting-started
+if ((repoPath.includes('providers') || repoPath.includes('getting-started')) && orderIndex !== null) {
+  frontmatter += `\nsidebar:\n  order: ${orderIndex}`;
+}
   
   frontmatter += `\n---\n\n`;
   return frontmatter + content;
@@ -49,6 +49,16 @@ async function fetchFolder(repoPath, localPath) {
     path: repoPath,
     ref: "main", // branch
   });
+
+  // Sort getting-started alphabetically, but keep introduction.md first
+  if (repoPath.includes('getting-started')) {
+    data.sort((a, b) => {
+      if (a.name === 'introduction.md') return -1;
+      if (b.name === 'introduction.md') return 1;
+      return a.name.localeCompare(b.name);
+    });
+  }
+  
 
   // Sort providers alphabetically, but keep more.md last
   if (repoPath.includes('providers')) {
@@ -72,12 +82,18 @@ async function fetchFolder(repoPath, localPath) {
       const response = await fetch(item.download_url);
       let markdown = await response.text();
 
-      // Calculate order index for providers (more.md gets 10, others get 1,2,3...)
       let orderIndex = null;
+
+      if (repoPath.includes('getting-started')) {
+        // introduction.md = 1, others follow alphabetical order from your earlier sort
+        orderIndex = item.name === 'introduction.md' ? 1 : i + 1;
+      }
+      
       if (repoPath.includes('providers')) {
+        // alphabetical from earlier sort, but more.md last (give it a high order)
         orderIndex = item.name === 'more.md' ? 30 : i + 1;
       }
-
+      
       // Ensure Astro frontmatter exists
       markdown = ensureFrontmatter(markdown, item.name, item.path, orderIndex);
 
