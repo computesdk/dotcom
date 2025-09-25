@@ -3,8 +3,6 @@ title: "Quick Start"
 description: ""
 ---
 
-# Quick Start
-
 Welcome to ComputeSDK! This guide will get you up and running with secure, isolated code execution across multiple cloud providers using a unified TypeScript interface.
 
 ## Installation
@@ -238,4 +236,3 @@ try {
   // Handle specific error types as needed
 }
 ```
-

@@ -3,8 +3,6 @@ title: "Next.js"
 description: ""
 ---
 
-# Next.js
-
 Use ComputeSDK to execute code in secure sandboxes from your Next.js API routes.
 
 ## Setup

@@ -3,8 +3,6 @@ title: "Installation"
 description: ""
 ---
 
-# Installation
-
 ComputeSDK provides a unified abstraction layer for executing code in secure, isolated sandboxed environments across multiple cloud providers.
 
 ## Core SDK
@@ -87,4 +85,3 @@ CodeSandbox provides collaborative development environments:
 ```bash
 export CSB_API_KEY=your_codesandbox_api_key_here
 ```
-

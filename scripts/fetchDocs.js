@@ -1,5 +1,6 @@
 // scripts/fetchDocs.js
 import { Octokit } from "@octokit/rest";
+import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 
@@ -13,7 +14,7 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN, // required if repo is private
 });
 
-// Ensure frontmatter exists
+// Ensure frontmatter exists and remove duplicate title heading
 function ensureFrontmatter(markdown, fileName, repoPath, orderIndex = null) {
   if (markdown.startsWith("---")) {
     return markdown; // already has frontmatter
@@ -23,6 +24,12 @@ function ensureFrontmatter(markdown, fileName, repoPath, orderIndex = null) {
   const headingMatch = markdown.match(/^#\s+(.*)/m);
   const title = headingMatch ? headingMatch[1].trim() : fileName.replace(/\.md$/, "");
 
+  // Remove the first heading from markdown content to avoid duplication
+  let content = markdown;
+  if (headingMatch) {
+    content = markdown.replace(/^#\s+.*$/m, '').trim();
+  }
+
   let frontmatter = `---\ntitle: "${title}"\ndescription: ""`;
   
   // Add sidebar order for providers directory
@@ -31,7 +38,7 @@ function ensureFrontmatter(markdown, fileName, repoPath, orderIndex = null) {
   }
   
   frontmatter += `\n---\n\n`;
-  return frontmatter + markdown;
+  return frontmatter + content;
 }
 
 // Recursive function to sync files
@@ -95,6 +102,15 @@ async function main() {
   await fetchFolder(repoDocsPath, localDocsPath);
 
   console.log("🎉 Docs synced successfully from GitHub (with frontmatter)!");
+
+  // Build site to update llm.txt files
+  console.log("🔧 Building site to update llm.txt files...");
+  try {
+    execSync('npm run build', { stdio: 'inherit' });
+    console.log("✅ Site built successfully! llm.txt files updated.");
+  } catch (buildError) {
+    console.warn("⚠️ Build failed, but docs were synced:", buildError.message);
+  }
 }
 
 main().catch(err => {

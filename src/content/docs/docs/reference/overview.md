@@ -3,8 +3,6 @@ title: "Overview"
 description: ""
 ---
 
-# Overview
-
 Complete reference documentation for ComputeSDK's APIs and interfaces.
 
 ## What is ComputeSDK?

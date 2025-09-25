@@ -3,8 +3,6 @@ title: "Remix"
 description: ""
 ---
 
-# Remix
-
 Use ComputeSDK to execute code in secure sandboxes from your Remix action and loader functions.
 
 ## Setup

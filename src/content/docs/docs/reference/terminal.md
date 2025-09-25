@@ -3,8 +3,6 @@ title: "Terminal"
 description: ""
 ---
 
-# Terminal
-
 ComputeSDK provides full terminal access for interactive shell sessions, command execution, and process management. Create persistent terminal sessions, handle input/output streams, and manage multiple shell environments.
 
 ## Quick Start

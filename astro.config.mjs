@@ -19,7 +19,8 @@ export default defineConfig({
     },
   },
   redirects: {
-    '/docs': '/docs/getting-started/introduction'
+    '/docs': '/docs/getting-started/introduction',
+    '/docs/reference': '/docs/reference/overview',
   },
   integrations: [starlight({
     title: 'ComputeSDK',
@@ -140,22 +141,22 @@ export default defineConfig({
              {
                label: 'Getting Started',
                description: 'Essential documentation for new users',
-               paths: ['docs/start/**']
+               paths: ['docs/docs/getting-started/**']
              },
              {
                label: 'SDK Reference',
                description: 'Complete API reference and technical documentation',
-               paths: ['docs/reference/**']
+               paths: ['docs/docs/reference/**']
              },
              {
                label: 'Provider Integration',
                description: 'Documentation for supported cloud providers',
-               paths: ['docs/providers/**']
+               paths: ['docs/docs/providers/**']
              },
              {
                label: 'Framework Guides',
                description: 'Integration guides for popular frameworks',
-               paths: ['docs/frameworks/**']
+               paths: ['docs/docs/frameworks/**']
              }
           ],
            promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
@@ -173,7 +174,7 @@ export default defineConfig({
           // { label: 'Server', link: '/server' },
           {
               label: 'Getting Started',
-              autogenerate: { directory: 'docs/start' },
+              autogenerate: { directory: 'docs/getting-started' },
           },
           {
               label: 'Providers',
@@ -186,7 +187,7 @@ export default defineConfig({
           {
               label: 'SDK Reference',
               items: [
-                  { label: 'Overview', link: '/docs/reference/' },
+                  { label: 'Overview', link: '/docs/reference/overview' },
                   { label: 'UI Package', link: '/docs/reference/ui' },
                   { label: 'Configuration', link: '/docs/reference/configuration' },
                   { label: 'Code Execution', link: '/docs/reference/code-execution' },

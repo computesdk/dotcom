@@ -5,8 +5,6 @@ sidebar:
   order: 7
 ---
 
-# Vercel
-
 Vercel provider for ComputeSDK - Execute code in globally distributed serverless environments.
 
 ## Installation
