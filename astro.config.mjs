@@ -188,7 +188,7 @@ export default defineConfig({
               label: 'SDK Reference',
               items: [
                   { label: 'Overview', link: '/docs/reference/overview' },
-                  { label: 'UI Package', link: '/docs/reference/ui' },
+                  { label: 'UI Package', link: '/docs/reference/ui-package' },
                   { label: 'Configuration', link: '/docs/reference/configuration' },
                   { label: 'Code Execution', link: '/docs/reference/code-execution' },
                   { label: 'Sandbox Management', link: '/docs/reference/sandbox-management' },

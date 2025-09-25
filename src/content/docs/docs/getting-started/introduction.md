@@ -1,6 +1,8 @@
 ---
 title: "Introduction"
 description: ""
+sidebar:
+  order: 1
 ---
 
 ## What is ComputeSDK?
