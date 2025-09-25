@@ -3,8 +3,6 @@ title: "Configuration"
 description: ""
 ---
 
-# Configuration
-
 ComputeSDK provides flexible configuration options for customizing sandbox behavior, performance settings, and provider-specific options. Configuration can be set globally, per-instance, or dynamically at runtime.
 
 ## Quick Start

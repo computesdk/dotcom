@@ -1,10 +1,10 @@
 ---
 const codeExample = `
-import { compute } from 'computesdk';
+import { createCompute } from 'computesdk';
 import { provider } from '@computesdk/provider';
 
-// Set default provider
-compute.setConfig({ 
+// Create compute instance
+const compute = createCompute({ 
   defaultProvider: provider({ apiKey: process.env.PROVIDER_API_KEY }) 
 });
 

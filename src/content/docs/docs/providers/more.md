@@ -5,8 +5,6 @@ sidebar:
   order: 30
 ---
 
-# More
-
 #### Open Source
 
 We welcome contributions to the Compute SDK! If you have a provider you'd like to add, please open a pull request.

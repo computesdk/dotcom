@@ -5,8 +5,6 @@ sidebar:
   order: 5
 ---
 
-# Modal
-
 Modal provider for ComputeSDK - Execute code with GPU support for machine learning workloads.
 
 ## Installation

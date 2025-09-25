@@ -5,8 +5,6 @@ sidebar:
   order: 4
 ---
 
-# E2B
-
 E2B provider for ComputeSDK - Execute code in full development environments with terminal support.
 
 ## Installation

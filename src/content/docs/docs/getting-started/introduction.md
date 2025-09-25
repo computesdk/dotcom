@@ -3,8 +3,6 @@ title: "Introduction"
 description: ""
 ---
 
-# Introduction
-
 ## What is ComputeSDK?
 
 ComputeSDK is a free and open-source toolkit for running other people's code in your applications. Think of it as the "AI SDK for compute" - providing a consistent TypeScript interface whether you're using E2B, Vercel, Daytona, Modal, CodeSandbox, or Blaxel.

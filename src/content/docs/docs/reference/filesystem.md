@@ -3,8 +3,6 @@ title: "Filesystem"
 description: ""
 ---
 
-# Filesystem
-
 ComputeSDK provides comprehensive filesystem operations for managing files and directories within sandboxes. Perform file I/O, manage permissions, sync files, and handle large datasets across different providers.
 
 ## Quick Start

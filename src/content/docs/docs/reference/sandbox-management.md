@@ -3,8 +3,6 @@ title: "Sandbox Management"
 description: ""
 ---
 
-# Sandbox Management
-
 ComputeSDK provides comprehensive sandbox lifecycle management, including creation, configuration, monitoring, and cleanup. Learn how to effectively manage compute resources across different providers.
 
 ## Quick Start

@@ -3,8 +3,6 @@ title: "Code Execution"
 description: ""
 ---
 
-# Code Execution
-
 ComputeSDK provides powerful code execution capabilities across multiple languages and environments. Execute scripts, run commands, manage processes, and handle input/output streams with ease.
 
 ## Quick Start

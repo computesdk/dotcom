@@ -5,8 +5,6 @@ sidebar:
   order: 2
 ---
 
-# Codesandbox
-
 CodeSandbox provider for ComputeSDK - Execute code in web-based development environments.
 
 ## Installation

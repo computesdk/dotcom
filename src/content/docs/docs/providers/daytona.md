@@ -5,8 +5,6 @@ sidebar:
   order: 3
 ---
 
-# Daytona
-
 Daytona provider for ComputeSDK - Execute code in Daytona development workspaces.
 
 ## Installation

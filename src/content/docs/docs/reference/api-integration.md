@@ -3,8 +3,6 @@ title: "API Integration"
 description: ""
 ---
 
-# API Integration
-
 ComputeSDK provides seamless integration with web frameworks and APIs, enabling you to embed compute capabilities directly into your applications. Build powerful backend services, API endpoints, and serverless functions with compute sandboxes.
 
 ## Quick Start

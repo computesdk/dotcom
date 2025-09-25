@@ -5,8 +5,6 @@ sidebar:
   order: 6
 ---
 
-# Runloop
-
 Runloop provider for ComputeSDK - Execute code in cloud-based devboxes with full development environments.
 
 ## Installation
