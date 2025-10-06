@@ -23,7 +23,11 @@ import { vercel } from '@computesdk/vercel';
 
 // Set as default provider
 const compute = createCompute({ 
-  defaultProvider: vercel({ runtime: 'node' }) 
+  provider: vercel({ 
+    token: process.env.VERCEL_TOKEN,
+    teamId: process.env.VERCEL_TEAM_ID,
+    projectId: process.env.VERCEL_PROJECT_ID,
+  }) 
 });
 
 // Create sandbox
@@ -47,8 +51,9 @@ import { vercel } from '@computesdk/vercel';
 
 // Create provider
 const provider = vercel({ 
-  runtime: 'python',
-  timeout: 1800000  // 30 minutes
+  token: process.env.VERCEL_TOKEN,
+  teamId: process.env.VERCEL_TEAM_ID,
+  projectId: process.env.VERCEL_PROJECT_ID,
 });
 
 // Use with compute singleton
@@ -74,7 +79,7 @@ export VERCEL_PROJECT_ID=your_project_id_here
 ```typescript
 interface VercelConfig {
   /** Runtime environment */
-  runtime: 'node' | 'python';
+  runtime?: 'node' | 'python';
   /** Vercel token - if not provided, will use env vars */
   token?: string;
   /** Team ID for team accounts */
