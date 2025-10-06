@@ -193,7 +193,6 @@ export default defineConfig({
                   { label: 'Code Execution', link: '/docs/reference/code-execution' },
                   { label: 'Sandbox Management', link: '/docs/reference/sandbox-management' },
                   { label: 'Filesystem', link: '/docs/reference/filesystem' },
-                  { label: 'Terminal', link: '/docs/reference/terminal' },
                   { label: 'API Integration', link: '/docs/reference/api-integration' },
               ],
           },
