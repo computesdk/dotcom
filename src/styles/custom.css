@@ -1,9 +1,21 @@
 /* src/styles/custom.css */
   /* `splash` template > top heading text + container */
-  body:not(:has(#starlight__sidebar)) .content-panel:has(h1#_top) {
+  /* body:not(:has(#starlight__sidebar)) .content-panel:has(h1#_top) {
+    display: none;
+  } */
+
+  /* Hide only the main doc title on splash pages, but show on 404 page */
+  body:not(:has(#starlight__sidebar)) h1#_top {
     display: none;
   }
   
+  /* Override: Show h1#_top specifically when it has data-page-title attribute (like on 404 page) */
+  /* body:not(:has(#starlight__sidebar)) h1#_top[data-page-title] {
+    display: block !important;
+    margin-left: auto;
+    margin-right: auto;
+  } */
+
   body:not(:has(#starlight__sidebar)) .content-panel {
     border: none;
   }
