@@ -37,40 +37,13 @@ const compute = createCompute({
 })
 ```
 
-### Sandbox Management
+### See also:
 
-```typescript
-// Create a sandbox with options
-const sandbox = await compute.sandbox.create({
-  runtime: 'python3.9',
-  timeout: 300000,  // 5 minutes
-  metadata: {
-    userId: 'user-123',
-    jobType: 'data-processing'
-  }
-})
+- **[Code Execution](/docs/reference/code-execution)** - Execute code snippets in various runtimes
+- **[Command Execution](/docs/reference/code-execution#basic-code-execution)** - Run shell commands and scripts
+- **[Filesystem Operations](/docs/reference/filesystem)** - Read, write, and manage files in sandboxes
+- **[Sandbox Management](/docs/reference/sandbox-management)** - Create, list, and destroy sandboxes
 
-try {
-  // Run a command
-  const result = await sandbox.runCommand({
-    command: 'python',
-    args: ['script.py'],
-    options: {
-      cwd: '/app',
-      env: {
-        CUSTOM_VAR: 'value'
-      }
-    }
-  })
-  
-  console.log('Output:', result.stdout)
-  console.log('Exit code:', result.exitCode)
-  
-} finally {
-  // Always clean up
-  await sandbox.destroy()
-}
-```
 
 ## Web Framework Integration
 
@@ -117,9 +90,7 @@ app.post('/api/compute', async (req, res) => {
 import { CommandExitError } from 'computesdk'
 
 try {
-  const result = await sandbox.runCommand({
-    command: 'false'  // Will exit with non-zero status
-  })
+  const result = await sandbox.runCommand('false') // Will exit with non-zero status
 } catch (error) {
   if (error instanceof CommandExitError) {
     console.error('Command failed:', error.result.stderr)
@@ -128,22 +99,6 @@ try {
     console.error('Unexpected error:', error)
   }
 }
-```
-
-## Filesystem Operations
-
-```typescript
-// Write a file
-await sandbox.filesystem.writeFile('/hello.txt', 'Hello, World!')
-
-// Read a file
-const content = await sandbox.filesystem.readFile('/hello.txt')
-
-// List directory contents
-const files = await sandbox.filesystem.readdir('/')
-
-// Check if path exists
-const exists = await sandbox.filesystem.exists('/path/to/check')
 ```
 
 

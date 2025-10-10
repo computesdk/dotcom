@@ -27,7 +27,7 @@ ComputeSDK is a free and open-source toolkit for running other people's code in 
 ## Features
 
 🚀 **Multi-provider support** - E2B, Vercel, Daytona, Modal, CodeSandbox, Blaxel, and more  
-📁 **Filesystem operations** - Read, write, create directories 
+📁 **Filesystem operations** - Read, write, create directories  
 ⚡ **Command execution** - Run shell commands directly  
 🛡️ **Type-safe** - Full TypeScript support with comprehensive error handling  
 📦 **Modular** - Install only the providers you need  
@@ -42,7 +42,7 @@ import { e2b } from '@computesdk/e2b';
 
 // Set default provider
 const compute = createCompute({ 
-  defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
+  provider: e2b({ apiKey: process.env.E2B_API_KEY }) 
 });
 
 // Create a sandbox
@@ -59,4 +59,4 @@ await compute.sandbox.destroy(sandbox.sandboxId);
 
 ## Next Steps
 
-Ready to get started? Check out our [installation guide](./installation.md) or dive into the [quick start](./quick-start.md) to begin building with ComputeSDK.
+Ready to get started? Check out our [installation guide](/docs/getting-started/installation) or dive into the [quick start](/docs/getting-started/quick-start) to begin building with ComputeSDK.
