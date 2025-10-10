@@ -14,67 +14,40 @@ A sandbox is an isolated environment where your code executes securely. Each san
 - Resource limits
 - Clean environment for each execution
 
-Learn more about [managing sandboxes →](./sandbox-management.md)
+Jump to [Quick Start →](/docs/getting-started/quick-start)
+
+Or learn more about [managing sandboxes →](/docs/reference/sandbox-management)
 
 ### Providers: Powering Your Sandboxes
 ComputeSDK supports multiple execution backends (see providers for details)
 
-[Configure your provider →](./configuration.md)
+[Configure your provider →](/docs/reference/configuration)
 
 ## Key Features
 
 ### 1. Run Node.js, Python, and more
 Execute code in multiple languages with automatic runtime detection.
 
-[Learn about code execution →](./code-execution.md)
+[Learn about code execution →](/docs/reference/code-execution)
 
 ### 2. Full Filesystem Access
 Interact with files in your sandbox:
 
-[Explore filesystem operations →](./filesystem.md)
+[Explore filesystem operations →](/docs/reference/filesystem)
 
-### 3. Web Integration
+### 3. Web Integration & UI Package
 Build interactive web applications using our UI package:
 
-[See UI package →](./ui-package.md)
+[Learn about web integration →](/docs/reference/api-integration#web-integration)
 
-## Getting Started
+[See UI package →](/docs/reference/ui-package)
 
-### Installation
-```bash
-npm install computesdk
-# or
-yarn add computesdk
-```
+### 4. Sandbox Options
+Configure your sandbox with options to customize its behavior.
 
-### Basic Usage
-```typescript
-import { createCompute } from 'computesdk';
+[Learn about sandbox options →](/docs/reference/api-integration#sandbox-options)
 
-// Initialize with default provider (E2B)
-const compute = createCompute({ provider: e2b({ apiKey: process.env.E2B_API_KEY }) });
+### 5. Error Handling
+Handle errors and exceptions in your code.
 
-// Create a sandbox
-const sandbox = await compute.sandbox.create({
-  options: {
-    templateId: 'python',
-    timeout: 30000
-  }
-});
-
-try {
-  // Run a command
-  const result = await sandbox.runCommand('python', ['-c', 'print(2 + 2)']);
-  console.log(result.stdout); // 4
-  
-  // Work with files
-  await sandbox.filesystem.writeFile('/app/hello.py', 'print("Hello from Python!")');
-  const fileResult = await sandbox.runCommand('python', ['/app/hello.py']);
-  console.log(fileResult.stdout); // Hello from Python!
-  
-} finally {
-  // Always clean up
-  await compute.sandbox.destroy(sandbox.sandboxId);
-}
-```
-[View full API reference →](./code-execution.md)
+[Learn about error handling →](/docs/reference/api-integration#error-handling)
