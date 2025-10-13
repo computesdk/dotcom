@@ -20,9 +20,9 @@
     border: none;
   }
 
-  /* Hide footer when there's no sidebar */
-  body:not(:has(#starlight__sidebar)) footer.sl-flex.astro-3yyafb3n {
-    display: none;
+  /* Hide Starlight's footer globally */
+  footer.sl-flex[class*="astro-"] {
+    display: none !important;
   }
 
   /* Remove Starlight container padding */
