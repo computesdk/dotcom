@@ -1,0 +1,177 @@
+---
+// Hero.astro
+---
+
+<div class="">
+  <div class="relative isolate overflow-hidden">
+    <div class="pb-24 pt-10 sm:pb-32 lg:py-24">
+      <div class="px-6 lg:px-8">
+        <div class="mx-auto max-w-4xl text-center">
+          <!-- Badge -->
+          <div class="mb-8">
+            <span class="inline-flex items-center rounded-full bg-emerald-600/10 dark:bg-emerald-300/30 px-4 py-1.5 text-sm font-semibold text-emerald-800 dark:text-white ring-1 ring-inset ring-emerald-600/10">
+              Production-Ready Sandboxes
+            </span>
+          </div>
+
+          <!-- Headline -->
+          <h1 class="text-pretty text-6xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl lg:text-8xl mt-8">
+            Sandboxes Anywhere
+          </h1>
+
+          <!-- Subheadline -->
+          <p class="mt-8 text-pretty text-xl font-medium text-gray-600 dark:text-gray-400 sm:text-2xl/8 max-w-3xl mx-auto">
+            Execute code directly from the browser. One SDK, any cloud provider. Built for AI coding tools, playgrounds, and educational platforms.
+          </p>
+
+          <!-- CTA Container -->
+          <div class="mt-12 flex justify-center">
+            <!-- Unified Command Interface -->
+            <div
+              class="group relative w-full max-w-xl bg-neutral-900 dark:bg-neutral-900 ring-1 ring-neutral-700 hover:ring-emerald-500 transition-all duration-300 shadow-xl overflow-hidden"
+            >
+              <!-- Package Manager Tabs -->
+              <div
+                class="flex bg-gray-800 border-b border-gray-700"
+              >
+                <button
+                  onclick="switchTab('npm')"
+                  id="tab-npm"
+                  class="tab-button px-5 py-3 mt-0 text-sm font-medium transition-colors bg-gray-500 text-white border-b-2 border-emerald-500"
+                >
+                  npm
+                </button>
+                <button
+                  onclick="switchTab('pnpm')"
+                  id="tab-pnpm"
+                  class="tab-button px-5 py-3 mt-0 text-sm font-medium transition-colors bg-gray-700 text-neutral-400 hover:text-white border-b-2 border-transparent hover:border-neutral-600"
+                >
+                  pnpm
+                </button>
+                <button
+                  onclick="switchTab('bun')"
+                  id="tab-bun"
+                  class="tab-button px-5 py-3 mt-0 text-sm font-medium transition-colors bg-gray-700 text-neutral-400 hover:text-white border-b-2 border-transparent hover:border-neutral-600"
+                >
+                  bun
+                </button>
+                <button
+                  onclick="switchTab('curl')"
+                  id="tab-curl"
+                  class="tab-button px-5 py-3 mt-0 text-sm font-medium transition-colors bg-gray-700 text-neutral-400 hover:text-white border-b-2 border-transparent hover:border-neutral-600"
+                >
+                  curl
+                </button>
+              </div>
+
+              <!-- Command Display -->
+              <div class="flex items-center justify-between px-6 py-5">
+                <code
+                  id="command-text"
+                  class="font-mono text-base text-white truncate bg-gray-700 px-4 py-2 rounded-md w-full text-start"
+                >
+                  npm create compute
+                </code>
+                <button
+                  onclick="copyCommand()"
+                  class="ml-4 shrink-0 rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Secondary CTA -->
+          <div class="mt-6">
+            <a 
+              href="/docs" 
+              class="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline"
+            >
+              View Documentation <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  h1, p, .group {
+    animation: fadeInUp 0.6s ease-out backwards;
+  }
+
+  h1 {
+    animation-delay: 0.1s;
+  }
+
+  p {
+    animation-delay: 0.2s;
+  }
+
+  .group {
+    animation-delay: 0.3s;
+  }
+</style>
+
+<script>
+  // At the top of your script section
+  declare global {
+  interface Window {
+    switchTab: (tabId: string) => void;
+    copyCommand: () => void;
+    }
+  }
+
+  type PackageManager = 'npm' | 'pnpm' | 'bun' | 'curl';
+  
+  const commands: Record<PackageManager, string> = {
+    npm: 'npm create compute',
+    pnpm: 'pnpm create compute',
+    bun: 'bunx create-compute',
+    curl: 'curl -fsSL https://compute.sdk/install.sh | sh'
+  };
+
+  let currentTab: PackageManager = 'npm';
+
+  function switchTab(tab: PackageManager) {
+    currentTab = tab;
+    
+    // Update command text
+    const commandText = document.getElementById('command-text');
+    if (commandText) {
+      commandText.textContent = commands[tab];
+    }
+    
+    // Update tab styles
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.className = 'tab-button px-5 py-3 mt-0 text-sm font-medium transition-colors bg-gray-700 text-neutral-400 hover:text-white border-b-2 border-transparent hover:border-neutral-600';
+    });
+    
+    const activeTab = document.getElementById(`tab-${tab}`);
+    if (activeTab) {
+      activeTab.className = 'tab-button px-5 py-3 mt-0 text-sm font-medium transition-colors bg-gray-500 text-white border-b-2 border-emerald-500';
+    }
+  }
+
+  function copyCommand() {
+    navigator.clipboard.writeText(commands[currentTab]);
+  }
+
+  // Make functions globally available
+(window as any).switchTab = switchTab;
+(window as any).copyCommand = copyCommand;
+</script>

@@ -1,0 +1,71 @@
+---
+// VideoDemo.astro
+interface Props {
+  src: string;
+  poster?: string;
+  title?: string;
+}
+
+const { src, poster, title = 'See it in action' } = Astro.props;
+---
+
+<div class="relative py-24 sm:py-32 overflow-hidden">
+  
+  <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
+
+
+    <!-- Headline - Clean and Direct -->
+    <h2 class="text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-20">
+      See Compute in Action
+    </h2>
+
+    <!-- Video Container with Browser-like Chrome -->
+    <div class="mx-auto max-w-4xl">
+      <div class="relative group">
+
+        <!-- Video Frame -->
+        <div class="relative overflow-hidden shadow-2xl shadow-emerald-500/10 ring-1 ring-white/5 group-hover:ring-emerald-500/30 transition-all duration-300">
+          <div class="aspect-video bg-black">
+            <iframe
+              src={src}
+              class="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              title={title}
+            ></iframe>
+          </div>
+        </div>
+
+        <!-- Subtle glow effect on hover -->
+        <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 -z-10"></div>
+      </div>
+
+      <!-- Optional: Quick stats or highlights below video -->
+      <!-- CTA Section -->
+      <div class="mt-16 text-center">
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+          Ready to try it yourself?
+        </h3>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href="/docs/getting-started/quick-start"
+            class="inline-flex items-center rounded-lg bg-emerald-600 px-6 py-3 text-lg font-semibold text-white hover:bg-emerald-500 transition-colors no-underline"
+          >
+            Get Started
+          </a>
+            <a 
+              href="/docs" 
+              class="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline"
+            >
+              View Documentation <span aria-hidden="true">→</span>
+            </a>
+        </div>
+      </div>    </div>
+  </div>
+</div>
+
+<style>
+  iframe {
+    border: none;
+  }
+</style>

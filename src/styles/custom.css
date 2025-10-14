@@ -62,3 +62,42 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
     display: none !important;
   }
 }
+
+/* Parallax Background Styles */
+.parallax-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -20;
+  transform-style: preserve-3d;
+  perspective: 1px;
+  overflow: hidden;
+}
+
+.parallax-background > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateZ(-1px) scale(2);
+  will-change: transform;
+}
+
+.parallax-content {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  transform-style: preserve-3d;
+}
+
+/* Ensure components have proper backgrounds for scrolling over parallax */
+.parallax-content > * {
+  position: relative;
+  z-index: 2;
+  transform: translateZ(0);
+}

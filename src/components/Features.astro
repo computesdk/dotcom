@@ -1,0 +1,97 @@
+---
+// Features.astro
+
+const primaryFeatures = [
+  {
+    title: "End-User Authentication",
+    description: "Give your users direct access to their sandboxes—no proxy required. Build client-side code editors and AI coding assistants with zero server overhead."
+  },
+  {
+    title: "Full Terminal Access",
+    description: "Connect to provider environments through interactive terminals from browser or backend. Complete shell access to the underlying Linux system."
+  },
+  {
+    title: "Interactive Terminal I/O",
+    description: "Full PTY support for authentic terminal experiences via WebSocket. Real-time input/output with xterm.js compatibility."
+  },
+  {
+    title: "Complete File System Control",
+    description: "Manage files in provider sandboxes via REST APIs. Upload datasets, scaffold projects, read build outputs with full programmatic access."
+  }
+];
+
+const additionalFeatures = [
+  "Real-time File Watching",
+  "Output Streams",
+  "WebSocket Event System",
+  "Public URLs Out of the Box"
+];
+---
+
+<div class="py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="mx-auto max-w-2xl text-center mb-16">
+      <div class="mb-4">
+        <span class="inline-flex items-center bg-emerald-600/10 dark:bg-emerald-300/30 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 ring-1 ring-inset ring-emerald-600/10">
+          Features
+        </span>
+      </div>
+      <h2 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl max-w-lg mx-auto">
+        Everything You Need, Out of the Box
+      </h2>
+      <p class="mt-6 text-lg text-gray-600 dark:text-gray-400">
+        Built for developers who want powerful sandboxes without the complexity
+      </p>
+    </div>
+
+    <!-- Features Container -->
+    <div class="bg-white dark:bg-gray-900 shadow-lg ring-1 ring-gray-200 dark:ring-gray-800 p-8 lg:p-12 space-y-12 max-w-4xl mx-auto">
+      
+      <!-- Primary Features: 2x2 Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {primaryFeatures.map((feature) => (
+          <div class="space-y-3 mt-0">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+              {feature.title}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+              {feature.description}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <!-- Additional Features: Two Columns -->
+      <div>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+          And more...
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-0">
+          {additionalFeatures.map((feature) => (
+            <div class="flex items-center text-gray-600 dark:text-gray-400 mt-2">
+              <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              {feature}
+            </div>
+          ))}
+        </div>
+        <div class="flex items-center justify-end mt-16">
+          <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+          <a 
+            href="/features" 
+            class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors no-underline font-bold"
+          >
+            View All Features
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</div>
