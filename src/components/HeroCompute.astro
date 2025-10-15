@@ -28,7 +28,7 @@
           <div class="mt-12 flex justify-center">
             <!-- Unified Command Interface -->
             <div
-              class="group relative w-full max-w-xl bg-neutral-900 dark:bg-neutral-900 ring-1 ring-neutral-700 hover:ring-emerald-500 transition-all duration-300 shadow-xl overflow-hidden"
+              class="group relative w-full max-w-xl bg-neutral-900 dark:bg-neutral-900 ring-1 ring-neutral-700 hover:ring-emerald-500 transition-all duration-300 shadow-xl overflow-hidden rounded-sm"
             >
               <!-- Package Manager Tabs -->
               <div
@@ -65,10 +65,10 @@
               </div>
 
               <!-- Command Display -->
-              <div class="flex items-center justify-between px-6 py-5">
+              <div class="flex items-center justify-between px-6 py-5 my-2">
                 <code
                   id="command-text"
-                  class="font-mono text-base text-white truncate bg-gray-700 px-4 py-2 rounded-md w-full text-start"
+                  class="font-mono text-sm text-white truncate bg-gray-700 px-4 py-2 rounded-md w-full text-start"
                 >
                   npm create compute
                 </code>
@@ -141,7 +141,7 @@
   const commands: Record<PackageManager, string> = {
     npm: 'npm create compute',
     pnpm: 'pnpm create compute',
-    bun: 'bunx create-compute',
+    bun: 'bun create compute',
     curl: 'curl -fsSL https://compute.sdk/install.sh | sh'
   };
 
