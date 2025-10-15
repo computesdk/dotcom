@@ -2,36 +2,29 @@
 // FinalCTA.astro
 ---
 
-<div class="backdrop-blur-sm">
-  <div class="relative isolate overflow-hidden py-24 sm:py-32">
+<div class="py-12 sm:py-16">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="bg-white dark:bg-gray-900 shadow-lg ring-1 ring-gray-200 dark:ring-gray-800 p-8 lg:p-16 max-w-4xl mx-auto">
+      <div class="text-center">
+        <!-- Headline -->
+        <h2 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+          Start Building Today
+        </h2>
 
-    <div class="mx-auto max-w-4xl text-center px-6 lg:px-8">
-      <!-- Headline -->
-      <h2 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
-        Start Building Today
-      </h2>
-
-      <!-- Description -->
-      <p class="mt-6 text-xl text-gray-600 dark:text-gray-400">
-        Production-ready sandboxes are waiting for you.
-      </p>
-
-      <!-- CTA Buttons -->
-      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-        <!-- Primary CTA - Command Box -->
-        <div class="group relative flex items-center gap-3 bg-gray-900 dark:bg-gray-800 px-6 py-4 ring-1 ring-gray-700 hover:ring-emerald-500 transition-all duration-300 shadow-lg">
-          <code class="font-mono text-lg truncate text-white bg-gray-700 dark:bg-gray-600 px-3 py-1 rounded">npm create compute</code>
-          <button 
-            onclick="navigator.clipboard.writeText('npm create compute')"
-            class="ml-2 rounded-md bg-emerald-600 dark:bg-emerald-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-500 dark:hover:bg-emerald-400 transition-colors"
-          >
-            Copy
-          </button>
-        </div>
+        <!-- Description -->
+        <p class="mt-6 text-lg text-gray-600 dark:text-gray-400">
+          Production-ready sandboxes are waiting for you.
+        </p>
       </div>
 
       <!-- Secondary CTAs -->
       <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-6">
+        <a 
+          href="/pricing" 
+          class="inline-flex items-center rounded-sm bg-emerald-600 dark:bg-emerald-500 px-6 py-2.5 text-base font-semibold text-white shadow-sm hover:bg-emerald-500 dark:hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-colors no-underline"
+        >
+          Get Started
+        </a>
         <a 
           href="/docs" 
           class="text-base font-semibold text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline"
@@ -39,12 +32,6 @@
           View Documentation <span aria-hidden="true">→</span>
         </a>
         <span class="hidden sm:block text-gray-300 dark:text-gray-700">|</span>
-        <a 
-          href="/pricing" 
-          class="text-base font-semibold text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline"
-        >
-          Pricing <span aria-hidden="true">→</span>
-        </a>
       </div>
     </div>
   </div>
