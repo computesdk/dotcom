@@ -1,10 +1,11 @@
 ---
 // FinalCTA.astro
+import CTABlock from "./CTABlock.astro";
 ---
 
-<div class="py-12 sm:py-16">
+<div class="py-12 sm:py-16 mb-30">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <div class="bg-white dark:bg-gray-900 shadow-lg ring-1 ring-gray-200 dark:ring-gray-800 p-8 lg:p-16 max-w-4xl mx-auto">
+    <div class="bg-white dark:bg-gray-900 shadow-lg ring-1 ring-gray-200 dark:ring-gray-800 p-8 lg:p-16 max-w-4xl mx-auto rounded-xs">
       <div class="text-center">
         <!-- Headline -->
         <h2 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
@@ -18,21 +19,7 @@
       </div>
 
       <!-- Secondary CTAs -->
-      <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-6">
-        <a 
-          href="/pricing" 
-          class="inline-flex items-center rounded-sm bg-emerald-600 dark:bg-emerald-500 px-6 py-2.5 text-base font-semibold text-white shadow-sm hover:bg-emerald-500 dark:hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-colors no-underline"
-        >
-          Get Started
-        </a>
-        <a 
-          href="/docs" 
-          class="text-base font-semibold text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors no-underline"
-        >
-          View Documentation <span aria-hidden="true">→</span>
-        </a>
-        <span class="hidden sm:block text-gray-300 dark:text-gray-700">|</span>
-      </div>
+      <CTABlock />
     </div>
   </div>
 </div>
