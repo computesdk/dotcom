@@ -1,0 +1,75 @@
+---
+const useCases = [
+  {
+    icon: '/MaterialSymbolsDeployedCode.svg',
+    title: "AI Code Execution",
+    description: "Power AI coding tools like Anything, Bolt.new, and Lovable. Compute provides the APIs and interfaces for LLMs to execute code, read output, and iterate in real-time. Stream terminal output, file changes, and execution results directly to AI models. Enable true AI pair programming with sandboxes that AI agents can actually control."
+  },
+  {
+    icon: '/MaterialSymbolsCodeBlocksOutlineSharp.svg',
+    title: "Code Playgrounds",
+    description: "Build interactive coding environments like CodeSandbox or StackBlitz. Users edit code in the browser while Compute handles execution, file watching, and hot reload. Serve preview URLs instantly. Support any language or framework—Node.js, Python, Go, Ruby—with full terminal and package manager access."
+  },
+  {
+    icon: '/TdesignEducationFilled.svg',
+    title: "Educational Platforms",
+    description: 'Build hands-on coding courses like Scrimba, Codecademy, freeCodeCamp, or boot camp platforms. Students write code, run tests, and see results immediately without local setup. Instructors monitor progress, provide instant feedback, and share working environments. Eliminate "it works on my machine" problems forever.'
+  },
+  {
+    icon: '/MaterialSymbolsDataTable.svg',
+    title: "Data Analysis & Notebooks",
+    description: "Run Jupyter notebooks, R scripts, or data processing pipelines from the browser. Upload datasets via file APIs, execute analysis code, and watch output stream in real-time. Export results, share findings via public URLs, and reproduce analyses with complete environment isolation."
+  },
+  {
+    icon: '/MaterialSymbolsLightComputerSharp.svg',
+    title: "Interview & Assessment Platforms",
+    description: "Build technical assessment tools like HackerRank, LeetCode, or Codility. Provide candidates with fully functional development environments during interviews. Evaluate real coding skills with actual compilers and runtimes. Record terminal sessions, review file changes, and assess problem-solving approaches."
+  }
+];
+---
+
+<div class="relative isolate bg-white dark:bg-gray-900 py-16 sm:py-16 lg:py-16">
+  <div aria-hidden="true" class="fixed inset-0 -z-10 transform-gpu overflow-hidden blur-3xl">
+    <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-emerald-400 to-emerald-600 opacity-30"></div>
+  </div>
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:items-center">
+      <div class="col-span-2">
+        <h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-5xl">Use Cases</h2>
+        <p class="mt-6 text-lg/8 text-gray-700 dark:text-gray-300">From AI coding assistants to educational platforms, Compute SDK powers diverse applications that need secure, real-time code execution. See how developers are building the future of interactive computing.</p>
+      </div>
+      <div class="relative col-span-1">
+        <img src="/card-stack-light.svg" alt="Card stack pattern" class="dark:hidden max-w-sm mx-auto mr-0 ml-auto" />
+        <img src="/card-stack-dark.svg" alt="Card stack pattern" class="hidden dark:block max-w-sm mx-auto" />
+      </div>
+    </div>
+    <dl class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 text-base/7 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+      {useCases.map((useCase) => (
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <img 
+              src={useCase.icon} 
+              alt="" 
+              class="w-6 h-6 text-emerald-600 dark:text-emerald-400"
+              width="24"
+              height="24"
+            />
+            <p class="font-semibold text-gray-900 dark:text-white">{useCase.title}</p>
+          </div>
+          <p class="mt-1 text-gray-600 dark:text-gray-300">{useCase.description}</p>
+        </div>
+      ))}
+    </dl>
+    
+    <div class="relative isolate mt-32 px-6 py-16 sm:mt-32 sm:py-32 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-balance text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-5xl">Ready to build your use case?</h2>
+        <p class="mx-auto mt-6 max-w-2xl text-pretty text-lg/8 text-gray-600 dark:text-gray-300">From AI coding assistants to educational platforms, Compute SDK provides the infrastructure you need to build secure, real-time code execution experiences.</p>
+        <div class="mt-10 flex items-center justify-center gap-x-6">
+          <a href="/pricing" class="rounded-md bg-emerald-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 no-underline">Get Started</a>
+          <a href="https://cal.com/heygarrison" class="text-sm/6 font-semibold text-emerald-700 dark:text-emerald-400 no-underline">Book a call <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

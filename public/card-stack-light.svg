@@ -1,0 +1,28 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top layer -->
+  <path d="M 150 180 L 400 100 L 650 180 L 400 260 Z" 
+        fill="none" 
+        stroke="#474747" 
+        stroke-width="24" 
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        style="paint-order: stroke;"/>
+  
+  <!-- Middle layer -->
+  <path d="M 150 300 L 400 220 L 650 300 L 400 380 Z" 
+        fill="none" 
+        stroke="#474747" 
+        stroke-width="24" 
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        style="paint-order: stroke;"/>
+  
+  <!-- Bottom layer -->
+  <path d="M 150 420 L 400 340 L 650 420 L 400 500 Z" 
+        fill="none" 
+        stroke="#474747" 
+        stroke-width="24" 
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        style="paint-order: stroke;"/>
+</svg>

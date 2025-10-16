@@ -101,3 +101,7 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
   z-index: 2;
   transform: translateZ(0);
 }
+
+h1[id="_top"]:has-text("Page") {
+  display: none;
+}
