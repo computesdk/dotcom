@@ -4,14 +4,14 @@
 <div class="flex items-center justify-between px-6 py-5 my-0">
     <code
         id="command-text"
-        class="font-mono text-sm text-black dark:text-white truncate bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-xs w-full text-start"
+        class="font-mono text-sm text-black dark:text-white truncate bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-xs w-full text-start flex justify-between items-center"
     >
         curl -fsSL https://compute.sdk/install.sh | sh
+        <div
+        onclick="copyCommand()">
+            <img src="MaterialSymbolsContentCopyOutlineSharp.svg" alt="Copy" height="16" width="16" class="ml-4 cursor-pointer" />
+        </div>
     </code>
-    <div
-    onclick="copyCommand()">
-        <img src="MaterialSymbolsContentCopyOutlineSharp.svg" alt="Copy" class="ml-4 cursor-pointer" />
-    </div>
 </div>
 
 <script>
