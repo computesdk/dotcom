@@ -48,6 +48,10 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
     padding: 0 !important;
 }
 
+.container:has(h1#_top) {
+    display: none;
+}
+
 .nova-header-nav * {
     display: flex !important;
 }
