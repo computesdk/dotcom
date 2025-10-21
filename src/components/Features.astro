@@ -28,72 +28,69 @@ const additionalFeatures = [
 ];
 ---
 
-<div class="max-w-6xl mx-auto mb-36">
+<div class="mx-auto pt-32 px-8 mt-0 pb-32 border-b border-gray-200 dark:border-gray-700">
+  <!-- Section Header -->
+  <div class="mx-auto max-w-2xl text-center mb-16">
+    <!-- Badge -->
+    <div class="mb-8">
+      <span class="inline-flex items-center bg-emerald-600/10 dark:bg-emerald-900/50 px-4 py-1.5 text-sm font-semibold text-emerald-800 dark:text-white ring-1 ring-inset ring-emerald-600/10 rounded-xs">
+        Features
+      </span>
+    </div>
+    <h2 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl max-w-lg mx-auto mt-8">
+      Everything You Need, Out of the Box
+    </h2>
+    <p class="mt-6 text-lg text-gray-600 dark:text-gray-400">
+      Built for developers who want powerful sandboxes without the complexity
+    </p>
+  </div>
+
+  <!-- Features Container -->
+  <div class="bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 p-8 lg:p-12 space-y-12 max-w-4xl mx-auto rounded-xs">
     
-  <div class="mx-auto max-w-7xl px-6 pt-16 lg:pt-36 lg:px-8">
-    <!-- Section Header -->
-    <div class="mx-auto max-w-2xl text-center mb-16">
-      <!-- Badge -->
-      <div class="mb-8">
-        <span class="inline-flex items-center bg-emerald-600/10 dark:bg-emerald-900/50 px-4 py-1.5 text-sm font-semibold text-emerald-800 dark:text-white ring-1 ring-inset ring-emerald-600/10 rounded-xs">
-          Features
-        </span>
-      </div>
-      <h2 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl max-w-lg mx-auto mt-8">
-        Everything You Need, Out of the Box
-      </h2>
-      <p class="mt-6 text-lg text-gray-600 dark:text-gray-400">
-        Built for developers who want powerful sandboxes without the complexity
-      </p>
+    <!-- Primary Features: 2x2 Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {primaryFeatures.map((feature) => (
+        <div class="space-y-3 mt-0">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+            {feature.title}
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+            {feature.description}
+          </p>
+        </div>
+      ))}
     </div>
 
-    <!-- Features Container -->
-    <div class="bg-white dark:bg-gray-900 shadow-lg ring-1 ring-gray-200 dark:ring-gray-800 p-8 lg:p-12 space-y-12 max-w-4xl mx-auto rounded-xs">
-      
-      <!-- Primary Features: 2x2 Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {primaryFeatures.map((feature) => (
-          <div class="space-y-3 mt-0">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-              {feature.title}
-            </h3>
-            <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-              {feature.description}
-            </p>
+    <!-- Additional Features: Two Columns -->
+    <div>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+        And more...
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-0">
+        {additionalFeatures.map((feature) => (
+          <div class="flex items-center text-gray-600 dark:text-gray-400 mt-2">
+            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            {feature}
           </div>
         ))}
       </div>
-
-      <!-- Additional Features: Two Columns -->
-      <div>
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-          And more...
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-0">
-          {additionalFeatures.map((feature) => (
-            <div class="flex items-center text-gray-600 dark:text-gray-400 mt-2">
-              <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-              {feature}
-            </div>
-          ))}
-        </div>
-        <div class="flex items-center justify-end mt-16">
-          <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
-          <a 
-            href="/features" 
-            class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors no-underline font-bold"
-          >
-            View All Features
-          </a>
-        </div>
+      <div class="flex items-center justify-end mt-16">
+        <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+        <a 
+          href="/features" 
+          class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors no-underline font-bold"
+        >
+          View All Features
+        </a>
       </div>
-
     </div>
 
-
   </div>
+
+
 </div>
