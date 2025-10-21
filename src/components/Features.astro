@@ -45,52 +45,82 @@ const additionalFeatures = [
     </p>
   </div>
 
-  <!-- Features Container -->
-  <div class="bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 p-8 lg:p-12 space-y-12 max-w-4xl mx-auto rounded-xs">
-    
-    <!-- Primary Features: 2x2 Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {primaryFeatures.map((feature) => (
-        <div class="space-y-3 mt-0">
+  <!-- Features Container with 2x3 Grid -->
+  <div class="bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 max-w-4xl mx-auto rounded-xs overflow-hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2">
+      <!-- Top Row: 2 cells -->
+      <div class="p-6 lg:p-8 border-b border-gray-200 dark:border-gray-700 md:border-r md:border-gray-200 md:dark:border-gray-700">
+        <div class="space-y-3">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-            {feature.title}
+            {primaryFeatures[0].title}
           </h3>
           <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-            {feature.description}
+            {primaryFeatures[0].description}
           </p>
         </div>
-      ))}
-    </div>
-
-    <!-- Additional Features: Two Columns -->
-    <div>
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-        And more...
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-0">
-        {additionalFeatures.map((feature) => (
-          <div class="flex items-center text-gray-600 dark:text-gray-400 mt-2">
-            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-            </svg>
-            {feature}
-          </div>
-        ))}
       </div>
-      <div class="flex items-center justify-end mt-16">
-        <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-        </svg>
-        <a 
-          href="/features" 
-          class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors no-underline font-bold"
-        >
-          View All Features
-        </a>
+      
+      <div class="p-6 lg:p-8 border-b border-gray-200 dark:border-gray-700 mt-0">
+        <div class="space-y-3">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+            {primaryFeatures[1].title}
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+            {primaryFeatures[1].description}
+          </p>
+        </div>
+      </div>
+
+      <!-- Middle Row: 2 cells -->
+      <div class="p-6 lg:p-8 border-b border-gray-200 dark:border-gray-700 md:border-r md:border-gray-200 md:dark:border-gray-700 mt-0">
+        <div class="space-y-3">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+            {primaryFeatures[2].title}
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+            {primaryFeatures[2].description}
+          </p>
+        </div>
+      </div>
+      
+      <div class="p-6 lg:p-8 border-b border-gray-200 dark:border-gray-700 mt-0">
+        <div class="space-y-3">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+            {primaryFeatures[3].title}
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+            {primaryFeatures[3].description}
+          </p>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Merged cell spanning 2 columns -->
+      <div class="col-span-1 md:col-span-2 p-6 lg:p-8">
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+          And more...
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+          {additionalFeatures.map((feature) => (
+            <div class="flex items-center text-gray-600 dark:text-gray-400 mt-2">
+              <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              {feature}
+            </div>
+          ))}
+        </div>
+        <div class="flex items-center justify-end mt-12">
+          <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+          <a 
+            href="/features" 
+            class="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors no-underline font-bold"
+          >
+            View All Features
+          </a>
+        </div>
       </div>
     </div>
-
   </div>
-
-
 </div>
