@@ -1,0 +1,21 @@
+---
+import HeroCompute from "./HeroCompute.astro";
+import Features from "./Features.astro";
+import UseCases from "./UseCases.astro";
+import FinalCTA from "./FinalCTA.astro";    
+import Footer from "./Footer.astro";
+---
+
+<div class="parallax-background">
+    <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+        <div class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-emerald-200 to-emerald-400 opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"></div>
+    </div>
+</div>
+
+<div class="parallax-content border border-gray-200 dark:border-gray-700 border-t-0 border-b-0 mt-0 mb-0 mx-24">
+    <HeroCompute />
+    <Features />
+    <UseCases />
+    <FinalCTA />
+</div>
+<Footer />

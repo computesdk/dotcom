@@ -5,17 +5,11 @@ import CTABlock from "./CTABlock.astro";
 import LogoCloud from "./LogoCloud.astro";
 ---
 
-<div class="mb-24">
-  <div class="relative isolate overflow-hidden">
-    <div class="pb-24 mt-0 sm:pb-48 lg:py-0">
-      <div class="px-6 lg:px-8">
+<div>
+  <div class="relative isolate overflow-hidden pb-32 border-b border-gray-200 dark:border-gray-700">
+    <!-- Home page hero section -->
+    <div class="my-20">
         <div class="mx-auto max-w-4xl text-center">
-          <!-- Badge -->
-          <!-- <div class="mb-8">
-            <span class="inline-flex items-center bg-emerald-600/10 dark:bg-emerald-500/20 px-4 py-1.5 text-sm font-semibold text-emerald-800 dark:text-white ring-1 ring-inset ring-emerald-600/10">
-              Production-Ready Sandboxes
-            </span>
-          </div> -->
 
           <!-- Headline -->
           <h1 class="text-pretty text-6xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl lg:text-8xl mt-0">
@@ -33,16 +27,15 @@ import LogoCloud from "./LogoCloud.astro";
             <CurlBlock />
           </div>
 
+        </div>
 
           <!-- Secondary CTA -->
-          <div class="mt-8 flex justify-center">
+          <div class="mt-8">
             <CTABlock />
           </div>
-        </div>
-        <div class="mt-16">
-          <LogoCloud />
-        </div>
-      </div>
+    </div>
+    <div class="mt-16">
+      <LogoCloud />
     </div>
   </div>
 </div>
