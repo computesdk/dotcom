@@ -111,26 +111,30 @@ export default defineConfig({
     plugins: 
     [starlightThemeNova({
       nav: [
-          // {
-          //   label:'Features',
-          //   href: '/features'
-          // },  
-          // {
-          //   label:'Pricing',
-          //   href: '/pricing'
-          // },
+          {
+            label:'Features',
+            href: '/features'
+          },
+          {
+            label:'Use Cases',
+            href: '/use-cases'
+          },
+          {
+            label:'Pricing',
+            href: '/pricing'
+          },
           {
             label: 'Docs',
             href: '/docs/getting-started/introduction',
           },
-          {
-            label:'Blog',
-            href: '/blog'
-          },
-          {
-            label:'Contact',
-            href: '/contact'
-          },
+          // {
+          //   label:'Blog',
+          //   href: '/blog'
+          // },
+          // {
+          //   label:'Contact',
+          //   href: '/contact'
+          // },
         ],
          }),
          starlightLlmsTxt({
