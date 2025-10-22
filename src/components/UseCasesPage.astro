@@ -32,9 +32,11 @@ const useCases = [
 ---
 
 <PageLayout>
-    <div class="relative isolate bg-transparent dark:bg-transparent py-4">
-  <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:items-center">
+<div class="relative isolate bg-transparent dark:bg-transparent py-4">
+  <div class="mx-auto">
+    <!-- Use Cases Hero -->
+    <div class="border-b border-gray-200 dark:border-b-gray-700 py-32">
+    <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:grid-cols-3 lg:items-center lg:max-w-5xl px-6 lg:px-8">
       <div class="col-span-2">
         <h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-5xl">Use Cases</h2>
         <p class="mt-6 text-lg/8 text-gray-700 dark:text-gray-300">From AI coding assistants to educational platforms, Compute SDK powers diverse applications that need secure, real-time code execution. See how developers are building the future of interactive computing.</p>
@@ -47,25 +49,31 @@ const useCases = [
         <img src="/card-stack-dark.svg" alt="Card stack pattern" class="hidden dark:block max-w-sm mx-auto" />
       </div>
     </div>
-    <dl class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 text-base/7 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+    </div>
+
+  <!-- Features Grid -->
+  <div class="py-32 border-b border-gray-200 dark:border-b-gray-700 mt-0">
+    <h3 class="text-pretty text-3xl text-center font-semibold tracking-tight text-gray-900 dark:text-white mb-16">Sandboxes to meet your needs</h3>
+    <dl class="mx-auto grid max-w-2xl grid-cols-1 text-base/7 sm:grid-cols-2 lg:max-w-5xl lg:grid-cols-2 border-l border-t border-gray-200 dark:border-l-gray-700 dark:border-t-gray-700">
       {useCases.map((useCase) => (
-        <div>
-          <div class="flex items-center gap-3 mb-4">
+        <div class="border-r border-b border-gray-200 dark:border-r-gray-700 dark:border-b-gray-700 p-12 mt-0">
+          <div class="flex items-center gap-3 mb-4 mt-0">
             <img 
               src={useCase.icon} 
               alt="" 
-              class="w-6 h-6 text-emerald-600 dark:text-emerald-400"
+              class="w-6 h-6 text-emerald-600 dark:text-emerald-400 items-center"
               width="24"
               height="24"
             />
-            <p class="font-semibold text-gray-900 dark:text-white">{useCase.title}</p>
+            <p class="font-semibold text-gray-900 dark:text-white mt-0">{useCase.title}</p>
           </div>
           <p class="mt-1 text-gray-600 dark:text-gray-300">{useCase.description}</p>
         </div>
       ))}
     </dl>
+  </div>
     
-    <div class="relative isolate mt-32 mb-16 px-6 py-16 sm:mt-32 sm:py-32 lg:px-8">
+    <div class="relative isolate px-6 py-16 sm:py-32 lg:px-8">
       <div class="mx-auto max-w-2xl text-center">
         <h2 class="text-balance text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-5xl">Ready to build your use case?</h2>
         <p class="mx-auto mt-6 max-w-2xl text-pretty text-lg/8 text-gray-600 dark:text-gray-300">From AI coding assistants to educational platforms, Compute SDK provides the infrastructure you need to build secure, real-time code execution experiences.</p>
@@ -74,6 +82,5 @@ const useCases = [
         </div>
       </div>
     </div>
-  </div>
 </div>
 </PageLayout>
