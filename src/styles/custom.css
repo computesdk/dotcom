@@ -53,7 +53,7 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
     display: none;
 } */
 
-.content-panel:where(.astro-x7zvoo7a) {
+body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-x7zvoo7a) {
     padding: 0 !important;
 }
 

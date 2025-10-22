@@ -8,6 +8,6 @@
 @plugin "@tailwindcss/typography";
 
 /* Hide Starlight content panel with "Compute SDK home" title */
-.content-panel h1#_top {
+/* .content-panel h1#_top {
   display: none;
-}
+} */
