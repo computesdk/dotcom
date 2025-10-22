@@ -1,70 +1,90 @@
 ---
 import CTABlock from "./CTABlock.astro";
 import PageLayout from "./layouts/PageLayout.astro";
+
+const features = [
+  {
+    title: "Multi-provider Support",
+    description: "Switch between E2B, Vercel, Daytona, Modal, CodeSandbox and more without code changes. Provider-agnostic design means no vendor lock-in."
+  },
+  {
+    title: "Real-time Terminal Access",
+    description: "Create and manage persistent terminal sessions with WebSocket connectivity for interactive development and debugging."
+  },
+  {
+    title: "Complete Filesystem Control",
+    description: "Full CRUD operations on files and directories with real-time file watching and change notifications across all providers."
+  },
+  {
+    title: "TypeScript-Native API",
+    description: "Full TypeScript support with comprehensive error handling, making development safer and more productive."
+  },
+  {
+    title: "Process Signal Management",
+    description: "Start, stop, and monitor processes with port forwarding and server readiness detection for complete process control."
+  },
+  {
+    title: "JWT-Secured Endpoints",
+    description: "First-come-first-served authentication model with token-based access control for secure code execution environments."
+  },
+  {
+    title: "One-off Command Execution",
+    description: "Execute commands instantly without spinning up persistent terminals for quick tasks and automated workflows."
+  },
+  {
+    title: "WebSocket Communication",
+    description: "Low-latency bidirectional communication for real-time updates and interactive sessions with your sandbox environments."
+  },
+  {
+    title: "Health Monitoring",
+    description: "Built-in health checks and status endpoints for reliability and observability of your code execution infrastructure."
+  }
+];
 ---
 
 <PageLayout>
-    <div class="relative isolate bg-transparent dark:bg-transparent py-4">
-    <!-- <div aria-hidden="true" class="fixed inset-0 -z-10 transform-gpu overflow-hidden blur-3xl">
-        <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-emerald-400 to-emerald-600 opacity-30"></div>
-      </div> -->
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:items-center">
-        <div class="col-span-2">
-          <h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-5xl">All you need is compute.</h2>
-          <p class="mt-6 text-lg/8 text-gray-700 dark:text-gray-300">Turn any compute instance into a sandbox primitive with our self-executing binaries. Deploy our lightweight sidecar containers alongside your existing infrastructure to instantly enable secure code execution without architectural changes or vendor dependencies.</p>
-          <div class="flex items-start mt-8">
-            <CTABlock />
+  <div class="relative isolate bg-transparent dark:bg-transparent py-4">
+    <div class="mx-auto">
+      <!-- Feature Hero -->
+      <div class="border-b border-gray-200 dark:border-b-gray-700">
+        <div class="mx-auto grid max-w-2xl grid-cols-1 gap-0 lg:max-w-5xl lg:grid-cols-3 lg:items-center px-6 lg:px-8 my-32">
+          <div class="col-span-2">
+            <h2 class="text-pretty text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-5xl">All you need is compute.</h2>
+            <p class="mt-6 text-lg/8 text-gray-700 dark:text-gray-300">Turn any compute instance into a sandbox primitive with our self-executing binaries. Deploy our lightweight sidecar containers alongside your existing infrastructure to instantly enable secure code execution without architectural changes or vendor dependencies.</p>
+            <div class="flex items-start mt-8">
+              <CTABlock />
+            </div>
+          </div>
+          <div class="relative col-span-1 lg:ml-12">
+            <img src="/cube-design-light.svg" alt="Geometric pattern" class="dark:hidden max-w-sm
+            mx-auto mr-0 ml-auto" />
+            <img src="/cube-design-dark.svg" alt="Geometric pattern" class="hidden dark:block
+            max-w-sm mx-auto mr-0 ml-auto" />
           </div>
         </div>
-        <div class="relative col-span-1">
-          <img src="/cube-design-light.svg" alt="Geometric pattern" class="dark:hidden max-w-sm
-          mx-auto mr-0 ml-auto" />
-          <img src="/cube-design-dark.svg" alt="Geometric pattern" class="hidden dark:block
-          max-w-sm mx-auto mr-0 ml-auto" />
-        </div>
       </div>
-      <dl class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 text-base/7 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div>
-          <p class="font-semibold text-gray-900 dark:text-white">Multi-provider Support</p>
-          <p class="mt-1 text-gray-600 dark:text-gray-300">Switch between E2B, Vercel, Daytona, Modal, CodeSandbox and more without code changes. Provider-agnostic design means no vendor lock-in.</p>
-        </div>
-        <div>
-          <p class="font-semibold text-gray-900 dark:text-white">Real-time Terminal Access</p>
-          <p class="mt-1 text-gray-600 dark:text-gray-300">Create and manage persistent terminal sessions with WebSocket connectivity for interactive development and debugging.</p>
-        </div>
-        <div>
-          <p class="font-semibold text-gray-900 dark:text-white">Complete Filesystem Control</p>
-          <p class="mt-1 text-gray-600 dark:text-gray-300">Full CRUD operations on files and directories with real-time file watching and change notifications across all providers.</p>
-        </div>
-        <div>
-          <p class="font-semibold text-gray-900 dark:text-white">TypeScript-Native API</p>
-          <p class="mt-1 text-gray-600 dark:text-gray-300">Full TypeScript support with comprehensive error handling, making development safer and more productive.</p>
-        </div>
-        <div>
-          <p class="font-semibold text-gray-900 dark:text-white">Process Signal Management</p>
-          <p class="mt-1 text-gray-600 dark:text-gray-300">Start, stop, and monitor processes with port forwarding and server readiness detection for complete process control.</p>
-        </div>
-        <div>
-          <p class="font-semibold text-gray-900 dark:text-white">JWT-Secured Endpoints</p>
-          <p class="mt-1 text-gray-600 dark:text-gray-300">First-come-first-served authentication model with token-based access control for secure code execution environments.</p>
-        </div>
-        <div>
-          <p class="font-semibold text-gray-900 dark:text-white">One-off Command Execution</p>
-          <p class="mt-1 text-gray-600 dark:text-gray-300">Execute commands instantly without spinning up persistent terminals for quick tasks and automated workflows.</p>
-        </div>
-        <div>
-          <p class="font-semibold text-gray-900 dark:text-white">WebSocket Communication</p>
-          <p class="mt-1 text-gray-600 dark:text-gray-300">Low-latency bidirectional communication for real-time updates and interactive sessions with your sandbox environments.</p>
-        </div>
-        <div>
-          <p class="font-semibold text-gray-900 dark:text-white">Health Monitoring</p>
-          <p class="mt-1 text-gray-600 dark:text-gray-300">Built-in health checks and status endpoints for reliability and observability of your code execution infrastructure.</p>
-        </div>
-      </dl>
+      
+      <!-- Features Grid -->
+      <div class="py-32 border-b border-gray-200 dark:border-b-gray-700">
+            <!-- Badge -->
+        <!-- <div class="mb-12 mx-auto text-center">
+          <span class="inline-flex items-center bg-emerald-600/10 dark:bg-emerald-900/50 px-4 py-1.5 text-sm font-semibold text-emerald-800 dark:text-white ring-1 ring-inset ring-emerald-600/10 rounded-xs">
+            Features
+          </span>
+        </div> -->
+        <h3 class="text-pretty text-3xl text-center font-semibold tracking-tight text-gray-900 dark:text-white mb-12">Features Developers Love</h3>
+        <dl class="mx-auto grid max-w-2xl grid-cols-1 gap-0 text-base/7 sm:grid-cols-2 lg:max-w-5xl lg:grid-cols-3 border-l border-t border-gray-200 dark:border-l-gray-700 dark:border-t-gray-700 bg-white/70 dark:bg-gray-900/70">
+          {features.map((feature) => (
+            <div class="border-r border-b border-gray-200 dark:border-r-gray-700 dark:border-b-gray-700 p-6 mt-0">
+              <p class="font-semibold text-gray-900 dark:text-white">{feature.title}</p>
+              <p class="mt-1 text-gray-600 dark:text-gray-300">{feature.description}</p>
+            </div>
+          ))}
+        </dl>
+      </div>
       
       <!-- CTA section -->
-      <div class="relative isolate mt-32 px-6 py-16 sm:mt-32 sm:py-32 lg:px-8">
+      <div class="relative isolate px-6 py-16 sm:py-32 lg:px-8">
         <div class="mx-auto max-w-2xl text-center">
           <h2 class="text-balance text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-5xl">Ready to transform your compute infrastructure?</h2>
           <p class="mx-auto mt-6 max-w-2xl text-pretty text-lg/8 text-gray-600 dark:text-gray-300">Turn any compute instance into a secure code execution environment. Deploy our lightweight sidecar containers and start building sandboxes in minutes.</p>
