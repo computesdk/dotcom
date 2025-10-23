@@ -108,6 +108,9 @@ export default defineConfig({
             './src/styles/custom.css',
 		    ],
     social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],
+    components: {
+      SocialIcons: './src/components/SocialIcons.astro',
+    },
     plugins: 
     [starlightThemeNova({
       nav: [

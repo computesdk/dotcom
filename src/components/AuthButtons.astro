@@ -1,0 +1,23 @@
+---
+interface Props {
+  loginUrl?: string;
+  registerUrl?: string;
+}
+
+const { loginUrl = 'https://console.computesdk.com/login', registerUrl = 'https://console.computesdk.com/register' } = Astro.props;
+---
+
+<div class="flex items-center gap-3">
+  <a 
+    href={loginUrl} 
+    class="px-4 py-2 text-xs font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 no-underline w-20 text-center"
+  >
+    Login
+  </a>
+  <a 
+    href={registerUrl} 
+    class="px-4 py-2 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200 rounded-lg shadow-sm hover:shadow-md no-underline w-20 text-center"
+  >
+    Register
+  </a>
+</div>
