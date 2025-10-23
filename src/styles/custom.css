@@ -111,8 +111,12 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-x7zvoo7a) {
   transform: translateZ(0);
 }
 
-.nova-search-button {
-    width: auto !important;
+.nova-header-search {
+  margin-right: 0.5rem !important;
+}
+
+body:not(:has(#starlight__sidebar)) .nova-search-button {
+    display: none !important;
 }
 
 span.sl-hidden.md\:sl-block[aria-hidden="true"] {

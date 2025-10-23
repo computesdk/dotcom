@@ -109,6 +109,7 @@ export default defineConfig({
 		    ],
     social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],
     components: {
+      Header: './src/components/Header.astro',
       SocialIcons: './src/components/SocialIcons.astro',
     },
     plugins: 
