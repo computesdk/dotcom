@@ -127,3 +127,22 @@ span.sl-hidden.md\:sl-block[aria-hidden="true"] {
     justify-content: end !important;
 }
     
+@media (max-width: 767px) {
+    .nova-header-nav {
+        display: none !important;
+    }
+    #auth-buttons {
+        display: none !important;
+    }
+}
+
+body:has(#starlight__sidebar) #mobile-menu-button {
+    display: none !important;
+}
+
+body:not(:has(#starlight__sidebar)) #mobile-menu-button {
+    margin-left: 1rem !important;
+}
+    
+
+    
