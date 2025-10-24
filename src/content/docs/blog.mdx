@@ -7,5 +7,9 @@ template: splash
 import BlogIndex from "../../components/BlogIndex.astro";
 import Footer from "../../components/Footer.astro";
 
-<BlogIndex />
-<Footer />
+<div class="min-h-[calc(100vh-75px)] flex flex-col">
+  <div class="flex-1">
+    <BlogIndex />
+  </div>
+  <Footer />
+</div>
