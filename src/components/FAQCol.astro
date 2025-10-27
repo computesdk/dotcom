@@ -8,27 +8,27 @@
       <dl class="space-y-16 sm:grid sm:grid-cols-2 gap-0 sm:space-y-0 border-l border-t border-gray-200 dark:border-l-gray-700 dark:border-t-gray-700 bg-white/60 dark:bg-gray-800/60">
         <div class="border-r border-b border-gray-200 dark:border-r-gray-700 dark:border-b-gray-700 p-6 m-0">
           <p class="text-base/7 font-semibold text-gray-900 dark:text-white">What does it cost?</p>
-          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">$97 per 10,000 executions. An "execution" is any API call - file operation, terminal command, or signal.</p>
+          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">We like to keep pricing simple and transparent. $0.0097 per sandbox.</p>
         </div>
         <div class="border-r border-b border-gray-200 dark:border-r-gray-700 dark:border-b-gray-700 p-6 m-0">
-          <p class="text-base/7 font-semibold text-gray-900 dark:text-white">What counts as an execution?</p>
-          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">Every API call counts as one execution: creating a file, running a terminal command, sending a signal, or getting file status. WebSocket connections themselves don't count, only the operations you perform.</p>
+          <p class="text-base/7 font-semibold text-gray-900 dark:text-white">What counts as a sandbox?</p>
+          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">Every time you run <code>computesdk.create.sandbox</code> in your app, you create a new sandbox via our binary.</p>
         </div>
         <div class="border-r border-b border-gray-200 dark:border-r-gray-700 dark:border-b-gray-700 p-6 m-0">
           <p class="text-base/7 font-semibold text-gray-900 dark:text-white">Can we use this across multiple environments?</p>
-          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">Your subscription covers usage across all your compute environments - whether that's staging and production, or multiple providers like Vercel and Fly.</p>
+          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">Our pricing covers usage across all your compute environments - whether that's staging and production, or multiple providers like Vercel and Fly.</p>
         </div>
         <div class="border-r border-b border-gray-200 dark:border-r-gray-700 dark:border-b-gray-700 p-6 m-0">
           <p class="text-base/7 font-semibold text-gray-900 dark:text-white">How does team usage work?</p>
-          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">The pricing is per organization, not per user. Your whole team can use Sidekick across all your environments, sharing the execution allowance.</p>
+          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">The pricing is per workspace, not per user. Your whole team can use Compute across all your environments, simplifying the billing process.</p>
         </div>
         <div class="border-r border-b border-gray-200 dark:border-r-gray-700 dark:border-b-gray-700 p-6 m-0">
           <p class="text-base/7 font-semibold text-gray-900 dark:text-white">How do API keys work?</p>
-          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">You'll get an API key when you sign up. Set it as an environment variable in your compute environment, and Sidekick will automatically track your usage and apply it to your account. One API key works across all your environments and providers.</p>
+          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">You'll get an API key when you sign up. Set it as an environment variable in your compute environment, and Compute will automatically track your usage and apply it to your account. One API key works across all your environments and providers.</p>
         </div>
         <div class="border-r border-b border-gray-200 dark:border-r-gray-700 dark:border-b-gray-700 p-6 m-0">
-          <p class="text-base/7 font-semibold text-gray-900 dark:text-white">What about SSH and VS Code for Web?</p>
-          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">SSH access and VS Code for Web are coming soon as optional add-ons. These will be opt-in features since they require additional resources, but they'll integrate seamlessly with the existing API.</p>
+          <p class="text-base/7 font-semibold text-gray-900 dark:text-white">What if I decide I want to change providers?</p>
+          <p class="mt-2 text-base/7 text-gray-600 dark:text-gray-300">This is a core feature of ComputeSDK. You can change providers by simply updating your provider config, and all of your methods will continue to work just as before.</p>
         </div>
       </dl>
     </div>
