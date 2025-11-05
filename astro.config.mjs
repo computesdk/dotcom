@@ -24,6 +24,7 @@ export default defineConfig({
   },
   integrations: [starlight({
     title: 'ComputeSDK',
+    description: 'ComputeSDK: The Universal Sandbox Interface.',
 		    favicon: '/favicon.ico',
     head: [
       {
