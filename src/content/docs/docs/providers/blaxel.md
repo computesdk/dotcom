@@ -26,7 +26,8 @@ const compute = createCompute({
   provider: blaxel({ 
     apiKey: process.env.BLAXEL_API_KEY,
     workspace: process.env.BLAXEL_WORKSPACE 
-  }) 
+  }),
+  apiKey: process.env.COMPUTESDK_API_KEY 
 });
 
 // Create sandbox

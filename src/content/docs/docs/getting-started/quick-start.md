@@ -9,7 +9,7 @@ Welcome to ComputeSDK! This guide will get you up and running with secure, isola
 
 <br />
 
-<div class="bg-emerald-100/20 border-l-4 border-emerald-800/20 p-6 my-2 rounded flex flex-col gap-4">
+<div class="bg-emerald-100/20 border-l-4 border-emerald-800/20 dark:bg-emerald-800/30 dark:border-emerald-100/20 p-6 my-2 rounded flex flex-col gap-4">
   <strong>For a quick interactive demo of the SDK in action:</strong>
   
   ```bash
@@ -54,7 +54,8 @@ import { e2b } from '@computesdk/e2b';
 
 // Set default provider
 const compute = createCompute({ 
-  defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY }) 
+  defaultProvider: e2b({ apiKey: process.env.E2B_API_KEY }),
+  apiKey: process.env.COMPUTESDK_API_KEY 
 });
 
 // Create a sandbox
