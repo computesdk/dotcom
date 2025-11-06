@@ -1,5 +1,5 @@
 ---
-import CalScheduler from './CalScheduler.jsx';
+import CalBlock from './CalBlock.astro';
 ---
 <div class="relative isolate bg-transparent dark:bg-transparent py-4">
   <div class="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-10">
@@ -50,7 +50,21 @@ import CalScheduler from './CalScheduler.jsx';
     <!-- scheduler -->
     <div class="relative px-6 pb-20 pt-24 lg:static lg:px-8 lg:py-24 lg:col-span-7">
       <div class="items-end">
-        <CalScheduler client:load/>
+        <!-- Cal inline embed code begins -->
+        <div style="width:100%;height:100%;overflow:scroll" id="my-cal-inline-talk-to-an-engineer"></div>
+        <script type="text/javascript">
+        (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+        Cal("init", "talk-to-an-engineer", {origin:"https://app.cal.com"});
+
+        Cal.ns["talk-to-an-engineer"]("inline", {
+            elementOrSelector:"#my-cal-inline-talk-to-an-engineer",
+            config: {"layout":"month_view"},
+            calLink: "team/computesdk/talk-to-an-engineer",
+        });
+
+        Cal.ns["talk-to-an-engineer"]("ui", {"hideEventTypeDetails":true,"layout":"month_view"});
+        </script>
+        <!-- Cal inline embed code ends -->
       </div>
     </div>
   </div>
