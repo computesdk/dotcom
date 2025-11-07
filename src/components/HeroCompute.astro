@@ -1,0 +1,70 @@
+---
+// Hero.astro
+import CurlBlock from "./CurlBlock.astro";
+import CTABlock from "./CTABlock.astro";
+import LogoCloud from "./LogoCloud.astro";
+---
+
+<div>
+  <div class="relative isolate overflow-hidden pb-32 border-b border-gray-200 dark:border-gray-700">
+    <!-- Home page hero section -->
+    <div class="my-32 md:my-18">
+        <div class="mx-auto max-w-4xl text-center">
+
+          <!-- Headline -->
+          <h1 class="text-pretty text-6xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl lg:text-8xl mt-0">
+            The Universal Sandbox Interface
+          </h1>
+
+          <!-- Subheadline -->
+          <p class="mt-8 text-pretty text-xl font-medium text-gray-600 dark:text-gray-400 sm:text-2xl/8 max-w-3xl mx-auto">
+            One SDK, any cloud provider. Write your sandbox implementation once and deploy anywhere.
+          </p>
+
+          <!-- CTA Container -->
+          <div class="mt-12 flex justify-center">
+            <!-- Unified Command Interface -->
+            <CurlBlock />
+          </div>
+
+        </div>
+
+          <!-- Secondary CTA -->
+          <div class="mt-8 pb-4">
+            <CTABlock />
+          </div>
+    </div>
+    <div class="mt-16">
+      <LogoCloud />
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  h1, p, .group {
+    animation: fadeInUp 0.6s ease-out backwards;
+  }
+
+  h1 {
+    animation-delay: 0.1s;
+  }
+
+  p {
+    animation-delay: 0.2s;
+  }
+
+  .group {
+    animation-delay: 0.3s;
+  }
+</style>

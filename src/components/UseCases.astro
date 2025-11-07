@@ -1,0 +1,86 @@
+---
+// UseCases.astro
+const useCases = [
+  {
+    icon: '/MaterialSymbolsDeployedCode.svg',
+    title: "AI Code Execution",
+    description: "Power AI coding assistants with real-time code execution, terminal streaming, and file system control."
+  },
+  {
+    icon: '/MaterialSymbolsCodeBlocksOutlineSharp.svg',
+    title: "Code Playgrounds",
+    description: "Build interactive coding environments with instant preview URLs, hot reload, and multi-language support."
+  },
+  {
+    icon: '/TdesignEducationFilled.svg',
+    title: "Educational Platforms",
+    description: "Create hands-on learning experiences with isolated environments and real-time student monitoring."
+  }
+];
+---
+
+<div class="mx-auto pt-32 px-4 md:px-8 mt-0 pb-32 border-b border-gray-200 dark:border-gray-700">
+  <div class="mx-auto">
+    <!-- Section Header -->
+    <div class="mx-auto max-w-2xl text-center mb-16">
+      <!-- Badge -->
+      <div class="mb-8">
+        <span class="inline-flex items-center bg-emerald-600/10 dark:bg-emerald-900/50 px-4 py-1.5 text-sm font-semibold text-emerald-800 dark:text-white ring-1 ring-inset ring-emerald-600/10 rounded-xs">
+          Use Cases
+        </span>
+      </div>
+      <h2 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl mt-8">
+        Built for Modern Development
+      </h2>
+    </div>
+
+    <!-- Use Cases Grid Container -->
+    <div class="mx-auto mt-16 max-w-5xl bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 rounded-xs overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {useCases.map((useCase, index) => (
+          <div class={`group mt-0 p-8  transition-colors duration-300 ${
+            index < useCases.length - 1 ? 'border-b md:border-b-0' : ''
+          } ${
+            index === 0 ? 'md:border-r lg:border-r' : ''
+          } ${
+            index === 1 ? 'lg:border-r' : ''
+          } border-gray-200 dark:border-gray-700`}>
+            <!-- Icon -->
+            <div class="flex h-16 w-16 items-center justify-center mb-6">
+              <img 
+                src={useCase.icon} 
+                alt="" 
+                class="w-12 h-12 text-emerald-600 dark:text-emerald-400"
+                width="32"
+                height="32"
+              />
+            </div>
+            
+            <!-- Content -->
+            <div>
+              <h3 class="relative text-xl font-semibold text-gray-900 dark:text-white mb-3 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 group-hover:after:w-full after:h-0.5 after:bg-emerald-500 after:transition-all after:duration-600 after:ease-in-out inline-block">
+                {useCase.title}
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                {useCase.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- CTA Link -->
+    <div class="mt-16 flex justify-center">
+      <a 
+        href="/use-cases" 
+        class="group inline-flex items-center gap-2 text-lg font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors no-underline"
+      >
+        Explore All Use Cases
+        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>

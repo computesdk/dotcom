@@ -48,6 +48,15 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
     padding: 0 !important;
 }
 
+/* Hide h1#_top on splash pages */
+/* .content-panel:has(h1#_top) {
+    display: none;
+} */
+
+body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-x7zvoo7a) {
+    padding: 0 !important;
+}
+
 .nova-header-nav * {
     display: flex !important;
 }
@@ -62,3 +71,78 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
     display: none !important;
   }
 }
+
+/* Parallax Background Styles */
+.parallax-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -20;
+  transform-style: preserve-3d;
+  perspective: 1px;
+  overflow: hidden;
+}
+
+.parallax-background > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateZ(-1px) scale(2);
+  will-change: transform;
+}
+
+.parallax-content {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  transform-style: preserve-3d;
+}
+
+/* Ensure components have proper backgrounds for scrolling over parallax */
+.parallax-content > * {
+  position: relative;
+  z-index: 2;
+  transform: translateZ(0);
+}
+
+.nova-header-search {
+  margin-right: 0.5rem !important;
+}
+
+body:not(:has(#starlight__sidebar)) .nova-search-button {
+    display: none !important;
+}
+
+span.sl-hidden.md\:sl-block[aria-hidden="true"] {
+  display: none !important;
+}
+
+.nova-header-search {
+    justify-content: end !important;
+}
+    
+@media (max-width: 767px) {
+    .nova-header-nav {
+        display: none !important;
+    }
+    #auth-buttons {
+        display: none !important;
+    }
+}
+
+body:has(#starlight__sidebar) #mobile-menu-button {
+    display: none !important;
+}
+
+body:not(:has(#starlight__sidebar)) #mobile-menu-button {
+    margin-left: 1rem !important;
+}
+    
+
+    

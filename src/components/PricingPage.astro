@@ -1,17 +1,20 @@
 ---
-import FAQ from "./FAQ.astro";
 import FAQCol from "./FAQCol.astro";
 
 ---
-<div class="relative isolate bg-white dark:bg-gray-900 px-6 py-24 sm:py-32 lg:px-8">
-    <div aria-hidden="true" class="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl">
-      <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="mx-auto aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-emerald-400 to-emerald-600 opacity-30"></div>
-    </div>
+<div class="relative isolate bg-transparent dark:bg-transparent py-4">
+    <!-- Badge -->
+  <div class="border-b border-gray-200 dark:border-b-gray-700 py-32">
+    <div class="mx-6">
     <div class="mx-auto max-w-4xl text-center">
-      <h2 class="text-base/7 font-semibold text-emerald-600 dark:text-emerald-400">Pricing</h2>
-        <p class="mt-2 text-balance text-5xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-6xl">Secure Code Execution Made Simple</p>
+      <div class="mb-8 mx-auto">
+        <span class="inline-flex items-center bg-emerald-600/10 dark:bg-emerald-900/50 px-4 py-1.5 text-sm font-semibold text-emerald-800 dark:text-white ring-1 ring-inset ring-emerald-600/10 rounded-xs">
+          Pricing
+        </span>
+      </div>
+        <p class="mt-8 text-balance text-5xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-6xl">Sandboxes Made Simple</p>
     </div>
-    <p class="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 dark:text-gray-400 sm:text-xl/8">Start free with our provider-agnostic SDK, then scale with advanced features for production-ready code execution environments.</p>
+    <p class="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 dark:text-gray-400 sm:text-xl/8">Start for free with our SDK, then scale with advanced features for production-ready sandbox environments.</p>
     <div class="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
        <div class="rounded-3xl rounded-t-3xl bg-white/60 dark:bg-gray-800/60 p-8 ring-1 ring-gray-900/10 dark:ring-gray-700/50 sm:mx-8 sm:rounded-b-none sm:p-10 lg:mx-0 lg:rounded-bl-3xl lg:rounded-tr-none">
          <h3 id="tier-hobby" class="text-base/7 font-semibold text-emerald-600 dark:text-emerald-400">Free</h3>
@@ -20,12 +23,12 @@ import FAQCol from "./FAQCol.astro";
            <span class="text-base text-gray-500 dark:text-gray-400">forever</span>
         </p>
          <p class="mt-6 text-base/7 text-gray-600 dark:text-gray-300">Perfect for getting started with code execution in isolated sandbox environments.</p>
-          <ul role="list" class="mt-8 space-y-3 text-sm/6 text-gray-600 dark:text-gray-300 sm:mt-10">
+          <ul role="list" class="mt-8 space-y-3 p-0 text-sm/6 text-gray-600 dark:text-gray-300 sm:mt-10">
            <li class="flex gap-x-3">
               <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="h-6 w-5 flex-none text-emerald-600 dark:text-emerald-400">
                <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />
              </svg>
-             Multi-provider support (E2B, Vercel, Daytona, Modal, CodeSandbox)
+             Multi-provider support (Blaxel, CodeSandbox, Daytona, E2B, Modal, Vercel, and more)
            </li>
            <li class="flex gap-x-3">
               <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="h-6 w-5 flex-none text-emerald-600 dark:text-emerald-400">
@@ -45,17 +48,29 @@ import FAQCol from "./FAQCol.astro";
              </svg>
              TypeScript support
            </li>
+           <li class="flex gap-x-3">
+              <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="h-6 w-5 flex-none text-emerald-600 dark:text-emerald-400">
+               <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />
+             </svg>
+             Create 1000 sandboxes per workspace
+           </li>
          </ul>
-        <a href="https://buy.polar.sh/polar_cl_7kppmQMXd5cjk9iCiNv0XZkSSI1mCbCFei0JE0mLchM" target="_blank" aria-describedby="tier-free" class="mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-emerald-600 ring-1 ring-inset ring-emerald-200 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:mt-10 no-underline">Get started today</a>
+        <a href="https://console.computesdk.com/register" target="_blank" aria-describedby="tier-free" class="mt-8 block rounded-xs px-3.5 py-2.5 text-center text-sm font-semibold text-emerald-600 ring-1 ring-inset ring-emerald-200 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:mt-10 no-underline">Get started today</a>
       </div>
       <div class="relative rounded-3xl bg-gray-900 p-8 shadow-2xl ring-1 ring-gray-900/10 sm:p-10">
         <h3 id="tier-enterprise" class="text-base/7 font-semibold text-emerald-400">Premium</h3>
         <p class="mt-4 flex items-baseline gap-x-2">
           <span class="text-5xl font-semibold tracking-tight text-white">$97</span>
-          <span class="text-base text-gray-400">per 100k executions</span>
+          <span class="text-base text-gray-400">/ month + usage</span>
         </p>
         <p class="mt-6 text-base/7 text-gray-300">Turn any compute instance into a sandbox primitive with our self-executing binaries.</p>
-         <ul role="list" class="mt-8 space-y-3 text-sm/6 text-gray-300 sm:mt-10">
+         <ul role="list" class="mt-8 space-y-3 text-sm/6 p-0 text-gray-300 sm:mt-10">
+            <li class="flex gap-x-3">
+             <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="h-6 w-5 flex-none text-emerald-400">
+               <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />
+             </svg>
+             10,000 monthly sandbox creations included. $0.0097/sandbox over 10,000.
+           </li>
            <li class="flex gap-x-3">
              <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="h-6 w-5 flex-none text-emerald-400">
                <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />
@@ -93,9 +108,12 @@ import FAQCol from "./FAQCol.astro";
              Health monitoring with built-in status endpoints
            </li>
          </ul>
-        <a href="https://buy.polar.sh/polar_cl_7kppmQMXd5cjk9iCiNv0XZkSSI1mCbCFei0JE0mLchM" target="_blank" aria-describedby="tier-premium" class="mt-8 block rounded-md bg-emerald-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 sm:mt-10 no-underline">Get started today</a>
+        <a href="https://console.computesdk.com/register" target="_blank" aria-describedby="tier-premium" class="mt-8 block rounded-xs bg-emerald-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 sm:mt-10 no-underline">Get started today</a>
       </div>
     </div>
+    </div>
+  </div>
+  <div class="max-w-5xl mx-auto mt-0">
     <FAQCol />
   </div>
-  
+</div>

@@ -1,0 +1,24 @@
+<div
+    class="group relative w-full max-w-xl bg-white dark:bg-gray-800 ring-1 ring-neutral-300 dark:ring-neutral-700 hover:ring-emerald-500 transition-all duration-300 overflow-hidden rounded-xs my-0"
+>
+<div class="flex items-center px-6 py-5 my-0">
+    <div class="flex items-center justify-between my-0 px-4 py-2 bg-gray-200 dark:bg-gray-700 w-full">
+        <code
+            id="command-text"
+            class="font-mono text-sm text-black dark:text-white bg-transparent rounded-xs flex-1 truncate text-start mr-2"
+        >
+            curl -fsSL https://computesdk.com/install.sh | sh
+        </code>
+        <button type="button" class="cursor-pointer bg-transparent" onclick="copyCommand()">
+            <img src="MaterialSymbolsContentCopyOutlineSharp.svg" alt="Copy" height="16" width="16" />
+        </button>
+    </div>
+</div>
+
+<script>
+      function copyCommand() {
+    navigator.clipboard.writeText("curl -fsSL https://computesdk.com/install.sh | sh");
+  }
+
+(window as any).copyCommand = copyCommand;
+</script>

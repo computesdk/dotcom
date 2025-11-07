@@ -1,0 +1,72 @@
+---
+// Providers.astro
+const providers = [
+  { name: "E2B", logo: "/logos/e2b.svg" },
+  { name: "Daytona", logo: "/logos/daytona.svg" },
+  { name: "Vercel", logo: "/logos/vercel.svg" },
+  { name: "Railway", logo: "/logos/railway.svg" },
+  { name: "AWS EKS", logo: "/logos/aws.svg" }
+];
+---
+
+<div class="py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="mx-auto max-w-2xl text-center mb-16">
+      <div class="mb-4">
+        <span class="inline-flex items-center rounded-full bg-emerald-600/10 dark:bg-emerald-300/30 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 ring-1 ring-inset ring-emerald-600/10">
+          Integrated Providers
+        </span>
+      </div>
+      <h2 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+        Run on Any Infrastructure
+      </h2>
+    </div>
+
+    <!-- Providers Grid -->
+    <div class="mx-auto mt-16 grid max-w-5xl grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+      {providers.map((provider) => (
+        <div class="group col-span-1 flex justify-center items-center rounded-xl bg-white dark:bg-gray-800 p-8 ring-1 ring-gray-200 dark:ring-gray-700 hover:ring-emerald-500 dark:hover:ring-emerald-400 transition-all duration-300 hover:shadow-lg">
+          <div class="flex items-center justify-center h-16 grayscale group-hover:grayscale-0 transition-all duration-300">
+            <!-- Placeholder for actual logos - replace with actual logo images -->
+            <div class="text-2xl font-bold text-gray-400 dark:text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+              {provider.name}
+            </div>
+          </div>
+        </div>
+      ))}
+      
+      <!-- Custom Infrastructure Card -->
+      <div class="col-span-2 sm:col-span-3 lg:col-span-5 flex justify-center mt-4">
+        <div class="flex items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/20 px-8 py-6 ring-1 ring-emerald-200 dark:ring-emerald-800">
+          <span class="text-lg font-semibold text-emerald-800 dark:text-emerald-300">
+            + Custom Infrastructure
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Provider CTA -->
+    <div class="mx-auto mt-16 max-w-2xl text-center">
+      <p class="text-gray-600 dark:text-gray-400 mb-6">
+        For infrastructure providers: Want to offer best-in-class sandbox features to your users?
+      </p>
+      <a 
+        href="/contact" 
+        class="inline-flex items-center gap-2 rounded-md bg-emerald-600 dark:bg-emerald-500 px-6 py-3 text-base font-semibold text-white hover:bg-emerald-500 dark:hover:bg-emerald-400 transition-colors no-underline"
+      >
+        Get in Touch
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Logo hover effects */
+  .group:hover img {
+    filter: grayscale(0);
+  }
+</style>

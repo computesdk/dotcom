@@ -1,0 +1,3 @@
+page column borders: border border-gray-200 dark:border-gray-700 border-t-0 border-b-0 mt-0 mb-0 mx-24
+section padding: py-32
+section bottom borders: border-b border-gray-200 dark:border-gray-700
