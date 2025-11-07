@@ -9,15 +9,62 @@
         >
             curl -fsSL https://computesdk.com/install.sh | sh
         </code>
-        <button type="button" class="cursor-pointer bg-transparent" onclick="copyCommand()">
-            <img src="MaterialSymbolsContentCopyOutlineSharp.svg" alt="Copy" height="16" width="16" />
+        <button 
+          type="button" 
+          class="relative cursor-pointer bg-transparent p-1 rounded transition-all duration-200 hover:bg-gray-300/30 dark:hover:bg-gray-600/30 active:scale-90" 
+          onclick="copyCommand(this)"
+          aria-label="Copy to clipboard"
+          data-state="default"
+        >
+          <div class="relative w-4 h-4">
+            <img 
+              src="MaterialSymbolsContentCopyOutlineSharp.svg" 
+              alt="" 
+              height="16" 
+              width="16" 
+              class="text-gray-600 dark:text-gray-300 group-hover:text-emerald-500 transition-colors"
+              data-icon="copy"
+            />
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="currentColor" 
+            class="hidden absolute inset-0 m-auto w-4 h-4 text-emerald-500"
+            data-icon="check"
+          >
+            <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 011.04-.207z" clip-rule="evenodd" />
+          </svg>
+          <span class="sr-only">Copy to clipboard</span>
+          </div>
         </button>
     </div>
 </div>
 
 <script>
-      function copyCommand() {
+      function copyCommand(button: HTMLElement) {
+    if (button.getAttribute('data-state') === 'copied') return;
+    
+    const copyIcon = button.querySelector<HTMLElement>('[data-icon="copy"]');
+    const checkIcon = button.querySelector<HTMLElement>('[data-icon="check"]');
+    
+    if (!copyIcon || !checkIcon) return;
+    
+    // Show feedback
+    button.setAttribute('data-state', 'copied');
+    copyIcon.classList.add('hidden');
+    checkIcon.classList.remove('hidden');
+    button.classList.add('text-emerald-500');
+    
+    // Copy to clipboard
     navigator.clipboard.writeText("curl -fsSL https://computesdk.com/install.sh | sh");
+    
+    // Reset after 2 seconds
+    setTimeout(() => {
+      button.setAttribute('data-state', 'default');
+      copyIcon.classList.remove('hidden');
+      checkIcon.classList.add('hidden');
+      button.classList.remove('text-emerald-500');
+    }, 2000);
   }
 
 (window as any).copyCommand = copyCommand;
