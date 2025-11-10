@@ -229,7 +229,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
     server: {
       host: true,
-      allowedHosts: ['.tail4ecb92.ts.net'],
+      allowedHosts: ['.hartley-wahoo.ts.net'],
     },
     preview: {
       allowedHosts: ['com-production-86d3.up.railway.app', '.railway.app', ],
