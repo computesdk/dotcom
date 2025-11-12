@@ -18,6 +18,7 @@
 
   body:not(:has(#starlight__sidebar)) .content-panel {
     border: none;
+    padding: 0 !important;
   }
 
   /* Hide Starlight's footer globally */
@@ -44,9 +45,9 @@ html {
   scroll-behavior: smooth;
 }
 
-body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
+/* body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
     padding: 0 !important;
-}
+} */
 
 /* Hide h1#_top on splash pages */
 /* .content-panel:has(h1#_top) {
@@ -54,6 +55,9 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-7nkwcw3z) {
 } */
 
 body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-x7zvoo7a) {
+    padding: 0 !important;
+}
+body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-t772eank) {
     padding: 0 !important;
 }
 
