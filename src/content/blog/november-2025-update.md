@@ -26,7 +26,7 @@ ComputeSDK is a universal sandbox interface that lets you build, deploy, and int
 - Full file-system access
 - Real-time file watching
 - WebSocket event system
-- More details here
+- [More features here](https://www.computesdk.com/features)
 
 ## Why would I use ComputeSDK?
 The compute power needed to run AI-written code is not the bottleneck in implementing AI in a useful way. The bottleneck is in the setup, the configuration of the infrastructure, and the work it takes to update & improve that architecture. ComputeSDK decouples your application from your infrastructure - a separation of concerns, if you will. Our users are now able to focus on creating value in their core application (AI or otherwise), not fussing with decisions about the architecture of their sandbox infrastructure. **Now, with ComputeSDK, changing or adding sandbox providers is as simple as importing a new provider module and updating environment variables.**
