@@ -28,7 +28,7 @@ ComputeSDK is a universal sandbox interface that lets you build, deploy, and int
 - WebSocket event system
 - [More features here](https://www.computesdk.com/features)
 
-<img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/public/compute-install.gif" alt="Screen recording of a user installing Compute CLI via terminal" title="How to install Compute CLI" />
+<img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/compute-install.gif" alt="Screen recording of a user installing Compute CLI via terminal" title="How to install Compute CLI" />
 
 ## Why would I use Compute?
 The compute power needed to run AI-written code is not the bottleneck in implementing AI in a useful way. The bottleneck is in the setup, the configuration of the infrastructure, and the work it takes to update & improve that architecture. ComputeSDK decouples your application from your infrastructure - a separation of concerns, if you will. Our users are now able to focus on creating value in their core application (AI or otherwise), not fussing with decisions about the architecture of their sandbox infrastructure. **Now, with ComputeSDK, changing or adding sandbox providers is as simple as importing a new provider module and updating environment variables.**
@@ -42,7 +42,7 @@ Here’s how you can start with Compute today:
 * [Sign up](https://console.computesdk.com/register) and use ComputeSDK in your application ([Read our docs](https://www.computesdk.com/docs/getting-started/introduction))
 * [Talk to us](https://www.computesdk.com/contact) if you have questions or want help with implementation.
 
-<img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/public/compute-terminal.gif" alt="Screen recording of the built-in terminal access of Compute" title="How to use the Compute terminal" />
+<img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/compute-terminal.gif" alt="Screen recording of the built-in terminal access of Compute" title="How to use the Compute terminal" />
 
 Example application usage:
 ``` javascript
