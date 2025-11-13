@@ -137,10 +137,10 @@ export default defineConfig({
               label: 'Docs',
               href: '/docs/getting-started/introduction',
             },
-            // {
-            //   label:'Blog',
-            //   href: '/blog'
-            // },
+            {
+              label:'Blog',
+              href: '/blog'
+            },
             // {
             //   label:'Contact',
             //   href: '/contact'
