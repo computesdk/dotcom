@@ -2,7 +2,7 @@
 title: "Quick Start"
 description: ""
 sidebar:
-  order: 3
+  order: 2
 ---
 
 Welcome to ComputeSDK! This guide will get you up and running with secure, isolated code execution across multiple cloud providers using a unified TypeScript interface.
