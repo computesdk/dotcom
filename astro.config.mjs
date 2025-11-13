@@ -104,6 +104,22 @@ export default defineConfig({
             content: 'VEcg5NwgU_sHsQHc78Qeho6-F54Zv1oQTqJSGgISOkc',
           },
         },
+        {
+          tag: 'script',
+          attrs: {
+            async: true,
+            src: 'https://www.googletagmanager.com/gtag/js?id=G-CDJE5R5B1N'
+          }
+        },
+        {
+          tag: 'script',
+          content: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-CDJE5R5B1N');
+          `
+        },
       ],	
       logo: {
             light: './src/assets/hv_main_logo_light.svg',
