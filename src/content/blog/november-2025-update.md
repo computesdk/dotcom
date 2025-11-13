@@ -16,9 +16,9 @@ Around a year ago, I was building a K8s-based sandbox implementation for a large
 
 Addressing any one of these issues is a massive undertaking, and it shouldn’t be. You should be able to easily use compute anywhere it’s available without affecting your business, your users, or your developers.
 
-## That is why we are proud to announce the new capabilities of ComputeSDK.
+## That is why we are proud to announce the Compute CLI.
 
-ComputeSDK is a universal sandbox interface that lets you build, deploy, and interact with sandboxes anywhere using a single, consistent API. Our lightweight binary lives anywhere your compute lives - bare metal, VMs, containers, or your existing sandbox provider. This provides a consistent experience across all compute environments with some key benefits:
+ComputeSDK is a universal sandbox interface that lets you build, deploy, and interact with sandboxes anywhere using a single, consistent API. Compute CLI anywhere your compute lives - bare metal, VMs, containers, or your existing sandbox provider. This provides a consistent experience across all compute environments with some key benefits:
 - Create sandboxes with any of our providers (more to come)
 - Authenticated access to each sandbox instance from any client (browser, server, or application)
 - Each sandbox instance has a secure, public URL out-of-the-box
@@ -28,17 +28,21 @@ ComputeSDK is a universal sandbox interface that lets you build, deploy, and int
 - WebSocket event system
 - [More features here](https://www.computesdk.com/features)
 
-## Why would I use ComputeSDK?
+<img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/public/compute-install.gif" alt="Screen recording of a user installing Compute CLI via terminal" title="How to install Compute CLI" />
+
+## Why would I use Compute?
 The compute power needed to run AI-written code is not the bottleneck in implementing AI in a useful way. The bottleneck is in the setup, the configuration of the infrastructure, and the work it takes to update & improve that architecture. ComputeSDK decouples your application from your infrastructure - a separation of concerns, if you will. Our users are now able to focus on creating value in their core application (AI or otherwise), not fussing with decisions about the architecture of their sandbox infrastructure. **Now, with ComputeSDK, changing or adding sandbox providers is as simple as importing a new provider module and updating environment variables.**
 
 ## Focus on building
 The need for sandboxes is exploding alongside the AI market. The companies that will win are the ones who can deliver the most value to their users. You can't afford to spend time working on complex integrations or debugging one-off APIs. You need ComputeSDK so you can focus on building your core product.
 
-## How to use ComputeSDK:
-Here’s how you can start with ComputeSDK today:
+## How to use Compute:
+Here’s how you can start with Compute today:
 * [Sign up](https://console.computesdk.com/register) and play with sandboxes locally (your first 1,000 sandbox creations are free)
 * [Sign up](https://console.computesdk.com/register) and use ComputeSDK in your application ([Read our docs](https://www.computesdk.com/docs/getting-started/introduction))
 * [Talk to us](https://www.computesdk.com/contact) if you have questions or want help with implementation.
+
+<img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/public/compute-terminal.gif" alt="Screen recording of the built-in terminal access of Compute" title="How to use the Compute terminal" />
 
 Example application usage:
 ``` javascript
@@ -67,7 +71,7 @@ await compute.sandbox.destroy(sandbox.sandboxId);
 Visit our [quick start page](https://www.computesdk.com/docs/getting-started/quick-start/) for more detailed instructions.
 
 ## Pricing
-Compute is $97/month for 10,000 sandboxes, and then $0.0097 per sandbox creation after that.
+Compute CLI is $97/month for 10,000 sandboxes, and then $0.0097 per sandbox creation after that.
 We’ve made it simple to get started whether you’re just testing locally or ready to integrate into your production application. You can sign up for free and generate an API key [here](https://console.computesdk.com/register).
 
 We're incredibly excited to see what you build.
