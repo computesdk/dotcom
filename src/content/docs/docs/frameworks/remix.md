@@ -98,7 +98,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
     
     // Create sandbox and execute code
-    const sandbox = await compute.sandbox.create({});
+    const sandbox = await compute.sandbox.create();
     const result = await sandbox.runCode(code, runtime);
     
     // Clean up
@@ -146,7 +146,7 @@ export async function action({ request }: ActionFunctionArgs) {
       provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
     });
     
-    const sandbox = await compute.sandbox.create({});
+    const sandbox = await compute.sandbox.create();
     const result = await sandbox.runCode(code, runtime);
     
     await compute.sandbox.destroy(sandbox.sandboxId);
@@ -232,7 +232,7 @@ export async function loader({}: LoaderFunctionArgs) {
       provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
     });
     
-    const sandbox = await compute.sandbox.create({});
+    const sandbox = await compute.sandbox.create();
     
     // Generate data on the server
     const result = await sandbox.runCode(`
@@ -314,7 +314,7 @@ export async function action({ request }: ActionFunctionArgs) {
       provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
     });
     
-    const sandbox = await compute.sandbox.create({});
+    const sandbox = await compute.sandbox.create();
     const result = await sandbox.runCode(code, runtime);
     
     await compute.sandbox.destroy(sandbox.sandboxId);
@@ -422,7 +422,7 @@ export async function action({ request }: ActionFunctionArgs) {
       provider: e2b({ apiKey: process.env.E2B_API_KEY! }) 
     });
     
-    const sandbox = await compute.sandbox.create({});
+    const sandbox = await compute.sandbox.create();
     
     // Save CSV data
     await sandbox.filesystem.writeFile('/data/input.csv', csvData);

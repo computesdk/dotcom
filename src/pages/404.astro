@@ -1,0 +1,23 @@
+---
+import Hero404 from '../components/Hero404.astro';
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Page Not Found | ComputeSDK</title>
+  <meta name="description" content="Page not found. The page you're looking for doesn't exist." />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  
+  <!-- Theme support -->
+  <script>
+    (()=>{let t="theme-toggle",n;function r(){return window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}function l(){let e=localStorage.getItem(t);return e==="dark"||e==="light"?e:null}function m(){return n||l()||r()}function s(e){e===r()?localStorage.removeItem(t):localStorage.setItem(t,e)}function h(e){let o=document.documentElement;o.classList.toggle("dark",e==="dark"),o.dataset.theme=e,o.style.colorScheme=e}function a(e){n=e,s(e),h(e)}function c(){a(m())}c()})();
+  </script>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+  <Hero404 />
+</body>
+</html>
