@@ -96,7 +96,7 @@ export default defineEventHandler(async (event) => {
     });
     
     // Create sandbox and execute code
-    const sandbox = await compute.sandbox.create({});
+    const sandbox = await compute.sandbox.create();
     const result = await sandbox.runCode(code, runtime);
     
     // Clean up
@@ -294,7 +294,7 @@ export default defineEventHandler(async (event) => {
       provider: e2b({ apiKey: useRuntimeConfig().e2bApiKey }) 
     });
     
-    const sandbox = await compute.sandbox.create({});
+    const sandbox = await compute.sandbox.create();
     
     // Save CSV data
     await sandbox.filesystem.writeFile('/data/input.csv', csvData);

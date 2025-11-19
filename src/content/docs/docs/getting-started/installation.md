@@ -2,7 +2,7 @@
 title: "Installation"
 description: ""
 sidebar:
-  order: 3
+  order: 2
 ---
 
 ComputeSDK provides a unified abstraction layer for executing code in secure, isolated sandboxed environments across multiple cloud providers.
