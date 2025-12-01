@@ -237,6 +237,7 @@ export default defineConfig({
                     { label: 'Filesystem', link: '/docs/reference/filesystem' },
                     { label: 'Client', link: '/docs/reference/client' },
                     { label: 'API Integration', link: '/docs/reference/api-integration' },
+                    { label: 'Adding a Provider', link: '/docs/reference/adding-a-provider' },
                 ],
             },
         ],
