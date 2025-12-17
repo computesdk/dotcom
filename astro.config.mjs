@@ -33,6 +33,27 @@ export default defineConfig({
 		    favicon: '/favicon.ico',
       head: [
         {
+          tag: 'meta',
+          attrs: {
+            property: 'og:image',
+            content: 'https://www.computesdk.com/og-preview-image.png',
+          },
+        },
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'twitter:image',
+            content: 'https://www.computesdk.com/og-preview-image.png',
+          },
+        },
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'twitter:card',
+            content: 'summary_large_image',
+          },
+        },
+        {
           tag: 'link',
           attrs: {
             rel: 'icon',
