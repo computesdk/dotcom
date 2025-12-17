@@ -20,7 +20,7 @@ They offer plenty of credits to get familiar with sandboxes.\
 And, they have the most intuitive sandbox management UI (in my opinion).\
 **Let's see how we can easily run a basic Vite app inside of an E2B sandbox.**
 
-## Let's start by creating a new Next.js project.
+## Let's start by creating a new Next.js project
 
 Run this command in your terminal:
 
@@ -53,8 +53,8 @@ Save your API key in your `env.local` file to the `E2B_API_KEY` variable.
 E2B_API_KEY=your_e2b_api_key
 ```
 
-## Create a ComputeSDK account 
-
+## Create a ComputeSDK account
+<!-- markdownlint-disable-next-line MD033 -->
 Create an account at our <a href="https://console.computesdk.com/register" target="_blank">signup page</a>.\
 Once you have created your ComputeSDK account, you'll need to generate an API key.\
 Click "API Keys" in the left-hand navigation -> "Create API Key"
@@ -75,10 +75,10 @@ npm install computesdk @computesdk/e2b
 
 ## Now we'll move on to creating the actual sandbox logic
 
-### We need to create the API route to create the sandbox.
+### We need to create the API route to create the sandbox
 
 ComputeSDK makes this easy, just import the basic `computesdk` package & the specific provider package.\
-More documentation [here](https://www.computesdk.com/docs/providers/e2b/#with-computesdk).
+More [documentation](https://www.computesdk.com/docs/providers/e2b/#with-computesdk).
 
 ```typescript
 // app/api/sandbox/route.ts
@@ -102,7 +102,6 @@ export async function POST() {
   });
 }
 ```
-
 
 ### Next, we'll edit the page.tsx file
 
@@ -153,7 +152,7 @@ Inside, you will be able to see your filesystem.
 
 ComputeSDK automatically installs our lightweight daemon upon sandbox creation. There should already be a `.compute/sandboxes/unique-sandbox-id` subfolder created in your sandbox. This is where you can run applications in your sandbox and automatically access them via the browser through our secure tunnel.
 
-## You've successfully created your first E2B sandbox!
+## You've successfully created your first E2B sandbox
 
 If you wanted to do this with another sandbox provider, like Daytona, all you need to do is:
 
@@ -257,7 +256,7 @@ So we need to cd into /app before we run npm install or start our Vite server.
   });
 ```
 
-#### Use the getUrl method to output the secure preview URL via the ComputeSDK tunnel.
+#### Use the getUrl method to output the secure preview URL via the ComputeSDK tunnel
 
 ```typescript
   // Get preview URL
@@ -265,7 +264,7 @@ So we need to cd into /app before we run npm install or start our Vite server.
   console.log('previewUrl:', url)
 ```
 
-#### Return the preview url along with the sandboxId.
+#### Return the preview url along with the sandboxId
 
 ```typescript
   return NextResponse.json({ 
