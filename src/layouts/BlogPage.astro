@@ -4,9 +4,12 @@ interface Props {
   date: Date;
   description?: string;
   tags?: string[];
+  author?: string;
+  role?: string;
+  image?: string;
 }
 
-const { title, date, description, tags } = Astro.props as Props;
+const { title, date, description, tags, author, role, image } = Astro.props as Props;
 ---
 
 <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -26,30 +29,36 @@ const { title, date, description, tags } = Astro.props as Props;
     </h1>
     
     <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
-      <time class="text-gray-500 dark:text-gray-400 text-lg">
-        {new Date(date).toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })}
-      </time>
+      <div class="relative flex items-center gap-x-4">
+        <img src={image} alt="" class="size-10 rounded-full bg-gray-50" />
+        <div class="text-sm/6 mt-0 items-center gap-y-2">
+          <p class="font-semibold text-gray-900 dark:text-white">
+            <span class="absolute inset-0"></span>
+            {author}
+          </p>
+          <p class="text-gray-600 mt-0 dark:text-gray-400">{role}</p>
+        </div>
+      </div>
+      <div class="gap-4 mb-6 text-center">
+        <time class="text-gray-500 dark:text-gray-400 text-sm">
+          {new Date(date).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </time>
+        {tags && tags.length > 0 && (
+        <div class="flex flex-wrap gap-2 mt-1">
+          {tags.map((tag: string) => (
+            <span class="px-3 py-1 bg-emerald-50/70 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-md text-sm font-medium">
+              {tag}
+            </span>
+          ))}
+        </div>
+        )}
+      </div>
     </div>
     
-    {description && (
-      <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-        {description}
-      </p>
-    )}
-    
-    {tags && tags.length > 0 && (
-      <div class="flex flex-wrap gap-2">
-        {tags.map((tag: string) => (
-          <span class="px-3 py-1 bg-emerald-50/70 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-md text-sm font-medium">
-            {tag}
-          </span>
-        ))}
-      </div>
-    )}
   </header>
 
   <!-- Article Content -->
