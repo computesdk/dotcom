@@ -2,7 +2,7 @@
 title: "Runloop"
 description: ""
 sidebar:
-  order: 6
+  order: 7
 ---
 
 Runloop provider for ComputeSDK - Execute code in cloud-based devboxes with full development environments.
