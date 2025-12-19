@@ -3,36 +3,67 @@
 import CurlBlock from "./CurlBlock.astro";
 import CTABlock from "./CTABlock.astro";
 import LogoCloud from "./LogoCloud.astro";
+import { Code } from "astro:components";
+
+const codeExample = `import { compute } from 'computesdk';
+
+const sandbox = compute.sandbox.create();
+
+const result = await sandbox.runCode('print("Hello!")');
+console.log(result.output); // "Hello!"
+
+await sandbox.filesystem.writeFile('/sandbox.txt', 'Success!');
+
+await compute.sandbox.destroy(sandbox.sandboxId);
+
+`;
 ---
 
 <div>
   <div class="relative isolate overflow-hidden pb-32 border-b border-gray-200 dark:border-gray-700">
     <!-- Home page hero section -->
-    <div class="my-32 md:my-18">
-        <div class="mx-auto max-w-4xl text-center">
+    <div class="my-24 md:my-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-          <!-- Headline -->
-          <h1 class="text-pretty text-6xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl lg:text-8xl mt-0">
-            The Universal Sandbox Interface
-          </h1>
+            <!-- Left column - Content -->
+            <div class="text-left">
+              <!-- Headline -->
+              <h1 class="text-pretty text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl lg:text-7xl mt-0">
+                The Universal Sandbox Interface
+              </h1>
 
-          <!-- Subheadline -->
-          <p class="mt-8 text-pretty text-xl font-medium text-gray-600 dark:text-gray-400 sm:text-2xl/8 max-w-3xl mx-auto">
-            One SDK, any cloud provider. Write your sandbox implementation <span class="underline">once</span> and run AI agents anywhere.
-          </p>
+              <!-- Subheadline -->
+              <p class="mt-8 text-pretty text-lg font-medium text-gray-600 dark:text-gray-400 sm:text-xl/8 max-w-xl">
+                One SDK, any cloud provider. Write your sandbox implementation <span class="underline">once</span> and run AI agents anywhere.
+              </p>
 
-          <!-- CTA Container -->
-          <div class="mt-12 flex justify-center">
-            <!-- Unified Command Interface -->
-            <CurlBlock />
+              <!-- Secondary CTA -->
+              <div class="mt-8">
+                <CTABlock />
+              </div>
+            </div>
+
+            <!-- Right column - Code Block -->
+            <div class="relative">
+              <div class="code-window rounded-xl overflow-hidden shadow-2xl bg-[#1e2432]">
+                <!-- Window header with tabs -->
+                <div class="flex items-center bg-[#171b26] px-4 py-3">
+                  <div class="flex">
+                    <div class="px-4 py-1.5 text-sm text-white bg-[#1e2432] rounded-t-md">sandbox.ts</div>
+                  </div>
+                </div>
+                <!-- Code content -->
+                <div class="code-content py-1 px-2 text-sm overflow-x-auto">
+                  <Code code={codeExample} lang="typescript" theme="github-dark" />
+                </div>
+              </div>
+              <!-- Decorative gradient behind code block -->
+              <div class="absolute -inset-4 -z-10 bg-gradient-to-r from-green-500/20 to-emerald-500/20 blur-3xl rounded-3xl"></div>
+            </div>
+
           </div>
-
         </div>
-
-          <!-- Secondary CTA -->
-          <div class="mt-8 pb-4">
-            <CTABlock />
-          </div>
     </div>
     <div class="mt-16">
       <LogoCloud />
@@ -66,5 +97,19 @@ import LogoCloud from "./LogoCloud.astro";
 
   .group {
     animation-delay: 0.3s;
+  }
+
+  .code-content :global(pre) {
+    background: transparent !important;
+    margin: 0;
+    padding: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .code-content :global(code) {
+    background: transparent !important;
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
 </style>
