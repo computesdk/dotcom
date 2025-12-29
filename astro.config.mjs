@@ -239,21 +239,22 @@ export default defineConfig({
                 autogenerate: { directory: 'docs/getting-started' },
             },
             {
-                label: 'SDK Reference',
+                label: 'Reference',
                 items: [
-                    { label: 'Sandbox Methods', link: '/docs/reference/sandbox-methods' },
-                    { label: 'Filesystem Methods', link: '/docs/reference/filesystem-methods' },
-                    { label: 'Provider Configuration', link: '/docs/reference/provider-config' },
+                    { label: 'compute', link: '/docs/reference/compute' },
+                    { label: 'compute.sandbox', link: '/docs/reference/computesandbox' },
+                    { label: 'Sandbox', link: '/docs/reference/sandbox' },
+                    { label: 'compute.events', link: '/docs/reference/computeevents' },
                 ],
             },
                      {
                 label: 'Features',
                 autogenerate: { directory: 'docs/features' },
             },
-            // {
-            //     label: 'Providers',
-            //     autogenerate: { directory: 'docs/providers' },
-            // },
+            {
+                label: 'Providers',
+                autogenerate: { directory: 'docs/providers' },
+            },
             // {
             //     label: 'Frameworks',
             //     autogenerate: { directory: 'docs/frameworks' },

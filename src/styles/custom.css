@@ -147,6 +147,10 @@ body:has(#starlight__sidebar) #mobile-menu-button {
 body:not(:has(#starlight__sidebar)) #mobile-menu-button {
     margin-left: 1rem !important;
 }
+
+starlight-toc a[href="#_top"] {
+  display: none !important;
+}
     
 
     
