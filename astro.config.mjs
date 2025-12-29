@@ -239,28 +239,40 @@ export default defineConfig({
                 autogenerate: { directory: 'docs/getting-started' },
             },
             {
-                label: 'Providers',
-                autogenerate: { directory: 'docs/providers' },
+                label: 'SDK Reference',
+                items: [
+                    { label: 'Sandbox Methods', link: '/docs/reference/sandbox-methods' },
+                    { label: 'Filesystem Methods', link: '/docs/reference/filesystem-methods' },
+                    { label: 'Provider Configuration', link: '/docs/reference/provider-config' },
+                ],
             },
+                     {
+                label: 'Features',
+                autogenerate: { directory: 'docs/features' },
+            },
+            // {
+            //     label: 'Providers',
+            //     autogenerate: { directory: 'docs/providers' },
+            // },
             // {
             //     label: 'Frameworks',
             //     autogenerate: { directory: 'docs/frameworks' },
             // },
-            {
-                label: 'SDK Reference',
-                items: [
-                    { label: 'Overview', link: '/docs/reference/overview' },
-                    { label: 'CLI', link: '/docs/reference/cli' },
-                    // { label: 'UI Package', link: '/docs/reference/ui-package' },
-                    { label: 'Configuration', link: '/docs/reference/configuration' },
-                    { label: 'Code Execution', link: '/docs/reference/code-execution' },
-                    { label: 'Sandbox Management', link: '/docs/reference/sandbox-management' },
-                    { label: 'Filesystem', link: '/docs/reference/filesystem' },
-                    { label: 'Client', link: '/docs/reference/client' },
-                    { label: 'API Integration', link: '/docs/reference/api-integration' },
-                    { label: 'Adding a Provider', link: '/docs/reference/adding-a-provider' },
-                ],
-            },
+            // {
+            //     label: 'SDK Reference',
+            //     items: [
+            //         { label: 'Overview', link: '/docs/reference/overview' },
+            //         { label: 'CLI', link: '/docs/reference/cli' },
+            //         // { label: 'UI Package', link: '/docs/reference/ui-package' },
+            //         { label: 'Configuration', link: '/docs/reference/configuration' },
+            //         { label: 'Code Execution', link: '/docs/reference/code-execution' },
+            //         { label: 'Sandbox Management', link: '/docs/reference/sandbox-management' },
+            //         { label: 'Filesystem', link: '/docs/reference/filesystem' },
+            //         { label: 'Client', link: '/docs/reference/client' },
+            //         { label: 'API Integration', link: '/docs/reference/api-integration' },
+            //         { label: 'Adding a Provider', link: '/docs/reference/adding-a-provider' },
+            //     ],
+            // },
         ],
     }), 
     sitemap({
