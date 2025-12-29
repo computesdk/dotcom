@@ -243,7 +243,7 @@ export default defineConfig({
                 items: [
                     { label: 'compute', link: '/docs/reference/compute' },
                     { label: 'compute.sandbox', link: '/docs/reference/computesandbox' },
-                    { label: 'Sandbox', link: '/docs/reference/sandbox' },
+                    { label: 'Sandbox (interface)', link: '/docs/reference/sandbox' },
                     { label: 'compute.events', link: '/docs/reference/computeevents' },
                 ],
             },
