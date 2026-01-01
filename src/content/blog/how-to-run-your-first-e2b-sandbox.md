@@ -8,6 +8,9 @@ role: "Founder, ComputeSDK"
 image: "/Garrison-Snelling-sq.jpeg"
 featured: true
 ---
+
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/dtice25/basic-sandbox-app" target="_blank">this repo</a>, update your credentials and run locally. Or check it out on <a href="https://stackblitz.com/edit/e2b" target="_blank">Stackblitz</a>.</span>
+
 It feels like everyone is talking about running code inside of sandboxes these days.\
 But how do you actually do that?\
 Let's walk through the process of getting a basic application running inside an E2B sandbox.
@@ -35,9 +38,6 @@ Once it has been created, be sure to create an `env.local` file to add your nece
 E2B_API_KEY=your_e2b_api_key
 COMPUTESDK_API_KEY=your_computesdk_api_key
 ```
-
-<!-- markdownlint-disable-next-line MD033 -->
-*Want to skip all of this talk? You can just clone <a href="https://github.com/dtice25/basic-sandbox-app" target="_blank">this repo</a>, update your .env.local with your ComputeSDK & E2B credentials and run it. You're welcome!*
 
 ## Create an E2B account
 <!-- markdownlint-disable-next-line MD033 -->
@@ -67,33 +67,25 @@ Save your API key in your `env.local` file to the `COMPUTESDK_API_KEY` variable.
 COMPUTESDK_API_KEY=your_computesdk_api_key
 ```
 
-## Install the necessary packages
+## Install the ComputeSDK package
 
 ```bash
-npm install computesdk @computesdk/e2b
+npm install computesdk
 ```
 
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-ComputeSDK makes this easy, just import the basic `computesdk` package & the specific provider package.\
-More [documentation](https://www.computesdk.com/docs/providers/e2b/#with-computesdk).
+ComputeSDK makes this easy, just import the basic `computesdk` package.\
+ComputeSDK auto-detects your sandbox provider variables from your .env file
 
 ```typescript
 // app/api/sandbox/route.ts
 import { NextResponse } from 'next/server';
-import { createCompute } from 'computesdk';
-import { e2b } from '@computesdk/e2b';
+import { compute } from 'computesdk';
 
 export async function POST() {
-  const compute = createCompute({
-    provider: e2b({
-      apiKey: process.env.E2B_API_KEY!,
-      timeout: 300000, // 5 minutes for testing
-    }),
-    apiKey: process.env.COMPUTESDK_API_KEY,
-  });
 
   const sandbox = await compute.sandbox.create();
 
@@ -154,45 +146,7 @@ ComputeSDK automatically installs our lightweight daemon upon sandbox creation. 
 
 ## You've successfully created your first E2B sandbox
 
-If you wanted to do this with another sandbox provider, like Daytona, all you need to do is:
-
-1. Install the new provider package
-
-    ```bash
-    npm install @computesdk/daytona
-    ```
-
-2. Import the new provider package in your API route file
-
-    ```typescript
-    import { daytona } from '@computesdk/daytona'
-    ```
-
-3. Update your environment variables
-
-    ```bash
-    DAYTONA_API_KEY=your_daytona_api_key_here
-    ```
-
-4. Change your `createCompute` logic to use new provider
-
-    ```typescript
-    export async function POST() {
-    const compute = createCompute({
-        provider: daytona({
-        apiKey: process.env.DAYTONA_API_KEY!,
-        timeout: 300000, // 5 minutes for testing
-        }),
-        apiKey: process.env.COMPUTESDK_API_KEY,
-    });
-
-    const sandbox = await compute.sandbox.create();
-
-    return NextResponse.json({ 
-        sandboxId: sandbox.sandboxId,
-    });
-    }
-    ```
+If you want to use another sandbox provider like Daytona or Modal, all you need to do is change your provider variable from `E2B_API_KEY=xxxxx` to `DAYTONA_API_KEY=xxxxx`. ComputeSDK automatically detects your sandbox provider from your environment variables.
 
 ## Making changes within the sandbox
 
@@ -210,7 +164,7 @@ const sandbox = await compute.sandbox.create();
 
 ```typescript
 // Scaffold Vite React app
-await sandbox.runCommand('npm', ['create', 'vite@5', 'app', '--', '--template', 'react']);
+await sandbox.runCommand('npm create vite@5 app -- --template react');
 ```
 
 #### Use the writeFile method
@@ -239,20 +193,22 @@ Customize the `vite.config.js` so we can access the local dev server.
 #### Run npm install using the runCommand method
 
 runCommand runs at the sandbox subfolder by default.
-(i.e., `/.compute/unique_sandbox_id/commands_run_here`)\
+(e.g., `/.compute/unique_sandbox_id/commands_run_here`)\
 So we need to cd into /app before we run npm install or start our Vite server.
 
 ```typescript
   // Install dependencies
-  await sandbox.runCommand('cd app && npm install')
+  await sandbox.runCommand('npm install', {
+    cwd: 'app',
+  })
 ```
 
 #### Start local dev server in the background with runCommand
 
 ```typescript
   // Start dev server
-  sandbox.runCommand('cd app && npm run dev', [], {
-    background: true,
+  sandbox.runCommand('npm run dev', {
+    cwd: 'app',
   });
 ```
 
@@ -279,22 +235,14 @@ Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { createCompute } from 'computesdk';
-import { e2b } from '@computesdk/e2b';
+import { compute } from 'computesdk';
 
 export async function POST() {
-  const compute = createCompute({
-    provider: e2b({
-      apiKey: process.env.E2B_API_KEY!,
-      timeout: 300000, // 5 minutes for testing
-    }),
-    apiKey: process.env.COMPUTESDK_API_KEY,
-  });
 
   const sandbox = await compute.sandbox.create();
 
   // Create basic Vite React app
-  await sandbox.runCommand('npm', ['create', 'vite@5', 'app', '--', '--template', 'react']);
+  await sandbox.runCommand('npm create vite@5 app -- --template react');
 
   // Custom vite.config.js to allow access to sandbox at port 5173
   const viteConfig = `import { defineConfig } from 'vite'
@@ -314,11 +262,13 @@ export async function POST() {
   await sandbox.filesystem.writeFile('app/vite.config.js', viteConfig);
   
   // Install dependencies
-  await sandbox.runCommand('cd app && npm install')
+  await sandbox.runCommand('npm install', {
+    cwd: 'app',
+  })
   
   // Start dev server
-  sandbox.runCommand('cd app && npm run dev', [], {
-    background: true,
+  sandbox.runCommand('npm run dev', {
+    cwd: 'app',
   });
 
   // Get preview URL
