@@ -7,6 +7,7 @@ import { Code } from "astro:components";
 
 const codeExample = `import { compute } from 'computesdk';
 
+// auto-detects provider from environment variables
 const sandbox = compute.sandbox.create();
 
 const result = await sandbox.runCode('print("Hello!")');
