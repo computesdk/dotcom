@@ -290,8 +290,7 @@ export default defineConfig({
         page !== 'https://www.computesdk.com/sidekick/' &&
         page !== 'https://www.computesdk.com/features/sandboxes/' &&
         page !== 'https://www.computesdk.com/old-index/' &&
-        page !== 'https://www.computesdk.com/refund/' &&
-        page !== 'https://www.computesdk.com/providers/blaxel'
+        page !== 'https://www.computesdk.com/refund/'
     }),
   ],
 
