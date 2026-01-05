@@ -247,13 +247,22 @@ export default defineConfig({
                     { label: 'compute.events', link: '/docs/reference/computeevents' },
                 ],
             },
-                     {
-                label: 'Features',
-                autogenerate: { directory: 'docs/features' },
-            },
             {
                 label: 'Providers',
                 autogenerate: { directory: 'docs/providers' },
+            },
+            {
+                label: 'Packages',
+                items: [
+                  { label: 'computesdk', link: 'https://github.com/computesdk/computesdk/blob/main/packages/computesdk/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/events', link: 'https://github.com/computesdk/computesdk/blob/main/packages/events/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/provider', link: 'https://github.com/computesdk/computesdk/blob/main/packages/provider/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/railway', link: 'https://github.com/computesdk/computesdk/blob/main/packages/railway/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/vercel', link: 'https://github.com/computesdk/computesdk/blob/main/packages/vercel/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/modal', link: 'https://github.com/computesdk/computesdk/blob/main/packages/modal/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/e2b', link: 'https://github.com/computesdk/computesdk/blob/main/packages/e2b/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/daytona', link: 'https://github.com/computesdk/computesdk/blob/main/packages/daytona/README.md', attrs: { target: '_blank' } },
+                ],
             },
             // {
             //     label: 'Frameworks',
