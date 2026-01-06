@@ -242,25 +242,47 @@ export default defineConfig({
                 label: 'Providers',
                 autogenerate: { directory: 'docs/providers' },
             },
+            {
+                label: 'Reference',
+                items: [
+                    { label: 'compute', link: '/docs/reference/compute' },
+                    { label: 'compute.sandbox', link: '/docs/reference/computesandbox' },
+                    { label: 'Sandbox (interface)', link: '/docs/reference/sandbox' },
+                    { label: 'compute.events', link: '/docs/reference/computeevents' },
+                ],
+            },
+            {
+                label: 'Packages',
+                items: [
+                  { label: 'computesdk', link: 'https://github.com/computesdk/computesdk/blob/main/packages/computesdk/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/events', link: 'https://github.com/computesdk/computesdk/blob/main/packages/events/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/provider', link: 'https://github.com/computesdk/computesdk/blob/main/packages/provider/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/railway', link: 'https://github.com/computesdk/computesdk/blob/main/packages/railway/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/vercel', link: 'https://github.com/computesdk/computesdk/blob/main/packages/vercel/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/modal', link: 'https://github.com/computesdk/computesdk/blob/main/packages/modal/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/e2b', link: 'https://github.com/computesdk/computesdk/blob/main/packages/e2b/README.md', attrs: { target: '_blank' } },
+                  { label: '@computesdk/daytona', link: 'https://github.com/computesdk/computesdk/blob/main/packages/daytona/README.md', attrs: { target: '_blank' } },
+                ],
+            },
             // {
             //     label: 'Frameworks',
             //     autogenerate: { directory: 'docs/frameworks' },
             // },
-            {
-                label: 'SDK Reference',
-                items: [
-                    { label: 'Overview', link: '/docs/reference/overview' },
-                    { label: 'CLI', link: '/docs/reference/cli' },
-                    // { label: 'UI Package', link: '/docs/reference/ui-package' },
-                    { label: 'Configuration', link: '/docs/reference/configuration' },
-                    { label: 'Code Execution', link: '/docs/reference/code-execution' },
-                    { label: 'Sandbox Management', link: '/docs/reference/sandbox-management' },
-                    { label: 'Filesystem', link: '/docs/reference/filesystem' },
-                    { label: 'Client', link: '/docs/reference/client' },
-                    { label: 'API Integration', link: '/docs/reference/api-integration' },
-                    { label: 'Adding a Provider', link: '/docs/reference/adding-a-provider' },
-                ],
-            },
+            // {
+            //     label: 'SDK Reference',
+            //     items: [
+            //         { label: 'Overview', link: '/docs/reference/overview' },
+            //         { label: 'CLI', link: '/docs/reference/cli' },
+            //         // { label: 'UI Package', link: '/docs/reference/ui-package' },
+            //         { label: 'Configuration', link: '/docs/reference/configuration' },
+            //         { label: 'Code Execution', link: '/docs/reference/code-execution' },
+            //         { label: 'Sandbox Management', link: '/docs/reference/sandbox-management' },
+            //         { label: 'Filesystem', link: '/docs/reference/filesystem' },
+            //         { label: 'Client', link: '/docs/reference/client' },
+            //         { label: 'API Integration', link: '/docs/reference/api-integration' },
+            //         { label: 'Adding a Provider', link: '/docs/reference/adding-a-provider' },
+            //     ],
+            // },
         ],
     }), 
     sitemap({
@@ -268,8 +290,7 @@ export default defineConfig({
         page !== 'https://www.computesdk.com/sidekick/' &&
         page !== 'https://www.computesdk.com/features/sandboxes/' &&
         page !== 'https://www.computesdk.com/old-index/' &&
-        page !== 'https://www.computesdk.com/refund/' &&
-        page !== 'https://www.computesdk.com/providers/blaxel'
+        page !== 'https://www.computesdk.com/refund/'
     }),
   ],
 
