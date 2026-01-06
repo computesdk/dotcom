@@ -239,6 +239,10 @@ export default defineConfig({
                 autogenerate: { directory: 'docs/getting-started' },
             },
             {
+                label: 'Providers',
+                autogenerate: { directory: 'docs/providers' },
+            },
+            {
                 label: 'Reference',
                 items: [
                     { label: 'compute', link: '/docs/reference/compute' },
@@ -246,10 +250,6 @@ export default defineConfig({
                     { label: 'Sandbox (interface)', link: '/docs/reference/sandbox' },
                     { label: 'compute.events', link: '/docs/reference/computeevents' },
                 ],
-            },
-            {
-                label: 'Providers',
-                autogenerate: { directory: 'docs/providers' },
             },
             {
                 label: 'Packages',
