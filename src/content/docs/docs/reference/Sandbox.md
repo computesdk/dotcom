@@ -837,9 +837,9 @@ await exec.destroy();
 
 **Notes:**
 - **PTY mode** provides an interactive shell with WebSocket streaming for real-time I/O - use for interactive sessions
-- **Exec mode** tracks individual commands with structured results - use for automation and scripting
+- **exec mode** tracks individual commands with structured results - use for automation and scripting
 - PTY terminals require WebSocket connection for real-time communication
-- Exec mode commands can run in foreground (blocking) or background (non-blocking with wait capability)
+- exec mode commands can run in foreground (blocking) or background (non-blocking with wait capability)
 - Always call `destroy()` to clean up terminal resources when done
 - Background commands return immediately with status 'running' - use `wait()` to block until completion
 - The `write()` and `resize()` methods are only available for PTY terminals
