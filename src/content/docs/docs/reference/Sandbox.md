@@ -710,7 +710,7 @@ if (await sandbox.filesystem.exists(filePath)) {
 
 ### `terminals.create(options?)`
 
-Create a terminal session in the sandbox with support for two modes: **PTY mode** (interactive shell with real-time I/O over WebSocket) and **Exec mode** (command tracking with structured results).
+Create a terminal session in the sandbox with support for two modes: **PTY mode** (interactive shell with real-time I/O over WebSocket) and **exec mode** (command tracking with structured results).
 
 **Parameters:**
 
@@ -735,7 +735,7 @@ Create a terminal session in the sandbox with support for two modes: **PTY mode*
 - `off(event: string, handler: Function): void` - Unregister event handler
 - `destroy(): Promise<void>` - Destroy the terminal and clean up resources
 
-**TerminalInstance methods (Exec mode):**
+**TerminalInstance methods (exec mode):**
 - `command.run(command: string, options?: { background?: boolean }): Promise<Command>` - Execute a command
 - `command.list(): Promise<Command[]>` - List all commands executed in this terminal
 - `command.retrieve(cmdId: string): Promise<Command>` - Retrieve specific command by ID
@@ -837,9 +837,9 @@ await exec.destroy();
 
 **Notes:**
 - **PTY mode** provides an interactive shell with WebSocket streaming for real-time I/O - use for interactive sessions
-- **Exec mode** tracks individual commands with structured results - use for automation and scripting
+- **exec mode** tracks individual commands with structured results - use for automation and scripting
 - PTY terminals require WebSocket connection for real-time communication
-- Exec mode commands can run in foreground (blocking) or background (non-blocking with wait capability)
+- exec mode commands can run in foreground (blocking) or background (non-blocking with wait capability)
 - Always call `destroy()` to clean up terminal resources when done
 - Background commands return immediately with status 'running' - use `wait()` to block until completion
 - The `write()` and `resize()` methods are only available for PTY terminals
@@ -873,7 +873,7 @@ const terminals = await sandbox.terminals.list();
 console.log(`Active terminals: ${terminals.length}`);
 
 terminals.forEach(term => {
-  console.log(`${term.id} - ${term.pty ? 'PTY' : 'Exec'} - ${term.status}`);
+  console.log(`${term.id} - ${term.pty ? 'PTY' : 'exec'} - ${term.status}`);
 });
 ```
 
