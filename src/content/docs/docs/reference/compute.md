@@ -113,12 +113,11 @@ try {
 
 ---
 
-## Creating a sandbox
-
+## `compute.sandbox` methods
 - [compute.sandbox](./computesandbox)
 
 
-## Sandbox (interface)
+## Sandbox (interface) methods
 - [Sandbox](./sandbox)
 
 
