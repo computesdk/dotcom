@@ -710,7 +710,7 @@ if (await sandbox.filesystem.exists(filePath)) {
 
 ### `terminals.create(options?)`
 
-Create a terminal session in the sandbox with support for two modes: **PTY mode** (interactive shell with real-time I/O over WebSocket) and **Exec mode** (command tracking with structured results).
+Create a terminal session in the sandbox with support for two modes: **PTY mode** (interactive shell with real-time I/O over WebSocket) and **exec mode** (command tracking with structured results).
 
 **Parameters:**
 
