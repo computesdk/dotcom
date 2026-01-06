@@ -873,7 +873,7 @@ const terminals = await sandbox.terminals.list();
 console.log(`Active terminals: ${terminals.length}`);
 
 terminals.forEach(term => {
-  console.log(`${term.id} - ${term.pty ? 'PTY' : 'Exec'} - ${term.status}`);
+  console.log(`${term.id} - ${term.pty ? 'PTY' : 'exec'} - ${term.status}`);
 });
 ```
 
