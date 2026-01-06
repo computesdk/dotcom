@@ -735,7 +735,7 @@ Create a terminal session in the sandbox with support for two modes: **PTY mode*
 - `off(event: string, handler: Function): void` - Unregister event handler
 - `destroy(): Promise<void>` - Destroy the terminal and clean up resources
 
-**TerminalInstance methods (Exec mode):**
+**TerminalInstance methods (exec mode):**
 - `command.run(command: string, options?: { background?: boolean }): Promise<Command>` - Execute a command
 - `command.list(): Promise<Command[]>` - List all commands executed in this terminal
 - `command.retrieve(cmdId: string): Promise<Command>` - Retrieve specific command by ID
