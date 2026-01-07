@@ -962,7 +962,7 @@ console.log('All terminals destroyed');
 ---
 
 
-## sandbox.server
+## `sandbox.server`
 
 Manage long-running server processes:
 
