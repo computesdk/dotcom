@@ -962,7 +962,7 @@ console.log('All terminals destroyed');
 ---
 
 
-## sandbox.server
+## `sandbox.server`
 
 Manage long-running server processes:
 
@@ -1228,7 +1228,7 @@ console.log('New status:', restarted.status);
 
 ---
 
-## sandbox.env
+## `sandbox.env`
 
 Manage `.env` files in the sandbox:
 
