@@ -710,7 +710,7 @@ if (await sandbox.filesystem.exists(filePath)) {
 
 ### `terminals.create(options?)`
 
-Create a terminal session in the sandbox with support for two modes: **PTY mode** (interactive shell with real-time I/O over WebSocket) and **exec mode** (command tracking with structured results).
+Create a terminal session in the sandbox with support for two modes: **PTY mode** (interactive shell with real-time I/O over WebSocket) and **Exec mode** (command tracking with structured results).
 
 **Parameters:**
 
@@ -735,7 +735,7 @@ Create a terminal session in the sandbox with support for two modes: **PTY mode*
 - `off(event: string, handler: Function): void` - Unregister event handler
 - `destroy(): Promise<void>` - Destroy the terminal and clean up resources
 
-**TerminalInstance methods (exec mode):**
+**TerminalInstance methods (Exec mode):**
 - `command.run(command: string, options?: { background?: boolean }): Promise<Command>` - Execute a command
 - `command.list(): Promise<Command[]>` - List all commands executed in this terminal
 - `command.retrieve(cmdId: string): Promise<Command>` - Retrieve specific command by ID
@@ -837,9 +837,9 @@ await exec.destroy();
 
 **Notes:**
 - **PTY mode** provides an interactive shell with WebSocket streaming for real-time I/O - use for interactive sessions
-- **exec mode** tracks individual commands with structured results - use for automation and scripting
+- **Exec mode** tracks individual commands with structured results - use for automation and scripting
 - PTY terminals require WebSocket connection for real-time communication
-- exec mode commands can run in foreground (blocking) or background (non-blocking with wait capability)
+- Exec mode commands can run in foreground (blocking) or background (non-blocking with wait capability)
 - Always call `destroy()` to clean up terminal resources when done
 - Background commands return immediately with status 'running' - use `wait()` to block until completion
 - The `write()` and `resize()` methods are only available for PTY terminals
@@ -873,7 +873,7 @@ const terminals = await sandbox.terminals.list();
 console.log(`Active terminals: ${terminals.length}`);
 
 terminals.forEach(term => {
-  console.log(`${term.id} - ${term.pty ? 'PTY' : 'exec'} - ${term.status}`);
+  console.log(`${term.id} - ${term.pty ? 'PTY' : 'Exec'} - ${term.status}`);
 });
 ```
 
@@ -962,49 +962,265 @@ console.log('All terminals destroyed');
 ---
 
 
-## sandbox.servers
+## `sandbox.server`
 
 Manage long-running server processes:
 
-### servers.start()
+### `server.start(options)`
+
+Start a managed server process in the sandbox with automatic process management and URL exposure.
+
+**Parameters:**
+
+- `options` (object, required): Server configuration
+  - `slug` (string, required): Unique URL-safe identifier for the server
+  - `command` (string, required): Command to start the server process
+  - `path` (string, optional): Working directory for command execution
+  - `env_file` (string, optional): Path to environment file to load
+
+**Returns:** `Promise<ServerInfo>` - Server information including status, URL, and process details
+
+**ServerInfo interface:**
+- `slug` (string): Server identifier
+- `command` (string): The command being executed
+- `path` (string): Working directory path
+- `original_path` (string, optional): Original path before resolution
+- `env_file` (string, optional): Environment file path if specified
+- `port` (number, optional): Detected port number
+- `url` (string, optional): Public URL when server is ready
+- `status` ('starting' | 'running' | 'ready' | 'failed' | 'stopped'): Current server status
+- `pid` (number, optional): Process ID when running
+- `terminal_id` (string, optional): Associated terminal session ID
+- `created_at` (string): ISO timestamp when server was created
+- `updated_at` (string): ISO timestamp of last status update
+
+**Examples:**
 
 ```typescript
-// Start a server
-const server = await sandbox.servers.start({
-  name: 'api',
-  command: 'npm start',
-  path: '/app',
-  env_file: '.env'
+// Basic server start
+const server = await sandbox.server.start({
+  slug: 'api',
+  command: 'npm start'
+});
+console.log(server.slug);     // "api"
+console.log(server.status);   // "starting"
+console.log(server.command);  // "npm start"
+
+// Server with environment file
+const server = await sandbox.server.start({
+  slug: 'api',
+  command: 'node server.js',
+  env_file: '.env.production'
+});
+console.log(server.env_file); // ".env.production"
+
+// Check server status after starting
+const server = await sandbox.server.start({
+  slug: 'api',
+  command: 'npm start'
+});
+console.log('Initial status:', server.status);  // "starting"
+
+// Error handling
+try {
+  const server = await sandbox.server.start({
+    slug: 'test-server',
+    command: 'invalid-command'
+  });
+} catch (error) {
+  console.error('Failed to start server:', error.message);
+}
+```
+
+**Notes:**
+- The `slug` must be unique across all servers in the sandbox
+- Server processes continue running until explicitly stopped with `server.stop(slug)`
+- Available on all sandbox instances regardless of provider
+
+<br/>
+<br/>
+
+---
+
+### `server.list()`
+
+List all managed server processes running in the sandbox.
+
+**Parameters:** None
+
+**Returns:** `Promise<ServerInfo[]>` - Array of server information objects (see `server.start()` for `ServerInfo` interface details)
+
+**Examples:**
+
+```typescript
+// Basic usage - list all servers
+const servers = await sandbox.server.list();
+console.log(`Found ${servers.length} servers`);
+
+// Empty array when no servers running
+const servers = await sandbox.server.list();
+if (servers.length === 0) {
+  console.log('No servers are currently running');
+}
+
+// Display all server information
+const servers = await sandbox.server.list();
+servers.forEach(server => {
+  console.log(`${server.slug}: ${server.status}`);
+  console.log(`  Command: ${server.command}`);
+  console.log(`  URL: ${server.url || 'not ready'}`);
 });
 ```
 
-### servers.list()
+**Notes:**
+- Returns an empty array if no servers are currently running
+- Use `server.retrieve(slug)` to get information about a specific server by its slug
+- Available on all sandbox instances regardless of provider
+
+<br/>
+<br/>
+
+---
+
+### `server.retrieve(slug)`
+
+Retrieve information about a specific server by its slug identifier.
+
+**Parameters:**
+
+- `slug` (string, required): The unique server slug identifier
+
+**Returns:** `Promise<ServerInfo>` - Server information object (see `server.start()` for `ServerInfo` interface details)
+
+**Examples:**
 
 ```typescript
-// List all servers
-const servers = await sandbox.servers.list();
+// Basic retrieval - get server by slug
+const server = await sandbox.server.retrieve('api');
+console.log(server.status);  // "ready"
+console.log(server.url);     // "https://..."
+
+// Check if server is ready
+const server = await sandbox.server.retrieve('api');
+if (server.status === 'ready') {
+  console.log('Server is ready at:', server.url);
+} else {
+  console.log('Server is still', server.status);
+}
+
+// Check server process information
+const server = await sandbox.server.retrieve('api');
+console.log('Process ID:', server.pid);
+console.log('Port:', server.port);
+console.log('Terminal:', server.terminal_id);
+
+// Check server status before operations
+const server = await sandbox.server.retrieve('backend');
+if (server.status === 'failed') {
+  console.log('Server failed, restarting...');
+  await sandbox.server.restart('backend');
+} else if (server.status === 'ready') {
+  console.log('Server is healthy');
+}
 ```
 
-### servers.retrieve()
+**Notes:**
+- Returns the current state of the server - status may change immediately after retrieval
+- Use `server.list()` first to check if a server exists before calling `retrieve()`
+- Available on all sandbox instances regardless of provider
+
+<br/>
+<br/>
+
+---
+
+### `server.stop(slug)`
+
+Stop a running server process.
+
+**Parameters:**
+
+- `slug` (string, required): The unique server slug identifier
+
+**Returns:** `Promise<void>` - Resolves when the server is successfully stopped
+
+**Examples:**
 
 ```typescript
-// Get server info
-const info = await sandbox.servers.retrieve('api');
-console.log(info.status); // 'starting' | 'running' | 'ready' | 'failed' | 'stopped'
-console.log(info.url);    // Server URL when ready
+// Basic stop - stop a server by slug
+await sandbox.server.stop('api');
+console.log('Server stopped');
+
+// Stop before starting with new configuration
+await sandbox.server.stop('api');
+const newServer = await sandbox.server.start({
+  slug: 'api',
+  command: 'npm run prod',
+  path: '/app'
+});
+console.log('Server started with new configuration');
+
+// Check status before stopping
+const server = await sandbox.server.retrieve('api');
+if (server.status === 'running' || server.status === 'ready') {
+  await sandbox.server.stop('api');
+  console.log('Server stopped');
+} else {
+  console.log('Server is not running');
+}
 ```
 
-### servers.stop()
+**Notes:**
+- Stops a running server process
+- Use `server.retrieve(slug)` to check server status before stopping
+- Available on all sandbox instances regardless of provider
+
+<br/>
+<br/>
+
+---
+
+### `server.restart(slug)`
+
+Restart a server process.
+
+**Parameters:**
+
+- `slug` (string, required): The unique server slug identifier
+
+**Returns:** `Promise<ServerInfo>` - Server information object after restart (see `server.start()` for `ServerInfo` interface details)
+
+**Examples:**
+
 ```typescript
-// Stop a server
-await sandbox.servers.stop('api');
+// Basic restart - restart a server by slug
+const server = await sandbox.server.restart('api');
+console.log(server.status);  // Server status after restart
+console.log(server.url);     // Server URL
+
+// Restart and check updated status
+const server = await sandbox.server.restart('backend');
+console.log('Server restarted');
+console.log('New status:', server.status);
+console.log('New PID:', server.pid);
+
+// Restart multiple servers sequentially
+const api = await sandbox.server.restart('api');
+const frontend = await sandbox.server.restart('frontend');
+const worker = await sandbox.server.restart('worker');
+console.log('All servers restarted');
+
+// Check status before restart
+const server = await sandbox.server.retrieve('api');
+console.log('Current status:', server.status);
+const restarted = await sandbox.server.restart('api');
+console.log('New status:', restarted.status);
 ```
 
-### servers.restart()
-```typescript
-// Restart a server
-await sandbox.servers.restart('api');
-```
+**Notes:**
+- Returns updated server information after restart
+- Use the returned `ServerInfo` object to check the new status, PID, and other details
+- Available on all sandbox instances regardless of provider
 
 
 <br/>
@@ -1012,71 +1228,543 @@ await sandbox.servers.restart('api');
 
 ---
 
-## sandbox.env
+## `sandbox.env`
 
 Manage `.env` files in the sandbox:
 
 
-### env.retrieve()
+### `env.retrieve(file)`
+
+Retrieve all environment variables from a `.env` file in the sandbox as a key-value object.
+
+**Parameters:**
+
+- `file` (string, required): Path to the .env file relative to sandbox root (e.g., '.env', '.env.production', 'config/.env')
+
+**Returns:** `Promise<Record<string, string>>` - Key-value map of all environment variables in the file
+
+**Examples:**
+
 ```typescript
-// Get environment variables
+// Basic retrieval
 const vars = await sandbox.env.retrieve('.env');
-console.log(vars); // { API_KEY: 'secret', DEBUG: 'true' }
+console.log(vars);  // { API_KEY: 'secret', DEBUG: 'true', PORT: '3000' }
+
+// Access specific variables
+const vars = await sandbox.env.retrieve('.env');
+console.log(vars.API_KEY);  // "secret"
+console.log(vars.DEBUG);    // "true"
+
+// Check if file exists before retrieving
+const exists = await sandbox.env.exists('.env.local');
+if (exists) {
+  const vars = await sandbox.env.retrieve('.env.local');
+  console.log('Local config loaded:', vars);
+} else {
+  console.log('No local config found, using defaults');
+}
 ```
 
-### env.update()
+**Notes:**
+- Returns all environment variables as string key-value pairs
+- File paths are relative to the sandbox root directory
+- All values are returned as strings - no automatic type conversion
+- Use with `env.exists()` to check file presence before retrieval
+
+### `env.update(file, variables)`
+
+Update or add environment variables in a `.env` file, merging with existing variables.
+
+**Parameters:**
+
+- `file` (string, required): Path to the .env file relative to sandbox root (e.g., '.env', '.env.production', 'config/.env')
+- `variables` (Record<string, string>, required): Key-value pairs of environment variables to set or update
+
+**Returns:** `Promise<string[]>` - Array of environment variable keys that were updated or added
+
+**Examples:**
+
 ```typescript
-// Update environment variables (merges with existing)
-await sandbox.env.update('.env', {
+// Basic update
+const keys = await sandbox.env.update('.env', {
   API_KEY: 'new-secret',
-  NEW_VAR: 'value'
+  DEBUG: 'true'
 });
+console.log(keys);  // ['API_KEY', 'DEBUG']
+
+// Conditional update with existence check
+const exists = await sandbox.env.exists('.env.local');
+if (!exists) {
+  await sandbox.env.update('.env.local', { DEBUG: 'true', LOG_LEVEL: 'verbose' });
+  console.log('Created new local environment file');
+} else {
+  await sandbox.env.update('.env.local', { DEBUG: 'false' });
+  console.log('Updated existing local environment');
+}
 ```
 
-### env.remove()
+**Notes:**
+- Merges with existing variables - does not replace the entire file
+- Existing variables not mentioned in the update are preserved
+- Creates the file if it doesn't exist
+- All values must be strings - no automatic type conversion
+- File paths are relative to the sandbox root directory
+- Returns array of keys that were modified or added
+
+### `env.remove(file, keys)`
+
+Remove specific environment variables from a `.env` file while preserving all other variables.
+
+**Parameters:**
+
+- `file` (string, required): Path to the .env file relative to sandbox root (e.g., '.env', '.env.production', 'config/.env')
+- `keys` (string[], required): Array of environment variable keys to remove from the file
+
+**Returns:** `Promise<string[]>` - Array of environment variable keys that were successfully removed
+
+**Examples:**
+
 ```typescript
-// Remove environment variables
-await sandbox.env.remove('.env', ['OLD_KEY', 'DEPRECATED']);
+// Basic removal
+const removed = await sandbox.env.remove('.env', ['OLD_KEY', 'DEPRECATED']);
+console.log(removed);  // ['OLD_KEY', 'DEPRECATED']
+
+// Conditional removal with existence check
+const exists = await sandbox.env.exists('.env.local');
+if (exists) {
+  const vars = await sandbox.env.retrieve('.env.local');
+  if ('DEBUG' in vars) {
+    await sandbox.env.remove('.env.local', ['DEBUG']);
+    console.log('DEBUG variable removed from local environment');
+  }
+}
 ```
 
-### env.exists()
+**Notes:**
+- Only removes specified keys - all other variables in the file are preserved
+- Returns array of keys that were successfully removed
+- File paths are relative to the sandbox root directory
+- Use with `env.retrieve()` to check which variables exist before removal
+
+### `env.exists(file)`
+
+Check if a `.env` file exists in the sandbox.
+
+**Parameters:**
+
+- `file` (string, required): Path to the .env file relative to sandbox root (e.g., '.env', '.env.production', 'config/.env')
+
+**Returns:** `Promise<boolean>` - Returns `true` if the file exists, `false` otherwise
+
+**Examples:**
+
 ```typescript
-// Check if env file exists
+// Basic existence check
 const exists = await sandbox.env.exists('.env');
+console.log(exists);  // true or false
+
+// Conditional operations - check before retrieve
+const exists = await sandbox.env.exists('.env.local');
+if (exists) {
+  const vars = await sandbox.env.retrieve('.env.local');
+  console.log('Local config loaded:', vars);
+} else {
+  console.log('No local config found, using defaults');
+}
+
+// Check before update - determine whether to create or update
+const exists = await sandbox.env.exists('.env.production');
+if (!exists) {
+  await sandbox.env.update('.env.production', {
+    NODE_ENV: 'production',
+    DATABASE_URL: 'postgres://prod-server/db'
+  });
+  console.log('Production environment file created');
+} else {
+  console.log('Production environment file already exists');
+}
 ```
+
+**Notes:**
+- Returns a boolean value - never throws errors (safe to call without try/catch)
+- Returns `false` for non-existent files rather than throwing an error
+- File paths are relative to the sandbox root directory
 <br/>
 <br/>
 
 ---
 
 
-## sandbox.files
+## `sandbox.file`
 
-File operations via the resource namespace:
+Resource-oriented file operations. Note that `sandbox.file` is distinct from `sandbox.filesystem`:
+- **`sandbox.file`** - Resource-oriented API with create/retrieve/destroy naming
+- **`sandbox.filesystem`** - Traditional filesystem API with readFile/writeFile/mkdir/readdir/exists/remove
 
-### files.read()
+### `file.create(path, content?)`
+
+Create a new file with optional content.
+
+**Parameters:**
+- `path` (string, required): File path
+- `content` (string, optional): File content
+
+**Returns:** `Promise<FileInfo>` - File information object
+
+**FileInfo interface:**
+- `name` (string): File name
+- `path` (string): Full file path
+- `size` (number): File size in bytes
+- `is_dir` (boolean): Whether this is a directory
+- `modified_at` (string): ISO timestamp of last modification
+
+**Examples:**
+
 ```typescript
-// Read file
-const content = await sandbox.files.read('/app/config.json');
+// Basic file creation with content
+const file = await sandbox.file.create('/project/hello.txt', 'Hello, World!');
+console.log(file.name);        // 'hello.txt'
+console.log(file.size);        // 13
+console.log(file.modified_at); // '2024-01-08T12:00:00Z'
+
+// Create empty file (content is optional)
+const emptyFile = await sandbox.file.create('/project/empty.txt');
+console.log(emptyFile.size);   // 0
+
+// Create JSON configuration file
+const config = { api_url: 'https://api.example.com', timeout: 5000 };
+const configFile = await sandbox.file.create(
+  '/project/config.json', 
+  JSON.stringify(config, null, 2)
+);
+console.log(configFile.name);  // 'config.json'
+
+// Create file with multiline content using template literals
+const script = await sandbox.file.create('/project/start.sh', `#!/bin/bash
+echo "Starting application..."
+npm install
+npm start
+`);
+console.log(script.name);      // 'start.sh'
+
+// Error handling for creation failures
+try {
+  const file = await sandbox.file.create('/invalid/path/file.txt', 'content');
+  console.log('File created:', file.name);
+} catch (error) {
+  console.error('Failed to create file:', error.message);
+}
 ```
 
-### files.write()
+**Notes:**
+- Creates a new file or overwrites if the file already exists
+- Content parameter is optional - omit it to create an empty file
+- Always returns UTF-8 encoded text
+- Available on all sandbox instances regardless of provider
+
+<br/>
+<br/>
+
+---
+
+### `file.list(path?)`
+
+List files at the specified path.
+
+**Parameters:**
+- `path` (string, optional, default: '/'): Directory path to list
+
+**Returns:** `Promise<FileInfo[]>` - Array of FileInfo objects
+
+**Examples:**
+
 ```typescript
-// Write file
-await sandbox.files.write('/app/config.json', '{"key": "value"}');
+// Basic directory listing with iteration
+const files = await sandbox.file.list('/project');
+files.forEach(file => {
+  console.log(`${file.is_dir ? '📁' : '📄'} ${file.name} (${file.size} bytes)`);
+});
+// Output:
+// 📄 hello.txt (13 bytes)
+// 📁 src (4096 bytes)
+// 📄 package.json (512 bytes)
+
+// List root directory (default parameter)
+const rootFiles = await sandbox.file.list();  // Defaults to '/'
+console.log(`Found ${rootFiles.length} items in root`);
+
+// Alternative: explicitly specify root
+const rootFiles2 = await sandbox.file.list('/');
+console.log(rootFiles2.length);
+
+// Separate files and directories
+const items = await sandbox.file.list('/project');
+const directories = items.filter(item => item.is_dir);
+const regularFiles = items.filter(item => !item.is_dir);
+
+console.log('Directories:', directories.map(d => d.name));
+console.log('Files:', regularFiles.map(f => f.name));
+
+// Check if directory is empty
+const exists = await sandbox.file.exists('/project/temp');
+if (exists) {
+  const files = await sandbox.file.list('/project/temp');
+  if (files.length === 0) {
+    console.log('Directory is empty');
+  } else {
+    console.log(`Directory contains ${files.length} items`);
+  }
+} else {
+  console.log('Directory does not exist');
+}
+
+// Defensive pattern: check existence before listing
+const dirPath = '/project/optional-data';
+if (await sandbox.file.exists(dirPath)) {
+  const files = await sandbox.file.list(dirPath);
+  console.log(`Found ${files.length} files`);
+} else {
+  console.log('Directory does not exist, skipping...');
+}
 ```
 
-### files.list()
+**Notes:**
+- Defaults to root directory (`'/'`) if path parameter is omitted
+- Only lists direct children - does not recurse into subdirectories
+- Returns FileInfo array with metadata (see `file.create()` for complete FileInfo interface details)
+- Available on all sandbox instances regardless of provider
+
+<br/>
+<br/>
+
+---
+
+### `file.retrieve(path)`
+
+Retrieve file content.
+
+**Parameters:**
+- `path` (string, required): File path
+
+**Returns:** `Promise<string>` - File content as string
+
+**Examples:**
+
 ```typescript
-// List directory
-const files = await sandbox.files.list('/app');
+// Basic file retrieval
+const content = await sandbox.file.retrieve('/project/hello.txt');
+console.log(content); // 'Hello, World!'
+
+
+// Read multiline file content (code, scripts, markdown)
+const scriptContent = await sandbox.file.retrieve('/project/start.sh');
+console.log(scriptContent);
+// Output:
+// #!/bin/bash
+// echo "Starting application..."
+// npm install
+// npm start
+
+// Defensive pattern: check existence before retrieving
+const filePath = '/project/optional-config.json';
+if (await sandbox.file.exists(filePath)) {
+  const content = await sandbox.file.retrieve(filePath);
+  const config = JSON.parse(content);
+  console.log('Config loaded:', config);
+} else {
+  console.log('Config file not found, using defaults');
+}
 ```
 
-### files.delete()
+**Notes:**
+- Always returns UTF-8 encoded text content as a string
+- Returns content only - for file metadata (size, modified_at, etc.), use `file.create()` or `file.list()`
+- Does not include file metadata in the return value (unlike `file.create()` which returns FileInfo)
+- Available on all sandbox instances regardless of provider
+
+<br/>
+<br/>
+
+---
+
+### `file.destroy(path)`
+
+Destroy (delete) a file or directory.
+
+**Parameters:**
+- `path` (string, required): File or directory path
+
+**Returns:** `Promise<void>`
+
+**Examples:**
+
 ```typescript
-// Delete file
-await sandbox.files.delete('/app/old-file.txt');
+// Basic file deletion
+await sandbox.file.destroy('/project/hello.txt');
+console.log('File deleted');
+
+// Delete file and verify with exists()
+await sandbox.file.create('/project/temp.txt', 'temporary data');
+await sandbox.file.destroy('/project/temp.txt');
+
+const exists = await sandbox.file.exists('/project/temp.txt');
+console.log('File still exists:', exists);  // false
+
+// Delete directory recursively (simple directory)
+await sandbox.file.create('/project/data/file.txt', 'content');
+await sandbox.file.destroy('/project/data');
+console.log('Directory and contents deleted');
+
+// Delete directory recursively (nested structure)
+await sandbox.file.create('/project/cache/images/thumb.jpg', 'image');
+await sandbox.file.create('/project/cache/data.json', '{}');
+await sandbox.file.destroy('/project/cache');
+console.log('Entire directory tree removed');
+
+// Defensive pattern: check existence before destroying
+const filePath = '/project/optional-file.txt';
+if (await sandbox.file.exists(filePath)) {
+  await sandbox.file.destroy(filePath);
+  console.log('File deleted');
+} else {
+  console.log('File does not exist, nothing to delete');
+}
 ```
+
+**Notes:**
+- For directories, recursively removes all contents and subdirectories (similar to `rm -rf`)
+- Deletion is permanent - no recycle bin, trash, or undo capability - use with caution
+- Available on all sandbox instances regardless of provider
+
+<br/>
+<br/>
+
+---
+
+### `file.batchWrite(files)`
+
+Batch file operations (write or delete multiple files). Features deduplication (last operation wins per path), file locking (prevents race conditions), and deterministic ordering (alphabetical path sorting).
+
+**Parameters:**
+- `files` (Array, required): Array of file operations where each operation contains:
+  - `path` (string, required): File path
+  - `operation` ('write' | 'delete', required): Operation type
+  - `content` (string, optional): File content (required for 'write' operations)
+
+**Returns:** `Promise<BatchWriteResult[]>` - Array of results for each operation
+
+**BatchWriteResult interface:**
+- `path` (string): File path
+- `success` (boolean): Whether the operation succeeded
+- `error` (string, optional): Error message if operation failed
+- `file` (FileInfo, optional): File info if operation succeeded
+
+**Examples:**
+
+```typescript
+// Batch write multiple files
+const results = await sandbox.file.batchWrite([
+  { path: '/project/a.txt', operation: 'write', content: 'A' },
+  { path: '/project/b.txt', operation: 'write', content: 'B' },
+]);
+
+// Check results
+results.forEach(result => {
+  if (result.success) {
+    console.log(`✓ ${result.path}`);
+  } else {
+    console.error(`✗ ${result.path}: ${result.error}`);
+  }
+});
+
+// Batch delete files
+const results = await sandbox.file.batchWrite([
+  { path: '/project/old.txt', operation: 'delete' },
+  { path: '/project/temp.txt', operation: 'delete' },
+]);
+
+// Mixed operations (write and delete)
+const results = await sandbox.file.batchWrite([
+  { path: '/project/new.txt', operation: 'write', content: 'New file' },
+  { path: '/project/old.txt', operation: 'delete' },
+  { path: '/project/updated.txt', operation: 'write', content: 'Updated content' },
+]);
+
+// Deduplication - last operation wins when targeting same path
+const results = await sandbox.file.batchWrite([
+  { path: '/project/config.txt', operation: 'write', content: 'First version' },
+  { path: '/project/config.txt', operation: 'write', content: 'Second version' },
+  { path: '/project/config.txt', operation: 'write', content: 'Final version' },
+]);
+
+// Only one file is created with the last content
+const content = await sandbox.file.retrieve('/project/config.txt');
+console.log(content); // 'Final version'
+```
+
+**Notes:**
+- Deduplication: If multiple operations target the same path, the last operation wins
+- File locking: Prevents race conditions during batch operations
+- Deterministic ordering: Operations are processed in alphabetical order by path
+- Partial failure handling: Returns per-file success/error results, allowing you to handle failures individually
+
+<br/>
+<br/>
+
+---
+
+### `file.exists(path)`
+
+Check if a file or directory exists.
+
+**Parameters:**
+- `path` (string, required): File or directory path
+
+**Returns:** `Promise<boolean>` - `true` if path exists, `false` otherwise
+
+**Examples:**
+```typescript
+// Basic file existence check
+const exists = await sandbox.file.exists('/project/hello.txt');
+if (exists) {
+  console.log('File exists!');
+} else {
+  console.log('File not found');
+}
+// Output: File exists! (if file exists) or File not found (if it doesn't)
+
+// Check directory existence
+const dirExists = await sandbox.file.exists('/project/src');
+console.log(dirExists); // true (works for directories too)
+
+// Check non-existent path (returns false, no error)
+const missing = await sandbox.file.exists('/project/nonexistent.txt');
+console.log(missing); // false (never throws an error)
+
+// Defensive pattern before read
+const configPath = '/project/config.json';
+if (await sandbox.file.exists(configPath)) {
+  const config = await sandbox.file.retrieve(configPath);
+  console.log('Config loaded:', config);
+} else {
+  console.log('Config file not found');
+}
+
+// Defensive pattern before write (avoid overwrite)
+const outputPath = '/project/report.txt';
+if (await sandbox.file.exists(outputPath)) {
+  console.log('File already exists, skipping write');
+} else {
+  await sandbox.file.create(outputPath, 'New report content');
+  console.log('File created successfully');
+}
+```
+
+**Notes:**
+- Unlike `retrieve()` or `list()`, `exists()` always returns `false` for non-existent paths instead of throwing an error. This makes it safe to call without try/catch blocks and ideal for conditional logic.
+- Returns `true` for any path that exists in the filesystem, whether it's a file or directory.
+- Use `exists()` before operations to avoid errors (before read), prevent overwrites (before write), or skip unnecessary operations (before delete).
+- Available on all sandbox instances regardless of provider.
 
 <br/>
 <br/>
