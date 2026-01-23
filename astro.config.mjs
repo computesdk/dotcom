@@ -178,6 +178,10 @@ export default defineConfig({
               href: '/use-cases'
             },
             {
+              label:'Providers',
+              href: '/providers'
+            },
+            {
               label:'Pricing',
               href: '/pricing'
             },
@@ -188,11 +192,7 @@ export default defineConfig({
             {
               label:'Blog',
               href: '/blog'
-            },
-            // {
-            //   label:'Contact',
-            //   href: '/contact'
-            // },
+            }
           ],
            }),
            starlightLlmsTxt({
