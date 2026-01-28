@@ -252,11 +252,11 @@ export default defineConfig({
                 ],
             },
             {
-                label: 'Features',
+                label: 'Concepts',
                 items: [
-                    { label: 'Overlays', link: '/docs/features/overlays' },
-                    { label: 'Servers', link: '/docs/features/servers' },
-                    { label: 'Client Access', link: '/docs/features/client-access' },
+                    { label: 'Overlays', link: '/docs/concepts/overlays' },
+                    { label: 'Servers', link: '/docs/concepts/servers' },
+                    { label: 'Client Access', link: '/docs/concepts/client-access' },
                 ],
             },
             {
