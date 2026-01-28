@@ -34,15 +34,18 @@ console.log(result.output); // "Hello!"
 await sandbox.destroy();
 ```
 
-For more advanced use cases, you can also use the callable mode to explicitly configure multiple providers in the same application:
+For more advanced use cases, you can use `setConfig()` to explicitly configure your provider:
 
 ```javascript
-// Explicit configuration for multi-provider setups
-const e2bSandbox = await compute({
+import { compute } from 'computesdk';
+
+// Explicit configuration
+compute.setConfig({
   provider: 'e2b',
-  computesdkApiKey: process.env.COMPUTESDK_API_KEY,
   e2b: { apiKey: process.env.E2B_API_KEY }
-}).sandbox.create();
+});
+
+const sandbox = await compute.sandbox.create();
 ```
 
 ## More sandbox features in v2.0
