@@ -252,6 +252,14 @@ export default defineConfig({
                 ],
             },
             {
+                label: 'Concepts',
+                items: [
+                    { label: 'Overlays', link: '/docs/concepts/overlays' },
+                    { label: 'Servers', link: '/docs/concepts/servers' },
+                    { label: 'Client Access', link: '/docs/concepts/client-access' },
+                ],
+            },
+            {
                 label: 'Packages',
                 items: [
                   { label: 'computesdk', link: 'https://github.com/computesdk/computesdk/blob/main/packages/computesdk/README.md', attrs: { target: '_blank' } },

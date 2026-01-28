@@ -2,7 +2,7 @@
 title: "Daytona"
 description: ""
 sidebar:
-  order: 1
+  order: 2
 ---
 
 Daytona provider for ComputeSDK - Execute code in Daytona development workspaces.

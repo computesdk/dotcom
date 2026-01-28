@@ -2,7 +2,7 @@
 title: "Modal"
 description: ""
 sidebar:
-  order: 3
+  order: 4
 ---
 
 Modal provider for ComputeSDK - Execute code with GPU support for machine learning workloads.
