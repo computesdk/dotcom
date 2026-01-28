@@ -12,84 +12,140 @@ featured: true
 
 We believe that sandboxes are the next primitive of compute, much like containers were a decade ago. When we started ComputeSDK, our goal was to make the universal interface for the sandbox primitive. Version 1.0 was an SDK that allowed developers to use our unified SDK across many sandbox providers with minimal changes to their codebase.
 
-However, version 1 of our SDK was limited by existing sandbox providers. We realized that many people don’t just want to use existing sandbox companies (E2B, Daytona, Modal), but would prefer to use their existing cloud infrastructure (Railway, AWS, GCP, etc).
+However, version 1 of our SDK was limited by existing sandbox providers. We realized that many people don't just want to use existing sandbox companies (E2B, Daytona, Modal), but would prefer to use their existing cloud infrastructure (Railway, AWS, GCP, etc).
 
 Back in November, we [launched](https://www.computesdk.com/blog/november-2025-update/) our own daemon that allowed all of those cloud providers to have the same universal interface as the sandbox providers do. This was a huge step in the right direction. But we still needed an orchestration layer so that we could realize our vision of being able to run sandboxes *literally* anywhere.
 
 ## The new Sandbox Gateway
 
-So, today we are excited to introduce version 2 of ComputeSDK, which has our Sandbox Gateway built into it as a first-class citizen. Our Sandbox Gateway allows you to use the same implementation with ANY provider, including your existing cloud, by simply bringing your own keys. This is a huge step forward for seamless sandbox management. Now you don’t have to change *any* code to change providers, just your environment variables.
+So, today we are excited to introduce version 2 of ComputeSDK, which has our Sandbox Gateway built into it as a first-class citizen. Our Sandbox Gateway allows you to use the same implementation with ANY provider, including your existing cloud, by simply bringing your own keys. This is a huge step forward for seamless sandbox management. Now you don't have to change *any* code to change providers, just your environment variables.
 
-``` javascript
+We currently support **11 providers** out of the box: E2B, Modal, Railway, Vercel, Daytona, Cloudflare, Runloop, CodeSandbox, Render, Blaxel, and Namespace—with more on the way.
+
+```javascript
 import { compute } from 'computesdk';
 
-// ComputeSDK Gateway auto-detects provider environment variables
+// ComputeSDK Gateway auto-detects provider from environment variables
 const sandbox = await compute.sandbox.create();
 
-const result = await sandbox.runCode('print("Hello!")');
+const result = await sandbox.run.code('print("Hello!")');
 console.log(result.output); // "Hello!"
 
-await compute.sandbox.destroy(sandbox.sandboxId);
+await sandbox.destroy();
+```
+
+For more advanced use cases, you can also use the callable mode to explicitly configure multiple providers in the same application:
+
+```javascript
+// Explicit configuration for multi-provider setups
+const e2bSandbox = await compute({
+  provider: 'e2b',
+  computesdkApiKey: process.env.COMPUTESDK_API_KEY,
+  e2b: { apiKey: process.env.E2B_API_KEY }
+}).sandbox.create();
 ```
 
 ## More sandbox features in v2.0
 
-
 ### Namespaces
 
-Namespaces allow you to create multiple sandboxes inside of a sandbox (or VM) for a specific user, project, or entity. The beauty of this is that it allows you to share resources of a particular machine
+Namespaces allow you to organize sandboxes by user, project, or any entity you choose. Combined with named sandboxes, this enables powerful patterns like idempotent creation—if a sandbox already exists for that namespace and name, we'll return the existing one instead of creating a duplicate.
 
 ```javascript
-await compute.sandbox.create({
-    namespace: userId | orgId | entityId
-})
+// Create or retrieve an existing sandbox for this user's project
+const sandbox = await compute.sandbox.findOrCreate({
+  name: projectId,
+  namespace: userId,
+});
 ```
 
 ### Servers
 
-Servers are managed processes inside of a sandbox. Servers
+Servers are supervised processes inside a sandbox with full lifecycle management. They support install commands that run before starting (perfect for `npm install`), automatic restarts with configurable policies, health checks for readiness detection, and graceful shutdown with SIGTERM/SIGKILL handling.
 
 ```javascript
-sandbox.servers.start({
-    port: 4000, // optional
-    slug: "react,
-    start: 'bun run dev',
-    path: "./react",
-    restart_policy: 'always',
-})
+await sandbox.server.start({
+  slug: 'react',
+  install: 'npm install',        // Runs blocking before start
+  start: 'npm run dev',
+  path: './react',
+  restart_policy: 'on-failure',  // Also: 'never', 'always'
+  health_check: {
+    path: '/',
+    interval_ms: 2000,
+  },
+});
 ```
-
 
 ### Overlays
 
-Overlays allow you to specify a source directory and target directory and copy files into it. Overlays are quite fast in that that start with symlinks and begin to copy in the background.
+Overlays allow you to instantly bootstrap a sandbox from a template directory. With the `smart` strategy, overlays use symlinks for immutable packages (like `node_modules`) giving you near-instant setup, while heavier directories are copied in the background. You can poll the copy status or wait for completion.
 
 ```javascript
-sandbox.overlay.create({
-    source: "/template/react"
-    target: "./react",
-})
+await sandbox.filesystem.overlay.create({
+  source: '/template/react',
+  target: './react',
+  strategy: 'smart',           // Instant symlinks + background copy
+  waitForCompletion: true,     // Optional: block until fully copied
+});
 ```
 
-#### Example usage of Namespaces, Servers, & Overlays on sandbox creation
+### Client-Side Access with Delegated Tokens
 
-``` javascript
-sandbox = await compute.sandbox.create({
-    name: projectId,
-    namespace: userId,
-    directory: "/home/workspace"
-    overlays: [{
-        source: "/template/react"
-        target: "./react",
-    }],
-    servers: [{
-        port: 4000, // optional
-        slug: "react,
-        start: 'bun run dev',
-        path: "./react",
-        restart_policy: 'always',
-    }]
+Building a web app that needs browser access to sandboxes? ComputeSDK v2 includes a complete authentication system for delegating access to your users without exposing your API keys.
+
+**Session tokens** are scoped credentials you create server-side and pass to your frontend:
+
+```javascript
+// Server-side: create a delegated token
+const session = await sandbox.sessionToken.create({
+  description: 'User session',
+  expiresIn: 86400, // 24 hours
 });
+
+// Pass session.token to your frontend
+```
+
+**Magic links** are even simpler—one-time URLs that automatically authenticate users in the browser:
+
+```javascript
+// Generate a magic link that redirects to your app
+const link = await sandbox.magicLink.create({
+  redirectUrl: '/workspace',
+});
+
+// Send link.url to your user (email, redirect, etc.)
+// They click it, get a session cookie, and land authenticated
+```
+
+Once authenticated, browser clients can use the full SDK—terminals, file watchers, signals—all over WebSocket with automatic reconnection.
+
+### Putting it all together
+
+Here's a complete example showing namespaces, servers, and overlays working together on sandbox creation:
+
+```javascript
+const sandbox = await compute.sandbox.create({
+  name: projectId,
+  namespace: userId,
+  directory: '/home/workspace',
+  overlays: [{
+    source: '/template/react',
+    target: './react',
+    strategy: 'smart',
+  }],
+  servers: [{
+    slug: 'react',
+    install: 'npm install',
+    start: 'npm run dev',
+    path: './react',
+    restart_policy: 'on-failure',
+  }],
+});
+
+// Server URL is available once the port is detected
+const server = await sandbox.server.retrieve('react');
+console.log(server.url); // https://react-abc123.sandbox.computesdk.com
 ```
 
 We're excited to keep improving your sandbox experience!
