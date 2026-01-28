@@ -865,7 +865,7 @@ await sandbox.filesystem.overlay.destroy('overlay-123');
 
 ## `sandbox.terminal`
 
-### `terminals.create(options?)`
+### `terminal.create(options?)`
 
 Create a terminal session in the sandbox with support for two modes: **PTY mode** (interactive shell with real-time I/O over WebSocket) and **Exec mode** (command tracking with structured results).
 
@@ -1008,7 +1008,7 @@ await exec.destroy();
 
 ---
 
-### `terminals.list()`
+### `terminal.list()`
 
 List all active terminal sessions in the sandbox.
 
@@ -1043,7 +1043,7 @@ terminals.forEach(term => {
 
 ---
 
-### `terminals.retrieve(id)`
+### `terminal.retrieve(id)`
 
 Retrieve information about a specific terminal by ID.
 
@@ -1083,7 +1083,7 @@ if (terminal.pty) {
 
 ---
 
-### `terminals.destroy(id)`
+### `terminal.destroy(id)`
 
 Destroy a terminal session and clean up all associated resources.
 
