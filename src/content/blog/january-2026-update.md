@@ -18,7 +18,11 @@ Back in November, we [launched](https://www.computesdk.com/blog/november-2025-up
 
 ## The new Sandbox Gateway
 
-So, today we are excited to introduce version 2 of ComputeSDK, which has our Sandbox Gateway built into it as a first-class citizen. Our Sandbox Gateway allows you to use the same implementation with ANY provider, including your existing cloud, by simply bringing your own keys. This is a huge step forward for seamless sandbox management. Now you don't have to change *any* code to change providers, just your environment variables.
+So, today we are excited to introduce version 2 of ComputeSDK, which has our Sandbox Gateway built into it as a first-class citizen. Our Sandbox Gateway allows you to use the same implementation with ANY provider, including your existing cloud infrastructure.
+
+**Today, the Gateway is fully BYOK (Bring Your Own Keys).** You provide your provider credentials, and ComputeSDK handles the rest—orchestration, lifecycle management, and a unified API across all providers. This means you maintain full control over your infrastructure and billing relationships. Just set your environment variables and go.
+
+We're starting with BYOK because it gives you maximum flexibility, but we're exploring ways to make getting started even simpler in the future. Stay tuned.
 
 We currently support **8 providers** out of the box: E2B, Modal, Railway, Vercel, Daytona, Render, Blaxel, and Namespace—with more on the way.
 
