@@ -37,58 +37,59 @@ await compute.sandbox.destroy(sandbox.sandboxId);
 
 ### Namespaces
 
-Namespaces allow you to create multiple sandboxes inside of a sandbox (or VM) for a specific user, project, or entity.
+Namespaces allow you to create multiple sandboxes inside of a sandbox (or VM) for a specific user, project, or entity. The beauty of this is that it allows you to share resources of a particular machine
 
+```javascript
+await compute.sandbox.create({
+    namespace: userId | orgId | entityId
+})
+```
 
 ### Servers
 
-Servers are managed processes inside of a sandbox.
+Servers are managed processes inside of a sandbox. Servers
+
+```javascript
+sandbox.servers.start({
+    port: 4000, // optional
+    slug: "react,
+    start: 'bun run dev',
+    path: "./react",
+    restart_policy: 'always',
+})
+```
 
 
 ### Overlays
 
-Overlays allow you to specify a source directory and target directory and copy files into it.
+Overlays allow you to specify a source directory and target directory and copy files into it. Overlays are quite fast in that that start with symlinks and begin to copy in the background.
 
+```javascript
+sandbox.overlay.create({
+    source: "/template/react"
+    target: "./react",
+})
+```
 
 #### Example usage of Namespaces, Servers, & Overlays on sandbox creation
 
 ``` javascript
 sandbox = await compute.sandbox.create({
-    name: devServerId,
-    namespace: organizationId,
-    ...config,
-    envs,
-    timeout: minDurationMs,
-    metadata: { devServerId, projectGroupId },
-    // directory: SANDBOX_ROOT,
-    overlays: [
-    {
-        source: SANDBOX_ROOT + "/" + WEB_APP_ROOT,
-        target: "apps/web",
-    },
-    {
-        source: SANDBOX_ROOT + "/" + MOBILE_APP_ROOT,
-        target: "apps/mobile",
-    }
-    ],
-    servers: [
-    {
-        port: 4000,
-        slug: RUNTIME_SLUGS[RuntimeEnvironment.REACT],
+    name: projectId,
+    namespace: userId,
+    directory: "/home/workspace"
+    overlays: [{
+        source: "/template/react"
+        target: "./react",
+    }],
+    servers: [{
+        port: 4000, // optional
+        slug: "react,
         start: 'bun run dev',
-        path: WEB_APP_ROOT,
+        path: "./react",
         restart_policy: 'always',
-    },
-    {
-        slug: RUNTIME_SLUGS[RuntimeEnvironment.EXPO],
-        start: 'npx expo start --port 8081',
-        path: MOBILE_APP_ROOT,
-        port: 8081,
-        restart_policy: 'always',
-    },
-    ],
+    }]
 });
-const readySandbox = await sandbox.ready();
 ```
 
 We're excited to keep improving your sandbox experience!
