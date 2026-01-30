@@ -6,7 +6,7 @@ tags: [how-to, sandboxes, e2b]
 author: "Garrison Snelling"
 role: "Founder, ComputeSDK"
 image: "/Garrison-Snelling-sq.jpeg"
-featured: true
+featured: false
 ---
 
 <span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/dtice25/basic-sandbox-app" target="_blank">this repo</a>, update your credentials and run locally. Or check it out on <a href="https://stackblitz.com/edit/e2b" target="_blank">Stackblitz</a>.</span>
