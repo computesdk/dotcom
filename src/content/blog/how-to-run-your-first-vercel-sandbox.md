@@ -214,7 +214,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.vercel.app', 'localhost', '127.0.0.1', '.computesdk.com'],
     },
   })
   `;
