@@ -8,12 +8,18 @@ role: "Founder, ComputeSDK"
 image: "/Garrison-Snelling-sq.jpeg"
 featured: false
 ---
-
 <span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/vercel-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
-<span style="font-size: 14px; font-style: italic;">Or, just deploy this example with Vercel:</span>
-<a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcomputesdk%2Fexamples%2Ftree%2Fmain%2Fvercel-basic" target="_blank">
-  <img src="https://vercel.com/button" alt="Deploy with Vercel"/>
-</a>
+<br />
+<span style="font-size: 14px; font-style: italic;">Or, just deploy an example with Vercel or Stackblitz:</span>
+<div style="display: flex; gap: 4px;">
+  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcomputesdk%2Fexamples%2Ftree%2Fmain%2Fvercel-basic" target="_blank">
+    <img src="https://vercel.com/button" alt="Deploy with Vercel"/>
+  </a>
+  <a href="https://stackblitz.com/edit/vercel" target="_blank">
+    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="open in Stackblitz" />
+  </a>
+</div>
+
 
 Want to use Vercel sandboxes to run AI-generated code? ComputeSDK makes it easy.
 Let's walk through the process of getting a basic application running inside a Vercel sandbox.
