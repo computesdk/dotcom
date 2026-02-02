@@ -2,7 +2,7 @@
 title: "Vercel"
 description: ""
 sidebar:
-  order: 8
+  order: 9
 ---
 
 Vercel provider for ComputeSDK - Execute code in globally distributed serverless environments.

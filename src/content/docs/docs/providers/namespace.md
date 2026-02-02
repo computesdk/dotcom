@@ -2,7 +2,7 @@
 title: "Namespace"
 description: ""
 sidebar:
-  order: 5
+  order: 6
 ---
 
 ## Deploy sandboxes on Namespace with ComputeSDK
