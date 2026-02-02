@@ -2,7 +2,7 @@
 title: "Render"
 description: ""
 sidebar:
-  order: 7
+  order: 8
 ---
 
 ## Deploy sandboxes on Render with ComputeSDK
