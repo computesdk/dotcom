@@ -1,7 +1,7 @@
 ---
 title: "How to run a sandbox on Railway"
 description: "A step-by-step process for creating a sandbox with Railway, running a basic Vite app inside, and accessing it securely via the browser."
-date: "2026-02-03"
+date: "2026-02-08"
 tags: [how-to, sandboxes, railway]
 author: "Garrison Snelling"
 role: "Founder, ComputeSDK"
