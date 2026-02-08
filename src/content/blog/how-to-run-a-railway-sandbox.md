@@ -11,7 +11,7 @@ featured: false
 
 <span style="font-size: 14px; font-style: italic;">Run locally with <a href="https://github.com/computesdk/examples/tree/main/railway-basic" target="_blank">this repo</a> or deploy with Railway or Stackblitz:</span>
 <div style="display: flex; gap: 4px;">
-  <a href="" target="_blank">
+  <a href="https://railway.com/deploy/yKLYhi?referralCode=-WK0PF&utm_medium=integration&utm_source=template&utm_campaign=generic" target="_blank">
     <img src="https://railway.com/button.svg" alt="Deploy on Railway" style="height: 32px;"/>
   </a>
   <a href="https://stackblitz.com/edit/railway-sandbox" target="_blank">
