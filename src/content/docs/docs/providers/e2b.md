@@ -2,7 +2,7 @@
 title: "E2B"
 description: ""
 sidebar:
-  order: 3
+  order: 4
 ---
 
 E2B provider for ComputeSDK

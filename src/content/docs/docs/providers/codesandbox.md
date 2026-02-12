@@ -1,11 +1,11 @@
 ---
-title: "Daytona"
+title: "Codesandbox"
 description: ""
 sidebar:
-  order: 3
+  order: 2
 ---
 
-Daytona provider for ComputeSDK - Execute code in Daytona development workspaces.
+Codesandbox provider for ComputeSDK - Execute code in Codesandbox development environments.
 
 ## Installation & Setup
 
@@ -15,7 +15,7 @@ npm install computesdk
 # add to .env file
 COMPUTESDK_API_KEY=your_computesdk_api_key
 
-DAYTONA_API_KEY=your_daytona_api_key
+CSB_API_KEY=your_codesandbox_api_key
 ```
 
 
@@ -31,8 +31,8 @@ import { compute } from 'computesdk';
 const sandbox = await compute.sandbox.create();
 
 // Execute code
-const result = await sandbox.runCode('print("Hello from Daytona!")');
-console.log(result.stdout); // "Hello from Daytona!"
+const result = await sandbox.runCode('print("Hello from Codesandbox!")');
+console.log(result.stdout); // "Hello from Codesandbox!"
 
 // Clean up
 await compute.sandbox.destroy(sandbox.sandboxId);
@@ -41,11 +41,11 @@ await compute.sandbox.destroy(sandbox.sandboxId);
 ### Configuration Options
 
 ```typescript
-interface DaytonaConfig {
-  /** Daytona API key - if not provided, will use DAYTONA_API_KEY env var */
+interface CodesandboxConfig {
+  /** CodeSandbox API key - if not provided, will fallback to CSB_API_KEY environment variable */
   apiKey?: string;
-  /** Default runtime environment */
-  runtime?: 'node' | 'python';
+  /** Template to use for new sandboxes */
+  templateId?: string;
   /** Execution timeout in milliseconds */
   timeout?: number;
 }
@@ -59,9 +59,9 @@ import { compute } from 'computesdk';
 
 compute.setConfig({
    computesdkApiKey: process.env.COMPUTESDK_API_KEY,
-   provider: 'daytona',
-   daytona: {
-     apiKey: process.env.DAYTONA_API_KEY
+   provider: 'codesandbox',
+   codesandbox: {
+     apiKey: process.env.CSB_API_KEY
    }
 });
 

@@ -2,7 +2,7 @@
 title: "Railway"
 description: ""
 sidebar:
-  order: 6
+  order: 7
 ---
 
 ## Deploy sandboxes on Railway with ComputeSDK
