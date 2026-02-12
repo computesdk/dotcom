@@ -16,8 +16,8 @@ import FAQCol from "./FAQCol.astro";
         <p class="mt-8 text-balance text-5xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-6xl">Sandboxes Made Simple</p>
     </div>
     <p class="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 dark:text-gray-400 sm:text-xl/8">Start for free with our SDK, then scale with advanced features for production-ready sandbox environments.</p>
-    <div class="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-       <div class="rounded-3xl rounded-t-3xl bg-white/60 dark:bg-gray-800/60 p-8 ring-1 ring-gray-900/10 dark:ring-gray-700/50 sm:mx-8 sm:rounded-b-none sm:p-10 lg:mx-0 lg:rounded-bl-3xl lg:rounded-tr-none">
+    <div class="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-6xl lg:grid-cols-3">
+       <div class="rounded-3xl rounded-t-3xl bg-white/60 dark:bg-gray-800/60 p-8 ring-1 ring-gray-900/10 dark:ring-gray-700/50 sm:mx-8 sm:rounded-b-none sm:p-10 lg:mx-0 lg:rounded-l-3xl lg:rounded-r-none">
          <h3 id="tier-hobby" class="text-base/7 font-semibold text-emerald-600 dark:text-emerald-400">Hobby (Free)</h3>
         <p class="mt-4 flex items-baseline gap-x-2">
            <span class="text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">$0</span>
@@ -64,8 +64,8 @@ import FAQCol from "./FAQCol.astro";
          </ul>
         <a href="https://console.computesdk.com/register" target="_blank" aria-describedby="tier-free" class="mt-8 block rounded-xs px-3.5 py-2.5 text-center text-sm font-semibold text-emerald-600 ring-1 ring-inset ring-emerald-200 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:mt-10 no-underline">Get started today</a>
       </div>
-      <div class="relative rounded-3xl bg-gray-900 p-8 shadow-2xl ring-1 ring-gray-900/10 sm:p-10">
-        <h3 id="tier-enterprise" class="text-base/7 font-semibold text-emerald-400">Pro</h3>
+      <div class="relative rounded-3xl bg-gray-900 p-8 shadow-2xl ring-1 ring-gray-900/10 sm:p-10 lg:z-10">
+        <h3 id="tier-pro" class="text-base/7 font-semibold text-emerald-400">Pro</h3>
         <p class="mt-4 flex items-baseline gap-x-2">
           <span class="text-5xl font-semibold tracking-tight text-white">$500</span>
           <span class="text-base text-gray-400">/ month</span>
@@ -121,7 +121,41 @@ import FAQCol from "./FAQCol.astro";
              Health monitoring with built-in status endpoints
            </li>
          </ul>
-        <a href="https://console.computesdk.com/register" target="_blank" aria-describedby="tier-premium" class="mt-8 block rounded-xs bg-emerald-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 sm:mt-10 no-underline">Get started today</a>
+        <a href="https://console.computesdk.com/register" target="_blank" aria-describedby="tier-pro" class="mt-8 block rounded-xs bg-emerald-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 sm:mt-10 no-underline">Get started today</a>
+      </div>
+      <div class="rounded-3xl bg-white/60 dark:bg-gray-800/60 p-8 ring-1 ring-gray-900/10 dark:ring-gray-700/50 sm:mx-8 sm:rounded-t-none sm:p-10 lg:mx-0 lg:rounded-r-3xl lg:rounded-l-none">
+        <h3 id="tier-enterprise" class="text-base/7 font-semibold text-emerald-600 dark:text-emerald-400">Enterprise</h3>
+        <p class="mt-4 flex items-baseline gap-x-2">
+          <span class="text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Custom</span>
+        </p>
+        <p class="mt-6 text-base/7 text-gray-600 dark:text-gray-300">Everything in Pro, plus unlimited scale and on-premise deployment for your organization.</p>
+          <ul role="list" class="mt-8 space-y-3 p-0 text-sm/6 text-gray-600 dark:text-gray-300 sm:mt-10">
+           <li class="flex gap-x-3">
+              <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="h-6 w-5 flex-none text-emerald-600 dark:text-emerald-400">
+               <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />
+             </svg>
+             Everything in Pro
+           </li>
+           <li class="flex gap-x-3">
+              <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="h-6 w-5 flex-none text-emerald-600 dark:text-emerald-400">
+               <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />
+             </svg>
+             Unlimited sandboxes
+           </li>
+           <li class="flex gap-x-3">
+              <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="h-6 w-5 flex-none text-emerald-600 dark:text-emerald-400">
+               <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />
+             </svg>
+             Unlimited storage
+           </li>
+           <li class="flex gap-x-3">
+              <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="h-6 w-5 flex-none text-emerald-600 dark:text-emerald-400">
+               <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />
+             </svg>
+             On-premise deployment
+           </li>
+         </ul>
+        <a href="/sales" aria-describedby="tier-enterprise" class="mt-8 block rounded-xs px-3.5 py-2.5 text-center text-sm font-semibold text-emerald-600 ring-1 ring-inset ring-emerald-200 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:mt-10 no-underline">Contact sales</a>
       </div>
     </div>
     </div>
