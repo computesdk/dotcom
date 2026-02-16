@@ -39,7 +39,7 @@ const { title, date, description, tags, author, role, image } = Astro.props as P
           <p class="text-gray-600 mt-0 dark:text-gray-400">{role}</p>
         </div>
       </div>
-      <div class="gap-4 mb-6 text-center">
+      <div class="gap-4 mb-6 text-end">
         <time class="text-gray-500 dark:text-gray-400 text-sm">
           {new Date(date).toLocaleDateString('en-US', { 
             year: 'numeric', 
