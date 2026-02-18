@@ -1,0 +1,158 @@
+---
+import benchmarkData from "../data/benchmark-results.json";
+
+interface ProviderResult {
+  provider: string;
+  summary: { ttiMs: { min: number; max: number; median: number; avg: number } };
+  skipped?: boolean;
+  skipReason?: string;
+  iterations?: Array<{ ttiMs: number; error?: string }>;
+}
+
+const results = benchmarkData.results as ProviderResult[];
+const timestamp = new Date(benchmarkData.timestamp).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+// Separate active vs skipped/failed, sort active by median TTI
+const active = results
+  .filter((r) => !r.skipped && r.summary.ttiMs.median > 0)
+  .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
+
+const inactive = results.filter((r) => r.skipped || r.summary.ttiMs.median === 0);
+
+const maxTti = Math.max(...active.map((r) => r.summary.ttiMs.max));
+
+function formatSeconds(ms: number): string {
+  return (ms / 1000).toFixed(1) + "s";
+}
+
+function barWidth(ms: number): number {
+  return Math.max((ms / maxTti) * 100, 2);
+}
+
+function successCount(r: ProviderResult): string {
+  if (!r.iterations || r.iterations.length === 0) return "";
+  const ok = r.iterations.filter((i) => !i.error).length;
+  return `${ok}/${r.iterations.length}`;
+}
+
+const providerColors: Record<string, string> = {
+  e2b: "bg-emerald-500",
+  vercel: "bg-sky-500",
+  blaxel: "bg-violet-500",
+  modal: "bg-amber-500",
+  daytona: "bg-rose-500",
+  namespace: "bg-cyan-500",
+  railway: "bg-indigo-500",
+  render: "bg-orange-500",
+};
+---
+
+<div class="relative isolate bg-transparent dark:bg-transparent py-4">
+  <!-- Header -->
+  <div class="border-b border-gray-200 dark:border-b-gray-700 py-16">
+    <div class="mx-6">
+      <div class="mx-auto max-w-4xl text-center">
+        <div class="mb-8 mx-auto">
+          <span class="inline-flex items-center bg-emerald-600/10 dark:bg-emerald-900/50 px-4 py-1.5 text-sm font-semibold text-emerald-800 dark:text-white ring-1 ring-inset ring-emerald-600/10 rounded-xs">
+            Leaderboard
+          </span>
+        </div>
+        <p class="mt-8 text-balance text-5xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
+          Sandbox Provider Comparison: Time to Interactive
+        </p>
+      </div>
+      <p class="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 dark:text-gray-400 sm:text-xl/8">
+        How fast can a sandbox provider create a sandbox and execute code.
+      </p>
+      <p class="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-400 dark:text-gray-500">
+        Last run: {timestamp}
+      </p>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="mx-auto max-w-4xl px-6 py-4">
+    <div class="space-y-5">
+      {active.map((r) => {
+        const color = providerColors[r.provider] || "bg-emerald-500";
+        return (
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-sm font-semibold text-gray-900 dark:text-white capitalize">
+                {r.provider}
+              </span>
+              <span class="text-sm font-mono text-gray-500 dark:text-gray-400">
+                {formatSeconds(r.summary.ttiMs.median)}
+              </span>
+            </div>
+            <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-8 overflow-hidden">
+              <div
+                class={`h-full rounded-full ${color} flex items-center justify-end pr-3 transition-all duration-500`}
+                style={`width: ${barWidth(r.summary.ttiMs.median)}%`}
+              >
+                {barWidth(r.summary.ttiMs.median) > 20 && (
+                  <span class="text-xs font-mono text-white/80">
+                    {formatSeconds(r.summary.ttiMs.median)}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- Range indicator -->
+    <div class="mt-4 flex justify-between text-xs text-gray-400 dark:text-gray-500">
+      <span>0s</span>
+      <span>{formatSeconds(maxTti)}</span>
+    </div>
+  </div>
+
+  <!-- Details Table -->
+  <div class="mx-auto max-w-4xl px-6 pb-16 flex flex-col items-center">
+    <div class="overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-gray-700">
+      <table class="divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-800/50 w-full">
+          <tr>
+            <th class="px-8 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Provider</th>
+            <th class="px-8 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Median</th>
+            <th class="px-8 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Min</th>
+            <th class="px-8 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Max</th>
+            <th class="px-8 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Runs</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-transparent">
+          {active.map((r) => (
+            <tr>
+              <td class="px-8 py-4 text-sm text-center font-medium text-gray-900 dark:text-white capitalize">{r.provider}</td>
+              <td class="px-8 py-4 text-sm text-center font-mono text-gray-600 dark:text-gray-300">{formatSeconds(r.summary.ttiMs.median)}</td>
+              <td class="px-8 py-4 text-sm text-center font-mono text-gray-400 dark:text-gray-500">{formatSeconds(r.summary.ttiMs.min)}</td>
+              <td class="px-8 py-4 text-sm text-center font-mono text-gray-400 dark:text-gray-500">{formatSeconds(r.summary.ttiMs.max)}</td>
+              <td class="px-8 py-4 text-sm text-center text-gray-400 dark:text-gray-500">{successCount(r)}</td>
+            </tr>
+          ))}
+          {inactive.map((r) => (
+            <tr class="opacity-50">
+              <td class="px-8 py-4 text-sm text-center font-medium text-gray-400 dark:text-gray-500 capitalize">{r.provider}</td>
+              <td class="px-8 py-4 text-sm text-center text-gray-400 dark:text-gray-500" colspan="3">
+                {r.skipped ? r.skipReason : "All iterations failed"}
+              </td>
+              <td class="px-8 py-4 text-sm text-center text-gray-400 dark:text-gray-500">
+                {r.skipped ? "--" : successCount(r)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="mt-6 text-center text-sm text-gray-400 dark:text-gray-500">
+      TTI measures wall-clock time from <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">compute.sandbox.create()</code> to first successful <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">runCommand()</code>. Median of 3 iterations per provider.
+    </p>
+  </div>
+</div>
