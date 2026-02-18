@@ -39,16 +39,19 @@ function successCount(r: ProviderResult): string {
   return `${ok}/${r.iterations.length}`;
 }
 
-const providerColors: Record<string, string> = {
-  e2b: "bg-emerald-500",
-  vercel: "bg-sky-500",
-  blaxel: "bg-violet-500",
-  modal: "bg-amber-500",
-  daytona: "bg-rose-500",
-  namespace: "bg-cyan-500",
-  railway: "bg-indigo-500",
-  render: "bg-orange-500",
+const providerGradient = "from-gray-900 to-gray-700 dark:from-white dark:to-gray-300";
+
+const providerLogos: Record<string, string> = {
+  e2b: "/E2B-logo-light.svg",
+  vercel: "/Vercel_Logo_L.svg",
+  blaxel: "/blaxel-logo-light.svg",
+  modal: "/modal-logo-light.svg",
+  daytona: "/daytona-logo-light.svg",
+  namespace: "/namespace-logo-light.svg",
+  railway: "/railway-light.svg",
+  render: "/render-logo-light.svg",
 };
+
 ---
 
 <div class="relative isolate bg-transparent dark:bg-transparent py-4">
@@ -66,7 +69,7 @@ const providerColors: Record<string, string> = {
         </p>
       </div>
       <p class="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 dark:text-gray-400 sm:text-xl/8">
-        How fast can a sandbox provider create a sandbox and execute code.
+        How fast can ComputeSDK create a sandbox and successfully execute a command on each sandbox provider.
       </p>
       <p class="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-400 dark:text-gray-500">
         Last run: {timestamp}
@@ -75,30 +78,40 @@ const providerColors: Record<string, string> = {
   </div>
 
   <!-- Chart -->
-  <div class="mx-auto max-w-4xl px-6 py-4">
-    <div class="space-y-5">
-      {active.map((r) => {
-        const color = providerColors[r.provider] || "bg-emerald-500";
+  <div class="mx-auto max-w-4xl px-6 py-10">
+    <div class="space-y-3">
+      {active.map((r, i) => {
+        const logo = providerLogos[r.provider];
+        const pct = barWidth(r.summary.ttiMs.median);
         return (
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <span class="text-sm font-semibold text-gray-900 dark:text-white capitalize">
-                {r.provider}
-              </span>
-              <span class="text-sm font-mono text-gray-500 dark:text-gray-400">
-                {formatSeconds(r.summary.ttiMs.median)}
-              </span>
+          <div class="relative flex items-center gap-4 rounded-xl px-4 py-3">
+            <div class="w-6 shrink-0 text-center">
+              <span class="text-sm font-mono text-gray-400 dark:text-gray-500">{i + 1}</span>
             </div>
-            <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-8 overflow-hidden">
-              <div
-                class={`h-full rounded-full ${color} flex items-center justify-end pr-3 transition-all duration-500`}
-                style={`width: ${barWidth(r.summary.ttiMs.median)}%`}
-              >
-                {barWidth(r.summary.ttiMs.median) > 20 && (
-                  <span class="text-xs font-mono text-white/80">
-                    {formatSeconds(r.summary.ttiMs.median)}
-                  </span>
-                )}
+
+            <div class="w-24 shrink-0 flex items-center justify-start h-6">
+              {logo ? (
+                <img
+                  src={logo}
+                  alt={`${r.provider} logo`}
+                  class="max-w-[90px] w-auto h-auto object-contain object-left dark:invert"
+                />
+              ) : (
+                <span class="text-sm font-semibold text-gray-900 dark:text-white capitalize">{r.provider}</span>
+              )}
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <div class="relative w-full h-7 bg-gray-100 dark:bg-gray-800/60 rounded-md overflow-hidden">
+                <div
+                  class={`absolute inset-y-0 left-0 bg-linear-to-r ${providerGradient} rounded-md transition-all duration-700 ease-out`}
+                  style={`width: ${pct}%`}
+                />
+                <div class="absolute inset-0 flex items-center">
+                    <span class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300" style={`margin-left: calc(${pct}% + 8px)`}>
+                      {formatSeconds(r.summary.ttiMs.median)}
+                    </span>
+                </div>
               </div>
             </div>
           </div>
@@ -106,9 +119,9 @@ const providerColors: Record<string, string> = {
       })}
     </div>
 
-    <!-- Range indicator -->
-    <div class="mt-4 flex justify-between text-xs text-gray-400 dark:text-gray-500">
+    <div class="mt-6 flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 px-4">
       <span>0s</span>
+      <div class="flex-1 mx-3 border-t border-dashed border-gray-200 dark:border-gray-700" />
       <span>{formatSeconds(maxTti)}</span>
     </div>
   </div>
