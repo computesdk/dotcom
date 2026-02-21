@@ -7,16 +7,24 @@ interface ProviderResult {
   iterations?: Array<{ ttiMs: number; error?: string }>;
 }
 
-const res = await fetch("https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/latest.json");
-const benchmarkData = await res.json();
-const results = benchmarkData.results as ProviderResult[];
-const timestamp = new Date(benchmarkData.timestamp).toLocaleDateString("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
+let results: ProviderResult[] = [];
+let timestamp = "";
+let fetchError = false;
 
-// Separate active vs skipped/failed, sort active by median TTI
+try {
+  const res = await fetch("https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/latest.json");
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const benchmarkData = await res.json();
+  results = benchmarkData.results as ProviderResult[];
+  timestamp = new Date(benchmarkData.timestamp).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+} catch (e) {
+  fetchError = true;
+}
+
 const active = results
   .filter((r) => !r.skipped && r.summary.ttiMs.median > 0)
   .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
@@ -85,6 +93,11 @@ const providerLogos: Record<string, string> = {
     </div>
   </div>
 
+  {fetchError ? (
+    <div class="max-w-4xl mx-auto my-0 py-16 text-center">
+      <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
+    </div>
+  ) : (
   <div class="max-w-4xl mx-auto my-0">
     <div class="w-full overflow-hidden bg-white dark:bg-gray-900/50 shadow-sm">
       <div class="overflow-x-auto">
@@ -225,6 +238,7 @@ const providerLogos: Record<string, string> = {
       Want to see a provider added? <a href="https://x.com/computesdk" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">Let us know on X</a>.
     </p>
   </div>
+  )}
 </div>
 
 <script>
