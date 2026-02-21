@@ -222,7 +222,7 @@ export default defineConfig({
                }
             ],
              promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
-            exclude: ['contact*'],
+            exclude: ['contact*', 'benchmarks*', 'blog*', 'privacy*', 'terms*'],
             minify: {
               note: true,
               tip: false,
