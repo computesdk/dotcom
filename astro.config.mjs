@@ -224,7 +224,6 @@ export default defineConfig({
             promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
             demote: ['contact', 'benchmarks', 'blog/**', 'privacy', 'terms'],
             exclude: ['contact*', 'benchmarks', 'blog/**', 'privacy', 'terms'],
-            rawContent: true,
             minify: {
               note: true,
               tip: false,
