@@ -1,0 +1,147 @@
+---
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  contactEmail?: string;
+  items: FAQItem[];
+}
+
+const {
+  title = "Frequently asked questions",
+  subtitle = "Have another question?",
+  contactEmail = 'email@computesdk.com',
+  items = [],
+} = Astro.props;
+
+const uid = Math.random().toString(36).slice(2, 8);
+---
+
+<section class="py-16 sm:py-24 lg:py-32 bg-transparent">
+  <div class="mx-auto max-w-3xl px-6 lg:px-8">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        {title}
+      </h2>
+      {(subtitle || contactEmail) && (
+        <p class="text-gray-600 dark:text-gray-400">
+          {subtitle}{" "}
+          {contactEmail && (
+            <a href={`mailto:${contactEmail}`} class="text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline">
+              Email us.
+            </a>
+          )}
+        </p>
+      )}
+    </div>
+
+    <div class="space-y-4" data-faq-accordion={uid}>
+      {items.map((item, i) => {
+        const isFirst = i === 0;
+        return (
+          <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden faq-item bg-white dark:bg-gray-800/40 shadow-xs">
+            <button
+              type="button"
+              class="faq-trigger group w-full px-6 py-4 text-left flex justify-between items-center bg-white dark:bg-transparent dark:hover:bg-gray-800/80 transition-colors focus:outline-none"
+              aria-expanded={isFirst ? "true" : "false"}
+            >
+              <span class="font-semibold text-gray-600 dark:text-white text-lg pr-4 transition-colors group-hover:text-gray-900 dark:group-hover:text-gray-300">
+                {item.question}
+              </span>
+              <svg class="faq-chevron w-5 h-5 text-gray-500 dark:text-gray-400 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            
+            <div class="faq-panel my-0 bg-white dark:bg-transparent" aria-hidden={isFirst ? "false" : "true"}>
+              <div class="faq-panel-inner">
+                <div class="px-6 pb-6 pt-2">
+                  <div class="text-gray-600 dark:text-gray-300 leading-relaxed text-sm sm:text-base">
+                    <Fragment set:html={item.answer} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": items.map((item) => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer,
+    },
+  })),
+})} />
+
+<style>
+  .faq-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease-out;
+  }
+
+  .faq-panel[aria-hidden="false"] {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-panel-inner {
+    overflow: hidden;
+  }
+
+  .faq-trigger[aria-expanded="true"] .faq-chevron {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+  function setupFAQAccordion() {
+    const accordions = document.querySelectorAll('[data-faq-accordion]');
+    
+    accordions.forEach(accordion => {
+      if (accordion.hasAttribute('data-initialized')) return;
+      accordion.setAttribute('data-initialized', 'true');
+      
+      const triggers = accordion.querySelectorAll('.faq-trigger');
+      
+      triggers.forEach(trigger => {
+        trigger.addEventListener('click', (e) => {
+          const btn = e.currentTarget as HTMLElement;
+          const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+          
+          // The panel is the immediate next sibling
+          const panel = btn.nextElementSibling as HTMLElement;
+          if (!panel || !panel.classList.contains('faq-panel')) return;
+
+          // Toggle state
+          if (isExpanded) {
+            btn.setAttribute('aria-expanded', 'false');
+            panel.setAttribute('aria-hidden', 'true');
+          } else {
+            btn.setAttribute('aria-expanded', 'true');
+            panel.setAttribute('aria-hidden', 'false');
+          }
+        });
+      });
+    });
+  }
+
+  // Setup on initial load
+  setupFAQAccordion();
+  
+  // Setup on Astro page transitions
+  document.addEventListener('astro:page-load', setupFAQAccordion);
+  document.addEventListener('astro:after-swap', setupFAQAccordion);
+</script>

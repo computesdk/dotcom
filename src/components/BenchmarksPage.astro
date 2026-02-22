@@ -62,6 +62,18 @@ const providerLogos: Record<string, string> = {
   railway: "/railway-light.svg",
   render: "/render-logo-light.svg",
 };
+
+import FAQAccordion from "./FAQAccordion.astro";
+const benchmarksFAQs = [
+  {
+    question: "What is a sandbox?",
+    answer: "A sandbox is anywhere you can run code in isolation. It could be a VM, bare metal, a container, anywhere with compute resources.",
+  },
+  {
+    question: "What is Time to Interactive (TTI)?",
+    answer: "TTI is the total elapsed time it takes for a sandbox provider to boot up a sandbox and run a terminal command inside the sandbox.",
+  },
+];
 ---
 
 <div class="relative isolate bg-transparent dark:bg-transparent py-4">
@@ -239,6 +251,8 @@ const providerLogos: Record<string, string> = {
     </p>
   </div>
   )}
+
+  <FAQAccordion title="Sandbox Benchmarks FAQs" items={benchmarksFAQs} />  
 </div>
 
 <script>
