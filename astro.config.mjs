@@ -221,8 +221,9 @@ export default defineConfig({
                  paths: ['docs/docs/frameworks/**']
                }
             ],
-             promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
-            exclude: ['contact*'],
+            promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
+            demote: ['contact', 'benchmarks', 'blog/**', 'privacy', 'terms'],
+            exclude: ['contact*', 'benchmarks', 'blog/**', 'privacy', 'terms'],
             minify: {
               note: true,
               tip: false,
