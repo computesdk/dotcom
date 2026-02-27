@@ -1,7 +1,7 @@
 ---
 interface ProviderResult {
   provider: string;
-  summary: { ttiMs: { min: number; max: number; median: number; avg: number } };
+  summary: { ttiMs: { min: number; max: number; median: number; p95: number; p99: number; avg: number } };
   skipped?: boolean;
   skipReason?: string;
   iterations?: Array<{ ttiMs: number; error?: string }>;
@@ -76,6 +76,18 @@ const benchmarksFAQs = [
     question: "What is Time to Interactive (TTI)?",
     answer: "TTI is the total elapsed time it takes for a sandbox provider to boot up a sandbox and run a terminal command inside the sandbox.",
   },
+  {
+    question: "Why use median instead of average?",
+    answer: "The average can be easily skewed by a single extreme outlier. The median provides a more accurate representation of the typical performance most users will experience.",
+  },
+  {
+    question: "What does P95 mean?",
+    answer: "P95 stands for the 95th percentile. 95% of iterations completed at or below this time. Tells you the 'typical worst case' — what a user experiences on a bad-but-not-extreme run.",
+  },
+  {
+    question: "What does P99 mean?",
+    answer: "P99 stands for the 99th percentile. 99% of iterations completed at or below this time. It highlights the tail latency (the rare outlier spikes). With 100 iterations, this is the 99th value (second-worst)",
+  },
 ];
 ---
 
@@ -85,13 +97,13 @@ const benchmarksFAQs = [
     <div class="mx-6">
       <div class="mx-auto max-w-5xl text-center">
         <h1 class="mt-8 text-balance text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
-          Sandbox Provider Leaderboard
+          Sandbox Benchmarks
         </h1>
       </div>
       <p class="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 dark:text-gray-400 sm:text-xl/8">
-        Benchmarks for each sandbox provider.
+        A leaderboard of common benchmarks for each of our sandbox providers.
       </p>
-      <p class="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-500 dark:text-gray-500">
+      <p id="benchmark-timestamp" class="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-500 dark:text-gray-500">
         Last run: {timestamp}
       </p>
       <div class="mt-5 flex justify-center">
@@ -113,16 +125,16 @@ const benchmarksFAQs = [
       <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
     </div>
   ) : (
-  <div class="max-w-4xl mx-auto my-0">
+  <div class="max-w-6xl mx-auto my-0">
     <div class="w-full overflow-hidden bg-white dark:bg-gray-900/50 shadow-sm">
       <div class="overflow-x-auto">
-        <table id="benchmark-table" class="w-full">
+        <table id="benchmark-table" class="w-full" data-build-timestamp={timestamp}>
           <thead>
             <tr class="border-b border-gray-200 dark:border-gray-700/60 bg-gray-50/80 dark:bg-gray-800/40">
-              <th scope="col" class="w-[4%] py-3 pl-5 pr-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <th scope="col" class="w-[3%] py-3 pl-5 pr-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 #
               </th>
-              <th scope="col" class="w-[26%] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="provider">
+              <th scope="col" class="w-[10%] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="provider">
                 <span class="group inline-flex items-center gap-1.5">
                   Provider
                   <span class="sort-icon opacity-0 transition-opacity group-hover:opacity-60" data-col="provider">
@@ -131,7 +143,7 @@ const benchmarksFAQs = [
                   </span>
                 </span>
               </th>
-              <th scope="col" class="w-[22%] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="median">
+              <th scope="col" class="w-[17%] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="median">
                 <span class="group inline-flex items-center gap-1.5">
                   Median TTI
                   <span class="sort-icon opacity-100 text-gray-700 dark:text-gray-300" data-col="median">
@@ -140,7 +152,7 @@ const benchmarksFAQs = [
                   </span>
                 </span>
               </th>
-              <th scope="col" class="w-[12%] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="min">
+              <th scope="col" class="w-[10%] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="min">
                 <span class="group inline-flex items-center justify-end gap-1.5">
                   Min
                   <span class="sort-icon opacity-0 transition-opacity group-hover:opacity-60" data-col="min">
@@ -149,7 +161,7 @@ const benchmarksFAQs = [
                   </span>
                 </span>
               </th>
-              <th scope="col" class="w-[12%] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="max">
+              <th scope="col" class="w-[10%] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="max">
                 <span class="group inline-flex items-center justify-end gap-1.5">
                   Max
                   <span class="sort-icon opacity-0 transition-opacity group-hover:opacity-60" data-col="max">
@@ -158,7 +170,25 @@ const benchmarksFAQs = [
                   </span>
                 </span>
               </th>
-              <th scope="col" class="w-[12%] py-3 pl-4 pr-5 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="runs">
+              <th scope="col" class="w-[10%] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="p95">
+                <span class="group inline-flex items-center justify-end gap-1.5">
+                  P95
+                  <span class="sort-icon opacity-0 transition-opacity group-hover:opacity-60" data-col="p95">
+                    <svg class="size-3.5 sort-asc" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a.75.75 0 0 1 .53.22l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.81l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25A.75.75 0 0 1 10 5Z" clip-rule="evenodd" /></svg>
+                    <svg class="size-3.5 sort-desc hidden" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                  </span>
+                </span>
+              </th>
+              <th scope="col" class="w-[10%] px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="p99">
+                <span class="group inline-flex items-center justify-end gap-1.5">
+                  P99
+                  <span class="sort-icon opacity-0 transition-opacity group-hover:opacity-60" data-col="p99">
+                    <svg class="size-3.5 sort-asc" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a.75.75 0 0 1 .53.22l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 6.81l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25A.75.75 0 0 1 10 5Z" clip-rule="evenodd" /></svg>
+                    <svg class="size-3.5 sort-desc hidden" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                  </span>
+                </span>
+              </th>
+              <th scope="col" class="w-[10%] py-3 pl-4 pr-5 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 cursor-pointer select-none" data-sort="runs">
                 <span class="group inline-flex items-center justify-end gap-1.5">
                   Runs
                   <span class="sort-icon opacity-0 transition-opacity group-hover:opacity-60" data-col="runs">
@@ -216,6 +246,12 @@ const benchmarksFAQs = [
                   <td class="whitespace-nowrap px-4 py-4 align-middle text-right text-sm font-mono tabular-nums text-gray-500 dark:text-gray-400" data-value={r.summary.ttiMs.max}>
                     {formatSeconds(r.summary.ttiMs.max)}
                   </td>
+                  <td class="whitespace-nowrap px-4 py-4 align-middle text-right text-sm font-mono tabular-nums text-gray-500 dark:text-gray-400" data-value={r.summary.ttiMs.p95}>
+                    {formatSeconds(r.summary.ttiMs.p95)}
+                  </td>
+                  <td class="whitespace-nowrap px-4 py-4 align-middle text-right text-sm font-mono tabular-nums text-gray-500 dark:text-gray-400" data-value={r.summary.ttiMs.p99}>
+                    {formatSeconds(r.summary.ttiMs.p99)}
+                  </td>
                   <td class="whitespace-nowrap py-4 pl-4 pr-5 align-middle text-right" data-value={successRatio(r)}>
                     <span class="text-sm font-mono tabular-nums text-gray-500 dark:text-gray-400">{successCount(r)}</span>
                   </td>
@@ -233,7 +269,7 @@ const benchmarksFAQs = [
                     <span class="text-sm font-semibold text-gray-400 dark:text-gray-500">{capitalize(r.provider)}</span>
                   </div>
                 </td>
-                <td class="px-4 py-4 text-sm text-gray-400 dark:text-gray-500" data-value="Infinity" colspan="3">
+                <td class="px-4 py-4 text-sm text-gray-400 dark:text-gray-500" data-value="Infinity" colspan="5">
                   {r.skipped ? r.skipReason : "All iterations failed"}
                 </td>
                 <td class="whitespace-nowrap py-4 pl-4 pr-5 text-right text-sm font-mono tabular-nums text-gray-400 dark:text-gray-500" data-value="0">
@@ -288,7 +324,9 @@ const benchmarksFAQs = [
         case 'median': return 2;
         case 'min': return 3;
         case 'max': return 4;
-        case 'runs': return 5;
+        case 'p95': return 5;
+        case 'p99': return 6;
+        case 'runs': return 7;
         default: return 2;
       }
     }
@@ -351,4 +389,128 @@ const benchmarksFAQs = [
       }
     }
   }
+</script>
+
+<script>
+  const BENCHMARK_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/latest.json";
+
+  const providerLogos: Record<string, string> = {
+    e2b: "/E2B-logo-light.svg",
+    vercel: "/Vercel_Logo_L.svg",
+    blaxel: "/blaxel-logo-light.svg",
+    modal: "/modal-logo-light.svg",
+    daytona: "/daytona-logo-light.svg",
+    namespace: "/namespace-logo-light.svg",
+    railway: "/railway-light.svg",
+    render: "/render-logo-light.svg",
+    hopx: "/hopx-logo-light.svg",
+    codesandbox: "/codesandbox-logo-light.svg",
+    runloop: "/runloop-logo-light.svg",
+  };
+
+  interface ProviderResult {
+    provider: string;
+    summary: { ttiMs: { min: number; max: number; median: number; p95: number; p99: number; avg: number } };
+    skipped?: boolean;
+    skipReason?: string;
+    iterations?: Array<{ ttiMs: number; error?: string }>;
+  }
+
+  function fmtSec(ms: number): string {
+    return (ms / 1000).toFixed(2) + "s";
+  }
+
+  function runs(r: ProviderResult): string {
+    if (!r.iterations || r.iterations.length === 0) return "";
+    const ok = r.iterations.filter((i) => !i.error).length;
+    return `${ok}/${r.iterations.length}`;
+  }
+
+  function ratio(r: ProviderResult): number {
+    if (!r.iterations || r.iterations.length === 0) return 0;
+    const ok = r.iterations.filter((i) => !i.error).length;
+    return ok / r.iterations.length;
+  }
+
+  function cap(s: string): string {
+    if (s.toLowerCase() === "e2b") return "E2B";
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function buildActiveRow(r: ProviderResult, i: number, maxMedian: number): string {
+    const logo = providerLogos[r.provider];
+    const barPct = Math.round((r.summary.ttiMs.median / maxMedian) * 100);
+    const isFirst = i === 0;
+    const rowClass = `group border-b border-gray-100 dark:border-gray-800/60 transition-colors hover:bg-gray-50/70 dark:hover:bg-gray-800/30 ${isFirst ? 'bg-emerald-50/40 dark:bg-emerald-950/10' : ''}`;
+    const rankClass = `inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${isFirst ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500'}`;
+    const barClass = `h-full rounded-full transition-all ${isFirst ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-gray-300 dark:bg-gray-600'}`;
+    const logoHtml = logo
+      ? `<div class="shrink-0 w-20 flex items-center justify-center"><img src="${logo}" alt="${r.provider} logo" class="w-auto h-8 object-contain dark:invert" /></div>`
+      : `<div class="shrink-0 w-20 rounded-md bg-gray-100 dark:bg-gray-800"></div>`;
+
+    return `<tr class="${rowClass}">
+      <td class="whitespace-nowrap py-4 pl-5 pr-2 align-middle rank-cell"><span class="${rankClass}">${i + 1}</span></td>
+      <td class="whitespace-nowrap p-2 align-middle" data-value="${r.provider}"><div class="flex items-center gap-3">${logoHtml}</div></td>
+      <td class="px-4 py-4 align-middle" data-value="${r.summary.ttiMs.median}"><div class="flex items-center gap-3"><span class="shrink-0 w-14 text-sm font-mono font-bold tabular-nums text-gray-900 dark:text-white">${fmtSec(r.summary.ttiMs.median)}</span><div class="flex-1 h-2 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden"><div class="${barClass}" style="width: ${barPct}%"></div></div></div></td>
+      <td class="whitespace-nowrap px-4 py-4 align-middle text-right text-sm font-mono tabular-nums text-gray-500 dark:text-gray-400" data-value="${r.summary.ttiMs.min}">${fmtSec(r.summary.ttiMs.min)}</td>
+      <td class="whitespace-nowrap px-4 py-4 align-middle text-right text-sm font-mono tabular-nums text-gray-500 dark:text-gray-400" data-value="${r.summary.ttiMs.max}">${fmtSec(r.summary.ttiMs.max)}</td>
+      <td class="whitespace-nowrap px-4 py-4 align-middle text-right text-sm font-mono tabular-nums text-gray-500 dark:text-gray-400" data-value="${r.summary.ttiMs.p95}">${fmtSec(r.summary.ttiMs.p95)}</td>
+      <td class="whitespace-nowrap px-4 py-4 align-middle text-right text-sm font-mono tabular-nums text-gray-500 dark:text-gray-400" data-value="${r.summary.ttiMs.p99}">${fmtSec(r.summary.ttiMs.p99)}</td>
+      <td class="whitespace-nowrap py-4 pl-4 pr-5 align-middle text-right" data-value="${ratio(r)}"><span class="text-sm font-mono tabular-nums text-gray-500 dark:text-gray-400">${runs(r)}</span></td>
+    </tr>`;
+  }
+
+  function buildInactiveRow(r: ProviderResult): string {
+    const reason = r.skipped ? (r.skipReason || 'Skipped') : "All iterations failed";
+    const runsText = r.skipped ? "--" : runs(r);
+    return `<tr class="border-b border-gray-100 dark:border-gray-800/60 opacity-40">
+      <td class="whitespace-nowrap py-4 pl-5 pr-2 rank-cell"><span class="inline-flex items-center justify-center w-6 h-6 text-xs text-gray-400 dark:text-gray-500">--</span></td>
+      <td class="whitespace-nowrap px-4 py-4" data-value="zzz_${r.provider}"><div class="flex items-center gap-3"><div class="shrink-0 w-10 h-10 rounded-md bg-gray-100 dark:bg-gray-800"></div><span class="text-sm font-semibold text-gray-400 dark:text-gray-500">${cap(r.provider)}</span></div></td>
+      <td class="px-4 py-4 text-sm text-gray-400 dark:text-gray-500" data-value="Infinity" colspan="5">${reason}</td>
+      <td class="whitespace-nowrap py-4 pl-4 pr-5 text-right text-sm font-mono tabular-nums text-gray-400 dark:text-gray-500" data-value="0">${runsText}</td>
+    </tr>`;
+  }
+
+  async function refreshBenchmarks() {
+    const table = document.getElementById('benchmark-table');
+    if (!table) return;
+
+    try {
+      const res = await fetch(BENCHMARK_URL);
+      if (!res.ok) return;
+      const data = await res.json();
+
+      const freshTimestamp = new Date(data.timestamp).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+
+      const buildTimestamp = table.getAttribute('data-build-timestamp');
+      if (buildTimestamp === freshTimestamp) return;
+
+      const results: ProviderResult[] = data.results;
+      const active = results
+        .filter((r) => !r.skipped && r.summary.ttiMs.median > 0)
+        .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
+      const inactive = results.filter((r) => r.skipped || r.summary.ttiMs.median === 0);
+      const maxMedian = active.length > 0 ? Math.max(...active.map((a) => a.summary.ttiMs.median)) : 1;
+
+      const tbody = table.querySelector('tbody');
+      if (!tbody) return;
+
+      const html = active.map((r, i) => buildActiveRow(r, i, maxMedian)).join('')
+        + inactive.map((r) => buildInactiveRow(r)).join('');
+      tbody.innerHTML = html;
+
+      table.setAttribute('data-build-timestamp', freshTimestamp);
+
+      const timestampEl = document.getElementById('benchmark-timestamp');
+      if (timestampEl) timestampEl.textContent = `Last run: ${freshTimestamp}`;
+    } catch {
+      // Silently fail — build-time data remains displayed
+    }
+  }
+
+  refreshBenchmarks();
 </script>
