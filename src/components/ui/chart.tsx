@@ -146,6 +146,12 @@ const ChartTooltipContent = React.forwardRef<
 
     const nestLabel = payload.length === 1 && indicator !== "dot"
 
+    const sortedPayload = [...payload].sort((a: any, b: any) => {
+      const valA = typeof a.value === "number" ? a.value : 0
+      const valB = typeof b.value === "number" ? b.value : 0
+      return valB - valA
+    })
+
     return (
       <div
         ref={ref}
@@ -156,7 +162,7 @@ const ChartTooltipContent = React.forwardRef<
       >
         {!nestLabel ? tooltipLabel : null}
         <div className="grid gap-1.5">
-          {payload.map((item: any, index: number) => {
+          {sortedPayload.map((item: any, index: number) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`
             const itemConfig = getPayloadConfigFromPayload(
               config,

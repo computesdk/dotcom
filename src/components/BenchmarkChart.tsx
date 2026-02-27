@@ -72,11 +72,11 @@ export function BenchmarkChart({ historyData, providers }: BenchmarkChartProps) 
   }
 
   return (
-    <div className="w-full">
+    <div className="not-content w-full">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">
         Median TTI Over Time
       </h3>
-      <ChartContainer config={chartConfig} className="min-h-[350px] w-full">
+      <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full">
         <LineChart
           data={historyData}
           margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
@@ -97,6 +97,7 @@ export function BenchmarkChart({ historyData, providers }: BenchmarkChartProps) 
             tickFormatter={(value: number) => `${(value / 1000).toFixed(1)}s`}
           />
           <ChartTooltip
+            itemSorter={(item) => (item.value as number) ?? 0}
             content={
               <ChartTooltipContent
                 labelFormatter={(value) => value}
@@ -147,7 +148,7 @@ export function BenchmarkChart({ historyData, providers }: BenchmarkChartProps) 
               key={provider}
               type="button"
               onClick={() => toggleProvider(provider)}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs transition-opacity ${
+              className={`not-content flex items-center gap-1.5 px-2 py-1 rounded text-xs transition-opacity ${
                 isHidden ? "opacity-30" : "opacity-100"
               }`}
             >

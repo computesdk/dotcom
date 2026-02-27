@@ -45,6 +45,8 @@ try {
       .sort((a, b) => a.name.localeCompare(b.name));
 
     const allProviders = new Set<string>();
+    const cutoffDate = new Date("2026-02-21T00:00:00Z");
+    const excludedProviders = new Set(["railway", "render"]);
 
     const historyPoints: HistoryDataPoint[] = [];
     for (const file of jsonFiles) {
@@ -53,10 +55,11 @@ try {
         if (!fileRes.ok) continue;
         const data = await fileRes.json();
         const ts = data.timestamp as string;
+        if (new Date(ts) <= cutoffDate) continue;
         const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
         const point: HistoryDataPoint = { date: dateLabel };
         for (const r of data.results as ProviderResult[]) {
-          if (!r.skipped && r.summary.ttiMs.median > 0) {
+          if (!r.skipped && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
             point[r.provider] = Math.round(r.summary.ttiMs.median);
             allProviders.add(r.provider);
           }
@@ -119,20 +122,20 @@ const benchmarksFAQs = [
 
 <div class="relative isolate bg-transparent dark:bg-transparent py-4">
   <!-- Header -->
-  <div class="border-b border-gray-200 dark:border-b-gray-700 py-8">
+  <div class="border-b border-gray-200 dark:border-b-gray-700 py-4">
     <div class="mx-6">
       <div class="mx-auto max-w-5xl text-center">
-        <h1 class="mt-8 text-balance text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
+        <h1 class="text-balance text-2xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
           Sandbox Benchmarks
         </h1>
       </div>
-      <p class="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 dark:text-gray-400 sm:text-xl/8">
+      <p class="mx-auto mt-2 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 dark:text-gray-400">
         A leaderboard of common benchmarks for each of our sandbox providers.
       </p>
-      <p id="benchmark-timestamp" class="mx-auto mt-3 max-w-2xl text-center text-sm text-gray-500 dark:text-gray-500">
+      <p id="benchmark-timestamp" class="mx-auto mt-2 max-w-2xl text-center text-sm text-gray-500 dark:text-gray-500">
         Last run: {timestamp}
       </p>
-      <div class="mt-5 flex justify-center">
+      <div class="mt-2 flex justify-center">
         <a
           href="https://github.com/computesdk/benchmarks"
           target="_blank"
@@ -152,6 +155,13 @@ const benchmarksFAQs = [
     </div>
   ) : (
   <div class="max-w-6xl mx-auto my-0">
+    <BenchmarkTable
+      client:load
+      active={active}
+      inactive={inactive}
+      providerLogos={providerLogos}
+    />
+
     {historyData.length > 0 && (
       <div class="py-8 px-4">
         <BenchmarkChart
@@ -161,13 +171,6 @@ const benchmarksFAQs = [
         />
       </div>
     )}
-
-    <BenchmarkTable
-      client:load
-      active={active}
-      inactive={inactive}
-      providerLogos={providerLogos}
-    />
 
     <p class="mt-5 text-center text-sm text-gray-600 dark:text-gray-400">
       TTI measures wall-clock time from <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">compute.sandbox.create()</code> to first successful <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">runCommand()</code>. Median of 100 iterations per provider.
