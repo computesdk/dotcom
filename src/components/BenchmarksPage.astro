@@ -1,6 +1,7 @@
 ---
 import FAQAccordion from "./FAQAccordion.astro";
 import { BenchmarkChart } from "./BenchmarkChart";
+import { BenchmarkBarChart } from "./BenchmarkBarChart";
 import { BenchmarkTable } from "./BenchmarkTable";
 
 interface ProviderResult {
@@ -160,6 +161,11 @@ const benchmarksFAQs = [
       active={active}
       inactive={inactive}
       providerLogos={providerLogos}
+    />
+
+    <BenchmarkBarChart
+      client:visible
+      activeResults={active}
     />
 
     {historyData.length > 0 && (
