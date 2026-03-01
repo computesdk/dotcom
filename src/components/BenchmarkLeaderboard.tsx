@@ -1,4 +1,11 @@
 import { useMemo, useState } from "react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select"
 
 interface ProviderResult {
   provider: string
@@ -80,24 +87,18 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos }: Benchmark
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
           Provider Leaderboard
         </h3>
-        <div className="relative">
-          <select
-            value={selectedMetric}
-            onChange={(e) => setSelectedMetric(e.target.value as Metric)}
-            className="appearance-none bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full h-8 px-4 pr-8 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors"
-          >
+        <Select value={selectedMetric} onValueChange={(value) => setSelectedMetric(value as Metric)}>
+          <SelectTrigger className="w-[120px] h-8 rounded-full text-xs text-gray-600">
+            <SelectValue placeholder="Select metric" />
+          </SelectTrigger>
+          <SelectContent className="text-gray-600 text-xs">
             {(Object.keys(METRIC_LABELS) as Metric[]).map((metric) => (
-              <option key={metric} value={metric}>
+              <SelectItem key={metric} value={metric} className="text-gray-600 text-xs">
                 {METRIC_LABELS[metric]}
-              </option>
+              </SelectItem>
             ))}
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 dark:text-gray-400">
-            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-        </div>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-0">
