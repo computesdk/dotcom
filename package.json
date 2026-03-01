@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "sync:docs": "node scripts/fetchDocs.js"
+    "sync:docs": "node scripts/fetchDocs.js",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
