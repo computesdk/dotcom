@@ -1,0 +1,20 @@
+diff --git a/node_modules/starlight-llms-txt/llms-full.txt.ts b/node_modules/starlight-llms-txt/llms-full.txt.ts
+index cdc3a34..8a7447d 100644
+--- a/node_modules/starlight-llms-txt/llms-full.txt.ts
++++ b/node_modules/starlight-llms-txt/llms-full.txt.ts
+@@ -1,6 +1,7 @@
+ import type { APIRoute } from 'astro';
+ import { generateLlmsTxt } from './generator';
+ import { getSiteTitle } from './utils';
++import { starlightLllmsTxtContext } from 'virtual:starlight-llms-txt/context';
+ 
+ /**
+  * Route that generates a single plaintext Markdown document from the full website content.
+@@ -9,6 +10,7 @@ export const GET: APIRoute = async (context) => {
+ 	const body = await generateLlmsTxt(context, {
+ 		minify: false,
+ 		description: `This is the full developer documentation for ${getSiteTitle()}`,
++		exclude: starlightLllmsTxtContext.exclude,
+ 	});
+ 	return new Response(body);
+ };
