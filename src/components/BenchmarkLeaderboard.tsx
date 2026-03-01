@@ -106,7 +106,9 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos }: Benchmark
           {leftColumn.map((item, index) => (
             <div
               key={item.provider}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors rounded-lg"
+              className={`flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors rounded-lg ${
+                index === 0 ? 'bg-blue-50/50 shadow-sm dark:bg-blue-900/10' : ''
+              }`}
             >
               <div className="shrink-0 w-6 text-left">
                 <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
@@ -114,7 +116,7 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos }: Benchmark
                 </span>
               </div>
               
-              <div className="shrink-0 w-24 flex items-center justify-center">
+              <div className="shrink-0 w-40 flex items-center justify-center">
                 <img
                   src={providerLogos[item.provider]}
                   alt={item.displayName}
@@ -151,7 +153,7 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos }: Benchmark
                 </span>
               </div>
               
-              <div className="shrink-0 w-24 flex items-center justify-center">
+              <div className="shrink-0 w-40 flex items-center justify-center">
                 <img
                   src={providerLogos[item.provider]}
                   alt={item.displayName}

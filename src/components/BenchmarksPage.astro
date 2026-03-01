@@ -3,7 +3,6 @@ import FAQAccordion from "./FAQAccordion.astro";
 import { BenchmarkChart } from "./BenchmarkChart";
 import { BenchmarkBarChart } from "./BenchmarkBarChart";
 import { BenchmarkLeaderboard } from "./BenchmarkLeaderboard";
-import { BenchmarkTable } from "./BenchmarkTable";
 
 interface ProviderResult {
   provider: string;
@@ -85,17 +84,17 @@ const active = results
 const inactive = results.filter((r) => r.skipped || r.summary.ttiMs.median === 0);
 
 const providerLogos: Record<string, string> = {
-  e2b: "/E2B-logo-light.svg",
-  vercel: "/Vercel_Logo_L.svg",
-  blaxel: "/blaxel-logo-light.svg",
-  modal: "/modal-logo-light.svg",
-  daytona: "/daytona-logo-light.svg",
-  namespace: "/namespace-logo-light.svg",
-  railway: "/railway-light.svg",
-  render: "/render-logo-light.svg",
-  hopx: "/hopx-logo-light.svg",
-  codesandbox: "/codesandbox-logo-light.svg",
-  runloop: "/runloop-logo-light.svg",
+  e2b: "/benchmarks/normal-e2b-light.svg",
+  vercel: "/benchmarks/normal-vercel-light.svg",
+  blaxel: "/benchmarks/normal-blaxel-light.svg",
+  modal: "/benchmarks/normal-modal-light.svg",
+  daytona: "/benchmarks/normal-daytona-light.svg",
+  namespace: "/benchmarks/normal-namespace-light.svg",
+  railway: "/benchmarks/normal-railway-light.svg",
+  render: "/benchmarks/normal-render-light.svg",
+  hopx: "/benchmarks/normal-bunnyshell-light.svg",
+  codesandbox: "/benchmarks/normal-codesandbox-light.svg",
+  runloop: "/benchmarks/normal-runloop-light.svg",
 };
 
 const benchmarksFAQs = [
