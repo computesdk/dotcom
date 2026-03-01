@@ -35,6 +35,7 @@ const PROVIDER_COLORS: Record<string, string> = {
 
 function capitalize(s: string): string {
   if (s.toLowerCase() === "e2b") return "E2B"
+  if (s.toLowerCase() === "codesandbox") return "CodeSandbox"
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
@@ -80,10 +81,13 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
   const chartHeight = Math.max(300, chartData.length * 40 + 60)
 
   return (
-    <div className="not-content w-full mt-8">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">
+    <div className="not-content w-full max-w-5xl mx-auto mt-8">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 text-left">
         Median TTI (Time to Interactive)
       </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+        TTI measures time from <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">compute.sandbox.create()</code> to first successful <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">runCommand()</code>.
+      </p>
       <ChartContainer config={chartConfig} className={`aspect-auto w-full`} style={{ height: `${chartHeight}px` }}>
         <BarChart
           data={chartData}
@@ -150,7 +154,7 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
                           {d.displayName}
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+                      <div className="flex flex-col gap-1.5 text-xs">
                         <div className="flex justify-between">
                           <span className="text-gray-500 dark:text-gray-400">Median</span>
                           <span className="font-mono font-medium text-gray-900 dark:text-gray-50">{formatSecs(d.median)}</span>
@@ -167,7 +171,7 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
                           <span className="text-gray-500 dark:text-gray-400">P95</span>
                           <span className="font-mono text-gray-600 dark:text-gray-300">{formatSecs(d.p95)}</span>
                         </div>
-                        <div className="flex justify-between col-span-2">
+                        <div className="flex justify-between">
                           <span className="text-gray-500 dark:text-gray-400">P99</span>
                           <span className="font-mono text-gray-600 dark:text-gray-300">{formatSecs(d.p99)}</span>
                         </div>
@@ -185,11 +189,12 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
           >
             <LabelList
               dataKey="median"
-              position="insideRight"
-              offset={10}
-              fill="#ffffff"
+              position="right"
+              offset={8}
+              fill="currentColor"
               fontSize={11}
               fontWeight={600}
+              className="fill-gray-700 dark:fill-gray-300"
               formatter={(value: any) => {
                 if (typeof value !== 'number') return ''
                 return `${(value / 1000).toFixed(2)}s`

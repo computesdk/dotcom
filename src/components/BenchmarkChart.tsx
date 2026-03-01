@@ -72,7 +72,7 @@ export function BenchmarkChart({ historyData, providers }: BenchmarkChartProps) 
   }
 
   return (
-    <div className="not-content w-full">
+    <div className="not-content w-full max-w-5xl mx-auto">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">
         Median TTI Over Time
       </h3>

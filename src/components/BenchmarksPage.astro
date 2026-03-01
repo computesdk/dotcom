@@ -2,6 +2,7 @@
 import FAQAccordion from "./FAQAccordion.astro";
 import { BenchmarkChart } from "./BenchmarkChart";
 import { BenchmarkBarChart } from "./BenchmarkBarChart";
+import { BenchmarkLeaderboard } from "./BenchmarkLeaderboard";
 import { BenchmarkTable } from "./BenchmarkTable";
 
 interface ProviderResult {
@@ -46,7 +47,7 @@ try {
       .sort((a, b) => a.name.localeCompare(b.name));
 
     const allProviders = new Set<string>();
-    const cutoffDate = new Date("2026-02-21T00:00:00Z");
+    const cutoffDate = new Date("2026-02-23T00:00:00Z");
     const excludedProviders = new Set(["railway", "render"]);
 
     const historyPoints: HistoryDataPoint[] = [];
@@ -156,10 +157,9 @@ const benchmarksFAQs = [
     </div>
   ) : (
   <div class="max-w-6xl mx-auto my-0">
-    <BenchmarkTable
-      client:load
-      active={active}
-      inactive={inactive}
+    <BenchmarkLeaderboard
+      client:visible
+      activeResults={active}
       providerLogos={providerLogos}
     />
 
@@ -178,9 +178,6 @@ const benchmarksFAQs = [
       </div>
     )}
 
-    <p class="mt-5 text-center text-sm text-gray-600 dark:text-gray-400">
-      TTI measures wall-clock time from <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">compute.sandbox.create()</code> to first successful <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">runCommand()</code>. Median of 100 iterations per provider.
-    </p>
     <p class="mt-3 text-center text-sm text-gray-600 dark:text-gray-400">
       Want to see a provider added? <a href="https://x.com/computesdk" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">Let us know on X</a>.
     </p>
