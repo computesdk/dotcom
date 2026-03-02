@@ -73,7 +73,7 @@ export function BenchmarkChart({ historyData, providers }: BenchmarkChartProps) 
 
   return (
     <div className="not-content w-full max-w-5xl mx-auto">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
         Median TTI Over Time
       </h3>
       <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full">

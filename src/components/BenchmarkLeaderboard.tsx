@@ -27,6 +27,7 @@ interface ProviderResult {
 interface BenchmarkLeaderboardProps {
   activeResults: ProviderResult[]
   providerLogos: Record<string, string>
+  providerLogosDark: Record<string, string>
 }
 
 const PROVIDER_COLORS: Record<string, string> = {
@@ -59,7 +60,7 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-export function BenchmarkLeaderboard({ activeResults, providerLogos }: BenchmarkLeaderboardProps) {
+export function BenchmarkLeaderboard({ activeResults, providerLogos, providerLogosDark }: BenchmarkLeaderboardProps) {
   const [selectedMetric, setSelectedMetric] = useState<Metric>("median")
 
   const leaderboardData = useMemo(() => {
@@ -106,7 +107,7 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos }: Benchmark
           {leftColumn.map((item, index) => (
             <div
               key={item.provider}
-              className={`flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors rounded-lg ${
+              className={`flex items-center gap-3 px-4 py-3 hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors rounded-lg ${
                 index === 0 ? 'bg-blue-50/50 shadow-sm dark:bg-blue-900/10' : ''
               }`}
             >
@@ -120,7 +121,12 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos }: Benchmark
                 <img
                   src={providerLogos[item.provider]}
                   alt={item.displayName}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain dark:hidden"
+                />
+                <img
+                  src={providerLogosDark[item.provider]}
+                  alt={item.displayName}
+                  className="w-full h-full object-contain hidden dark:block"
                 />
               </div>
 
@@ -145,7 +151,7 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos }: Benchmark
           {rightColumn.map((item, index) => (
             <div
               key={item.provider}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors rounded-lg"
+              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors rounded-lg"
             >
               <div className="shrink-0 w-6 text-left">
                 <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
@@ -157,7 +163,12 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos }: Benchmark
                 <img
                   src={providerLogos[item.provider]}
                   alt={item.displayName}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain dark:hidden"
+                />
+                <img
+                  src={providerLogosDark[item.provider]}
+                  alt={item.displayName}
+                  className="w-full h-full object-contain hidden dark:block"
                 />
               </div>
 
