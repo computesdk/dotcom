@@ -97,6 +97,20 @@ const providerLogos: Record<string, string> = {
   runloop: "/benchmarks/normal-runloop-light.svg",
 };
 
+const providerLogosDark: Record<string, string> = {
+  e2b: "/benchmarks/normal-e2b-dark.svg",
+  vercel: "/benchmarks/normal-vercel-dark.svg",
+  blaxel: "/benchmarks/normal-blaxel-dark.svg",
+  modal: "/benchmarks/normal-modal-dark.svg",
+  daytona: "/benchmarks/normal-daytona-dark.svg",
+  namespace: "/benchmarks/normal-namespace-dark.svg",
+  railway: "/benchmarks/normal-railway-dark.svg",
+  render: "/benchmarks/normal-render-dark.svg",
+  hopx: "/benchmarks/normal-hopx-dark.svg",
+  codesandbox: "/benchmarks/normal-codesandbox-dark.svg",
+  runloop: "/benchmarks/normal-runloop-dark.svg",
+};
+
 const benchmarksFAQs = [
   {
     question: "What is a sandbox?",
@@ -160,6 +174,7 @@ const benchmarksFAQs = [
       client:visible
       activeResults={active}
       providerLogos={providerLogos}
+      providerLogosDark={providerLogosDark}
     />
 
     <BenchmarkBarChart
