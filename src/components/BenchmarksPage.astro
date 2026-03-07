@@ -24,7 +24,7 @@ let historyData: HistoryDataPoint[] = [];
 let chartProviders: string[] = [];
 
 try {
-  const res = await fetch("https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/latest.json");
+  const res = await fetch("https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/sequential_tti/latest.json");
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const benchmarkData = await res.json();
   results = benchmarkData.results as ProviderResult[];
@@ -38,7 +38,7 @@ try {
 }
 
 try {
-  const listRes = await fetch("https://api.github.com/repos/computesdk/benchmarks/contents/results");
+  const listRes = await fetch("https://api.github.com/repos/computesdk/benchmarks/contents/results/sequential_tti");
   if (listRes.ok) {
     const files = (await listRes.json()) as Array<{ name: string; download_url: string }>;
     const jsonFiles = files
