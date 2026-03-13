@@ -39,8 +39,6 @@ const PROVIDER_COLORS: Record<string, string> = {
   modal: "#8b5cf6",
   blaxel: "#f97316",
   namespace: "#06b6d4",
-  railway: "#ec4899",
-  render: "#84cc16",
   hopx: "#f59e0b",
   codesandbox: "#6366f1",
   runloop: "#14b8a6",

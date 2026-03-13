@@ -29,6 +29,16 @@ const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/h
 const API_URL = "https://api.github.com/repos/computesdk/benchmarks/contents/results";
 const cutoffDate = new Date("2026-02-23T00:00:00Z");
 const excludedProviders = new Set(["railway", "render"]);
+const HISTORY_BATCH_SIZE = 10;
+
+// GitHub API auth headers (optional — increases rate limit from 60 to 5000 req/hr)
+const githubHeaders: Record<string, string> = {
+  "Accept": "application/vnd.github.v3+json",
+};
+const githubToken = import.meta.env.GITHUB_TOKEN;
+if (githubToken) {
+  githubHeaders["Authorization"] = `Bearer ${githubToken}`;
+}
 
 let fetchError = false;
 const datasets: Record<string, TestTypeData> = {};
@@ -47,12 +57,12 @@ async function fetchTestType(testType: string): Promise<TestTypeData> {
     day: "numeric",
   });
   data.active = results
-    .filter((r) => !r.skipped && r.summary.ttiMs.median > 0)
+    .filter((r) => !r.skipped && r.summary?.ttiMs?.median != null && r.summary.ttiMs.median > 0)
     .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
 
   // Fetch history
   try {
-    const listRes = await fetch(`${API_URL}/${testType}`);
+    const listRes = await fetch(`${API_URL}/${testType}`, { headers: githubHeaders });
     if (listRes.ok) {
       const files = (await listRes.json()) as Array<{ name: string; download_url: string }>;
       const jsonFiles = files
@@ -61,26 +71,38 @@ async function fetchTestType(testType: string): Promise<TestTypeData> {
 
       const allProviders = new Set<string>();
       const historyPoints: HistoryDataPoint[] = [];
-      for (const file of jsonFiles) {
-        try {
-          const fileRes = await fetch(file.download_url);
-          if (!fileRes.ok) continue;
-          const fileData = await fileRes.json();
+
+      // Fetch history files in parallel batches
+      for (let i = 0; i < jsonFiles.length; i += HISTORY_BATCH_SIZE) {
+        const batch = jsonFiles.slice(i, i + HISTORY_BATCH_SIZE);
+        const batchResults = await Promise.all(
+          batch.map(async (file) => {
+            try {
+              const fileRes = await fetch(file.download_url);
+              if (!fileRes.ok) return null;
+              return await fileRes.json();
+            } catch {
+              return null;
+            }
+          })
+        );
+
+        for (const fileData of batchResults) {
+          if (!fileData) continue;
           const ts = fileData.timestamp as string;
           if (new Date(ts) <= cutoffDate) continue;
           const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
           const point: HistoryDataPoint = { date: dateLabel };
           for (const r of fileData.results as ProviderResult[]) {
-            if (!r.skipped && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
+            if (!r.skipped && r.summary?.ttiMs?.median != null && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
               point[r.provider] = Math.round(r.summary.ttiMs.median);
               allProviders.add(r.provider);
             }
           }
           historyPoints.push(point);
-        } catch {
-          continue;
         }
       }
+
       data.historyData = historyPoints;
       data.chartProviders = Array.from(allProviders);
     }
@@ -107,8 +129,6 @@ const providerLogos: Record<string, string> = {
   modal: "/benchmarks/normal-modal-light.svg",
   daytona: "/benchmarks/normal-daytona-light.svg",
   namespace: "/benchmarks/normal-namespace-light.svg",
-  railway: "/benchmarks/normal-railway-light.svg",
-  render: "/benchmarks/normal-render-light.svg",
   hopx: "/benchmarks/normal-hopx-light.svg",
   codesandbox: "/benchmarks/normal-codesandbox-light.svg",
   runloop: "/benchmarks/normal-runloop-light.svg",
@@ -122,8 +142,6 @@ const providerLogosDark: Record<string, string> = {
   modal: "/benchmarks/normal-modal-dark.svg",
   daytona: "/benchmarks/normal-daytona-dark.svg",
   namespace: "/benchmarks/normal-namespace-dark.svg",
-  railway: "/benchmarks/normal-railway-dark.svg",
-  render: "/benchmarks/normal-render-dark.svg",
   hopx: "/benchmarks/normal-hopx-dark.svg",
   codesandbox: "/benchmarks/normal-codesandbox-dark.svg",
   runloop: "/benchmarks/normal-runloop-dark.svg",
