@@ -31,6 +31,7 @@ const PROVIDER_COLORS: Record<string, string> = {
   hopx: "#f59e0b",
   codesandbox: "#6366f1",
   runloop: "#14b8a6",
+  justbash: "#303137",
 }
 
 function capitalize(s: string): string {
