@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, LabelList } from "recharts"
 import {
   ChartContainer,
@@ -6,38 +6,11 @@ import {
   ChartTooltipContent,
 } from "./ui/chart"
 import type { ChartConfig } from "./ui/chart"
-
-interface ProviderResult {
-  provider: string
-  summary: { ttiMs: { min: number; max: number; median: number; p95: number; p99: number; avg: number } }
-  compositeScore?: number
-  successRate?: number
-  skipped?: boolean
-  skipReason?: string
-  iterations?: Array<{ ttiMs: number; error?: string }>
-}
+import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
+import type { ProviderResult } from "./benchmarkConstants"
 
 interface BenchmarkBarChartProps {
   activeResults: ProviderResult[]
-}
-
-const PROVIDER_COLORS: Record<string, string> = {
-  e2b: "#10b981",
-  daytona: "#3b82f6",
-  vercel: "#000000",
-  modal: "#8b5cf6",
-  blaxel: "#f97316",
-  namespace: "#06b6d4",
-  hopx: "#f59e0b",
-  codesandbox: "#6366f1",
-  runloop: "#14b8a6",
-  justbash: "#303137",
-}
-
-function capitalize(s: string): string {
-  if (s.toLowerCase() === "e2b") return "E2B"
-  if (s.toLowerCase() === "codesandbox") return "CodeSandbox"
-  return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
 export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
@@ -78,18 +51,17 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
     return null
   }
 
-  // Calculate height based on number of items to ensure bars don't get squished
   const chartHeight = Math.max(300, chartData.length * 40 + 60)
 
   return (
-    <div className="not-content w-full max-w-5xl mx-auto mt-8">
+    <div className="not-content w-full max-w-7xl mx-auto">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 text-left">
         Median TTI (Time to Interactive)
       </h3>
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
         TTI measures time from <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">compute.sandbox.create()</code> to first successful <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">runCommand()</code>.
       </p>
-      <ChartContainer config={chartConfig} className={`aspect-auto w-full`} style={{ height: `${chartHeight}px` }}>
+      <ChartContainer config={chartConfig} className="aspect-auto w-full min-w-0" style={{ height: `${chartHeight}px`, minHeight: `${chartHeight}px` }}>
         <BarChart
           data={chartData}
           layout="vertical"
@@ -137,7 +109,6 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
               <ChartTooltipContent
                 hideLabel
                 formatter={(value, name, props) => {
-                  const ms = value as number
                   const d = props.payload
                   const provider = d.provider
                   const formatSecs = (val: number) => `${(val / 1000).toFixed(2)}s`
@@ -202,9 +173,9 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
               }}
             />
             {chartData.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={PROVIDER_COLORS[entry.provider] || "#6b7280"} 
+              <Cell
+                key={`cell-${index}`}
+                fill={PROVIDER_COLORS[entry.provider] || "#6b7280"}
               />
             ))}
           </Bar>

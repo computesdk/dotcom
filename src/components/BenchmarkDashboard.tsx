@@ -1,33 +1,12 @@
-import { useState } from "react"
-import { BenchmarkLeaderboard } from "./BenchmarkLeaderboard"
+import { useState, useMemo } from "react"
 import { BenchmarkBarChart } from "./BenchmarkBarChart"
 import { BenchmarkChart } from "./BenchmarkChart"
-
-interface ProviderResult {
-  provider: string
-  summary: {
-    ttiMs: {
-      min: number
-      max: number
-      median: number
-      p95: number
-      p99: number
-      avg: number
-    }
-  }
-  compositeScore?: number
-  successRate?: number
-  skipped?: boolean
-  skipReason?: string
-  iterations?: Array<{ ttiMs: number; error?: string }>
-}
-
-interface HistoryDataPoint {
-  date: string
-  [provider: string]: number | string
-}
+import { BenchmarkDataTable } from "./BenchmarkDataTable"
+import { BenchmarkProviderToggle } from "./BenchmarkProviderToggle"
+import type { ProviderResult, HistoryDataPoint } from "./benchmarkConstants"
 
 type TestType = "sequential_tti" | "burst_tti" | "staggered_tti"
+type TimeRange = "30" | "60" | "90" | "all"
 
 interface TestTypeData {
   active: ProviderResult[]
@@ -58,53 +37,128 @@ const TEST_TYPE_LABELS: Record<TestType, { label: string; description: string }>
 }
 
 const TEST_TYPES: TestType[] = ["sequential_tti", "burst_tti", "staggered_tti"]
+const TIME_RANGES: { value: TimeRange; label: string }[] = [
+  { value: "30", label: "30d" },
+  { value: "60", label: "60d" },
+  { value: "90", label: "90d" },
+  { value: "all", label: "All" },
+]
 
 export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark }: BenchmarkDashboardProps) {
   const [selectedTest, setSelectedTest] = useState<TestType>("sequential_tti")
+  const [hiddenProviders, setHiddenProviders] = useState<Set<string>>(new Set())
+  const [timeRange, setTimeRange] = useState<TimeRange>("all")
 
   const currentData = datasets[selectedTest]
 
+  const visibleResults = useMemo(
+    () => currentData.active.filter((r) => !hiddenProviders.has(r.provider)),
+    [currentData.active, hiddenProviders]
+  )
+
+  const toggleProvider = (provider: string) => {
+    setHiddenProviders((prev) => {
+      const next = new Set(prev)
+      next.has(provider) ? next.delete(provider) : next.add(provider)
+      return next
+    })
+  }
+
+  const handleTestTypeChange = (testType: TestType) => {
+    setSelectedTest(testType)
+    setHiddenProviders(new Set())
+  }
+
   return (
-    <div>
-      {/* Test type selector */}
-      <div className="not-content flex flex-col items-center gap-2 mt-6 mb-2">
-        <div className="inline-flex rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-1">
-          {TEST_TYPES.map((testType) => (
-            <button
-              key={testType}
-              type="button"
-              onClick={() => setSelectedTest(testType)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                selectedTest === testType
-                  ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700/50"
-              }`}
-            >
-              {TEST_TYPE_LABELS[testType].label}
-            </button>
-          ))}
+    <div className="not-content">
+      {/* Test type selector — border-separated section */}
+      <div className="border-b border-gray-200/50 dark:border-gray-700/50">
+        <div className="md:max-w-7xl md:mx-auto py-3 px-4 md:py-4 md:px-6">
+          <div className="items-center gap-3">
+            <div className="flex gap-2">
+              {TEST_TYPES.map((testType) => (
+                <button
+                  key={testType}
+                  type="button"
+                  onClick={() => handleTestTypeChange(testType)}
+                  className={`inline-flex items-center justify-center h-8 gap-1.5 px-3 rounded-lg text-xs md:text-sm font-medium transition-all ${
+                    selectedTest === testType
+                      ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
+                      : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                  }`}
+                >
+                  {TEST_TYPE_LABELS[testType].label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs mt-2 text-gray-500 dark:text-gray-400">
+              {TEST_TYPE_LABELS[selectedTest].description}
+            </p>
+          </div>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-500">
-          {TEST_TYPE_LABELS[selectedTest].description}
-        </p>
       </div>
 
-      <BenchmarkLeaderboard
-        activeResults={currentData.active}
-        providerLogos={providerLogos}
-        providerLogosDark={providerLogosDark}
-      />
-
-      <BenchmarkBarChart activeResults={currentData.active} />
-
-      {currentData.historyData.length > 0 && (
-        <div className="py-8 px-4">
-          <BenchmarkChart
-            historyData={currentData.historyData}
-            providers={currentData.chartProviders}
+      {/* Provider ranked cards */}
+      <div className="border-b border-gray-200/50 dark:border-gray-700/50">
+        <div className="md:max-w-7xl md:mx-auto py-3 px-0 md:py-4">
+          <BenchmarkProviderToggle
+            activeResults={currentData.active}
+            providerLogos={providerLogos}
+            providerLogosDark={providerLogosDark}
           />
         </div>
-      )}
+      </div>
+
+      {/* Main content sections */}
+      <div className="md:max-w-7xl md:mx-auto px-4 md:px-6">
+        {/* Performance Over Time */}
+        {currentData.historyData.length > 0 && (
+          <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
+                Performance Over Time
+              </h3>
+              <div className="inline-flex rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-0.5">
+                {TIME_RANGES.map(({ value, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setTimeRange(value)}
+                    className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                      timeRange === value
+                        ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <BenchmarkChart
+              historyData={currentData.historyData}
+              providers={currentData.chartProviders}
+              hiddenProviders={hiddenProviders}
+              onToggleProvider={toggleProvider}
+              timeRange={timeRange}
+            />
+          </div>
+        )}
+
+        {/* Bar chart */}
+        <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
+          <BenchmarkBarChart activeResults={visibleResults} />
+        </div>
+
+        {/* Data table */}
+        <div className="py-6 md:py-8">
+          <BenchmarkDataTable
+            activeResults={visibleResults}
+            providerLogos={providerLogos}
+            providerLogosDark={providerLogosDark}
+          />
+        </div>
+      </div>
     </div>
   )
 }
