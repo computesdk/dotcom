@@ -1,12 +1,12 @@
 ---
 import FAQAccordion from "./FAQAccordion.astro";
-import { BenchmarkChart } from "./BenchmarkChart";
-import { BenchmarkBarChart } from "./BenchmarkBarChart";
-import { BenchmarkLeaderboard } from "./BenchmarkLeaderboard";
+import { BenchmarkDashboard } from "./BenchmarkDashboard";
 
 interface ProviderResult {
   provider: string;
   summary: { ttiMs: { min: number; max: number; median: number; p95: number; p99: number; avg: number } };
+  compositeScore?: number;
+  successRate?: number;
   skipped?: boolean;
   skipReason?: string;
   iterations?: Array<{ ttiMs: number; error?: string }>;
@@ -17,71 +17,88 @@ interface HistoryDataPoint {
   [provider: string]: number | string;
 }
 
-let results: ProviderResult[] = [];
-let timestamp = "";
-let fetchError = false;
-let historyData: HistoryDataPoint[] = [];
-let chartProviders: string[] = [];
+interface TestTypeData {
+  active: ProviderResult[];
+  historyData: HistoryDataPoint[];
+  chartProviders: string[];
+  timestamp: string;
+}
 
-try {
-  const res = await fetch("https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/sequential_tti/latest.json");
+const TEST_TYPES = ["sequential_tti", "burst_tti", "staggered_tti"] as const;
+const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
+const API_URL = "https://api.github.com/repos/computesdk/benchmarks/contents/results";
+const cutoffDate = new Date("2026-02-23T00:00:00Z");
+const excludedProviders = new Set(["railway", "render"]);
+
+let fetchError = false;
+const datasets: Record<string, TestTypeData> = {};
+
+async function fetchTestType(testType: string): Promise<TestTypeData> {
+  const data: TestTypeData = { active: [], historyData: [], chartProviders: [], timestamp: "" };
+
+  // Fetch latest results
+  const res = await fetch(`${BASE_URL}/${testType}/latest.json`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const benchmarkData = await res.json();
-  results = benchmarkData.results as ProviderResult[];
-  timestamp = new Date(benchmarkData.timestamp).toLocaleDateString("en-US", {
+  const results = benchmarkData.results as ProviderResult[];
+  data.timestamp = new Date(benchmarkData.timestamp).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-} catch (e) {
-  fetchError = true;
+  data.active = results
+    .filter((r) => !r.skipped && r.summary.ttiMs.median > 0)
+    .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
+
+  // Fetch history
+  try {
+    const listRes = await fetch(`${API_URL}/${testType}`);
+    if (listRes.ok) {
+      const files = (await listRes.json()) as Array<{ name: string; download_url: string }>;
+      const jsonFiles = files
+        .filter((f) => f.name.endsWith(".json") && f.name !== "latest.json" && f.name !== ".gitkeep")
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      const allProviders = new Set<string>();
+      const historyPoints: HistoryDataPoint[] = [];
+      for (const file of jsonFiles) {
+        try {
+          const fileRes = await fetch(file.download_url);
+          if (!fileRes.ok) continue;
+          const fileData = await fileRes.json();
+          const ts = fileData.timestamp as string;
+          if (new Date(ts) <= cutoffDate) continue;
+          const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          const point: HistoryDataPoint = { date: dateLabel };
+          for (const r of fileData.results as ProviderResult[]) {
+            if (!r.skipped && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
+              point[r.provider] = Math.round(r.summary.ttiMs.median);
+              allProviders.add(r.provider);
+            }
+          }
+          historyPoints.push(point);
+        } catch {
+          continue;
+        }
+      }
+      data.historyData = historyPoints;
+      data.chartProviders = Array.from(allProviders);
+    }
+  } catch {
+    // History fetch failed — chart will be hidden for this test type
+  }
+
+  return data;
 }
 
 try {
-  const listRes = await fetch("https://api.github.com/repos/computesdk/benchmarks/contents/results/sequential_tti");
-  if (listRes.ok) {
-    const files = (await listRes.json()) as Array<{ name: string; download_url: string }>;
-    const jsonFiles = files
-      .filter((f) => f.name.endsWith(".json") && f.name !== "latest.json" && f.name !== ".gitkeep")
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    const allProviders = new Set<string>();
-    const cutoffDate = new Date("2026-02-23T00:00:00Z");
-    const excludedProviders = new Set(["railway", "render"]);
-
-    const historyPoints: HistoryDataPoint[] = [];
-    for (const file of jsonFiles) {
-      try {
-        const fileRes = await fetch(file.download_url);
-        if (!fileRes.ok) continue;
-        const data = await fileRes.json();
-        const ts = data.timestamp as string;
-        if (new Date(ts) <= cutoffDate) continue;
-        const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-        const point: HistoryDataPoint = { date: dateLabel };
-        for (const r of data.results as ProviderResult[]) {
-          if (!r.skipped && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
-            point[r.provider] = Math.round(r.summary.ttiMs.median);
-            allProviders.add(r.provider);
-          }
-        }
-        historyPoints.push(point);
-      } catch {
-        continue;
-      }
-    }
-    historyData = historyPoints;
-    chartProviders = Array.from(allProviders);
+  const results = await Promise.all(TEST_TYPES.map((t) => fetchTestType(t)));
+  for (let i = 0; i < TEST_TYPES.length; i++) {
+    datasets[TEST_TYPES[i]] = results[i];
   }
-} catch {
-  // Historical data fetch failed — chart will be hidden
+} catch (e) {
+  fetchError = true;
 }
-
-const active = results
-  .filter((r) => !r.skipped && r.summary.ttiMs.median > 0)
-  .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
-
-const inactive = results.filter((r) => r.skipped || r.summary.ttiMs.median === 0);
 
 const providerLogos: Record<string, string> = {
   e2b: "/benchmarks/normal-e2b-light.svg",
@@ -149,7 +166,7 @@ const benchmarksFAQs = [
           A leaderboard of common benchmarks for each of our sandbox providers.
         </p>
         <p id="benchmark-timestamp" class="mx-auto mt-2 max-w-2xl text-center text-sm text-gray-500 dark:text-gray-500">
-          Last run: {timestamp}
+          Last run: {datasets.sequential_tti?.timestamp || ""}
         </p>
         <a
           href="https://github.com/computesdk/benchmarks"
@@ -170,27 +187,12 @@ const benchmarksFAQs = [
     </div>
   ) : (
   <div class="max-w-6xl mx-auto my-0">
-    <BenchmarkLeaderboard
+    <BenchmarkDashboard
       client:visible
-      activeResults={active}
+      datasets={datasets}
       providerLogos={providerLogos}
       providerLogosDark={providerLogosDark}
     />
-
-    <BenchmarkBarChart
-      client:visible
-      activeResults={active}
-    />
-
-    {historyData.length > 0 && (
-      <div class="py-8 px-4">
-        <BenchmarkChart
-          client:visible
-          historyData={historyData}
-          providers={chartProviders}
-        />
-      </div>
-    )}
 
     <p class="mt-3 text-center text-sm text-gray-600 dark:text-gray-400">
       Want to see a provider added? <a href="https://x.com/computesdk" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">Let us know on X</a>.

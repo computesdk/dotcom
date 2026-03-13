@@ -10,6 +10,8 @@ import type { ChartConfig } from "./ui/chart"
 interface ProviderResult {
   provider: string
   summary: { ttiMs: { min: number; max: number; median: number; p95: number; p99: number; avg: number } }
+  compositeScore?: number
+  successRate?: number
   skipped?: boolean
   skipReason?: string
   iterations?: Array<{ ttiMs: number; error?: string }>

@@ -19,6 +19,8 @@ interface ProviderResult {
       avg: number
     }
   }
+  compositeScore?: number
+  successRate?: number
   skipped?: boolean
   skipReason?: string
   iterations?: Array<{ ttiMs: number; error?: string }>
@@ -45,7 +47,7 @@ const PROVIDER_COLORS: Record<string, string> = {
   justbash: "#303137",
 }
 
-type Metric = "median" | "min" | "max" | "p95" | "p99"
+type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
 
 const METRIC_LABELS: Record<Metric, string> = {
   median: "Median TTI",
@@ -53,6 +55,7 @@ const METRIC_LABELS: Record<Metric, string> = {
   max: "Max TTI",
   p95: "P95 TTI",
   p99: "P99 TTI",
+  compositeScore: "Composite Score",
 }
 
 function capitalize(s: string): string {
@@ -64,15 +67,21 @@ function capitalize(s: string): string {
 export function BenchmarkLeaderboard({ activeResults, providerLogos, providerLogosDark }: BenchmarkLeaderboardProps) {
   const [selectedMetric, setSelectedMetric] = useState<Metric>("median")
 
+
   const leaderboardData = useMemo(() => {
     return activeResults
       .map((r) => ({
         provider: r.provider,
         displayName: capitalize(r.provider),
-        value: r.summary.ttiMs[selectedMetric],
+        value: selectedMetric === "compositeScore"
+          ? (r.compositeScore ?? 0)
+          : r.summary.ttiMs[selectedMetric],
         color: PROVIDER_COLORS[r.provider] || "#6b7280",
       }))
-      .sort((a, b) => a.value - b.value)
+      .sort((a, b) => selectedMetric === "compositeScore"
+        ? b.value - a.value   // higher is better
+        : a.value - b.value   // lower is better
+      )
   }, [activeResults, selectedMetric])
 
   const midpoint = Math.ceil(leaderboardData.length / 2)
@@ -138,7 +147,9 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos, providerLog
 
               <div className="shrink-0 flex flex-col items-end">
                 <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
-                  {(item.value / 1000).toFixed(2)}s
+                  {selectedMetric === "compositeScore"
+                    ? item.value.toFixed(1)
+                    : `${(item.value / 1000).toFixed(2)}s`}
                 </span>
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   {METRIC_LABELS[selectedMetric]}
@@ -180,7 +191,9 @@ export function BenchmarkLeaderboard({ activeResults, providerLogos, providerLog
 
               <div className="shrink-0 flex flex-col items-end">
                 <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
-                  {(item.value / 1000).toFixed(2)}s
+                  {selectedMetric === "compositeScore"
+                    ? item.value.toFixed(1)
+                    : `${(item.value / 1000).toFixed(2)}s`}
                 </span>
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   {METRIC_LABELS[selectedMetric]}
