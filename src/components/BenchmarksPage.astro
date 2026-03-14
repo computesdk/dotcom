@@ -1,12 +1,12 @@
 ---
 import FAQAccordion from "./FAQAccordion.astro";
-import { BenchmarkChart } from "./BenchmarkChart";
-import { BenchmarkBarChart } from "./BenchmarkBarChart";
-import { BenchmarkLeaderboard } from "./BenchmarkLeaderboard";
+import { BenchmarkDashboard } from "./BenchmarkDashboard";
 
 interface ProviderResult {
   provider: string;
   summary: { ttiMs: { min: number; max: number; median: number; p95: number; p99: number; avg: number } };
+  compositeScore?: number;
+  successRate?: number;
   skipped?: boolean;
   skipReason?: string;
   iterations?: Array<{ ttiMs: number; error?: string }>;
@@ -17,71 +17,110 @@ interface HistoryDataPoint {
   [provider: string]: number | string;
 }
 
-let results: ProviderResult[] = [];
-let timestamp = "";
-let fetchError = false;
-let historyData: HistoryDataPoint[] = [];
-let chartProviders: string[] = [];
+interface TestTypeData {
+  active: ProviderResult[];
+  historyData: HistoryDataPoint[];
+  chartProviders: string[];
+  timestamp: string;
+}
 
-try {
-  const res = await fetch("https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/sequential_tti/latest.json");
+const TEST_TYPES = ["sequential_tti", "burst_tti", "staggered_tti"] as const;
+const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
+const API_URL = "https://api.github.com/repos/computesdk/benchmarks/contents/results";
+const cutoffDate = new Date("2026-02-23T00:00:00Z");
+const excludedProviders = new Set(["railway", "render"]);
+const HISTORY_BATCH_SIZE = 10;
+
+// GitHub API auth headers (optional — increases rate limit from 60 to 5000 req/hr)
+const githubHeaders: Record<string, string> = {
+  "Accept": "application/vnd.github.v3+json",
+};
+const githubToken = import.meta.env.GITHUB_TOKEN;
+if (githubToken) {
+  githubHeaders["Authorization"] = `Bearer ${githubToken}`;
+}
+
+let fetchError = false;
+const datasets: Record<string, TestTypeData> = {};
+
+async function fetchTestType(testType: string): Promise<TestTypeData> {
+  const data: TestTypeData = { active: [], historyData: [], chartProviders: [], timestamp: "" };
+
+  // Fetch latest results
+  const res = await fetch(`${BASE_URL}/${testType}/latest.json`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const benchmarkData = await res.json();
-  results = benchmarkData.results as ProviderResult[];
-  timestamp = new Date(benchmarkData.timestamp).toLocaleDateString("en-US", {
+  const results = benchmarkData.results as ProviderResult[];
+  data.timestamp = new Date(benchmarkData.timestamp).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-} catch (e) {
-  fetchError = true;
+  data.active = results
+    .filter((r) => !r.skipped && r.summary?.ttiMs?.median != null && r.summary.ttiMs.median > 0)
+    .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
+
+  // Fetch history
+  try {
+    const listRes = await fetch(`${API_URL}/${testType}`, { headers: githubHeaders });
+    if (listRes.ok) {
+      const files = (await listRes.json()) as Array<{ name: string; download_url: string }>;
+      const jsonFiles = files
+        .filter((f) => f.name.endsWith(".json") && f.name !== "latest.json" && f.name !== ".gitkeep")
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      const allProviders = new Set<string>();
+      const historyPoints: HistoryDataPoint[] = [];
+
+      // Fetch history files in parallel batches
+      for (let i = 0; i < jsonFiles.length; i += HISTORY_BATCH_SIZE) {
+        const batch = jsonFiles.slice(i, i + HISTORY_BATCH_SIZE);
+        const batchResults = await Promise.all(
+          batch.map(async (file) => {
+            try {
+              const fileRes = await fetch(file.download_url);
+              if (!fileRes.ok) return null;
+              return await fileRes.json();
+            } catch {
+              return null;
+            }
+          })
+        );
+
+        for (const fileData of batchResults) {
+          if (!fileData) continue;
+          const ts = fileData.timestamp as string;
+          if (new Date(ts) <= cutoffDate) continue;
+          const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          const point: HistoryDataPoint = { date: dateLabel };
+          for (const r of fileData.results as ProviderResult[]) {
+            if (!r.skipped && r.summary?.ttiMs?.median != null && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
+              point[r.provider] = Math.round(r.summary.ttiMs.median);
+              allProviders.add(r.provider);
+            }
+          }
+          historyPoints.push(point);
+        }
+      }
+
+      data.historyData = historyPoints;
+      data.chartProviders = Array.from(allProviders);
+    }
+  } catch {
+    // History fetch failed — chart will be hidden for this test type
+  }
+
+  return data;
 }
 
 try {
-  const listRes = await fetch("https://api.github.com/repos/computesdk/benchmarks/contents/results/sequential_tti");
-  if (listRes.ok) {
-    const files = (await listRes.json()) as Array<{ name: string; download_url: string }>;
-    const jsonFiles = files
-      .filter((f) => f.name.endsWith(".json") && f.name !== "latest.json" && f.name !== ".gitkeep")
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    const allProviders = new Set<string>();
-    const cutoffDate = new Date("2026-02-23T00:00:00Z");
-    const excludedProviders = new Set(["railway", "render"]);
-
-    const historyPoints: HistoryDataPoint[] = [];
-    for (const file of jsonFiles) {
-      try {
-        const fileRes = await fetch(file.download_url);
-        if (!fileRes.ok) continue;
-        const data = await fileRes.json();
-        const ts = data.timestamp as string;
-        if (new Date(ts) <= cutoffDate) continue;
-        const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-        const point: HistoryDataPoint = { date: dateLabel };
-        for (const r of data.results as ProviderResult[]) {
-          if (!r.skipped && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
-            point[r.provider] = Math.round(r.summary.ttiMs.median);
-            allProviders.add(r.provider);
-          }
-        }
-        historyPoints.push(point);
-      } catch {
-        continue;
-      }
-    }
-    historyData = historyPoints;
-    chartProviders = Array.from(allProviders);
+  const results = await Promise.all(TEST_TYPES.map((t) => fetchTestType(t)));
+  for (let i = 0; i < TEST_TYPES.length; i++) {
+    datasets[TEST_TYPES[i]] = results[i];
   }
-} catch {
-  // Historical data fetch failed — chart will be hidden
+} catch (e) {
+  fetchError = true;
 }
-
-const active = results
-  .filter((r) => !r.skipped && r.summary.ttiMs.median > 0)
-  .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
-
-const inactive = results.filter((r) => r.skipped || r.summary.ttiMs.median === 0);
 
 const providerLogos: Record<string, string> = {
   e2b: "/benchmarks/normal-e2b-light.svg",
@@ -90,11 +129,11 @@ const providerLogos: Record<string, string> = {
   modal: "/benchmarks/normal-modal-light.svg",
   daytona: "/benchmarks/normal-daytona-light.svg",
   namespace: "/benchmarks/normal-namespace-light.svg",
-  railway: "/benchmarks/normal-railway-light.svg",
-  render: "/benchmarks/normal-render-light.svg",
   hopx: "/benchmarks/normal-hopx-light.svg",
   codesandbox: "/benchmarks/normal-codesandbox-light.svg",
   runloop: "/benchmarks/normal-runloop-light.svg",
+  justbash: "/benchmarks/normal-justbash-light.svg",
+  cloudflare: "/benchmarks/normal-cloudflare-light.svg",
 };
 
 const providerLogosDark: Record<string, string> = {
@@ -104,11 +143,11 @@ const providerLogosDark: Record<string, string> = {
   modal: "/benchmarks/normal-modal-dark.svg",
   daytona: "/benchmarks/normal-daytona-dark.svg",
   namespace: "/benchmarks/normal-namespace-dark.svg",
-  railway: "/benchmarks/normal-railway-dark.svg",
-  render: "/benchmarks/normal-render-dark.svg",
   hopx: "/benchmarks/normal-hopx-dark.svg",
   codesandbox: "/benchmarks/normal-codesandbox-dark.svg",
   runloop: "/benchmarks/normal-runloop-dark.svg",
+  justbash: "/benchmarks/normal-justbash-dark.svg",
+  cloudflare: "/benchmarks/normal-cloudflare-dark.svg",
 };
 
 const benchmarksFAQs = [
@@ -135,66 +174,100 @@ const benchmarksFAQs = [
 ];
 ---
 
-<div class="relative isolate bg-transparent dark:bg-transparent py-4">
-  <!-- Header -->
-  <div class="border-b border-gray-200 dark:border-b-gray-700 py-4">
-    <div class="mx-6">
-      <div class="mx-auto max-w-5xl text-center">
-        <h1 class="text-balance text-4xl font-semibold tracking-tight text-gray-900 dark:text-white">
-          Sandbox Benchmarks
-        </h1>
-        <p class="mx-auto mt-2 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 dark:text-gray-400">
-          A leaderboard of common benchmarks for each of our sandbox providers.
-        </p>
-        <p id="benchmark-timestamp" class="mx-auto mt-2 max-w-2xl text-center text-sm text-gray-500 dark:text-gray-500">
-          Last run: {timestamp}
-        </p>
-        <a
-          href="https://github.com/computesdk/benchmarks"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center mt-2 gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
-        >
-          <svg class="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z" /></svg>
-          View on GitHub
-        </a>
+<div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+  <!-- Sticky header -->
+  <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
+    <div class="border-b border-gray-200/50 dark:border-gray-700/50">
+      <div class="md:max-w-7xl md:mx-auto py-3 px-4 md:py-4 md:px-6">
+        <div class="sm:flex sm:flex-row items-center md:justify-between gap-3">
+          <div>
+            <h1 class="text-lg md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Sandbox Benchmarks</h1>
+            <p class="m-0 text-sm text-gray-700">A leaderboard of common benchmarks for each of our sandbox providers.</p>
+          </div>
+          <div class="m-0 text-left md:text-right">
+            <div class="items-center">
+              <a
+                href="https://github.com/computesdk/benchmarks"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center h-8 gap-1.5 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-xs md:text-sm font-medium text-gray-900 dark:text-white transition-all"
+              >
+                <svg class="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z" /></svg>
+                View on Github
+              </a>
+            </div>
+            <span class="text-xs text-gray-700 dark:text-gray-400">
+              Last run: {datasets.sequential_tti?.timestamp || ""}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </header>
 
   {fetchError ? (
     <div class="max-w-4xl mx-auto my-0 py-16 text-center">
       <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
     </div>
   ) : (
-  <div class="max-w-6xl mx-auto my-0">
-    <BenchmarkLeaderboard
+  <div>
+    <BenchmarkDashboard
       client:visible
-      activeResults={active}
+      datasets={datasets}
       providerLogos={providerLogos}
       providerLogosDark={providerLogosDark}
     />
 
-    <BenchmarkBarChart
-      client:visible
-      activeResults={active}
-    />
-
-    {historyData.length > 0 && (
-      <div class="py-8 px-4">
-        <BenchmarkChart
-          client:visible
-          historyData={historyData}
-          providers={chartProviders}
-        />
-      </div>
-    )}
-
-    <p class="mt-3 text-center text-sm text-gray-600 dark:text-gray-400">
-      Want to see a provider added? <a href="https://x.com/computesdk" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">Let us know on X</a>.
-    </p>
+    <div class="md:max-w-7xl md:mx-auto px-4 md:px-6">
+      <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+        Want to see a provider added? <a href="https://x.com/computesdk" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">Let us know on X</a>.
+      </p>
+    </div>
   </div>
   )}
 
-  <FAQAccordion title="Sandbox Benchmarks FAQs" items={benchmarksFAQs} />  
+  <!-- Methodology -->
+  <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-6">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Methodology</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+      <div class="mt-0">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-3">What We Measure</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          Every benchmark measures <strong class="text-gray-900 dark:text-white">Time to Interactive (TTI)</strong> — the elapsed time from calling <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">compute.sandbox.create()</code> to the first successful <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">runCommand()</code> inside the sandbox.
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          Each provider is tested with <strong class="text-gray-900 dark:text-white">100 iterations</strong> per run. Benchmarks run automatically via GitHub Actions on a recurring schedule. All results are committed to the <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">public benchmarks repo</a>.
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          <strong class="text-gray-900 dark:text-white">Sequential Test:</strong> Sandboxes are launched <strong class="text-gray-900 dark:text-white">one at a time</strong>, waiting for each to become interactive before starting the next.
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+         <strong class="text-gray-900 dark:text-white">Staggered Test:</strong> Sandboxes are launched with <strong class="text-gray-900 dark:text-white">200ms delays</strong> between each.
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          <strong class="text-gray-900 dark:text-white">Burst Test:</strong> All sandboxes are launched <strong class="text-gray-900 dark:text-white">concurrently</strong> in a single burst.
+        </p>
+      </div>
+
+      <div class="mt-0">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-3">How We Score</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          The <strong class="text-gray-900 dark:text-white">Composite Score</strong> is a weighted blend of timing metrics multiplied by the success rate. Each metric is scored against a fixed 10-second ceiling: <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">100 &times; (1 &minus; value / 10,000ms)</code>, so a 200ms median scores 98 and anything &ge;10s scores 0.
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          The weighted timing score is then multiplied by the success rate (0–1), so providers that fail frequently are penalized proportionally.
+        </p>
+        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1.5 list-none p-0 m-0">
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Median: 50%</strong> — primary signal for typical experience</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P95: 20%</strong> — tail latency / consistency</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Max: 15%</strong> — worst-case exposure</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P99: 10%</strong> — extreme tail latency</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Min: 5%</strong> — best-case capability</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <FAQAccordion title="Sandbox Benchmarks FAQs" items={benchmarksFAQs} />
 </div>

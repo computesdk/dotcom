@@ -43,13 +43,13 @@ const ChartContainer = React.forwardRef<
         data-chart={chartId}
         ref={ref}
         className={cn(
-          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-gray-500 [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-gray-200/50 dark:[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-gray-700/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-gray-200 dark:[&_.recharts-curve.recharts-tooltip-cursor]:stroke-gray-700 [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-gray-200 dark:[&_.recharts-polar-grid_[stroke='#ccc']]:stroke-gray-700 [&_.recharts-reference-line_[stroke='#ccc']]:stroke-gray-200 dark:[&_.recharts-reference-line_[stroke='#ccc']]:stroke-gray-700 [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
+          "flex justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-gray-500 [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-gray-200/50 dark:[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-gray-700/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-gray-200 dark:[&_.recharts-curve.recharts-tooltip-cursor]:stroke-gray-700 [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-gray-200 dark:[&_.recharts-polar-grid_[stroke='#ccc']]:stroke-gray-700 [&_.recharts-reference-line_[stroke='#ccc']]:stroke-gray-200 dark:[&_.recharts-reference-line_[stroke='#ccc']]:stroke-gray-700 [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
           className
         )}
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
+        <RechartsPrimitive.ResponsiveContainer minWidth={0} minHeight={0}>
           {children}
         </RechartsPrimitive.ResponsiveContainer>
       </div>
