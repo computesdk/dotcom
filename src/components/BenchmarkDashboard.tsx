@@ -73,7 +73,7 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
     <div className="not-content">
       {/* Test type selector — border-separated section */}
       <div className="border-b border-gray-200/50 dark:border-gray-700/50">
-        <div className="md:max-w-7xl md:mx-auto py-3 px-4 md:py-4 md:px-6">
+        <div className="md:max-w-7xl md:mx-auto py-2 px-4 md:px-6">
           <div className="items-center gap-3">
             <div className="flex gap-2">
               {TEST_TYPES.map((testType) => (

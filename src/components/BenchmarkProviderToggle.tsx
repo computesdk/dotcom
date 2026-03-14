@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react"
 import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
 import type { ProviderResult } from "./benchmarkConstants"
 
@@ -7,54 +8,136 @@ interface BenchmarkProviderToggleProps {
   providerLogosDark: Record<string, string>
 }
 
+type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
+
+const METRIC_LABELS: Record<Metric, string> = {
+  compositeScore: "Composite Score",
+  median: "Median TTI",
+  min: "Min TTI",
+  max: "Max TTI",
+  p95: "P95 TTI",
+  p99: "P99 TTI",
+}
+
+function getMetricValue(r: ProviderResult, metric: Metric): number {
+  if (metric === "compositeScore") return r.compositeScore ?? 0
+  return r.summary.ttiMs[metric]
+}
+
+function formatValue(value: number, metric: Metric): string {
+  if (metric === "compositeScore") return value.toFixed(1)
+  return `${(value / 1000).toFixed(2)}s`
+}
+
 export function BenchmarkProviderToggle({
   activeResults,
   providerLogos,
   providerLogosDark,
 }: BenchmarkProviderToggleProps) {
-  // Sorted by median TTI for ranking
-  const ranked = [...activeResults].sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median)
+  const [selectedMetric, setSelectedMetric] = useState<Metric>("compositeScore")
+
+  const ranked = useMemo(() => {
+    return [...activeResults]
+      .map((r) => ({
+        ...r,
+        metricValue: getMetricValue(r, selectedMetric),
+      }))
+      .sort((a, b) =>
+        selectedMetric === "compositeScore"
+          ? b.metricValue - a.metricValue
+          : a.metricValue - b.metricValue
+      )
+  }, [activeResults, selectedMetric])
+
+  const midpoint = Math.ceil(ranked.length / 2)
+  const leftColumn = ranked.slice(0, midpoint)
+  const rightColumn = ranked.slice(midpoint)
+
+  if (!ranked.length) return null
+
+  const renderCard = (result: (typeof ranked)[0], index: number) => {
+    const logoLight = providerLogos[result.provider]
+    const logoDark = providerLogosDark[result.provider]
+
+    return (
+      <div
+        key={result.provider}
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border transition-colors ${
+          index === 0
+            ? "border-blue-200 dark:border-blue-700/30 shadow-sm"
+            : "border-gray-200 dark:border-gray-700/50"
+        }`}
+      >
+        <div className="shrink-0 w-6 text-center">
+          <span className="text-sm font-mono font-medium text-gray-500 dark:text-gray-400">
+            {index + 1}
+          </span>
+        </div>
+
+        <div className="shrink-0 w-40 flex items-center">
+          {logoLight ? (
+            <>
+              <img src={logoLight} alt={`${result.provider} logo`} className="w-full h-full object-contain dark:hidden" />
+              <img src={logoDark || logoLight} alt="" className="w-full h-full object-contain hidden dark:block" />
+            </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <div
+                className="w-3 h-3 rounded-full shrink-0"
+                style={{ backgroundColor: PROVIDER_COLORS[result.provider] || "#6b7280" }}
+              />
+              <span className="text-sm font-medium text-gray-900 dark:text-white">
+                {capitalize(result.provider)}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex-1" />
+
+        <div className="shrink-0 flex flex-col items-end">
+          <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
+            {formatValue(result.metricValue, selectedMetric)}
+          </span>
+          <span className="text-[10px] text-gray-500 dark:text-gray-400">
+            {METRIC_LABELS[selectedMetric]}
+          </span>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="not-content overflow-x-auto">
-      <div className="flex gap-2 px-4 md:px-6 min-w-0">
-        {ranked.map((result, index) => {
-          const logoLight = providerLogos[result.provider]
-          const logoDark = providerLogosDark[result.provider]
-          const medianSecs = (result.summary.ttiMs.median / 1000).toFixed(2)
-
-          return (
-            <div
-              key={result.provider}
-              className="relative flex items-center gap-2.5 px-3 py-2 rounded-lg border shrink-0 whitespace-nowrap min-w-[120px] bg-white dark:bg-gray-800 border-gray-200/50 dark:border-gray-700/50 shadow-sm"
+    <div className="not-content w-full max-w-7xl">
+      <div className="flex items-center justify-between mb-3 px-4 md:px-6">
+        {/* <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
+          Provider Leaderboard
+        </h3> */}
+        <div className="flex gap-2">
+          {(Object.keys(METRIC_LABELS) as Metric[]).map((metric) => (
+            <button
+              key={metric}
+              type="button"
+              onClick={() => setSelectedMetric(metric)}
+              className={`inline-flex items-center justify-center h-8 gap-1.5 px-3 rounded-lg text-xs md:text-sm font-medium transition-all ${
+                selectedMetric === metric
+                  ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
+                  : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+              }`}
             >
-              <div className="text-sm text-gray-700 dark:text-gray-400 font-mono font-medium shrink-0">
-                {index + 1}
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex flex-col items-start">
-                  {logoLight ? (
-                    <div className="shrink-0 w-24 flex items-center justify-center">
-                      <img src={logoLight} alt="{result.provider} logo" className="w-full h-full object-contain dark:hidden" />
-                      <img src={logoDark || logoLight} alt="" className="w-full h-full object-contain hidden dark:block" />
-                    </div>
-                  ) : (
-                    <div
-                      className="w-3 h-3 rounded-full shrink-0"
-                      style={{ backgroundColor: PROVIDER_COLORS[result.provider] || "#6b7280" }}
-                    />
-                  )}
-                  {/* <p className="text-xs font-medium text-gray-900 dark:text-white">
-                    {capitalize(result.provider)}
-                  </p> */}
-                  <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                    {medianSecs}s median
-                  </p>
-                </div>
-              </div>
-            </div>
-          )
-        })}
+              {METRIC_LABELS[metric]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 px-4 md:px-6">
+        <div className="flex flex-col gap-2">
+          {leftColumn.map((result, index) => renderCard(result, index))}
+        </div>
+        <div className="flex flex-col gap-2">
+          {rightColumn.map((result, index) => renderCard(result, midpoint + index))}
+        </div>
       </div>
     </div>
   )
