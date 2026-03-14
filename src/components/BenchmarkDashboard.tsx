@@ -21,18 +21,15 @@ interface BenchmarkDashboardProps {
   providerLogosDark: Record<string, string>
 }
 
-const TEST_TYPE_LABELS: Record<TestType, { label: string; description: string }> = {
+const TEST_TYPE_LABELS: Record<TestType, { label: string; }> = {
   sequential_tti: {
-    label: "Sequential",
-    description: "Sandboxes launched one at a time",
+    label: "Sequential TTI",
   },
   burst_tti: {
-    label: "Burst",
-    description: "All sandboxes launched concurrently",
+    label: "Burst TTI",
   },
   staggered_tti: {
-    label: "Staggered",
-    description: "Sandboxes launched with 200ms delays",
+    label: "Staggered TTI",
   },
 }
 
@@ -73,27 +70,22 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
     <div className="not-content">
       {/* Test type selector — border-separated section */}
       <div className="border-b border-gray-200/50 dark:border-gray-700/50">
-        <div className="md:max-w-7xl md:mx-auto py-2 px-4 md:px-6">
-          <div className="items-center gap-3">
-            <div className="flex gap-2">
-              {TEST_TYPES.map((testType) => (
-                <button
-                  key={testType}
-                  type="button"
-                  onClick={() => handleTestTypeChange(testType)}
-                  className={`inline-flex items-center justify-center h-8 gap-1.5 px-3 rounded-lg text-xs md:text-sm font-medium transition-all ${
-                    selectedTest === testType
-                      ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
-                      : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
-                  }`}
-                >
-                  {TEST_TYPE_LABELS[testType].label}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs mt-2 text-gray-500 dark:text-gray-400">
-              {TEST_TYPE_LABELS[selectedTest].description}
-            </p>
+        <div className="md:max-w-7xl md:mx-auto py-2 mb-3 px-4 md:px-6">
+          <div className="inline-flex rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-0.5">
+            {TEST_TYPES.map((testType) => (
+              <button
+                key={testType}
+                type="button"
+                onClick={() => handleTestTypeChange(testType)}
+                className={`px-3 py-1 rounded text-xs md:text-sm font-medium transition-colors ${
+                  selectedTest === testType
+                    ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                }`}
+              >
+                {TEST_TYPE_LABELS[testType].label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
