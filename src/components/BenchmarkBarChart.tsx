@@ -58,9 +58,6 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 text-left">
         Median TTI (Time to Interactive)
       </h3>
-      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-        TTI measures time from <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">compute.sandbox.create()</code> to first successful <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">runCommand()</code>.
-      </p>
       <ChartContainer config={chartConfig} className="aspect-auto w-full min-w-0" style={{ height: `${chartHeight}px`, minHeight: `${chartHeight}px` }}>
         <BarChart
           data={chartData}

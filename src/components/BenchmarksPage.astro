@@ -259,85 +259,16 @@ const benchmarksFAQs = [
           The weighted timing score is then multiplied by the success rate (0–1), so providers that fail frequently are penalized proportionally.
         </p>
         <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1.5 list-none p-0 m-0">
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Median 50%</strong> — primary signal for typical experience</li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P95 20%</strong> — tail latency / consistency</li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Max 15%</strong> — worst-case exposure</li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P99 10%</strong> — extreme tail latency</li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Min 5%</strong> — best-case capability</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Median: 50%</strong> — primary signal for typical experience</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P95: 20%</strong> — tail latency / consistency</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Max: 15%</strong> — worst-case exposure</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P99: 10%</strong> — extreme tail latency</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Min: 5%</strong> — best-case capability</li>
         </ul>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mt-3">
           Scores are absolute — they don't change when providers are added or removed.
         </p>
       </div>
-    </div>
-
-    <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4">Test Types</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="rounded-lg border border-gray-200 dark:border-gray-700/50 p-4">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="inline-flex items-center justify-center h-6 w-6 rounded bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-semibold">S</span>
-          <h4 class="text-sm font-semibold text-gray-900 dark:text-white m-0">Sequential</h4>
-        </div>
-        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed m-0">
-          Sandboxes are launched <strong class="text-gray-900 dark:text-white">one at a time</strong>, waiting for each to become interactive before starting the next. Tests baseline performance without concurrency pressure.
-        </p>
-      </div>
-      <div class="rounded-lg border border-gray-200 dark:border-gray-700/50 p-4">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="inline-flex items-center justify-center h-6 w-6 rounded bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-semibold">B</span>
-          <h4 class="text-sm font-semibold text-gray-900 dark:text-white m-0">Burst</h4>
-        </div>
-        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed m-0">
-          All sandboxes are launched <strong class="text-gray-900 dark:text-white">concurrently</strong> in a single burst. Stress-tests how well a provider handles sudden spikes in demand.
-        </p>
-      </div>
-      <div class="rounded-lg border border-gray-200 dark:border-gray-700/50 p-4">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="inline-flex items-center justify-center h-6 w-6 rounded bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-semibold">T</span>
-          <h4 class="text-sm font-semibold text-gray-900 dark:text-white m-0">Staggered</h4>
-        </div>
-        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed m-0">
-          Sandboxes are launched with <strong class="text-gray-900 dark:text-white">200ms delays</strong> between each. Simulates realistic traffic patterns where requests arrive in rapid succession but not all at once.
-        </p>
-      </div>
-    </div>
-
-    <h3 class="text-base font-semibold text-gray-900 dark:text-white mt-8 mb-4">Metrics</h3>
-    <div class="overflow-x-auto border border-gray-200 dark:border-gray-700/50 rounded-lg">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-gray-200 dark:border-gray-700/50">
-            <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Metric</th>
-            <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="border-b border-gray-100 dark:border-gray-800/60">
-            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">Median</td>
-            <td class="px-4 py-3 text-gray-600 dark:text-gray-400">The middle value across all iterations. More stable than the average because it ignores extreme outliers.</td>
-          </tr>
-          <tr class="border-b border-gray-100 dark:border-gray-800/60">
-            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">Min / Max</td>
-            <td class="px-4 py-3 text-gray-600 dark:text-gray-400">The fastest and slowest individual iterations. Shows the full range of possible outcomes.</td>
-          </tr>
-          <tr class="border-b border-gray-100 dark:border-gray-800/60">
-            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">P95</td>
-            <td class="px-4 py-3 text-gray-600 dark:text-gray-400">95th percentile — 95% of iterations completed at or below this time. The typical worst-case experience.</td>
-          </tr>
-          <tr class="border-b border-gray-100 dark:border-gray-800/60">
-            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">P99</td>
-            <td class="px-4 py-3 text-gray-600 dark:text-gray-400">99th percentile — highlights tail latency. The rare outlier spikes that can impact user experience.</td>
-          </tr>
-          <tr class="border-b border-gray-100 dark:border-gray-800/60 last:border-b-0">
-            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">Composite Score</td>
-            <td class="px-4 py-3 text-gray-600 dark:text-gray-400">A weighted blend of median, P95, P99, success rate, and variance. Higher is better.</td>
-          </tr>
-          <tr>
-            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">Success Rate</td>
-            <td class="px-4 py-3 text-gray-600 dark:text-gray-400">Percentage of iterations that completed without error. Providers that fail frequently are penalized in scoring.</td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 
