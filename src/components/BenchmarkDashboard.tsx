@@ -7,6 +7,7 @@ import type { ProviderResult, HistoryDataPoint } from "./benchmarkConstants"
 
 type TestType = "sequential_tti" | "burst_tti" | "staggered_tti"
 type TimeRange = "30" | "60" | "90" | "all"
+type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
 
 interface TestTypeData {
   active: ProviderResult[]
@@ -43,6 +44,7 @@ const TIME_RANGES: { value: TimeRange; label: string }[] = [
 
 export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark }: BenchmarkDashboardProps) {
   const [selectedTest, setSelectedTest] = useState<TestType>("sequential_tti")
+  const [selectedMetric, setSelectedMetric] = useState<Metric>("compositeScore")
   const [hiddenProviders, setHiddenProviders] = useState<Set<string>>(new Set())
   const [timeRange, setTimeRange] = useState<TimeRange>("all")
 
@@ -97,6 +99,8 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
             activeResults={currentData.active}
             providerLogos={providerLogos}
             providerLogosDark={providerLogosDark}
+            selectedMetric={selectedMetric}
+            onMetricChange={setSelectedMetric}
           />
         </div>
       </div>
@@ -133,13 +137,14 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               hiddenProviders={hiddenProviders}
               onToggleProvider={toggleProvider}
               timeRange={timeRange}
+              selectedMetric={selectedMetric}
             />
           </div>
         )}
 
         {/* Bar chart */}
         <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
-          <BenchmarkBarChart activeResults={visibleResults} />
+          <BenchmarkBarChart activeResults={visibleResults} selectedMetric={selectedMetric} />
         </div>
 
         {/* Data table */}

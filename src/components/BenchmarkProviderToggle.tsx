@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
 import type { ProviderResult } from "./benchmarkConstants"
 
@@ -6,6 +6,8 @@ interface BenchmarkProviderToggleProps {
   activeResults: ProviderResult[]
   providerLogos: Record<string, string>
   providerLogosDark: Record<string, string>
+  selectedMetric: Metric
+  onMetricChange: (metric: Metric) => void
 }
 
 type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
@@ -33,8 +35,9 @@ export function BenchmarkProviderToggle({
   activeResults,
   providerLogos,
   providerLogosDark,
+  selectedMetric,
+  onMetricChange,
 }: BenchmarkProviderToggleProps) {
-  const [selectedMetric, setSelectedMetric] = useState<Metric>("compositeScore")
 
   const ranked = useMemo(() => {
     return [...activeResults]
@@ -62,7 +65,7 @@ export function BenchmarkProviderToggle({
     return (
       <div
         key={result.provider}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border transition-colors ${
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors ${
           index === 0
             ? "dark:bg-gray-700 shadow:lg border-blue-200 dark:border-blue-700/30 shadow-sm"
             : "bg-white/50 dark:bg-gray-700 shadow:lg border-gray-200 dark:border-gray-700/50"
@@ -118,7 +121,7 @@ export function BenchmarkProviderToggle({
             <button
               key={metric}
               type="button"
-              onClick={() => setSelectedMetric(metric)}
+              onClick={() => onMetricChange(metric)}
               className={`px-3 py-1 rounded text-xs md:text-sm font-medium transition-colors ${
                 selectedMetric === metric
                   ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
