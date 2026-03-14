@@ -64,8 +64,8 @@ export function BenchmarkProviderToggle({
         key={result.provider}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border transition-colors ${
           index === 0
-            ? "border-blue-200 dark:border-blue-700/30 shadow-sm"
-            : "border-gray-200 dark:border-gray-700/50"
+            ? "dark:bg-gray-700 shadow:lg border-blue-200 dark:border-blue-700/30 shadow-sm"
+            : "bg-white/50 dark:bg-gray-700 shadow:lg border-gray-200 dark:border-gray-700/50"
         }`}
       >
         <div className="shrink-0 w-6 text-center">
@@ -110,19 +110,19 @@ export function BenchmarkProviderToggle({
   return (
     <div className="not-content w-full max-w-7xl">
       <div className="flex items-center justify-between mb-3 px-4 md:px-6">
-        {/* <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
           Provider Leaderboard
-        </h3> */}
-        <div className="flex gap-2">
+        </h3>
+        <div className="inline-flex rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-0.5">
           {(Object.keys(METRIC_LABELS) as Metric[]).map((metric) => (
             <button
               key={metric}
               type="button"
               onClick={() => setSelectedMetric(metric)}
-              className={`inline-flex items-center justify-center h-8 gap-1.5 px-3 rounded-lg text-xs md:text-sm font-medium transition-all ${
+              className={`px-3 py-1 rounded text-xs md:text-sm font-medium transition-colors ${
                 selectedMetric === metric
                   ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
-                  : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
               }`}
             >
               {METRIC_LABELS[metric]}
