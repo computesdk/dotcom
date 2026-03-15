@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { BenchmarkBarChart } from "./BenchmarkBarChart"
 import { BenchmarkChart } from "./BenchmarkChart"
 import { BenchmarkDataTable } from "./BenchmarkDataTable"
@@ -63,6 +63,19 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
   const [selectedMetric, setSelectedMetric] = useState<Metric>("compositeScore")
   const [hiddenProviders, setHiddenProviders] = useState<Set<string>>(new Set())
   const [timeRange, setTimeRange] = useState<TimeRange>("all")
+  const [isStuck, setIsStuck] = useState(false)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsStuck(!entry.isIntersecting),
+      { threshold: 0 }
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [])
 
   const currentData = datasets[selectedTest]
 
@@ -85,10 +98,14 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
   }
 
   return (
-    <div className="not-content">
+    <div className="not-content mt-0">
+      {/* Sentinel element — when it scrolls out of view, the controls become fixed */}
+      <div ref={sentinelRef} className="h-0" />
+      {/* Spacer to prevent content jump when controls become fixed */}
+      {isStuck && <div className="h-[57px]" />}
       {/* Test type dropdown + metric selector */}
-      <div className="border-b border-gray-200 dark:border-gray-700/50">
-        <div className="md:max-w-7xl md:mx-auto py-3 px-4 md:px-6 flex items-center gap-3 mb-3">
+      <div className={`${isStuck ? "fixed top-0 left-0 right-0 z-50" : ""} backdrop-blur-sm border-b border-gray-200 dark:border-gray-700/50`}>
+        <div className="md:max-w-7xl md:mx-auto py-3 px-4 md:px-6 flex items-center gap-3">
           <Select value={selectedTest} onValueChange={(value) => handleTestTypeChange(value as TestType)}>
             <SelectTrigger className="w-[150px] h-9 rounded-lg text-sm font-medium text-gray-900 dark:text-white border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <SelectValue />
