@@ -7,7 +7,6 @@ interface BenchmarkProviderToggleProps {
   providerLogos: Record<string, string>
   providerLogosDark: Record<string, string>
   selectedMetric: Metric
-  onMetricChange: (metric: Metric) => void
 }
 
 type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
@@ -36,7 +35,6 @@ export function BenchmarkProviderToggle({
   providerLogos,
   providerLogosDark,
   selectedMetric,
-  onMetricChange,
 }: BenchmarkProviderToggleProps) {
 
   const ranked = useMemo(() => {
@@ -116,22 +114,6 @@ export function BenchmarkProviderToggle({
         <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
           Provider Leaderboard
         </h3>
-        <div className="inline-flex rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-0.5">
-          {(Object.keys(METRIC_LABELS) as Metric[]).map((metric) => (
-            <button
-              key={metric}
-              type="button"
-              onClick={() => onMetricChange(metric)}
-              className={`px-3 py-1 rounded text-xs md:text-sm font-medium transition-colors ${
-                selectedMetric === metric
-                  ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-              }`}
-            >
-              {METRIC_LABELS[metric]}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 px-4 md:px-6">
