@@ -9,29 +9,56 @@ import type { ChartConfig } from "./ui/chart"
 import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
 import type { ProviderResult } from "./benchmarkConstants"
 
-interface BenchmarkBarChartProps {
-  activeResults: ProviderResult[]
+type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
+
+const METRIC_CHART_LABELS: Record<Metric, string> = {
+  compositeScore: "Composite Score",
+  median: "Median TTI (Time to Interactive)",
+  min: "Min TTI (Time to Interactive)",
+  max: "Max TTI (Time to Interactive)",
+  p95: "P95 TTI (Time to Interactive)",
+  p99: "P99 TTI (Time to Interactive)",
 }
 
-export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
+interface BenchmarkBarChartProps {
+  activeResults: ProviderResult[]
+  selectedMetric: Metric
+}
+
+function getMetricValue(r: ProviderResult, metric: Metric): number {
+  if (metric === "compositeScore") return r.compositeScore ?? 0
+  return r.summary.ttiMs[metric]
+}
+
+function formatMetricValue(value: number, metric: Metric): string {
+  if (metric === "compositeScore") return value.toFixed(1)
+  return `${(value / 1000).toFixed(2)}s`
+}
+
+export function BenchmarkBarChart({ activeResults, selectedMetric }: BenchmarkBarChartProps) {
+  const isComposite = selectedMetric === "compositeScore"
+
   const chartData = useMemo(() => {
-    return activeResults.map((r) => ({
+    const data = activeResults.map((r) => ({
       provider: r.provider,
-      median: r.summary.ttiMs.median,
+      value: getMetricValue(r, selectedMetric),
       displayName: capitalize(r.provider),
+      median: r.summary.ttiMs.median,
       min: r.summary.ttiMs.min,
       max: r.summary.ttiMs.max,
       p95: r.summary.ttiMs.p95,
       p99: r.summary.ttiMs.p99,
+      compositeScore: r.compositeScore ?? 0,
       runs: r.iterations?.filter(i => !i.error).length || 0,
       totalRuns: r.iterations?.length || 0,
     }))
-  }, [activeResults])
+    return data.sort((a, b) => isComposite ? b.value - a.value : a.value - b.value)
+  }, [activeResults, selectedMetric, isComposite])
 
   const chartConfig = useMemo(() => {
     const config: ChartConfig = {
-      median: {
-        label: "Median TTI",
+      value: {
+        label: METRIC_CHART_LABELS[selectedMetric],
       },
     }
     for (const r of activeResults) {
@@ -41,10 +68,10 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
       }
     }
     return config
-  }, [activeResults])
+  }, [activeResults, selectedMetric])
 
-  const maxMedian = useMemo(() => {
-    return Math.max(...chartData.map(d => d.median))
+  const maxValue = useMemo(() => {
+    return Math.max(...chartData.map(d => d.value))
   }, [chartData])
 
   if (!chartData.length) {
@@ -56,23 +83,23 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
   return (
     <div className="not-content w-full max-w-7xl mx-auto">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 text-left">
-        Median TTI (Time to Interactive)
+        {METRIC_CHART_LABELS[selectedMetric]}
       </h3>
       <ChartContainer config={chartConfig} className="aspect-auto w-full min-w-0" style={{ height: `${chartHeight}px`, minHeight: `${chartHeight}px` }}>
         <BarChart
           data={chartData}
           layout="vertical"
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          margin={{ top: 5, right: 100, left: 20, bottom: 5 }}
         >
           <CartesianGrid horizontal={true} vertical={false} strokeDasharray="3 3" />
           <XAxis
             type="number"
-            domain={[0, maxMedian + 500]}
+            domain={[0, isComposite ? 100 : maxValue + 500]}
             tickLine={false}
             axisLine={false}
             tickMargin={8}
             tick={{ fontSize: 11 }}
-            tickFormatter={(value: number) => `${(value / 1000).toFixed(1)}s`}
+            tickFormatter={(value: number) => isComposite ? value.toFixed(0) : `${(value / 1000).toFixed(1)}s`}
           />
           <YAxis
             type="category"
@@ -152,12 +179,12 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
             }
           />
           <Bar
-            dataKey="median"
+            dataKey="value"
             radius={[0, 4, 4, 0]}
             barSize={24}
           >
             <LabelList
-              dataKey="median"
+              dataKey="value"
               position="right"
               offset={8}
               fill="currentColor"
@@ -166,7 +193,7 @@ export function BenchmarkBarChart({ activeResults }: BenchmarkBarChartProps) {
               className="fill-gray-700 dark:fill-gray-300"
               formatter={(value: any) => {
                 if (typeof value !== 'number') return ''
-                return `${(value / 1000).toFixed(2)}s`
+                return formatMetricValue(value, selectedMetric)
               }}
             />
             {chartData.map((entry, index) => (

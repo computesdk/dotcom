@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
 import type { ProviderResult } from "./benchmarkConstants"
 
@@ -6,6 +6,7 @@ interface BenchmarkProviderToggleProps {
   activeResults: ProviderResult[]
   providerLogos: Record<string, string>
   providerLogosDark: Record<string, string>
+  selectedMetric: Metric
 }
 
 type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
@@ -33,8 +34,8 @@ export function BenchmarkProviderToggle({
   activeResults,
   providerLogos,
   providerLogosDark,
+  selectedMetric,
 }: BenchmarkProviderToggleProps) {
-  const [selectedMetric, setSelectedMetric] = useState<Metric>("compositeScore")
 
   const ranked = useMemo(() => {
     return [...activeResults]
@@ -62,7 +63,7 @@ export function BenchmarkProviderToggle({
     return (
       <div
         key={result.provider}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border transition-colors ${
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors ${
           index === 0
             ? "dark:bg-gray-700 shadow:lg border-blue-200 dark:border-blue-700/30 shadow-sm"
             : "bg-white/50 dark:bg-gray-700 shadow:lg border-gray-200 dark:border-gray-700/50"
@@ -113,22 +114,6 @@ export function BenchmarkProviderToggle({
         <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
           Provider Leaderboard
         </h3>
-        <div className="inline-flex rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-0.5">
-          {(Object.keys(METRIC_LABELS) as Metric[]).map((metric) => (
-            <button
-              key={metric}
-              type="button"
-              onClick={() => setSelectedMetric(metric)}
-              className={`px-3 py-1 rounded text-xs md:text-sm font-medium transition-colors ${
-                selectedMetric === metric
-                  ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-              }`}
-            >
-              {METRIC_LABELS[metric]}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 px-4 md:px-6">

@@ -1,12 +1,20 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { BenchmarkBarChart } from "./BenchmarkBarChart"
 import { BenchmarkChart } from "./BenchmarkChart"
 import { BenchmarkDataTable } from "./BenchmarkDataTable"
 import { BenchmarkProviderToggle } from "./BenchmarkProviderToggle"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select"
 import type { ProviderResult, HistoryDataPoint } from "./benchmarkConstants"
 
 type TestType = "sequential_tti" | "burst_tti" | "staggered_tti"
 type TimeRange = "30" | "60" | "90" | "all"
+type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
 
 interface TestTypeData {
   active: ProviderResult[]
@@ -34,6 +42,15 @@ const TEST_TYPE_LABELS: Record<TestType, { label: string; }> = {
 }
 
 const TEST_TYPES: TestType[] = ["sequential_tti", "burst_tti", "staggered_tti"]
+const METRICS: Metric[] = ["compositeScore", "median", "min", "max", "p95", "p99"]
+const METRIC_LABELS: Record<Metric, string> = {
+  compositeScore: "Composite Score",
+  median: "Median TTI",
+  min: "Min TTI",
+  max: "Max TTI",
+  p95: "P95 TTI",
+  p99: "P99 TTI",
+}
 const TIME_RANGES: { value: TimeRange; label: string }[] = [
   { value: "30", label: "30d" },
   { value: "60", label: "60d" },
@@ -43,8 +60,22 @@ const TIME_RANGES: { value: TimeRange; label: string }[] = [
 
 export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark }: BenchmarkDashboardProps) {
   const [selectedTest, setSelectedTest] = useState<TestType>("sequential_tti")
+  const [selectedMetric, setSelectedMetric] = useState<Metric>("compositeScore")
   const [hiddenProviders, setHiddenProviders] = useState<Set<string>>(new Set())
   const [timeRange, setTimeRange] = useState<TimeRange>("all")
+  const [isStuck, setIsStuck] = useState(false)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsStuck(!entry.isIntersecting),
+      { threshold: 0 }
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [])
 
   const currentData = datasets[selectedTest]
 
@@ -67,23 +98,54 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
   }
 
   return (
-    <div className="not-content">
-      {/* Test type selector — border-separated section */}
-      <div className="border-b border-gray-200/50 dark:border-gray-700/50">
-        <div className="md:max-w-7xl md:mx-auto py-2 mb-3 px-4 md:px-6">
-          <div className="inline-flex rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-0.5">
-            {TEST_TYPES.map((testType) => (
+    <div className="not-content mt-0">
+      {/* Sentinel element — when it scrolls out of view, the controls become fixed */}
+      <div ref={sentinelRef} className="h-0" />
+      {/* Spacer to prevent content jump when controls become fixed */}
+      {isStuck && <div className="h-[57px]" />}
+      {/* Test type dropdown + metric selector */}
+      <div className={`${isStuck ? "fixed top-0 left-0 right-0 z-50" : ""} backdrop-blur-sm border-b border-gray-200 dark:border-gray-700/50`}>
+        <div className="md:max-w-7xl md:mx-auto py-3 px-4 md:px-6 flex items-center gap-3">
+          <Select value={selectedTest} onValueChange={(value) => handleTestTypeChange(value as TestType)}>
+            <SelectTrigger className="w-[150px] h-9 rounded-lg text-sm font-medium text-gray-900 dark:text-white border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TEST_TYPES.map((testType) => (
+                <SelectItem key={testType} value={testType} className="text-sm">
+                  {TEST_TYPE_LABELS[testType].label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {/* Metric: dropdown on mobile, tabs on sm+ */}
+          <div className="sm:hidden">
+            <Select value={selectedMetric} onValueChange={(value) => setSelectedMetric(value as Metric)}>
+              <SelectTrigger className="w-[170px] h-9 rounded-lg text-sm font-medium text-gray-900 dark:text-white border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {METRICS.map((metric) => (
+                  <SelectItem key={metric} value={metric} className="text-sm">
+                    {METRIC_LABELS[metric]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="hidden sm:inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+            {METRICS.map((metric) => (
               <button
-                key={testType}
+                key={metric}
                 type="button"
-                onClick={() => handleTestTypeChange(testType)}
-                className={`px-3 py-1 rounded text-xs md:text-sm font-medium transition-colors ${
-                  selectedTest === testType
-                    ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                onClick={() => setSelectedMetric(metric)}
+                className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-white dark:ring-offset-gray-950 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
+                  selectedMetric === metric
+                    ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                    : "bg-gray-100 hover:text-gray-950 dark:hover:text-gray-50"
                 }`}
               >
-                {TEST_TYPE_LABELS[testType].label}
+                {METRIC_LABELS[metric]}
               </button>
             ))}
           </div>
@@ -97,6 +159,7 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
             activeResults={currentData.active}
             providerLogos={providerLogos}
             providerLogosDark={providerLogosDark}
+            selectedMetric={selectedMetric}
           />
         </div>
       </div>
@@ -110,16 +173,16 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
                 Performance Over Time
               </h3>
-              <div className="inline-flex rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-0.5">
+              <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
                 {TIME_RANGES.map(({ value, label }) => (
                   <button
                     key={value}
                     type="button"
                     onClick={() => setTimeRange(value)}
-                    className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-white dark:ring-offset-gray-950 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
                       timeRange === value
-                        ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
-                        : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                        ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                        : "hover:text-gray-950 dark:hover:text-gray-50"
                     }`}
                   >
                     {label}
@@ -133,13 +196,14 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               hiddenProviders={hiddenProviders}
               onToggleProvider={toggleProvider}
               timeRange={timeRange}
+              selectedMetric={selectedMetric}
             />
           </div>
         )}
 
         {/* Bar chart */}
         <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
-          <BenchmarkBarChart activeResults={visibleResults} />
+          <BenchmarkBarChart activeResults={visibleResults} selectedMetric={selectedMetric} />
         </div>
 
         {/* Data table */}

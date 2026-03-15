@@ -95,7 +95,21 @@ async function fetchTestType(testType: string): Promise<TestTypeData> {
           const point: HistoryDataPoint = { date: dateLabel };
           for (const r of fileData.results as ProviderResult[]) {
             if (!r.skipped && r.summary?.ttiMs?.median != null && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
-              point[r.provider] = Math.round(r.summary.ttiMs.median);
+              const t = r.summary.ttiMs;
+              // Store all metrics with compound keys for the line chart
+              point[`${r.provider}_median`] = Math.round(t.median);
+              point[`${r.provider}_min`] = Math.round(t.min);
+              point[`${r.provider}_max`] = Math.round(t.max);
+              point[`${r.provider}_p95`] = Math.round(t.p95);
+              point[`${r.provider}_p99`] = Math.round(t.p99);
+              // Compute composite score inline
+              const ceil = 10_000;
+              const score = (v: number) => Math.max(0, 100 * (1 - v / ceil));
+              const weighted = score(t.median) * 0.5 + score(t.p95) * 0.2 + score(t.max) * 0.15 + score(t.p99) * 0.1 + score(t.min) * 0.05;
+              const sr = r.successRate ?? 1;
+              point[`${r.provider}_compositeScore`] = Math.round(weighted * sr * 10) / 10;
+              // Keep plain provider key for backwards compat (median)
+              point[r.provider] = Math.round(t.median);
               allProviders.add(r.provider);
             }
           }
@@ -178,10 +192,10 @@ const benchmarksFAQs = [
   <!-- Sticky header -->
   <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
     <div class="border-b border-gray-200/50 dark:border-gray-700/50">
-      <div class="md:max-w-7xl md:mx-auto py-3 px-4 md:py-4 md:px-6">
+      <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:py-12 md:px-6">
         <div class="sm:flex sm:flex-row items-center md:justify-between gap-3">
           <div>
-            <h1 class="text-lg md:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Sandbox Benchmarks</h1>
+            <h1 class="text-xl md:text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">Sandbox Benchmarks</h1>
             <p class="m-0 text-sm text-gray-700">A leaderboard of common benchmarks for each of our sandbox providers.</p>
           </div>
           <div class="m-0 text-left md:text-right">
@@ -210,7 +224,7 @@ const benchmarksFAQs = [
       <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
     </div>
   ) : (
-  <div>
+  <div class="mt-0">
     <BenchmarkDashboard
       client:visible
       datasets={datasets}
