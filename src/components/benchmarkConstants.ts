@@ -2,12 +2,12 @@ export interface ProviderResult {
   provider: string
   summary: {
     ttiMs: {
-      min: number
-      max: number
       median: number
       p95: number
       p99: number
-      avg: number
+      min?: number
+      max?: number
+      avg?: number
     }
   }
   compositeScore?: number
@@ -33,10 +33,12 @@ export const PROVIDER_COLORS: Record<string, string> = {
   codesandbox: "#6366f1",
   runloop: "#14b8a6",
   justbash: "#303137",
+  "just-bash": "#303137",
 }
 
 export function capitalize(s: string): string {
   if (s.toLowerCase() === "e2b") return "E2B"
   if (s.toLowerCase() === "codesandbox") return "CodeSandbox"
+  if (s === "just-bash" || s === "justbash") return "JustBash"
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
