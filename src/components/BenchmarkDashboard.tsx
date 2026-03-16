@@ -14,7 +14,7 @@ import type { ProviderResult, HistoryDataPoint } from "./benchmarkConstants"
 
 type TestType = "sequential_tti" | "burst_tti" | "staggered_tti"
 type TimeRange = "30" | "60" | "90" | "all"
-type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
+type Metric = "median" | "p95" | "p99" | "compositeScore"
 
 interface TestTypeData {
   active: ProviderResult[]
@@ -42,12 +42,10 @@ const TEST_TYPE_LABELS: Record<TestType, { label: string; }> = {
 }
 
 const TEST_TYPES: TestType[] = ["sequential_tti", "burst_tti", "staggered_tti"]
-const METRICS: Metric[] = ["compositeScore", "median", "min", "max", "p95", "p99"]
+const METRICS: Metric[] = ["compositeScore", "median", "p95", "p99"]
 const METRIC_LABELS: Record<Metric, string> = {
   compositeScore: "Composite Score",
   median: "Median TTI",
-  min: "Min TTI",
-  max: "Max TTI",
   p95: "P95 TTI",
   p99: "P99 TTI",
 }

@@ -90,24 +90,6 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
         size: 100,
       },
       {
-        id: "min",
-        accessorFn: (r) => r.summary.ttiMs.min,
-        header: "Min",
-        cell: ({ getValue }) => (
-          <span className="font-mono">{formatSecs(getValue() as number)}</span>
-        ),
-        size: 100,
-      },
-      {
-        id: "max",
-        accessorFn: (r) => r.summary.ttiMs.max,
-        header: "Max",
-        cell: ({ getValue }) => (
-          <span className="font-mono">{formatSecs(getValue() as number)}</span>
-        ),
-        size: 100,
-      },
-      {
         id: "p95",
         accessorFn: (r) => r.summary.ttiMs.p95,
         header: "P95",
