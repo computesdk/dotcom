@@ -65,8 +65,8 @@ export function BenchmarkProviderToggle({
         key={result.provider}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors ${
           index === 0
-            ? "dark:bg-gray-700 shadow:lg border-blue-200 dark:border-blue-700/30 shadow-sm"
-            : "bg-white/50 dark:bg-gray-700 shadow:lg border-gray-200 dark:border-gray-700/50"
+            ? "dark:bg-gray-700/50 shadow:lg border-blue-200 dark:border-blue-700/30 shadow-sm"
+            : "bg-white/50 dark:bg-gray-700/50 shadow:lg border-gray-200 dark:border-gray-700/50"
         }`}
       >
         <div className="shrink-0 w-6 text-center">
