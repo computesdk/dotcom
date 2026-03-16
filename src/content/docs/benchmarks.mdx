@@ -19,3 +19,18 @@ import PageLayout from '../../components/layouts/PageLayout.astro';
     <BenchmarksPage />
 </PageLayout>
 </div>
+
+<style>{`
+  .nova-page-frame-header {
+    position: relative !important;
+  }
+  .main-frame {
+    padding-top: 0 !important;
+  }
+  .parallax-content {
+    transform-style: flat !important;
+  }
+  .parallax-content > * {
+    transform: none !important;
+  }
+`}</style>
