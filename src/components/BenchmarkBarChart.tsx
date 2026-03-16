@@ -9,13 +9,11 @@ import type { ChartConfig } from "./ui/chart"
 import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
 import type { ProviderResult } from "./benchmarkConstants"
 
-type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
+type Metric = "median" | "p95" | "p99" | "compositeScore"
 
 const METRIC_CHART_LABELS: Record<Metric, string> = {
   compositeScore: "Composite Score",
   median: "Median TTI (Time to Interactive)",
-  min: "Min TTI (Time to Interactive)",
-  max: "Max TTI (Time to Interactive)",
   p95: "P95 TTI (Time to Interactive)",
   p99: "P99 TTI (Time to Interactive)",
 }
@@ -44,8 +42,6 @@ export function BenchmarkBarChart({ activeResults, selectedMetric }: BenchmarkBa
       value: getMetricValue(r, selectedMetric),
       displayName: capitalize(r.provider),
       median: r.summary.ttiMs.median,
-      min: r.summary.ttiMs.min,
-      max: r.summary.ttiMs.max,
       p95: r.summary.ttiMs.p95,
       p99: r.summary.ttiMs.p99,
       compositeScore: r.compositeScore ?? 0,
@@ -154,14 +150,6 @@ export function BenchmarkBarChart({ activeResults, selectedMetric }: BenchmarkBa
                         <div className="flex justify-between">
                           <span className="text-gray-500 dark:text-gray-400">Median</span>
                           <span className="font-mono font-medium text-gray-900 dark:text-gray-50">{formatSecs(d.median)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500 dark:text-gray-400">Min</span>
-                          <span className="font-mono text-gray-600 dark:text-gray-300">{formatSecs(d.min)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500 dark:text-gray-400">Max</span>
-                          <span className="font-mono text-gray-600 dark:text-gray-300">{formatSecs(d.max)}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-500 dark:text-gray-400">P95</span>

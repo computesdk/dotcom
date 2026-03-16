@@ -4,7 +4,7 @@ import { BenchmarkDashboard } from "./BenchmarkDashboard";
 
 interface ProviderResult {
   provider: string;
-  summary: { ttiMs: { min: number; max: number; median: number; p95: number; p99: number; avg: number } };
+  summary: { ttiMs: { median: number; p95: number; p99: number; min?: number; max?: number; avg?: number } };
   compositeScore?: number;
   successRate?: number;
   skipped?: boolean;
@@ -96,16 +96,14 @@ async function fetchTestType(testType: string): Promise<TestTypeData> {
           for (const r of fileData.results as ProviderResult[]) {
             if (!r.skipped && r.summary?.ttiMs?.median != null && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
               const t = r.summary.ttiMs;
-              // Store all metrics with compound keys for the line chart
+              // Store metrics with compound keys for the line chart
               point[`${r.provider}_median`] = Math.round(t.median);
-              point[`${r.provider}_min`] = Math.round(t.min);
-              point[`${r.provider}_max`] = Math.round(t.max);
               point[`${r.provider}_p95`] = Math.round(t.p95);
               point[`${r.provider}_p99`] = Math.round(t.p99);
-              // Compute composite score inline
+              // Compute composite score: median 60%, p95 25%, p99 15%
               const ceil = 10_000;
               const score = (v: number) => Math.max(0, 100 * (1 - v / ceil));
-              const weighted = score(t.median) * 0.5 + score(t.p95) * 0.2 + score(t.max) * 0.15 + score(t.p99) * 0.1 + score(t.min) * 0.05;
+              const weighted = score(t.median) * 0.6 + score(t.p95) * 0.25 + score(t.p99) * 0.15;
               const sr = r.successRate ?? 1;
               point[`${r.provider}_compositeScore`] = Math.round(weighted * sr * 10) / 10;
               // Keep plain provider key for backwards compat (median)
@@ -147,6 +145,7 @@ const providerLogos: Record<string, string> = {
   codesandbox: "/benchmarks/normal-codesandbox-light.svg",
   runloop: "/benchmarks/normal-runloop-light.svg",
   justbash: "/benchmarks/normal-justbash-light.svg",
+  "just-bash": "/benchmarks/normal-justbash-light.svg",
   cloudflare: "/benchmarks/normal-cloudflare-light.svg",
 };
 
@@ -161,6 +160,7 @@ const providerLogosDark: Record<string, string> = {
   codesandbox: "/benchmarks/normal-codesandbox-dark.svg",
   runloop: "/benchmarks/normal-runloop-dark.svg",
   justbash: "/benchmarks/normal-justbash-dark.svg",
+  "just-bash": "/benchmarks/normal-justbash-dark.svg",
   cloudflare: "/benchmarks/normal-cloudflare-dark.svg",
 };
 
@@ -273,11 +273,9 @@ const benchmarksFAQs = [
           The weighted timing score is then multiplied by the success rate (0–1), so providers that fail frequently are penalized proportionally.
         </p>
         <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1.5 list-none p-0 m-0">
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Median: 50%</strong> — primary signal for typical experience</li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P95: 20%</strong> — tail latency / consistency</li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Max: 15%</strong> — worst-case exposure</li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P99: 10%</strong> — extreme tail latency</li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Min: 5%</strong> — best-case capability</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Median: 60%</strong> — primary signal for typical experience</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P95: 25%</strong> — tail latency / consistency</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">P99: 15%</strong> — extreme tail latency</li>
         </ul>
       </div>
     </div>

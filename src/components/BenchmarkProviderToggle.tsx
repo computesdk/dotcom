@@ -9,13 +9,11 @@ interface BenchmarkProviderToggleProps {
   selectedMetric: Metric
 }
 
-type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
+type Metric = "median" | "p95" | "p99" | "compositeScore"
 
 const METRIC_LABELS: Record<Metric, string> = {
   compositeScore: "Composite Score",
   median: "Median TTI",
-  min: "Min TTI",
-  max: "Max TTI",
   p95: "P95 TTI",
   p99: "P99 TTI",
 }

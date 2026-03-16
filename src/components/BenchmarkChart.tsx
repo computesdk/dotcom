@@ -9,7 +9,7 @@ import type { ChartConfig } from "./ui/chart"
 import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
 import type { HistoryDataPoint } from "./benchmarkConstants"
 
-type Metric = "median" | "min" | "max" | "p95" | "p99" | "compositeScore"
+type Metric = "median" | "p95" | "p99" | "compositeScore"
 
 interface BenchmarkChartProps {
   historyData: HistoryDataPoint[]
