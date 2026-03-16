@@ -142,7 +142,7 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
                 className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-white dark:ring-offset-gray-950 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
                   selectedMetric === metric
                     ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
-                    : "bg-gray-100 hover:text-gray-950 dark:hover:text-gray-50"
+                    : "bg-gray-100 dark:bg-gray-800 hover:text-gray-950 dark:hover:text-gray-50"
                 }`}
               >
                 {METRIC_LABELS[metric]}
@@ -182,7 +182,7 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
                     className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-white dark:ring-offset-gray-950 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
                       timeRange === value
                         ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
-                        : "hover:text-gray-950 dark:hover:text-gray-50"
+                        : "hover:text-gray-950 dark:bg-gray-800 dark:hover:text-gray-50"
                     }`}
                   >
                     {label}
