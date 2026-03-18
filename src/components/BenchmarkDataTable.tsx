@@ -52,7 +52,7 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
           const logoLight = providerLogos[provider]
           const logoDark = providerLogosDark[provider]
           return (
-            <div className="flex items-center gap-2">
+            <a href={`/benchmarks/${provider}`} className="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity">
               {logoLight && (
                 <>
                   <img src={logoLight} alt="" className="h-5 w-auto object-contain dark:hidden" />
@@ -64,7 +64,7 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
                   {capitalize(provider)}
                 </span>
               )}
-            </div>
+            </a>
           )
         },
         enableSorting: false,

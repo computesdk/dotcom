@@ -59,9 +59,10 @@ export function BenchmarkProviderToggle({
     const logoDark = providerLogosDark[result.provider]
 
     return (
-      <div
+      <a
         key={result.provider}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors ${
+        href={`/benchmarks/${result.provider}`}
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors no-underline cursor-pointer ${
           index === 0
             ? "dark:bg-gray-700/50 shadow:lg border-blue-200 dark:border-blue-700/30 shadow-sm"
             : "bg-white/50 dark:bg-gray-700/50 shadow:lg border-gray-200 dark:border-gray-700/50"
@@ -94,15 +95,20 @@ export function BenchmarkProviderToggle({
 
         <div className="flex-1" />
 
-        <div className="shrink-0 flex flex-col items-end">
-          <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
-            {formatValue(result.metricValue, selectedMetric)}
-          </span>
-          <span className="text-[10px] text-gray-500 dark:text-gray-400">
-            {METRIC_LABELS[selectedMetric]}
-          </span>
+        <div className="shrink-0 flex items-center gap-2">
+          <div className="flex flex-col items-end">
+            <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
+              {formatValue(result.metricValue, selectedMetric)}
+            </span>
+            <span className="text-[10px] text-gray-500 dark:text-gray-400">
+              {METRIC_LABELS[selectedMetric]}
+            </span>
+          </div>
+          <svg className="size-4 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
         </div>
-      </div>
+      </a>
     )
   }
 
