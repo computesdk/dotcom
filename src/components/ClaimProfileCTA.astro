@@ -6,9 +6,9 @@ interface Props {
 const { displayName } = Astro.props
 
 const sponsors = [
-  { name: "Daytona", logoLight: "/benchmarks/normal-daytona-light.svg", logoDark: "/benchmarks/normal-daytona-dark.svg" },
-  { name: "E2B", logoLight: "/benchmarks/normal-e2b-light.svg", logoDark: "/benchmarks/normal-e2b-dark.svg" },
-  { name: "Modal", logoLight: "/benchmarks/normal-modal-light.svg", logoDark: "/benchmarks/normal-modal-dark.svg" },
+  { name: "Archil", logo: "/archil-logo.png" },
+  { name: "Latitude", logo: "/latitude-logo.svg" },
+  { name: "Tigris", logo: "/tigris-logo.svg" },
 ]
 ---
 
@@ -63,9 +63,8 @@ const sponsors = [
       <p class="text-xs text-gray-400 dark:text-gray-500 m-0 mb-3">Sponsored by</p>
       <div class="flex items-center justify-center gap-8">
         {sponsors.map((s) => (
-          <div class="w-20 flex items-center justify-center">
-            <img src={s.logoLight} alt={s.name} class="max-h-4 w-full object-contain opacity-40 dark:hidden" />
-            <img src={s.logoDark} alt="" class="max-h-4 w-full object-contain opacity-40 hidden dark:block" />
+          <div class="flex items-center justify-center">
+            <img src={s.logo} alt={s.name} class="h-4 w-auto object-contain opacity-40 dark:invert" />
           </div>
         ))}
       </div>
