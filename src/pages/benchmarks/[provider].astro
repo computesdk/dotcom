@@ -232,11 +232,10 @@ const displayName = capitalize(provider)
         </div>
       </header>
 
-      <!-- Provider's section (top) — claimed content goes here, placeholders for unclaimed -->
-      <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-8">
-        <!-- Claim CTA banner -->
-        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-8 mb-6 text-center bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/20 text-xs font-medium text-amber-700 dark:text-amber-400 mb-4">
+      <!-- Claim CTA banner -->
+      <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 pt-6">
+        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 text-center bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/20 text-xs font-medium text-amber-700 dark:text-amber-400 mb-3">
             <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
@@ -245,7 +244,7 @@ const displayName = capitalize(provider)
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white m-0 mb-2">
             Claim this profile
           </h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 max-w-lg mx-auto m-0 mb-5">
+          <p class="text-sm text-gray-500 dark:text-gray-400 max-w-lg mx-auto m-0 mb-4">
             Your benchmark data is public. Control your narrative — add branding, respond to the data, and showcase what makes {displayName} unique.
           </p>
           <a
@@ -259,6 +258,32 @@ const displayName = capitalize(provider)
               <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
           </a>
+        </div>
+      </div>
+
+      <!-- Verified benchmark data -->
+      {fetchError ? (
+        <div class="max-w-4xl mx-auto my-0 py-16 text-center">
+          <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
+        </div>
+      ) : (
+        <ProviderDetailDashboard
+          client:visible
+          provider={provider}
+          providerData={providerData}
+          datasets={datasets}
+          providerRank={providerRank}
+          totalProviders={totalProviders}
+        />
+      )}
+
+      <!-- Unclaimed placeholders (bottom) -->
+      <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 pb-8">
+        <!-- Divider -->
+        <div class="flex items-center gap-4 py-6">
+          <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+          <span class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">Available when claimed</span>
+          <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
         </div>
 
         <!-- Provider description placeholder -->
@@ -300,7 +325,7 @@ const displayName = capitalize(provider)
         </div>
 
         <!-- Custom Benchmarks placeholder -->
-        <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 mb-4 relative overflow-hidden">
+        <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 relative overflow-hidden">
           <div class="absolute inset-0 bg-gray-50/50 dark:bg-gray-800/30" />
           <div class="relative text-center">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-xs font-medium text-gray-500 dark:text-gray-400 mb-3">
@@ -315,39 +340,6 @@ const displayName = capitalize(provider)
           </div>
         </div>
       </div>
-
-      <!-- Verified Benchmark Data divider -->
-      <div class="md:max-w-7xl md:mx-auto px-4 md:px-6">
-        <div class="flex items-center gap-4 py-2">
-          <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-          <div class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50">
-            <svg class="size-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-            </svg>
-            <span class="text-sm font-medium text-emerald-700 dark:text-emerald-400">Verified Benchmark Data</span>
-          </div>
-          <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-        </div>
-        <p class="text-center text-xs text-gray-400 dark:text-gray-500 mt-1 mb-0">
-          Collected and validated by ComputeSDK. This data cannot be modified by the provider.
-        </p>
-      </div>
-
-      <!-- Verified benchmark data (bottom) -->
-      {fetchError ? (
-        <div class="max-w-4xl mx-auto my-0 py-16 text-center">
-          <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
-        </div>
-      ) : (
-        <ProviderDetailDashboard
-          client:visible
-          provider={provider}
-          providerData={providerData}
-          datasets={datasets}
-          providerRank={providerRank}
-          totalProviders={totalProviders}
-        />
-      )}
     </div>
   </PageLayout>
   <Footer />
