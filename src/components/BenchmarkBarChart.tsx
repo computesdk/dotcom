@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useSyncExternalStore } from "react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, LabelList } from "recharts"
 import {
   ChartContainer,
@@ -33,8 +33,20 @@ function formatMetricValue(value: number, metric: Metric): string {
   return `${(value / 1000).toFixed(2)}s`
 }
 
+function useIsMobile(breakpoint = 640) {
+  const subscribe = (cb: () => void) => {
+    const mql = window.matchMedia(`(min-width: ${breakpoint}px)`)
+    mql.addEventListener("change", cb)
+    return () => mql.removeEventListener("change", cb)
+  }
+  const getSnapshot = () => window.innerWidth >= breakpoint
+  const getServerSnapshot = () => true
+  return !useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+}
+
 export function BenchmarkBarChart({ activeResults, selectedMetric }: BenchmarkBarChartProps) {
   const isComposite = selectedMetric === "compositeScore"
+  const isMobile = useIsMobile()
 
   const chartData = useMemo(() => {
     const data = activeResults.map((r) => ({
@@ -85,7 +97,7 @@ export function BenchmarkBarChart({ activeResults, selectedMetric }: BenchmarkBa
         <BarChart
           data={chartData}
           layout="vertical"
-          margin={{ top: 5, right: 100, left: 20, bottom: 5 }}
+          margin={{ top: 5, right: isMobile ? 50 : 100, left: isMobile ? 0 : 20, bottom: 5 }}
         >
           <CartesianGrid horizontal={true} vertical={false} strokeDasharray="3 3" />
           <XAxis
@@ -104,25 +116,27 @@ export function BenchmarkBarChart({ activeResults, selectedMetric }: BenchmarkBa
             axisLine={false}
             tickMargin={8}
             tick={{ fontSize: 11, fill: "currentColor" }}
-            width={80}
+            width={isMobile ? 60 : 80}
             className="text-gray-600 dark:text-gray-400"
           />
-          <YAxis
-            yAxisId="right"
-            orientation="right"
-            type="category"
-            dataKey="runs"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            tick={{ fontSize: 11, fill: "currentColor" }}
-            tickFormatter={(value, index) => {
-              const item = chartData[index]
-              return item ? `${item.runs}/${item.totalRuns}` : `${value}`
-            }}
-            width={70}
-            className="text-gray-500 dark:text-gray-500"
-          />
+          {!isMobile && (
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              type="category"
+              dataKey="runs"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tick={{ fontSize: 11, fill: "currentColor" }}
+              tickFormatter={(value, index) => {
+                const item = chartData[index]
+                return item ? `${item.runs}/${item.totalRuns}` : `${value}`
+              }}
+              width={70}
+              className="text-gray-500 dark:text-gray-500"
+            />
+          )}
           <ChartTooltip
             cursor={{ fill: "var(--color-gray-100)", opacity: 0.1 }}
             content={
