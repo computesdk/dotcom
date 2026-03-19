@@ -63,10 +63,10 @@ const sponsors = [
       <p class="text-xs text-gray-400 dark:text-gray-500 m-0 mb-3">Sponsored by</p>
       <div class="flex items-center justify-center gap-6">
         {sponsors.map((s) => (
-          <>
+          <div class="flex items-center">
             <img src={s.logoLight} alt={s.name} class="h-4 w-auto object-contain opacity-40 dark:hidden" />
             <img src={s.logoDark} alt="" class="h-4 w-auto object-contain opacity-40 hidden dark:block" />
-          </>
+          </div>
         ))}
       </div>
     </div>
