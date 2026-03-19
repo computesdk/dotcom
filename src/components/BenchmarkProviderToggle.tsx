@@ -74,7 +74,7 @@ export function BenchmarkProviderToggle({
           </span>
         </div>
 
-        <div className="shrink-0 w-40 flex items-center">
+        <div className="shrink-0 w-24 flex items-center">
           {logoLight ? (
             <>
               <img src={logoLight} alt={`${result.provider} logo`} className="w-full h-full object-contain dark:hidden" />
