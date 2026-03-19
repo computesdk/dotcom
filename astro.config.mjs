@@ -182,6 +182,10 @@ export default defineConfig({
               href: '/providers'
             },
             {
+              label:'Benchmarks',
+              href: '/benchmarks'
+            },
+            {
               label:'Pricing',
               href: '/pricing'
             },
