@@ -215,6 +215,22 @@ const benchmarksFAQs = [
             </span>
           </div>
         </div>
+        <div class="mt-6 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
+          <div class="flex items-center justify-center gap-6">
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Sponsored by</span>
+            <div class="flex items-center gap-8">
+              <a href="https://archil.com/" target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity">
+                <img src="/archil-logo.png" alt="Archil" class="h-6 w-auto object-contain dark:invert" />
+              </a>
+              <a href="https://latitude.so/" target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity">
+                <img src="/latitude-logo.svg" alt="Latitude" class="h-6 w-auto object-contain dark:invert" />
+              </a>
+              <a href="https://www.tigrisdata.com/" target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity">
+                <img src="/tigris-logo.svg" alt="Tigris" class="h-6 w-auto object-contain dark:invert" />
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -225,24 +241,6 @@ const benchmarksFAQs = [
     </div>
   ) : (
   <div class="mt-0">
-    <!-- Sponsor strip -->
-    <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-4">
-      <div class="flex items-center justify-center gap-3">
-        <span class="text-xs text-gray-400 dark:text-gray-500">Sponsored by</span>
-        <div class="flex items-center gap-6">
-          <a href="https://archil.com/" target="_blank" rel="noopener noreferrer" class="opacity-40 hover:opacity-70 transition-opacity">
-            <img src="/archil-logo.png" alt="Archil" class="h-4 w-auto object-contain dark:invert" />
-          </a>
-          <a href="https://latitude.so/" target="_blank" rel="noopener noreferrer" class="opacity-40 hover:opacity-70 transition-opacity">
-            <img src="/latitude-logo.svg" alt="Latitude" class="h-4 w-auto object-contain dark:invert" />
-          </a>
-          <a href="https://www.tigrisdata.com/" target="_blank" rel="noopener noreferrer" class="opacity-40 hover:opacity-70 transition-opacity">
-            <img src="/tigris-logo.svg" alt="Tigris" class="h-4 w-auto object-contain dark:invert" />
-          </a>
-        </div>
-      </div>
-    </div>
-
     <BenchmarkDashboard
       client:visible
       datasets={datasets}
