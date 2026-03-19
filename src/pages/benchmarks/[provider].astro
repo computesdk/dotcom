@@ -1,7 +1,6 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro"
 import PageLayout from "../../components/layouts/PageLayout.astro"
-import Footer from "../../components/Footer.astro"
 import ClaimProfileCTA from "../../components/ClaimProfileCTA.astro"
 import { ProviderDetailDashboard } from "../../components/ProviderDetailDashboard"
 import { capitalize } from "../../components/benchmarkConstants"
@@ -263,7 +262,6 @@ const displayName = capitalize(provider)
       </div>
     </div>
   </PageLayout>
-  <Footer />
 </StarlightPage>
 
 <style is:global>
