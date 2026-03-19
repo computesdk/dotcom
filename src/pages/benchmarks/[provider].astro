@@ -2,6 +2,7 @@
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro"
 import PageLayout from "../../components/layouts/PageLayout.astro"
 import Footer from "../../components/Footer.astro"
+import ClaimProfileCTA from "../../components/ClaimProfileCTA.astro"
 import { ProviderDetailDashboard } from "../../components/ProviderDetailDashboard"
 import { capitalize } from "../../components/benchmarkConstants"
 import type { ProviderResult, HistoryDataPoint } from "../../components/benchmarkConstants"
@@ -234,31 +235,7 @@ const displayName = capitalize(provider)
 
       <!-- Claim CTA banner -->
       <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 pt-6">
-        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 text-center bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/20 text-xs font-medium text-amber-700 dark:text-amber-400 mb-3">
-            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-            </svg>
-            Unclaimed profile
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white m-0 mb-2">
-            Claim this profile
-          </h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 max-w-lg mx-auto m-0 mb-4">
-            Your benchmark data is public. Control your narrative — add branding, respond to the data, and showcase what makes {displayName} unique.
-          </p>
-          <a
-            href="https://x.com/computesdk"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors no-underline"
-          >
-            Get started
-            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </a>
-        </div>
+        <ClaimProfileCTA displayName={displayName} />
       </div>
 
       <!-- Verified benchmark data -->
@@ -277,49 +254,12 @@ const displayName = capitalize(provider)
         />
       )}
 
-      <!-- Claim this profile (bottom) -->
+      <!-- Claim CTA (bottom) -->
       <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 pb-8">
         <div class="flex items-center gap-4 py-6">
           <div class="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
         </div>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-8 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
-          <div class="max-w-md mx-auto text-center">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white m-0 mb-2">
-              Claim this profile to unlock
-            </h3>
-            <ul class="text-sm text-gray-500 dark:text-gray-400 list-none p-0 m-0 mb-5 space-y-2.5">
-              <li class="flex items-center gap-3">
-                <svg class="size-4 shrink-0 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016A3.001 3.001 0 0021 9.349m-18 0a2.999 2.999 0 00.72-1.599L4.49 3H19.51l.77 4.75A2.999 2.999 0 0021 9.349" />
-                </svg>
-                <span>Provider branding, description, and links</span>
-              </li>
-              <li class="flex items-center gap-3">
-                <svg class="size-4 shrink-0 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-                </svg>
-                <span>Public response from your team</span>
-              </li>
-              <li class="flex items-center gap-3">
-                <svg class="size-4 shrink-0 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" />
-                </svg>
-                <span>Custom benchmarks and metrics</span>
-              </li>
-            </ul>
-            <a
-              href="https://x.com/computesdk"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors no-underline"
-            >
-              Get started
-              <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </a>
-          </div>
-        </div>
+        <ClaimProfileCTA displayName={displayName} />
       </div>
     </div>
   </PageLayout>
