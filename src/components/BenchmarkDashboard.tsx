@@ -10,11 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select"
-import type { ProviderResult, HistoryDataPoint } from "./benchmarkConstants"
+import { METRIC_LABELS } from "./benchmarkConstants"
+import type { ProviderResult, HistoryDataPoint, Metric } from "./benchmarkConstants"
 
 type TestType = "sequential_tti" | "burst_tti" | "staggered_tti"
 type TimeRange = "30" | "60" | "90" | "all"
-type Metric = "median" | "p95" | "p99" | "compositeScore"
 
 interface TestTypeData {
   active: ProviderResult[]
@@ -43,12 +43,6 @@ const TEST_TYPE_LABELS: Record<TestType, { label: string; }> = {
 
 const TEST_TYPES: TestType[] = ["sequential_tti", "burst_tti", "staggered_tti"]
 const METRICS: Metric[] = ["compositeScore", "median", "p95", "p99"]
-const METRIC_LABELS: Record<Metric, string> = {
-  compositeScore: "Composite Score",
-  median: "Median TTI",
-  p95: "P95 TTI",
-  p99: "P99 TTI",
-}
 const TIME_RANGES: { value: TimeRange; label: string }[] = [
   { value: "30", label: "30d" },
   { value: "60", label: "60d" },
