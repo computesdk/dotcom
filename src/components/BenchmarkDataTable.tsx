@@ -33,17 +33,6 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
   const columns = useMemo<ColumnDef<ProviderResult>[]>(
     () => [
       {
-        id: "rank",
-        header: "#",
-        cell: ({ row }) => (
-          <span className="text-gray-500 dark:text-gray-400 font-medium">
-            {row.index + 1}
-          </span>
-        ),
-        enableSorting: false,
-        size: 40,
-      },
-      {
         id: "provider",
         accessorKey: "provider",
         header: "Provider",
@@ -69,32 +58,33 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
         },
         enableSorting: false,
         size: 160,
+        meta: { align: "left" },
       },
       {
         id: "compositeScore",
         accessorFn: (r) => r.compositeScore ?? 0,
         header: "Score",
         cell: ({ getValue }) => (
-          <span className="font-mono">{(getValue() as number).toFixed(1)}</span>
+          <span className="font-mono text-xs">{(getValue() as number).toFixed(1)}</span>
         ),
         sortDescFirst: true,
-        size: 80,
+        size: 100,
       },
       {
         id: "median",
         accessorFn: (r) => r.summary.ttiMs.median,
         header: "Median",
         cell: ({ getValue }) => (
-          <span className="font-mono">{formatSecs(getValue() as number)}</span>
+          <span className="font-mono text-xs">{formatSecs(getValue() as number)}</span>
         ),
-        size: 100,
+        size: 80,
       },
       {
         id: "p95",
         accessorFn: (r) => r.summary.ttiMs.p95,
         header: "P95",
         cell: ({ getValue }) => (
-          <span className="font-mono">{formatSecs(getValue() as number)}</span>
+          <span className="font-mono text-xs">{formatSecs(getValue() as number)}</span>
         ),
         size: 100,
       },
@@ -103,7 +93,7 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
         accessorFn: (r) => r.summary.ttiMs.p99,
         header: "P99",
         cell: ({ getValue }) => (
-          <span className="font-mono">{formatSecs(getValue() as number)}</span>
+          <span className="font-mono text-xs">{formatSecs(getValue() as number)}</span>
         ),
         size: 100,
       },
@@ -116,13 +106,13 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
         ),
         header: "Success",
         cell: ({ getValue }) => (
-          <span className="font-mono">{Math.round((getValue() as number) * 100)}%</span>
+          <span className="font-mono text-xs">{Math.round((getValue() as number) * 100)}%</span>
         ),
         sortDescFirst: true,
         size: 80,
       },
     ],
-    [providerLogos, providerLogosDark]
+    []
   )
 
   const table = useReactTable({
@@ -143,21 +133,23 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
         Detailed Metrics
       </h3>
-      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <table className="w-full text-sm border-collapse">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="bg-gray-50 dark:bg-gray-800/50">
+              <tr key={headerGroup.id} className="bg-white dark:bg-gray-800/50 ">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className={`px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${
-                      header.column.getCanSort() ? "cursor-pointer select-none hover:text-gray-900 dark:hover:text-white" : ""
-                    }`}
                     style={{ width: header.getSize() }}
+                    className={`p-3 text-xs font-medium text-gray-900 dark:text-gray-400 uppercase tracking-wider ${
+                      (header.column.columnDef.meta as any)?.align === "left" ? "text-left" : "text-center"
+                    } ${
+                      header.column.getCanSort() ? "cursor-pointer select-none font-semibold hover:text-gray-500 dark:hover:text-white" : ""
+                    }`}
                     onClick={header.column.getToggleSortingHandler()}
                   >
-                    <div className="flex items-center gap-1">
+                    <div className={`flex items-center gap-1 ${(header.column.columnDef.meta as any)?.align === "left" ? "justify-start" : "justify-center"}`}>
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getCanSort() && (
                         <SortIcon sorted={header.column.getIsSorted()} />
@@ -168,16 +160,18 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y bg-white dark:bg-gray-900/50 divide-gray-200 dark:divide-gray-700">
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                className="hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="px-4 py-3 text-gray-900 dark:text-white whitespace-nowrap"
+                    className={`py-2 px-6 text-gray-900 dark:text-white whitespace-nowrap ${
+                      (cell.column.columnDef.meta as any)?.align === "left" ? "text-left" : "text-center"
+                    }`}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
