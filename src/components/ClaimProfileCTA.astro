@@ -1,16 +1,11 @@
 ---
+import SponsorLogos from "./SponsorLogos.astro"
+
 interface Props {
   displayName: string
 }
 
 const { displayName } = Astro.props
-
-const sponsors = [
-  { name: "Archil", logo: "/archil-logo.svg" },
-  { name: "Latitude", logo: "/latitude-logo.svg" },
-  { name: "Tigris", logo: "/tigris-logo.svg" },
-  { name: "Browserbase", logo: "/browserbase-logo.svg" },
-]
 ---
 
 <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
@@ -61,14 +56,7 @@ const sponsors = [
       </a>
     </div>
     <div class="mt-6 pt-5 border-t border-gray-200/50 dark:border-gray-700/50">
-      <p class="text-xs text-gray-400 dark:text-gray-500 m-0 mb-3">Sponsored by</p>
-      <div class="flex items-center justify-center gap-8">
-        {sponsors.map((s) => (
-          <div class="flex items-center justify-center">
-            <img src={s.logo} alt={s.name} class="h-4 w-auto object-contain opacity-40 dark:invert" />
-          </div>
-        ))}
-      </div>
+      <SponsorLogos tier="tier-1" size="sm" layout="stacked" label="Sponsored by" />
     </div>
   </div>
 </div>
