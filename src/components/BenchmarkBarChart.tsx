@@ -7,9 +7,7 @@ import {
 } from "./ui/chart"
 import type { ChartConfig } from "./ui/chart"
 import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
-import type { ProviderResult } from "./benchmarkConstants"
-
-type Metric = "median" | "p95" | "p99" | "compositeScore"
+import type { ProviderResult, Metric } from "./benchmarkConstants"
 
 const METRIC_CHART_LABELS: Record<Metric, string> = {
   compositeScore: "Composite Score",

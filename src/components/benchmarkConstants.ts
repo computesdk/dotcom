@@ -36,6 +36,15 @@ export const PROVIDER_COLORS: Record<string, string> = {
   "just-bash": "#303137",
 }
 
+export type Metric = "median" | "p95" | "p99" | "compositeScore"
+
+export const METRIC_LABELS: Record<Metric, string> = {
+  compositeScore: "Composite Score",
+  median: "Median TTI",
+  p95: "P95 TTI",
+  p99: "P99 TTI",
+}
+
 export function capitalize(s: string): string {
   if (s.toLowerCase() === "e2b") return "E2B"
   if (s.toLowerCase() === "codesandbox") return "CodeSandbox"

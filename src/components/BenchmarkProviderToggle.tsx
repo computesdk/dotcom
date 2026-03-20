@@ -1,21 +1,12 @@
 import { useMemo } from "react"
-import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
-import type { ProviderResult } from "./benchmarkConstants"
+import { PROVIDER_COLORS, capitalize, METRIC_LABELS } from "./benchmarkConstants"
+import type { ProviderResult, Metric } from "./benchmarkConstants"
 
 interface BenchmarkProviderToggleProps {
   activeResults: ProviderResult[]
   providerLogos: Record<string, string>
   providerLogosDark: Record<string, string>
   selectedMetric: Metric
-}
-
-type Metric = "median" | "p95" | "p99" | "compositeScore"
-
-const METRIC_LABELS: Record<Metric, string> = {
-  compositeScore: "Composite Score",
-  median: "Median TTI",
-  p95: "P95 TTI",
-  p99: "P99 TTI",
 }
 
 function getMetricValue(r: ProviderResult, metric: Metric): number {
@@ -74,7 +65,7 @@ export function BenchmarkProviderToggle({
           </span>
         </div>
 
-        <div className="shrink-0 w-24 flex items-center">
+        <div className="shrink-0 w-40 flex items-center">
           {logoLight ? (
             <>
               <img src={logoLight} alt={`${result.provider} logo`} className="w-full h-full object-contain dark:hidden" />
