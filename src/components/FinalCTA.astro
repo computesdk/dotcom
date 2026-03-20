@@ -17,9 +17,17 @@ import CTABlock from "./CTABlock.astro";
         </p>
       </div>
 
-      <!-- Secondary CTAs -->
-      <div class="mt-8 flex justify-center">
-        <CTABlock />
+      <!-- CTAs -->
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://console.computesdk.com/register" class="inline-flex items-center justify-center rounded-xs bg-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 no-underline transition-colors">
+          Get Started
+        </a>
+        <a href="/sales" class="inline-flex items-center justify-center text-base font-semibold text-emerald-700 dark:text-emerald-400 no-underline hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors">
+          Talk to Sales <span aria-hidden="true">→</span>
+        </a>
+        <a href="/benchmarks" class="inline-flex items-center justify-center text-base font-semibold text-gray-600 dark:text-gray-400 no-underline hover:text-gray-900 dark:hover:text-white transition-colors">
+          Compare Providers <span aria-hidden="true">→</span>
+        </a>
       </div>
     </div>
   </div>
