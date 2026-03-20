@@ -13,8 +13,6 @@ import type { ProviderResult } from "./benchmarkConstants"
 
 interface BenchmarkDataTableProps {
   activeResults: ProviderResult[]
-  providerLogos: Record<string, string>
-  providerLogosDark: Record<string, string>
 }
 
 const formatSecs = (ms: number) => `${(ms / 1000).toFixed(2)}s`
@@ -25,7 +23,7 @@ function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
   return <ArrowUpDown className="h-3 w-3 opacity-40" />
 }
 
-export function BenchmarkDataTable({ activeResults, providerLogos, providerLogosDark }: BenchmarkDataTableProps) {
+export function BenchmarkDataTable({ activeResults }: BenchmarkDataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "median", desc: false },
   ])
@@ -38,21 +36,11 @@ export function BenchmarkDataTable({ activeResults, providerLogos, providerLogos
         header: "Provider",
         cell: ({ row }) => {
           const provider = row.original.provider
-          const logoLight = providerLogos[provider]
-          const logoDark = providerLogosDark[provider]
           return (
             <a href={`/benchmarks/${provider}`} className="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity">
-              {logoLight && (
-                <>
-                  <img src={logoLight} alt="" className="h-5 w-auto object-contain dark:hidden" />
-                  <img src={logoDark || logoLight} alt="" className="h-5 w-auto object-contain hidden dark:block" />
-                </>
-              )}
-              {!logoLight && (
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {capitalize(provider)}
-                </span>
-              )}
+              <span className="font-medium text-gray-900 dark:text-white">
+                {capitalize(provider)}
+              </span>
             </a>
           )
         },

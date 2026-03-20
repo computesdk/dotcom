@@ -206,7 +206,7 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
 
         {/* Data table */}
         <div className="py-6 md:py-8">
-          <BenchmarkDataTable activeResults={visibleResults} providerLogos={providerLogos} providerLogosDark={providerLogosDark} />
+          <BenchmarkDataTable activeResults={visibleResults} />
         </div>
       </div>
     </div>

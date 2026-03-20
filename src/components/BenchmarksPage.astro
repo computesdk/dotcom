@@ -1,5 +1,6 @@
 ---
 import FAQAccordion from "./FAQAccordion.astro";
+import SponsorLogos from "./SponsorLogos.astro";
 import { BenchmarkDashboard } from "./BenchmarkDashboard";
 
 interface ProviderResult {
@@ -215,16 +216,8 @@ const benchmarksFAQs = [
             </span>
           </div>
         </div>
-        <div class="flex items-start gap-2 mt-4">
-          <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider font-medium leading-5">Sponsored by</span>
-          <div class="flex items-start gap-3">
-            <img src="/benchmarks/normal-archil-light.svg" alt="Archil" class="h-5 block mt-0 dark:hidden" />
-            <img src="/benchmarks/normal-archil-dark.svg" alt="Archil" class="h-5 hidden mt-0 dark:block" />
-            <img src="/benchmarks/normal-browserbase-light.svg" alt="Browserbase" class="h-5 block mt-0 dark:hidden" />
-            <img src="/benchmarks/normal-browserbase-dark.svg" alt="Browserbase" class="h-5 hidden mt-0 dark:block" />
-            <img src="/benchmarks/normal-latitude-light.svg" alt="Latitude" class="h-5 block mt-0 dark:hidden" />
-            <img src="/benchmarks/normal-latitude-dark.svg" alt="Latitude" class="h-5 hidden mt-0 dark:block" />
-          </div>
+        <div class="mt-6 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
+          <SponsorLogos tier="all" size="sm" layout="inline" />
         </div>
       </div>
     </div>
