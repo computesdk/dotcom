@@ -51,11 +51,11 @@ const gapClasses = {
   lg: "gap-10"
 }
 
-const labelText = label || (layout === "stacked" ? "Backed by" : "Sponsored by")
+const labelText = label || (layout === "stacked" ? "Sponsored by" : "Sponsored by")
 ---
 
 {layout === "stacked" ? (
-  <div class="flex flex-col items-center gap-6">
+  <div class="flex flex-col items-center gap-4 mt-0">
     <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{labelText}</span>
     <div class={`flex items-center ${gapClasses[size]}`}>
       {sponsors.map((s) => (
@@ -66,7 +66,7 @@ const labelText = label || (layout === "stacked" ? "Backed by" : "Sponsored by")
     </div>
   </div>
 ) : (
-  <div class="flex items-center gap-6">
+  <div class="flex items-center gap-6 mt-0">
     <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{labelText}</span>
     <div class={`flex items-center ${gapClasses[size]}`}>
       {sponsors.map((s) => (
