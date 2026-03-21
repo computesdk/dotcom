@@ -197,7 +197,7 @@ const displayName = capitalize(provider)
               <nav aria-label="Breadcrumb">
                 <ol class="flex items-center gap-1.5 text-sm m-0 p-0 list-none">
                   <li><a href="/benchmarks" class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors no-underline">Benchmarks</a></li>
-                  <li class="text-gray-300 dark:text-gray-600">/</li>
+                  <li class="mt-0 text-gray-300 dark:text-gray-600">/</li>
                   <li class="mt-0 text-gray-900 dark:text-white font-medium">{displayName}</li>
                 </ol>
               </nav>
@@ -208,6 +208,13 @@ const displayName = capitalize(provider)
             <div class="border-b mt-0 border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-900/30">
               <div class="md:max-w-7xl md:mx-auto relative">
                 <div class="flex px-4 md:px-6 py-4 gap-2 overflow-x-auto provider-nav-scroll" id="provider-nav">
+                  <a
+                    href="/benchmarks"
+                    class="shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-lg text-sm no-underline transition-all"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 dark:text-gray-500"><path d="m15 18-6-6 6-6"/></svg>
+                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">All</span>
+                  </a>
                   {allProviders.map((p, i) => {
                     const isCurrent = p.provider === provider
                     const pName = capitalize(p.provider)
