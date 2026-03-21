@@ -68,7 +68,7 @@ export function ProviderIterationHistogram({ iterations, provider }: ProviderIte
 
   return (
     <div>
-      <ChartContainer config={chartConfig} className="aspect-auto h-[200px] w-full min-h-[200px] min-w-0">
+      <ChartContainer config={chartConfig} className="h-[200px] w-full">
         <BarChart
           data={buckets}
           margin={{ top: 5, right: 10, left: 0, bottom: 5 }}

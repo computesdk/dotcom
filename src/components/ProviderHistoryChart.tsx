@@ -3,16 +3,18 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 import { ChartContainer } from "./ui/chart"
 import type { ChartConfig } from "./ui/chart"
 import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
-import type { HistoryDataPoint } from "./benchmarkConstants"
+import type { HistoryDataPoint, Metric } from "./benchmarkConstants"
 
 interface ProviderHistoryChartProps {
   historyData: HistoryDataPoint[]
   provider: string
+  selectedMetric?: Metric
 }
 
-export function ProviderHistoryChart({ historyData, provider }: ProviderHistoryChartProps) {
+export function ProviderHistoryChart({ historyData, provider, selectedMetric = "median" }: ProviderHistoryChartProps) {
   const color = PROVIDER_COLORS[provider] || "#6b7280"
-  const dataKey = `${provider}_median`
+  const isComposite = selectedMetric === "compositeScore"
+  const dataKey = `${provider}_${selectedMetric}`
 
   const chartConfig: ChartConfig = useMemo(() => ({
     [provider]: {
@@ -32,7 +34,7 @@ export function ProviderHistoryChart({ historyData, provider }: ProviderHistoryC
   }
 
   return (
-    <ChartContainer config={chartConfig} className="aspect-auto h-[200px] w-full min-h-[200px] min-w-0">
+    <ChartContainer config={chartConfig} className="h-[200px] w-full min-h-[200px]">
       <LineChart
         data={historyData}
         margin={{ top: 10, right: 10, left: 0, bottom: 5 }}
@@ -49,7 +51,7 @@ export function ProviderHistoryChart({ historyData, provider }: ProviderHistoryC
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 10 }}
-          tickFormatter={(value: number) => `${(value / 1000).toFixed(1)}s`}
+          tickFormatter={(value: number) => isComposite ? `${Math.round(value)}` : `${(value / 1000).toFixed(1)}s`}
           width={40}
         />
         <Tooltip
@@ -65,7 +67,7 @@ export function ProviderHistoryChart({ historyData, provider }: ProviderHistoryC
                     style={{ backgroundColor: color }}
                   />
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Median: <span className="font-mono font-medium text-gray-900 dark:text-white">{`${(value / 1000).toFixed(2)}s`}</span>
+                    {isComposite ? "Score" : selectedMetric.toUpperCase()}: <span className="font-mono font-medium text-gray-900 dark:text-white">{isComposite ? (value as number).toFixed(1) : `${((value as number) / 1000).toFixed(2)}s`}</span>
                   </span>
                 </div>
               </div>
