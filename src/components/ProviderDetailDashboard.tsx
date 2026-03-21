@@ -1,7 +1,6 @@
-import { useState, useMemo } from "react"
+import { useMemo } from "react"
 import { ProviderIterationHistogram } from "./ProviderIterationHistogram"
 import { ProviderHistoryChart } from "./ProviderHistoryChart"
-import { PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
 import type { ProviderResult, HistoryDataPoint } from "./benchmarkConstants"
 
 type TestType = "sequential_tti" | "burst_tti" | "staggered_tti"
@@ -100,7 +99,7 @@ function TestTypeSection({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <StatCard
           label="Composite"
           value={(result.compositeScore ?? 0).toFixed(1)}
@@ -116,13 +115,6 @@ function TestTypeSection({
         <StatCard
           label="P99"
           value={formatMs(result.summary.ttiMs.p99)}
-        />
-        <StatCard
-          label="Range"
-          value={result.summary.ttiMs.min != null && result.summary.ttiMs.max != null
-            ? `${formatMs(result.summary.ttiMs.min)} - ${formatMs(result.summary.ttiMs.max)}`
-            : "N/A"
-          }
         />
       </div>
 
@@ -161,51 +153,14 @@ export function ProviderDetailDashboard({
   providerRank,
   totalProviders,
 }: ProviderDetailDashboardProps) {
-  const [selectedTest, setSelectedTest] = useState<TestType | "all">("all")
-
-  const color = PROVIDER_COLORS[provider] || "#6b7280"
-
-  const testsToShow = selectedTest === "all"
-    ? TEST_TYPES.filter((t) => providerData[t] != null)
-    : providerData[selectedTest] ? [selectedTest] : []
+  const testsToShow = TEST_TYPES.filter((t) => providerData[t] != null)
 
   return (
     <div className="not-content mt-0">
       <div className="md:max-w-7xl md:mx-auto px-4 md:px-6">
-        <div className="flex items-center gap-2 py-4 border-b border-gray-200/50 dark:border-gray-700/50">
-          <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
-            <button
-              type="button"
-              onClick={() => setSelectedTest("all")}
-              className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all ${
-                selectedTest === "all"
-                  ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
-                  : "hover:text-gray-950 dark:hover:text-gray-50"
-              }`}
-            >
-              All Tests
-            </button>
-            {TEST_TYPES.map((testType) => (
-              <button
-                key={testType}
-                type="button"
-                onClick={() => setSelectedTest(testType)}
-                disabled={!providerData[testType]}
-                className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
-                  selectedTest === testType
-                    ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
-                    : "hover:text-gray-950 dark:hover:text-gray-50"
-                }`}
-              >
-                {TEST_TYPE_LABELS[testType]}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {testsToShow.length === 0 && (
           <div className="py-16 text-center">
-            <p className="text-gray-500 dark:text-gray-400">No benchmark data available for this test type.</p>
+            <p className="text-gray-500 dark:text-gray-400">No benchmark data available.</p>
           </div>
         )}
 
