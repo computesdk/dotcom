@@ -184,7 +184,7 @@ const displayName = capitalize(provider)
 <StarlightPage
   frontmatter={{
     title: `${displayName} Sandbox Benchmarks`,
-    description: `Detailed benchmark results and performance data for ${displayName} sandbox provider on ComputeSDK.`,
+    description: `Detailed benchmark results and performance data for ${displayName} sandboxes on ComputeSDK.`,
     template: "splash",
   }}
 >
@@ -278,6 +278,9 @@ const displayName = capitalize(provider)
                     <p>Last benchmarked {datasets.sequential_tti.timestamp}</p>
                   )}
                 </div>
+                <div class="mt-6 border-gray-200/50 dark:border-gray-700/50">
+                  <SponsorLogos size="sm" layout="stacked" align="left" tier="tier-1" />
+                </div>
               </div>
               <div class="mt-0 max-w-xs text-center flex flex-col items-center">
                 <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/20 text-xs font-medium text-amber-700 dark:text-amber-400 mb-2">
@@ -294,9 +297,9 @@ const displayName = capitalize(provider)
                 >
                   Claim this profile
                 </a>
-                <div class="mt-4 pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
-                  <SponsorLogos size="sm" layout="stacked" tier="tier-1" />
-                </div>
+                <p class="text-xs mt-2 text-wrap max-w-40 text-gray-500 dark:text-gray-400">
+                  Add custom benchmarks, branding, links & more.
+                </p>
               </div>
             </div>
           </div>

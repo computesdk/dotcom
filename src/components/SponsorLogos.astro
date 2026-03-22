@@ -3,10 +3,11 @@ interface Props {
   tier?: "all" | "tier-1"
   size?: "sm" | "md" | "lg"
   layout?: "inline" | "stacked"
+  align?: "left" | "center" | "right"
   label?: string
 }
 
-const { tier = "all", size = "md", layout = "inline", label } = Astro.props
+const { tier = "all", size = "md", layout = "inline", align = "center", label } = Astro.props
 
 const allSponsors = [
   { 
@@ -51,11 +52,23 @@ const gapClasses = {
   lg: "gap-10"
 }
 
-const labelText = label || (layout === "stacked" ? "Sponsored by" : "Sponsored by")
+const labelText = label || "Sponsored by"
+
+const alignClasses = {
+  left: "items-start",
+  center: "items-center",
+  right: "items-end",
+}
+
+const justifyClasses = {
+  left: "justify-start",
+  center: "justify-center",
+  right: "justify-end",
+}
 ---
 
 {layout === "stacked" ? (
-  <div class="flex flex-col items-center gap-4 mt-0">
+  <div class={`flex flex-col ${alignClasses[align]} gap-4 mt-0`}>
     <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{labelText}</span>
     <div class={`flex items-center ${gapClasses[size]}`}>
       {sponsors.map((s) => (
@@ -66,7 +79,7 @@ const labelText = label || (layout === "stacked" ? "Sponsored by" : "Sponsored b
     </div>
   </div>
 ) : (
-  <div class="flex items-center gap-6 mt-0">
+  <div class={`flex items-center gap-6 mt-0 ${justifyClasses[align]}`}>
     <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{labelText}</span>
     <div class={`flex items-center ${gapClasses[size]}`}>
       {sponsors.map((s) => (
