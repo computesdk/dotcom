@@ -61,8 +61,12 @@ body:not(:has(#starlight__sidebar)) .content-panel:where(.astro-t772eank) {
     padding: 0 !important;
 }
 
-.nova-header-nav * {
+.nova-header-nav > * {
     display: flex !important;
+}
+
+.nova-header-nav {
+    overflow: visible !important;
 }
 
 .nova-header-actions-lg {
