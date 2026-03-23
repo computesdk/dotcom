@@ -192,18 +192,6 @@ const displayName = capitalize(provider)
     <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
       <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
         <div class="border-b border-gray-200/50 dark:border-gray-700/50">
-          <!-- Breadcrumbs -->
-          <div class="border-b border-gray-200/50 dark:border-gray-700/50">
-            <div class="md:max-w-7xl md:mx-auto py-3 px-4 md:px-6">
-              <nav aria-label="Breadcrumb">
-                <ol class="flex items-center gap-1.5 text-sm m-0 p-0 list-none">
-                  <li><a href="/benchmarks" class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors no-underline">Benchmarks</a></li>
-                  <li class="mt-0 text-gray-300 dark:text-gray-600">/</li>
-                  <li class="mt-0 text-gray-900 dark:text-white font-medium">{displayName}</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
           <!-- Provider navigation strip -->
           {allProviders.length > 0 && (
             <div class="border-b mt-0 border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-900/30">
@@ -252,6 +240,7 @@ const displayName = capitalize(provider)
             </div>
           </div>
           )}
+          <!-- Provider hero -->
           <div class="md:max-w-7xl md:mx-auto mt-0 py-8 px-4 md:py-10 md:px-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
@@ -278,28 +267,9 @@ const displayName = capitalize(provider)
                     <p>Last benchmarked {datasets.sequential_tti.timestamp}</p>
                   )}
                 </div>
-                <div class="pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
-                  <SponsorLogos size="sm" layout="stacked" align="left" tier="tier-1" />
-                </div>
               </div>
-              <div class="mt-0 max-w-xs text-center flex flex-col items-center">
-                <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/20 text-xs font-medium text-amber-700 dark:text-amber-400 mb-2">
-                  <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                  </svg>
-                  Unclaimed profile
-                </div>
-                <a
-                  href="https://buy.stripe.com/5kQaEQ5oLdLpgVId8K5AQ02"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors no-underline"
-                >
-                  Claim this profile
-                </a>
-                <p class="text-xs mt-2 text-wrap max-w-40 text-gray-500 dark:text-gray-400">
-                  Add custom benchmarks, branding, links & more.
-                </p>
+              <div class="pt-6 border-t md:border-0 md:pt-0 md:mt-0 border-gray-200/50 dark:border-gray-700/50">
+                <SponsorLogos size="sm" layout="stacked" align="left" mdAlign="center" tier="tier-1" />
               </div>
             </div>
           </div>

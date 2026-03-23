@@ -6,14 +6,19 @@ const isDocsPage = currentPath.startsWith('/docs');
 // Navigation items for splash pages
 const splashNavItems = [
   { label: 'Home', href: '/' },
+  { type: 'group', label: 'Product' },
   { label: 'Features', href: '/features' },
   { label: 'Use Cases', href: '/use-cases' },
+  { label: 'Providers', href: '/providers' },
+  { type: 'divider' },
   { label: 'Benchmarks', href: '/benchmarks' },
   { label: 'Pricing', href: '/pricing' },
+  { type: 'divider' },
+  { type: 'group', label: 'Resources' },
   { label: 'Docs', href: '/docs/getting-started/introduction' },
   { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
-];
+] as const;
 ---
 
 {!isDocsPage && (
@@ -35,16 +40,22 @@ const splashNavItems = [
     <div class="splash-mobile-drawer" data-menu-drawer>
       <nav class="splash-mobile-nav">
         <ul class="splash-mobile-nav-list">
-          {splashNavItems.map((item) => (
-            <li>
-              <a 
-                href={item.href} 
-                class={`splash-mobile-nav-link ${currentPath === item.href ? 'active' : ''}`}
-              >
-                {item.label}
-              </a>
-            </li>
-          ))}
+          {splashNavItems.map((item) =>
+            'type' in item && item.type === 'group' ? (
+              <li class="splash-mobile-nav-group">{item.label}</li>
+            ) : 'type' in item && item.type === 'divider' ? (
+              <li class="splash-mobile-nav-divider" aria-hidden="true"></li>
+            ) : (
+              <li>
+                <a
+                  href={'href' in item ? item.href : '#'}
+                  class={`splash-mobile-nav-link ${'href' in item && currentPath === item.href ? 'active' : ''}`}
+                >
+                  {item.label}
+                </a>
+              </li>
+            )
+          )}
         </ul>
       </nav>
     </div>
@@ -230,6 +241,23 @@ const splashNavItems = [
     transition: all 0.2s ease;
     border: 1px solid transparent;
     background: rgba(255, 255, 255, 0.05);
+  }
+
+  .splash-mobile-nav-group {
+    padding: 0.5rem 1.5rem 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.5);
+    list-style: none;
+  }
+
+  .splash-mobile-nav-divider {
+    height: 1px;
+    margin: 0.5rem 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    list-style: none;
   }
 
   .splash-mobile-nav-link:hover {

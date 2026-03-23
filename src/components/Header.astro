@@ -8,13 +8,28 @@ import SiteTitle from 'virtual:starlight/components/SiteTitle'
 import SocialIcons from 'virtual:starlight/components/SocialIcons'
 import ThemeSelect from 'virtual:starlight/components/ThemeSelect'
 
-import options from 'virtual:starlight-theme-nova/user-config'
-import { getI18nText } from './get-i18n-text'
 import SplashMobileMenu from './SplashMobileMenu.astro'
 import CustomMobileMenu from './CustomMobileMenu.astro'
 
-const nav = options.nav ?? []
-const route = Astro.locals.starlightRoute
+const navItems = [
+  {
+    label: 'Product',
+    children: [
+      { label: 'Features', href: '/features' },
+      { label: 'Use Cases', href: '/use-cases' },
+      { label: 'Providers', href: '/providers' },
+    ],
+  },
+  {
+    label: 'Resources',
+    children: [
+      { label: 'Docs', href: '/docs/getting-started/introduction' },
+      { label: 'Blog', href: '/blog' },
+    ],
+  },
+  { label: 'Benchmarks', href: '/benchmarks' },
+  { label: 'Pricing', href: '/pricing' },
+]
 ---
 
 <div class="nova-header justify-between">
@@ -22,13 +37,25 @@ const route = Astro.locals.starlightRoute
     <SiteTitle />
   </div>
   <nav class="nova-header-nav">
-    {
-      nav.map((item) => (
-        <a class="nova-header-nav-link" href={getI18nText(item.href, route)}>
-          {getI18nText(item.label, route)}
-        </a>
-      ))
-    }
+    {navItems.map((item) =>
+      'href' in item ? (
+        <a class="nova-header-nav-link" href={item.href}>{item.label}</a>
+      ) : (
+        <div class="nova-header-dropdown px-2">
+          <button class="nova-header-nav-link nova-dropdown-trigger" type="button">
+            {item.label}
+            <svg class="nova-dropdown-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="nova-dropdown-menu">
+            {item.children.map((child) => (
+              <a class="nova-dropdown-item" href={child.href}>{child.label}</a>
+            ))}
+          </div>
+        </div>
+      )
+    )}
   </nav>
   <div class="flex items-center justify-center">
   <div class="nova-header-search">
@@ -45,3 +72,102 @@ const route = Astro.locals.starlightRoute
     </div>
   </div>
 </div>
+
+<style>
+  .nova-header-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .nova-dropdown-trigger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0;
+  }
+
+  .nova-dropdown-chevron {
+    transition: transform 0.2s ease;
+  }
+
+  .nova-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 11rem;
+    background: white;
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Invisible bridge to prevent hover gap */
+  .nova-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -0.5rem;
+    left: 0;
+    right: 0;
+    height: 0.5rem;
+  }
+
+  .nova-header-dropdown:hover .nova-dropdown-menu,
+  .nova-header-dropdown:focus-within .nova-dropdown-menu,
+  .nova-dropdown-menu.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .nova-header-dropdown:hover .nova-dropdown-chevron {
+    transform: rotate(180deg);
+  }
+
+  .nova-dropdown-item {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--sl-color-gray-3);
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .nova-dropdown-item:hover {
+    color: var(--sl-color-white);
+    background: var(--sl-color-gray-6);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.nova-dropdown-trigger').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const menu = btn.nextElementSibling;
+      if (!menu) return;
+      const isOpen = menu.classList.contains('open');
+      document.querySelectorAll('.nova-dropdown-menu.open').forEach(m => m.classList.remove('open'));
+      if (!isOpen) menu.classList.add('open');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('.nova-header-dropdown')) {
+      document.querySelectorAll('.nova-dropdown-menu.open').forEach(m => m.classList.remove('open'));
+    }
+  });
+</script>
