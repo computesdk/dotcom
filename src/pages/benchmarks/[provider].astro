@@ -192,18 +192,6 @@ const displayName = capitalize(provider)
     <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
       <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
         <div class="border-b border-gray-200/50 dark:border-gray-700/50">
-          <!-- Breadcrumbs -->
-          <div class="border-b border-gray-200/50 dark:border-gray-700/50">
-            <div class="md:max-w-7xl md:mx-auto py-3 px-4 md:px-6">
-              <nav aria-label="Breadcrumb">
-                <ol class="flex items-center gap-1.5 text-sm m-0 p-0 list-none">
-                  <li><a href="/benchmarks" class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors no-underline">Benchmarks</a></li>
-                  <li class="mt-0 text-gray-300 dark:text-gray-600">/</li>
-                  <li class="mt-0 text-gray-900 dark:text-white font-medium">{displayName}</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
           <!-- Provider navigation strip -->
           {allProviders.length > 0 && (
             <div class="border-b mt-0 border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-900/30">
@@ -252,6 +240,7 @@ const displayName = capitalize(provider)
             </div>
           </div>
           )}
+          <!-- Provider hero -->
           <div class="md:max-w-7xl md:mx-auto mt-0 py-8 px-4 md:py-10 md:px-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
