@@ -186,6 +186,9 @@ const displayName = capitalize(provider)
     title: `${displayName} Sandbox Benchmarks`,
     description: `Detailed benchmark results and performance data for ${displayName} sandboxes on ComputeSDK.`,
     template: "splash",
+    head: [
+      { tag: "link", attrs: { rel: "canonical", href: `https://www.computesdk.com/benchmarks/${provider}/` } },
+    ],
   }}
 >
   <PageLayout>
