@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react"
+import { Info } from "lucide-react"
 import { BenchmarkBarChart } from "./BenchmarkBarChart"
 import { BenchmarkChart } from "./BenchmarkChart"
 import { BenchmarkDataTable } from "./BenchmarkDataTable"
@@ -10,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select"
-import { Info } from "lucide-react"
 import { METRIC_LABELS } from "./benchmarkConstants"
 import type { ProviderResult, HistoryDataPoint, Metric } from "./benchmarkConstants"
 
@@ -120,21 +120,6 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               ))}
             </SelectContent>
           </Select>
-          <div className="relative inline-flex group">
-            <span className="inline-flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help">
-              <Info size={16} />
-            </span>
-            <div className="absolute top-full left-0 mt-2 w-72 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-              <div className="flex flex-col gap-2.5 text-xs">
-                {TEST_TYPES.map((testType) => (
-                  <div key={testType}>
-                    <span className="font-semibold text-gray-900 dark:text-white">{TEST_TYPE_LABELS[testType].label}</span>
-                    <p className="mt-0.5 text-gray-500 dark:text-gray-400 m-0">{TEST_TYPE_LABELS[testType].description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
           {/* Metric: dropdown on mobile, tabs on sm+ */}
           <div className="sm:hidden">
             <Select value={selectedMetric} onValueChange={(value) => setSelectedMetric(value as Metric)}>
@@ -169,21 +154,10 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               </button>
             ))}
           </div>
-          <div className="relative hidden sm:inline-flex group">
-            <span className="inline-flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help">
-              <Info size={16} />
-            </span>
-            <div className="absolute top-full right-0 mt-2 w-72 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-              <div className="flex flex-col gap-2.5 text-xs">
-                {METRICS.map((metric) => (
-                  <div key={metric}>
-                    <span className="font-semibold text-gray-900 dark:text-white">{METRIC_LABELS[metric]}</span>
-                    <p className="mt-0.5 text-gray-500 dark:text-gray-400 m-0">{METRIC_DESCRIPTIONS[metric]}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <a href="#methodology" className="hidden sm:inline-flex items-center gap-1 text-xs text-gray-900 hover:text-gray-400 dark:hover:text-gray-300 transition-colors underline">
+            <Info size={14} />
+            Details
+          </a>
         </div>
       </div>
 

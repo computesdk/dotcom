@@ -8,7 +8,7 @@ interface Props {
 const { displayName } = Astro.props
 ---
 
-<div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+<div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
   <div class="max-w-md mx-auto text-center">
     <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/20 text-xs font-medium text-amber-700 dark:text-amber-400 mb-3">
       <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -19,7 +19,7 @@ const { displayName } = Astro.props
     <h3 class="text-lg font-semibold text-gray-900 dark:text-white m-0 mb-2">
       Customize this profile
     </h3>
-    <p class="text-sm text-gray-500 dark:text-gray-400 m-0 mb-4">
+    <p class="text-xs max-w-xs mx-auto text-gray-500 dark:text-gray-400 m-0 mb-4">
       Add custom benchmarks, branding, links, & more to showcase what makes {displayName} unique.
     </p>
     <div>
@@ -36,7 +36,7 @@ const { displayName } = Astro.props
       </a>
     </div>
     <div class="mt-6 pt-5 border-t border-gray-200/50 dark:border-gray-700/50">
-      <SponsorLogos tier="tier-1" size="sm" layout="stacked" label="Sponsored by" />
+      <SponsorLogos tier="tier-1" size="sm" layout="stacked" label="" />
     </div>
   </div>
 </div>
