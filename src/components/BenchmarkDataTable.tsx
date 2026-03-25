@@ -118,9 +118,9 @@ export function BenchmarkDataTable({ activeResults }: BenchmarkDataTableProps) {
 
   return (
     <div className="not-content w-full max-w-7xl mx-auto">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+      <h2 className="text-base text-md font-semibold text-gray-900 dark:text-white mb-3">
         Detailed Metrics
-      </h3>
+      </h2>
       <div className="overflow-x-auto rounded-lg border border-gray-200">
         <table className="w-full text-sm border-collapse">
           <thead>

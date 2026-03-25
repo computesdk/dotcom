@@ -216,8 +216,8 @@ const benchmarksFAQs = [
             </span>
           </div>
         </div>
-        <div class="mt-6 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
-          <SponsorLogos tier="all" size="sm" layout="inline" />
+        <div class="mt-12 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
+          <SponsorLogos tier="all" size="sm" layout="stacked" align="left" />
         </div>
       </div>
     </div>
@@ -238,7 +238,15 @@ const benchmarksFAQs = [
 
     <div class="md:max-w-7xl md:mx-auto px-4 md:px-6">
       <p class="text-center text-sm text-gray-600 dark:text-gray-400">
-        Want to see a provider added? <a href="https://x.com/computesdk" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">Let us know on X</a>.
+        Want to see a provider added?
+      </p>
+      <p class="text-center mt-1">
+        <a href="https://x.com/computesdk" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 bg-black dark:bg-white text-white dark:text-black text-sm font-medium rounded-full hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+        Let us know on X
+        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+        </svg>
+        </a>
       </p>
     </div>
   </div>
@@ -246,11 +254,11 @@ const benchmarksFAQs = [
 
   <!-- Methodology -->
   <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-6">
-    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Methodology</h2>
+    <h2 class="text-base text-md font-semibold text-gray-900 dark:text-white mb-6">Methodology</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
       <div class="mt-0">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-3">What We Measure</h3>
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">What We Measure</h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
           Every benchmark measures <strong class="text-gray-900 dark:text-white">Time to Interactive (TTI)</strong> — the elapsed time from calling <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">compute.sandbox.create()</code> to the first successful <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">runCommand()</code> inside the sandbox.
         </p>
@@ -269,7 +277,7 @@ const benchmarksFAQs = [
       </div>
 
       <div class="mt-0">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-3">How We Score</h3>
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">How We Score</h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
           The <strong class="text-gray-900 dark:text-white">Composite Score</strong> is a weighted blend of timing metrics multiplied by the success rate. Each metric is scored against a fixed 10-second ceiling: <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">100 &times; (1 &minus; value / 10,000ms)</code>, so a 200ms median scores 98 and anything &ge;10s scores 0.
         </p>

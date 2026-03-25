@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select"
+import { Info } from "lucide-react"
 import { METRIC_LABELS } from "./benchmarkConstants"
 import type { ProviderResult, HistoryDataPoint, Metric } from "./benchmarkConstants"
 
@@ -29,20 +30,29 @@ interface BenchmarkDashboardProps {
   providerLogosDark: Record<string, string>
 }
 
-const TEST_TYPE_LABELS: Record<TestType, { label: string; }> = {
+const TEST_TYPE_LABELS: Record<TestType, { label: string; description: string }> = {
   sequential_tti: {
     label: "Sequential TTI",
+    description: "Sandboxes launched one at a time, waiting for each to become interactive before starting the next.",
   },
   burst_tti: {
     label: "Burst TTI",
+    description: "All sandboxes launched concurrently in a single burst.",
   },
   staggered_tti: {
     label: "Staggered TTI",
+    description: "Sandboxes launched with 200ms delays between each.",
   },
 }
 
 const TEST_TYPES: TestType[] = ["sequential_tti", "burst_tti", "staggered_tti"]
 const METRICS: Metric[] = ["compositeScore", "median", "p95", "p99"]
+const METRIC_DESCRIPTIONS: Record<Metric, string> = {
+  compositeScore: "Weighted blend of timing metrics × success rate. Higher is better.",
+  median: "The middle value — 50% of iterations completed at or below this time.",
+  p95: "95th percentile — the typical worst-case latency most users will experience.",
+  p99: "99th percentile — extreme tail latency, highlighting rare outlier spikes.",
+}
 const TIME_RANGES: { value: TimeRange; label: string }[] = [
   { value: "30", label: "30d" },
   { value: "60", label: "60d" },
@@ -110,6 +120,21 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               ))}
             </SelectContent>
           </Select>
+          <div className="relative inline-flex group">
+            <span className="inline-flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help">
+              <Info size={16} />
+            </span>
+            <div className="absolute top-full left-0 mt-2 w-72 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <div className="flex flex-col gap-2.5 text-xs">
+                {TEST_TYPES.map((testType) => (
+                  <div key={testType}>
+                    <span className="font-semibold text-gray-900 dark:text-white">{TEST_TYPE_LABELS[testType].label}</span>
+                    <p className="mt-0.5 text-gray-500 dark:text-gray-400 m-0">{TEST_TYPE_LABELS[testType].description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
           {/* Metric: dropdown on mobile, tabs on sm+ */}
           <div className="sm:hidden">
             <Select value={selectedMetric} onValueChange={(value) => setSelectedMetric(value as Metric)}>
@@ -118,8 +143,11 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               </SelectTrigger>
               <SelectContent>
                 {METRICS.map((metric) => (
-                  <SelectItem key={metric} value={metric} className="text-sm">
-                    {METRIC_LABELS[metric]}
+                  <SelectItem key={metric} value={metric} className="text-sm" title={METRIC_DESCRIPTIONS[metric]}>
+                    <div>
+                      <div>{METRIC_LABELS[metric]}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 font-normal">{METRIC_DESCRIPTIONS[metric]}</div>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -140,6 +168,21 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
                 {METRIC_LABELS[metric]}
               </button>
             ))}
+          </div>
+          <div className="relative hidden sm:inline-flex group">
+            <span className="inline-flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-help">
+              <Info size={16} />
+            </span>
+            <div className="absolute top-full right-0 mt-2 w-72 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <div className="flex flex-col gap-2.5 text-xs">
+                {METRICS.map((metric) => (
+                  <div key={metric}>
+                    <span className="font-semibold text-gray-900 dark:text-white">{METRIC_LABELS[metric]}</span>
+                    <p className="mt-0.5 text-gray-500 dark:text-gray-400 m-0">{METRIC_DESCRIPTIONS[metric]}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -162,9 +205,9 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
         {currentData.historyData.length > 0 && (
           <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
                 Performance Over Time
-              </h3>
+              </h2>
               <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
                 {TIME_RANGES.map(({ value, label }) => (
                   <button

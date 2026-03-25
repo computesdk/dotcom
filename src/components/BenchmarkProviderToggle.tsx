@@ -55,7 +55,7 @@ export function BenchmarkProviderToggle({
         href={`/benchmarks/${result.provider}`}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors no-underline cursor-pointer ${
           index === 0
-            ? "dark:bg-gray-700/50 shadow:lg border-blue-200 dark:border-blue-700/30 shadow-sm"
+            ? "dark:bg-gray-700/50 border-gray-200 dark:border-gray-700/50 shadow-sm"
             : "bg-white/50 dark:bg-gray-700/50 shadow:lg border-gray-200 dark:border-gray-700/50"
         }`}
       >
@@ -86,7 +86,7 @@ export function BenchmarkProviderToggle({
 
         <div className="flex-1" />
 
-        <div className="shrink-0 flex items-center gap-2">
+        <div className="shrink-0 flex items-center gap-4">
           <div className="flex flex-col items-end">
             <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
               {formatValue(result.metricValue, selectedMetric)}
@@ -96,7 +96,7 @@ export function BenchmarkProviderToggle({
             </span>
           </div>
           <svg className="size-4 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
           </svg>
         </div>
       </a>
@@ -106,9 +106,9 @@ export function BenchmarkProviderToggle({
   return (
     <div className="not-content w-full max-w-7xl">
       <div className="flex items-center justify-between mb-3 px-4 md:px-6">
-        <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
           Provider Leaderboard
-        </h3>
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 px-4 md:px-6">
