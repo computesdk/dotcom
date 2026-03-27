@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react"
+import { Info } from "lucide-react"
 import { BenchmarkBarChart } from "./BenchmarkBarChart"
 import { BenchmarkChart } from "./BenchmarkChart"
 import { BenchmarkDataTable } from "./BenchmarkDataTable"
@@ -29,20 +30,29 @@ interface BenchmarkDashboardProps {
   providerLogosDark: Record<string, string>
 }
 
-const TEST_TYPE_LABELS: Record<TestType, { label: string; }> = {
+const TEST_TYPE_LABELS: Record<TestType, { label: string; description: string }> = {
   sequential_tti: {
     label: "Sequential TTI",
+    description: "Sandboxes launched one at a time, waiting for each to become interactive before starting the next.",
   },
   burst_tti: {
     label: "Burst TTI",
+    description: "All sandboxes launched concurrently in a single burst.",
   },
   staggered_tti: {
     label: "Staggered TTI",
+    description: "Sandboxes launched with 200ms delays between each.",
   },
 }
 
 const TEST_TYPES: TestType[] = ["sequential_tti", "burst_tti", "staggered_tti"]
 const METRICS: Metric[] = ["compositeScore", "median", "p95", "p99"]
+const METRIC_DESCRIPTIONS: Record<Metric, string> = {
+  compositeScore: "Weighted blend of timing metrics × success rate. Higher is better.",
+  median: "The middle value — 50% of iterations completed at or below this time.",
+  p95: "95th percentile — the typical worst-case latency most users will experience.",
+  p99: "99th percentile — extreme tail latency, highlighting rare outlier spikes.",
+}
 const TIME_RANGES: { value: TimeRange; label: string }[] = [
   { value: "30", label: "30d" },
   { value: "60", label: "60d" },
@@ -118,8 +128,11 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               </SelectTrigger>
               <SelectContent>
                 {METRICS.map((metric) => (
-                  <SelectItem key={metric} value={metric} className="text-sm">
-                    {METRIC_LABELS[metric]}
+                  <SelectItem key={metric} value={metric} className="text-sm" title={METRIC_DESCRIPTIONS[metric]}>
+                    <div>
+                      <div>{METRIC_LABELS[metric]}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 font-normal">{METRIC_DESCRIPTIONS[metric]}</div>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -141,6 +154,10 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               </button>
             ))}
           </div>
+          <a href="#methodology" className="hidden sm:inline-flex items-center gap-1 text-xs text-gray-900 hover:text-gray-400 dark:hover:text-gray-300 transition-colors underline">
+            <Info size={14} />
+            Details
+          </a>
         </div>
       </div>
 
@@ -162,9 +179,9 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
         {currentData.historyData.length > 0 && (
           <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
                 Performance Over Time
-              </h3>
+              </h2>
               <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
                 {TIME_RANGES.map(({ value, label }) => (
                   <button

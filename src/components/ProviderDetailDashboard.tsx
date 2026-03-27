@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react"
+import { Info } from "lucide-react"
 import { ProviderIterationHistogram } from "./ProviderIterationHistogram"
 import { ProviderHistoryChart } from "./ProviderHistoryChart"
 import { METRIC_LABELS } from "./benchmarkConstants"
@@ -21,10 +22,10 @@ interface ProviderDetailDashboardProps {
 }
 
 const TEST_TYPES: TestType[] = ["sequential_tti", "burst_tti", "staggered_tti"]
-const TEST_TYPE_LABELS: Record<TestType, string> = {
-  sequential_tti: "Sequential TTI",
-  burst_tti: "Burst TTI",
-  staggered_tti: "Staggered TTI",
+const TEST_TYPE_LABELS: Record<TestType, { label: string; description: string }> = {
+  sequential_tti: { label: "Sequential TTI", description: "Sandboxes launched one at a time, waiting for each to become interactive before starting the next." },
+  burst_tti: { label: "Burst TTI", description: "All sandboxes launched concurrently in a single burst." },
+  staggered_tti: { label: "Staggered TTI", description: "Sandboxes launched with 200ms delays between each." },
 }
 
 const formatMs = (ms: number) => `${(ms / 1000).toFixed(2)}s`
@@ -85,12 +86,18 @@ function TestTypeSection({
     <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white m-0">
-            {TEST_TYPE_LABELS[testType]}
-          </h3>
+          <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white m-0">
+            {TEST_TYPE_LABELS[testType].label}
+          </h2>
+          <span className="relative group inline-flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-help">
+            <Info size={14} />
+            <span className="absolute top-full left-0 mt-2 w-64 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-2.5 text-xs text-gray-600 dark:text-gray-300 font-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              {TEST_TYPE_LABELS[testType].description}
+            </span>
+          </span>
           {rank > 0 && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-xs font-medium text-gray-600 dark:text-gray-400">
-              #{rank} of {allResults.length}
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-xs font-medium text-gray-600 dark:text-gray-300">
+              Ranked #{rank} of {allResults.length}
             </span>
           )}
         </div>
@@ -140,9 +147,9 @@ function TestTypeSection({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {result.iterations && result.iterations.length > 0 && (
           <div className="min-w-0 overflow-hidden">
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Iteration Distribution
-            </h4>
+            </h3>
             <ProviderIterationHistogram
               iterations={result.iterations}
               provider={provider}
@@ -151,9 +158,9 @@ function TestTypeSection({
         )}
         {historyData.length > 0 && (
           <div className="min-w-0 overflow-hidden">
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               {METRIC_LABELS[selectedMetric]} Over Time
-            </h4>
+            </h3>
             <ProviderHistoryChart
               historyData={historyData}
               provider={provider}

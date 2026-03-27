@@ -88,9 +88,9 @@ export function BenchmarkBarChart({ activeResults, selectedMetric }: BenchmarkBa
 
   return (
     <div className="not-content w-full max-w-7xl mx-auto">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 text-left">
+      <h2 className="text-base text-md font-semibold text-gray-900 dark:text-white mb-1 text-left">
         {METRIC_CHART_LABELS[selectedMetric]}
-      </h3>
+      </h2>
       <ChartContainer config={chartConfig} className="aspect-auto w-full min-w-0" style={{ height: `${chartHeight}px`, minHeight: `${chartHeight}px` }}>
         <BarChart
           data={chartData}
