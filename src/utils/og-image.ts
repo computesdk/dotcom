@@ -18,9 +18,8 @@ interface ProviderOgProps {
   staggered: TestStats;
 }
 
-interface LeaderboardProvider {
-  provider: string;
-  median: number;
+interface LeaderboardOgProps {
+  timestamp: string;
 }
 
 function readSvgContent(filePath: string): string | null {
@@ -207,40 +206,86 @@ export async function generateProviderOgImage(props: ProviderOgProps): Promise<B
   return sharp(Buffer.from(svg)).png().toBuffer();
 }
 
-export async function generateLeaderboardOgImage(
-  providers: LeaderboardProvider[],
-): Promise<Buffer> {
-  const branding = computeSdkBranding(60, 50);
+// Seeded pseudo-random for deterministic decorative lines
+function seededRandom(seed: number): () => number {
+  let s = seed;
+  return () => {
+    s = (s * 16807 + 0) % 2147483647;
+    return s / 2147483647;
+  };
+}
 
-  // Two-column layout for all providers
-  const startY = 220;
-  const rowHeight = 44;
-  const colWidth = 480;
-  const half = Math.ceil(providers.length / 2);
+function renderDecorativeChart(
+  chartX: number,
+  chartY: number,
+  chartW: number,
+  chartH: number,
+): string {
+  const colors = [
+    "#3b82f6", // blue
+    "#10b981", // green
+    "#8b5cf6", // purple
+    "#f97316", // orange
+    "#06b6d4", // cyan
+    "#f59e0b", // amber
+    "#6366f1", // indigo
+  ];
 
-  let providerRows = "";
-  for (let i = 0; i < providers.length; i++) {
-    const col = i < half ? 0 : 1;
-    const row = i < half ? i : i - half;
-    const x = 60 + col * colWidth;
-    const y = startY + row * rowHeight;
-    const name = capitalize(providers[i].provider);
-    const rank = i + 1;
+  const numPoints = 20;
+  const xStep = chartW / (numPoints - 1);
+  let svg = "";
 
-    providerRows += `
-      <text x="${x}" y="${y}" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-size="20" fill="#64748b" font-weight="bold">#${rank}</text>
-      <text x="${x + 44}" y="${y}" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-size="20" fill="white" font-weight="600">${name}</text>
-    `;
+  for (let lineIdx = 0; lineIdx < colors.length; lineIdx++) {
+    const color = colors[lineIdx];
+    const rand = seededRandom(lineIdx * 1337 + 42);
+
+    // Each line has a base y and gentle wandering
+    const baseY = chartY + 60 + lineIdx * (chartH / (colors.length + 1));
+    const points: { x: number; y: number }[] = [];
+    let drift = 0;
+
+    for (let i = 0; i < numPoints; i++) {
+      drift += (rand() - 0.5) * 40;
+      drift = Math.max(-80, Math.min(80, drift));
+      const x = chartX + i * xStep;
+      const y = baseY + drift;
+      points.push({ x, y });
+    }
+
+    const pathData = points
+      .map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+      .join(" ");
+    svg += `<path d="${pathData}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7" />`;
+
+    for (const p of points) {
+      svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="${color}" opacity="0.8" />`;
+    }
   }
 
+  return svg;
+}
+
+export async function generateLeaderboardOgImage(
+  props: LeaderboardOgProps,
+): Promise<Buffer> {
+  const { timestamp } = props;
+  const FONT = "Liberation Sans, Arial, Helvetica, sans-serif";
+
+  // Decorative chart fills the background, text overlays on top
+  const chartLines = renderDecorativeChart(
+    0, 220, // x, y
+    1200, 430, // width, height — extends past bottom edge for the cropped look
+  );
+
   const svg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-    ${backgroundLayer()}
-    ${branding}
-    <text x="60" y="140" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-size="48" font-weight="bold" fill="white">Sandbox Benchmarks</text>
-    <text x="60" y="176" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-size="22" fill="#64748b">Live performance rankings across sandbox providers</text>
-    ${providerRows}
-    <line x1="60" y1="580" x2="1140" y2="580" stroke="#1e293b" stroke-width="1" />
-    <text x="60" y="608" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-size="16" fill="#475569">computesdk.com/benchmarks</text>
+    <rect width="1200" height="630" fill="#0a0a0f" />
+    ${chartLines}
+    <text x="60" y="100" font-family="${FONT}" font-size="72" font-weight="bold" fill="white">Sandbox</text>
+    <text x="60" y="180" font-family="${FONT}" font-size="72" font-weight="bold" fill="white">Benchmarks</text>
+    <text x="60" y="225" font-family="${FONT}" font-size="20" fill="#94a3b8">Independently verified sandbox benchmarks run daily across providers.</text>
+    <line x1="0" y1="540" x2="1200" y2="540" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
+    <text x="60" y="580" font-family="${FONT}" font-size="22" font-weight="bold" fill="white">Last run ${timestamp}</text>
+    <text x="1140" y="580" font-family="${FONT}" font-size="26" font-weight="bold" fill="white" text-anchor="end">ComputeSDK</text>
   </svg>`;
 
   return sharp(Buffer.from(svg)).png().toBuffer();
