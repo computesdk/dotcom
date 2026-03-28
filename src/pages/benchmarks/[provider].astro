@@ -188,6 +188,11 @@ const displayName = capitalize(provider)
     template: "splash",
     head: [
       { tag: "link", attrs: { rel: "canonical", href: `https://www.computesdk.com/benchmarks/${provider}/` } },
+      { tag: "meta", attrs: { property: "og:image", content: `https://www.computesdk.com/benchmarks/og/${provider}.png` } },
+      { tag: "meta", attrs: { property: "og:url", content: `https://www.computesdk.com/benchmarks/${provider}/` } },
+      { tag: "meta", attrs: { property: "og:type", content: "website" } },
+      { tag: "meta", attrs: { name: "twitter:card", content: "summary_large_image" } },
+      { tag: "meta", attrs: { name: "twitter:image", content: `https://www.computesdk.com/benchmarks/og/${provider}.png` } },
     ],
   }}
 >
