@@ -65,26 +65,28 @@ function scaleSvg(
   return `<g transform="translate(${x}, ${y}) scale(${scale})">${inner}</g>`;
 }
 
-// Subtle crosshatch pattern for dark background texture
-const TEXTURE_PATTERN = `
-  <defs>
-    <pattern id="crosshatch" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <line x1="0" y1="0" x2="0" y2="20" stroke="#1a1a2e" stroke-width="0.5" />
-    </pattern>
-    <radialGradient id="vignette" cx="50%" cy="40%" r="70%">
-      <stop offset="0%" stop-color="#1a1a2e" stop-opacity="0.3" />
-      <stop offset="100%" stop-color="#000000" stop-opacity="0.6" />
-    </radialGradient>
-  </defs>
-`;
-
 function backgroundLayer(): string {
   return `
-    <rect width="1200" height="630" fill="#0f1117" />
-    ${TEXTURE_PATTERN}
-    <rect width="1200" height="630" fill="url(#crosshatch)" />
+    <defs>
+      <filter id="grain" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" seed="42" stitchTiles="stitch" result="noise" />
+        <feColorMatrix type="saturate" values="0" in="noise" result="mono" />
+        <feComponentTransfer in="mono" result="cutoff">
+          <feFuncR type="discrete" tableValues="0 0 0 0 0 0 0.08 0.12 0.18" />
+          <feFuncG type="discrete" tableValues="0 0 0 0 0 0 0.08 0.12 0.18" />
+          <feFuncB type="discrete" tableValues="0 0 0 0 0 0 0.1 0.14 0.22" />
+        </feComponentTransfer>
+        <feBlend mode="screen" in="cutoff" in2="SourceGraphic" />
+      </filter>
+      <radialGradient id="vignette" cx="50%" cy="40%" r="70%">
+        <stop offset="0%" stop-color="transparent" stop-opacity="0" />
+        <stop offset="100%" stop-color="#000000" stop-opacity="0.5" />
+      </radialGradient>
+    </defs>
+    <rect width="1200" height="630" fill="#0a0a0f" />
+    <rect width="1200" height="630" fill="#0a0a0f" filter="url(#grain)" />
     <rect width="1200" height="630" fill="url(#vignette)" />
-    <rect x="1" y="1" width="1198" height="628" rx="0" fill="none" stroke="#1e293b" stroke-width="1" />
+    <rect x="1" y="1" width="1198" height="628" rx="12" fill="none" stroke="#1e293b" stroke-width="1" />
   `;
 }
 
