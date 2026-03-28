@@ -222,13 +222,13 @@ function renderDecorativeChart(
   chartH: number,
 ): string {
   const colors = [
+    "#5eead4",
+    "#93c5fd", // light blue
+    "#ffffff", // light teal
     "#3b82f6", // blue
     "#10b981", // green
-    "#8b5cf6", // purple
-    "#f97316", // orange
-    "#06b6d4", // cyan
-    "#f59e0b", // amber
-    "#6366f1", // indigo
+    "#1d4ed8", // deep blue
+    "#047857", // deep green
   ];
 
   const numPoints = 20;
@@ -240,13 +240,13 @@ function renderDecorativeChart(
     const rand = seededRandom(lineIdx * 1337 + 42);
 
     // Each line has a base y and gentle wandering
-    const baseY = chartY + 60 + lineIdx * (chartH / (colors.length + 1));
+    const baseY = chartY + 90 + lineIdx * (chartH / (colors.length + 10));
     const points: { x: number; y: number }[] = [];
     let drift = 0;
 
     for (let i = 0; i < numPoints; i++) {
-      drift += (rand() - 0.5) * 40;
-      drift = Math.max(-80, Math.min(80, drift));
+      drift += (rand() - 0.5) * 30;
+      drift = Math.max(-80, Math.min(40, drift));
       const x = chartX + i * xStep;
       const y = baseY + drift;
       points.push({ x, y });
@@ -255,10 +255,10 @@ function renderDecorativeChart(
     const pathData = points
       .map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
       .join(" ");
-    svg += `<path d="${pathData}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7" />`;
+    svg += `<path d="${pathData}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" />`;
 
     for (const p of points) {
-      svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="${color}" opacity="0.8" />`;
+      svg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="2" fill="${color}" opacity="0.55" />`;
     }
   }
 
