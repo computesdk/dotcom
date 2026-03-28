@@ -67,7 +67,7 @@ function TestTypeSection({
   provider: string
   allResults: ProviderResult[]
 }) {
-  const [selectedMetric, setSelectedMetric] = useState<Metric>("compositeScore")
+  const [selectedMetric, setSelectedMetric] = useState<Metric>("median")
 
   const successRate = result.successRate ?? (
     result.iterations
@@ -112,13 +112,7 @@ function TestTypeSection({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <StatCard
-          label="Composite"
-          value={(result.compositeScore ?? 0).toFixed(1)}
-          active={selectedMetric === "compositeScore"}
-          onClick={() => setSelectedMetric("compositeScore")}
-        />
+      <div className="grid grid-cols-3 gap-3 mb-6">
         <StatCard
           label="Median"
           value={formatMs(result.summary.ttiMs.median)}
