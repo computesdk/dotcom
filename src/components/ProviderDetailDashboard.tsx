@@ -95,11 +95,6 @@ function TestTypeSection({
               {TEST_TYPE_LABELS[testType].description}
             </span>
           </span>
-          {rank > 0 && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-xs font-medium text-gray-600 dark:text-gray-300">
-              Ranked #{rank} of {allResults.length}
-            </span>
-          )}
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -145,17 +140,6 @@ function TestTypeSection({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {result.iterations && result.iterations.length > 0 && (
-          <div className="min-w-0 overflow-hidden">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Iteration Distribution
-            </h3>
-            <ProviderIterationHistogram
-              iterations={result.iterations}
-              provider={provider}
-            />
-          </div>
-        )}
         {historyData.length > 0 && (
           <div className="min-w-0 overflow-hidden">
             <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
@@ -165,6 +149,17 @@ function TestTypeSection({
               historyData={historyData}
               provider={provider}
               selectedMetric={selectedMetric}
+            />
+          </div>
+        )}
+        {result.iterations && result.iterations.length > 0 && (
+          <div className="min-w-0 overflow-hidden">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              Iteration Distribution
+            </h3>
+            <ProviderIterationHistogram
+              iterations={result.iterations}
+              provider={provider}
             />
           </div>
         )}
