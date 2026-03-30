@@ -9,6 +9,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
     TEST_TYPES.map((t) => fetchLatestResults(t)),
   );
 
+  const timestamp = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+  });
+
   // Use sequential results as the canonical provider list
   return sequential.map((r) => {
     const findStats = (results: typeof sequential) => {
@@ -29,6 +34,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
         sequential: findStats(sequential),
         burst: findStats(burst),
         staggered: findStats(staggered),
+        timestamp,
       },
     };
   });
@@ -36,7 +42,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const GET: APIRoute = async ({ props }) => {
   const png = await generateProviderOgImage(props as any);
-  return new Response(png, {
+  return new Response(png as unknown as BodyInit, {
     headers: { "Content-Type": "image/png" },
   });
 };
