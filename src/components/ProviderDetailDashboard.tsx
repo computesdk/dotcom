@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { Info } from "lucide-react"
+import { Info, Link } from "lucide-react"
 import { ProviderIterationHistogram } from "./ProviderIterationHistogram"
 import { ProviderHistoryChart } from "./ProviderHistoryChart"
 import { METRIC_LABELS } from "./benchmarkConstants"
@@ -83,11 +83,14 @@ function TestTypeSection({
   }, [allResults, provider])
 
   return (
-    <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
+    <div id={testType.replace(/_/g, "-")} className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8 scroll-mt-16">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white m-0">
-            {TEST_TYPE_LABELS[testType].label}
+            <a href={`#${testType.replace(/_/g, "-")}`} className="group/anchor no-underline text-inherit hover:text-inherit inline-flex items-center gap-2">
+              {TEST_TYPE_LABELS[testType].label}
+              <Link size={14} className="opacity-40 group-hover/anchor:opacity-100 transition-opacity" />
+            </a>
           </h2>
           <span className="relative group inline-flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-help">
             <Info size={14} />
