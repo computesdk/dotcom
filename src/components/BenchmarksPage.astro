@@ -29,7 +29,7 @@ const TEST_TYPES = ["sequential_tti", "burst_tti", "staggered_tti"] as const;
 const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
 const API_URL = "https://api.github.com/repos/computesdk/benchmarks/contents/results";
 const cutoffDate = new Date("2026-02-23T00:00:00Z");
-const excludedProviders = new Set(["railway", "render"]);
+const excludedProviders = new Set(["railway", "render", "justbash", "just-bash"]);
 const HISTORY_BATCH_SIZE = 10;
 
 // GitHub API auth headers (optional — increases rate limit from 60 to 5000 req/hr)
