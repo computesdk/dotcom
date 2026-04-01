@@ -17,6 +17,8 @@ interface ProviderOgProps {
   burst: TestStats;
   staggered: TestStats;
   timestamp: string;
+  testTypeLabel?: string;
+  stats?: TestStats;
 }
 
 interface LeaderboardOgProps {
@@ -103,8 +105,13 @@ function providerWordmark(provider: string, x: number, y: number, maxWidth: numb
   return `<g transform="translate(${x}, ${y}) scale(${scale})">${inner}</g>`;
 }
 
+function formatMs(ms: number): string {
+  if (ms >= 10000) return `${(ms / 1000).toFixed(1)}s`;
+  return `${Math.round(ms).toLocaleString("en-US")}ms`;
+}
+
 export async function generateProviderOgImage(props: ProviderOgProps): Promise<Buffer> {
-  const { provider, timestamp } = props;
+  const { provider, timestamp, testTypeLabel, stats } = props;
   const displayName = capitalize(provider);
   const FONT = "Liberation Sans, Arial, Helvetica, sans-serif";
 
@@ -118,11 +125,33 @@ export async function generateProviderOgImage(props: ProviderOgProps): Promise<B
 
   const subtitleY = hasWordmark ? 310 : 290;
 
+  // Test-type-specific label and stats
+  let testTypeContent = "";
+  if (testTypeLabel) {
+    testTypeContent += `<text x="80" y="${subtitleY + 45}" font-family="${FONT}" font-size="24" fill="#94a3b8">${testTypeLabel}</text>`;
+  }
+  if (stats) {
+    const statsY = testTypeLabel ? subtitleY + 100 : subtitleY + 60;
+    const statItems = [
+      { label: "Median", value: formatMs(stats.median) },
+      { label: "P95", value: formatMs(stats.p95) },
+      { label: "P99", value: formatMs(stats.p99) },
+    ];
+    for (let i = 0; i < statItems.length; i++) {
+      const x = 80 + i * 220;
+      testTypeContent += `
+        <text x="${x}" y="${statsY}" font-family="${FONT}" font-size="14" fill="#64748b" text-transform="uppercase" letter-spacing="1">${statItems[i].label}</text>
+        <text x="${x}" y="${statsY + 32}" font-family="${FONT}" font-size="28" font-weight="bold" fill="white">${statItems[i].value}</text>
+      `;
+    }
+  }
+
   const svg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
     ${backgroundLayer()}
     ${wordmark}
     ${providerNameFallback}
     <text x="80" y="${subtitleY}" font-family="${FONT}" font-size="32" font-weight="bold" fill="white">Sandbox Benchmarks</text>
+    ${testTypeContent}
     <text x="80" y="560" font-family="${FONT}" font-size="22" font-weight="bold" fill="white">Last run ${timestamp}</text>
     <text x="1120" y="560" font-family="${FONT}" font-size="26" font-weight="bold" fill="white" text-anchor="end">ComputeSDK</text>
   </svg>`;

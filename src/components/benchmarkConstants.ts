@@ -25,7 +25,7 @@ export interface HistoryDataPoint {
 export const PROVIDER_COLORS: Record<string, string> = {
   e2b: "#10b981",
   daytona: "#3b82f6",
-  vercel: "#000000",
+  vercel: "#71717a",
   modal: "#8b5cf6",
   blaxel: "#f97316",
   namespace: "#06b6d4",
