@@ -54,11 +54,11 @@ function StatCard({ label, value, sublabel, active, onClick }: { label: string; 
   )
 }
 
-function CopyAnchorLink({ anchor }: { anchor: string }) {
+function CopyAnchorLink({ anchor, provider }: { anchor: string; provider: string }) {
   const [copied, setCopied] = useState(false)
 
   const handleClick = useCallback(() => {
-    const url = `${window.location.origin}${window.location.pathname}#${anchor}`
+    const url = `${window.location.origin}/benchmarks/${provider}/${anchor}`
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
@@ -118,7 +118,7 @@ function TestTypeSection({
         <div className="flex items-center gap-3">
           <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white m-0 inline-flex items-center gap-2">
             {TEST_TYPE_LABELS[testType].label}
-            <CopyAnchorLink anchor={testType.replace(/_/g, "-")} />
+            <CopyAnchorLink anchor={testType.replace(/_/g, "-")} provider={provider} />
           </h2>
           <span className="relative group inline-flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-help">
             <Info size={14} />

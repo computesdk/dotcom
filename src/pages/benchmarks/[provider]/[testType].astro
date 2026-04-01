@@ -1,0 +1,59 @@
+---
+import { fetchLatestResults } from "../../../utils/benchmark-data";
+import { capitalize } from "../../../components/benchmarkConstants";
+
+export async function getStaticPaths() {
+  const { fetchLatestResults } = await import("../../../utils/benchmark-data");
+  const results = await fetchLatestResults("sequential_tti");
+  const providers = results.map((r: any) => r.provider);
+  const testTypes = ["sequential-tti", "burst-tti", "staggered-tti"];
+
+  return providers.flatMap((provider: string) =>
+    testTypes.map((testType: string) => ({
+      params: { provider, testType },
+      props: { provider, testType },
+    }))
+  );
+}
+
+const TEST_TYPES_MAP: Record<string, { anchor: string; label: string }> = {
+  "sequential-tti": { anchor: "sequential-tti", label: "Sequential TTI" },
+  "burst-tti": { anchor: "burst-tti", label: "Burst TTI" },
+  "staggered-tti": { anchor: "staggered-tti", label: "Staggered TTI" },
+};
+
+const { provider, testType } = Astro.props as { provider: string; testType: string };
+const meta = TEST_TYPES_MAP[testType];
+const displayName = capitalize(provider);
+const redirectUrl = `/benchmarks/${provider}/#${meta.anchor}`;
+const ogImage = `https://www.computesdk.com/benchmarks/og/${provider}/${testType}.png`;
+const pageUrl = `https://www.computesdk.com/benchmarks/${provider}/${testType}`;
+const title = `${displayName} ${meta.label} Benchmark | ComputeSDK`;
+const description = `${meta.label} benchmark results for ${displayName} sandboxes on ComputeSDK.`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href={`https://www.computesdk.com/benchmarks/${provider}/`}>
+  <title>{title}</title>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImage}>
+  <meta property="og:url" content={pageUrl}>
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+  <meta http-equiv="refresh" content={`0;url=${redirectUrl}`}>
+</head>
+<body>
+  <p>Redirecting...</p>
+  <script define:vars={{ redirectUrl }}>
+    window.location.replace(redirectUrl);
+  </script>
+</body>
+</html>
