@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react"
-import { Info } from "lucide-react"
+import { useState, useMemo, useCallback } from "react"
+import { Info, Link, Check } from "lucide-react"
 import { ProviderIterationHistogram } from "./ProviderIterationHistogram"
 import { ProviderHistoryChart } from "./ProviderHistoryChart"
 import { METRIC_LABELS } from "./benchmarkConstants"
@@ -54,6 +54,36 @@ function StatCard({ label, value, sublabel, active, onClick }: { label: string; 
   )
 }
 
+function CopyAnchorLink({ anchor }: { anchor: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleClick = useCallback(() => {
+    const url = `${window.location.origin}${window.location.pathname}#${anchor}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }, [anchor])
+
+  return (
+    <span className="relative inline-flex items-center">
+      {copied && (
+        <span className="absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-gray-500 text-white text-[11px] font-medium whitespace-nowrap animate-fade-in">
+          Copied!
+        </span>
+      )}
+      <button
+        type="button"
+        onClick={handleClick}
+        className="inline-flex items-center p-0.5 rounded bg-transparent text-gray-600 hover:text-gray-900 dark:hover:text-gray-300 transition-colors"
+        title="Copy link to section"
+      >
+        {copied ? <Check size={14} className="text-emerald-500" /> : <Link size={14} className="opacity-60 hover:opacity-100 transition-opacity" />}
+      </button>
+    </span>
+  )
+}
+
 function TestTypeSection({
   testType,
   result,
@@ -83,11 +113,12 @@ function TestTypeSection({
   }, [allResults, provider])
 
   return (
-    <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
+    <div id={testType.replace(/_/g, "-")} className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8 scroll-mt-16">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white m-0">
+          <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white m-0 inline-flex items-center gap-2">
             {TEST_TYPE_LABELS[testType].label}
+            <CopyAnchorLink anchor={testType.replace(/_/g, "-")} />
           </h2>
           <span className="relative group inline-flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-help">
             <Info size={14} />
