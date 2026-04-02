@@ -1,54 +1,56 @@
 ---
-title: "Daytona"
+title: "Upstash"
 description: ""
 sidebar:
-  order: 6
+  order: 13
 ---
 
-Daytona provider for ComputeSDK - Execute code in Daytona development workspaces.
+Upstash provider for ComputeSDK
+
 
 ## Installation & Setup
 
 ```bash
-npm install @computesdk/daytona
+npm install @computesdk/upstash
 ```
 
-Add your Daytona credentials to a `.env` file:
+Add your Upstash credentials to a `.env` file:
 
 ```bash
-DAYTONA_API_KEY=your_daytona_api_key
+UPSTASH_BOX_API_KEY=your_upstash_box_api_key
 ```
 
 
 ## Usage
 
 ```typescript
-import { daytona } from '@computesdk/daytona';
+import { upstash } from '@computesdk/upstash';
 
-const compute = daytona({
-  apiKey: process.env.DAYTONA_API_KEY,
+const compute = upstash({
+  apiKey: process.env.UPSTASH_BOX_API_KEY,
 });
 
 // Create sandbox
 const sandbox = await compute.sandbox.create();
 
 // Execute code
-const result = await sandbox.runCode('print("Hello from Daytona!")');
-console.log(result.output); // "Hello from Daytona!"
+const result = await sandbox.runCode('print("Hello from Upstash!")');
+console.log(result.output); // "Hello from Upstash!"
 
 // Clean up
 await sandbox.destroy();
 ```
 
+
 ### Configuration Options
 
 ```typescript
-interface DaytonaConfig {
-  /** Daytona API key - if not provided, will use DAYTONA_API_KEY env var */
+interface UpstashConfig {
+  /** Upstash Box API key - if not provided, will use UPSTASH_BOX_API_KEY env var */
   apiKey?: string;
   /** Default runtime environment */
-  runtime?: 'node' | 'python';
-  /** Execution timeout in milliseconds */
+  runtime?: Runtime;
+  /** Execution timeout in milliseconds (default: 600000) */
   timeout?: number;
 }
 ```
