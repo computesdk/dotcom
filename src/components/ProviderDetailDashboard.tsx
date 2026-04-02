@@ -54,7 +54,7 @@ function StatCard({ label, value, sublabel, active, onClick }: { label: string; 
   )
 }
 
-function CopyAnchorLink({ anchor, provider }: { anchor: string; provider: string }) {
+function CopyableSectionHeading({ label, anchor, provider }: { label: string; anchor: string; provider: string }) {
   const [copied, setCopied] = useState(false)
 
   const handleClick = useCallback(() => {
@@ -63,22 +63,26 @@ function CopyAnchorLink({ anchor, provider }: { anchor: string; provider: string
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
-  }, [anchor])
+  }, [anchor, provider])
 
   return (
-    <span className="relative inline-flex items-center">
+    <span className="relative">
       {copied && (
-        <span className="absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-gray-500 text-white text-[11px] font-medium whitespace-nowrap animate-fade-in">
+        <span className="absolute -top-7 left-0 px-2 py-0.5 rounded bg-gray-500 text-white text-[11px] font-medium whitespace-nowrap">
           Copied!
         </span>
       )}
       <button
         type="button"
         onClick={handleClick}
-        className="inline-flex items-center p-0.5 rounded bg-transparent text-gray-600 hover:text-gray-900 dark:hover:text-gray-300 transition-colors"
+        className="group/heading pr-0 inline-flex items-center bg-transparent gap-2 text-base md:text-lg font-semibold text-gray-900 dark:text-white cursor-pointer hover:text-gray-600 dark:hover:text-gray-500 transition-colors"
         title="Copy link to section"
       >
-        {copied ? <Check size={14} className="text-emerald-500" /> : <Link size={14} className="opacity-60 hover:opacity-100 transition-opacity" />}
+        {label}
+        {copied
+          ? <Check size={14} className="text-emerald-500" />
+          : <Link size={14} className="" />
+        }
       </button>
     </span>
   )
@@ -98,6 +102,7 @@ function TestTypeSection({
   allResults: ProviderResult[]
 }) {
   const [selectedMetric, setSelectedMetric] = useState<Metric>("median")
+  const [showTooltip, setShowTooltip] = useState(false)
 
   const successRate = result.successRate ?? (
     result.iterations
@@ -116,21 +121,23 @@ function TestTypeSection({
     <div id={testType.replace(/_/g, "-")} className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8 scroll-mt-16">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white m-0 inline-flex items-center gap-2">
-            {TEST_TYPE_LABELS[testType].label}
-            <CopyAnchorLink anchor={testType.replace(/_/g, "-")} provider={provider} />
+          <h2 className="m-0">
+            <CopyableSectionHeading label={TEST_TYPE_LABELS[testType].label} anchor={testType.replace(/_/g, "-")} provider={provider} />
           </h2>
-          <span className="relative group inline-flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-help">
+          <div className="h-4 w-px bg-gray-300 mt-1" />
+          <button
+            type="button"
+            onClick={() => setShowTooltip(!showTooltip)}
+            onBlur={() => setShowTooltip(false)}
+            className="relative group mt-1 inline-flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-help bg-transparent border-none p-0"
+          >
             <Info size={14} />
-            <span className="absolute top-full left-0 mt-2 w-64 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-2.5 text-xs text-gray-600 dark:text-gray-300 font-normal opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+            <span className={`absolute top-full left-0 mt-2 w-64 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-2.5 text-xs text-gray-600 dark:text-gray-300 font-normal transition-all z-50 ${showTooltip ? "opacity-100 visible" : "opacity-0 invisible md:group-hover:opacity-100 md:group-hover:visible"}`}>
               {TEST_TYPE_LABELS[testType].description}
             </span>
-          </span>
+          </button>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {successCount}/{totalCount} successful
-          </span>
+        <div className="flex items-center">
           <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${
             successRate >= 0.95
               ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
@@ -138,7 +145,7 @@ function TestTypeSection({
                 ? "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400"
                 : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400"
           }`}>
-            {Math.round(successRate * 100)}%
+            {Math.round(successRate * 100)}% success
           </span>
         </div>
       </div>
