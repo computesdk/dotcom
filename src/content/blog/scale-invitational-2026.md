@@ -13,7 +13,7 @@ featured: true
 
 Just like the legendary Maui Invitational brings together elite college basketball programs for intense, high-stakes competition, ComputeSDK is launching the 2026 Scale Invitational — an open invite benchmark showdown designed to reveal which sandbox providers can truly handle massive concurrency.
 
-This first-of-its-kind event will push participants to spin up and sustain 100,000 concurrent sandboxes under real production-like conditions on June 1st, 2026.
+This first-of-its-kind event will push participants to spin up and sustain 100,000 concurrent sandboxes under real production-like conditions on June 1st, 2026. Want to stay in the loop? RSVP below.
 
 ## Why the Scale Invitational Matters
 
@@ -52,3 +52,7 @@ This event continues ComputeSDK's core philosophy: no pay-to-play, no cherry-pic
 Whether you're a provider ready to prove your scaling muscle or a developer who wants real data before choosing a platform, stay tuned.
 
 **The Scale Invitational is coming — and it will separate the contenders from the true champions.**
+
+---
+
+Want to stay in the loop? RSVP here: [https://luma.com/aye07ar2](https://luma.com/aye07ar2)
