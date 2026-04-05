@@ -128,7 +128,7 @@ export default function Home() {
 
 Click the button on the main page.
 <!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="300px" src="/nextjs-button-screenshot.png" alt="screenshot of next.js app button" title="sandbox test button" />
+<img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/blog/create-sandbox-button-ui.png" alt="screenshot of next.js app button" title="sandbox test button" />
 
 Then check your Daytona dashboard.\
 You should see a new sandbox created!
@@ -295,7 +295,8 @@ So now that you've written this code in Daytona, you can easily adjust this code
 
 **Happy Sandboxing!**
 
-[Sign up with ComputeSDK](https://console.computesdk.com/register)
+<!-- markdownlint-disable-next-line MD033 -->
+<a href="https://console.computesdk.com/register" target="_blank" style="display: inline-block; padding: 6px 12px; background-color: #10b981; color: white; font-weight: bold; border-radius: 8px; text-decoration: none;">Sign up with ComputeSDK</a>
 
 Want to get sandboxes running in your application?\
 Want to be added as a provider?\

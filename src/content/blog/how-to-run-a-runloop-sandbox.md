@@ -25,7 +25,7 @@ Let's walk through the process of getting a basic application running inside a R
 Run this command in your terminal:
 
 ```bash
-npx create-next-app@latest runloop-basic
+npx create-next-app@latest basic-runloop-sandbox
 ```
 
 You can use all of the defaults when prompted.
@@ -49,7 +49,10 @@ npm install computesdk
 <!-- markdownlint-disable-next-line MD033 -->
 Create a Runloop account or log in <a href="https://runloop.ai" target="_blank">here</a>.\
 Once you have created an account, you'll need to get your Runloop API key.\
-Go to your dashboard and create an API key.
+Go to "Settings" and generate an API key.
+
+<!-- markdownlint-disable-next-line MD033 -->
+<img style="margin: 24px auto; border-radius: 10px;" width="700px" src="/blog/runloop/runloop-api-key-ui.png" alt="screenshot of Runloops's API key management interface" title="Runloop settings page" />
 
 Save your API key in your `.env` file to the `RUNLOOP_API_KEY` variable.
 
@@ -75,8 +78,8 @@ COMPUTESDK_API_KEY=your_computesdk_api_key
 
 ### We need to create the API route to create the sandbox
 
-ComputeSDK makes this easy, just import the basic `computesdk` package.\
-ComputeSDK auto-detects your sandbox provider variables from your .env file
+ComputeSDK makes this easy. To create a sandbox with any provider just import the basic `computesdk` package.\
+Use compute.sandbox.create() to create a sandbox. ComputeSDK auto-detects your sandbox provider variables from your .env file
 
 ```typescript
 // app/api/sandbox/route.ts
@@ -128,14 +131,20 @@ export default function Home() {
 
 Click the button on the main page.
 <!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="300px" src="/nextjs-button-screenshot.png" alt="screenshot of next.js app button" title="sandbox test button" />
+<img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/blog/create-sandbox-button-ui.png" alt="screenshot of next.js app button" title="sandbox test button" />
 
 Then check your Runloop dashboard.\
 You should see a new sandbox created!
+<!-- markdownlint-disable-next-line MD033 -->
+<img style="margin: 12px auto; border-radius: 10px;" width="800px" src="/blog/runloop/runloop-sandbox-list-ui.png" alt="screenshot of Runloop sandbox list UI" title="Runloop devboxes list" />
 
 Success!
 
 ## You've successfully created your first Runloop sandbox
+
+You can view more details about your active sandbox by clicking it in Runloop's UI.
+<!-- markdownlint-disable-next-line MD033 -->
+<img style="margin: 12px auto; border-radius: 10px;" width="600px" src="/blog/runloop/runloop-sandbox-ui.png" alt="screenshot of Runloop sandbox UI" title="Runloop devboxes UI" />
 
 If you want to use another sandbox provider like E2B or Vercel, all you need to do is change your provider variable from `RUNLOOP_API_KEY=xxxxx` to `E2B_API_KEY=xxxxx`. ComputeSDK automatically detects your sandbox provider from your environment variables.
 
@@ -295,7 +304,8 @@ So now that you've written this code in Runloop, you can easily adjust this code
 
 **Happy Sandboxing!**
 
-[Sign up with ComputeSDK](https://console.computesdk.com/register)
+<!-- markdownlint-disable-next-line MD033 -->
+<a href="https://console.computesdk.com/register" target="_blank" style="display: inline-block; padding: 6px 12px; background-color: #10b981; color: white; font-weight: bold; border-radius: 8px; text-decoration: none;">Register with ComputeSDK</a>
 
 Want to get sandboxes running in your application?\
 Want to be added as a provider?\
