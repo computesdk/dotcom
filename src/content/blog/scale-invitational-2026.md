@@ -37,7 +37,7 @@ We've already started inviting consistent top performers from our Benchmark Frid
 
 **Do you know a company that should compete?**
 
-Reply to this post on X and cc/tag them directly. If they're interested, they can reach out to us and we'll coordinate all of the details from there.
+Reply to this [post on X](https://x.com/computesdk/status/2041184560168280571?s=20) and cc/tag them directly. If they're interested, they can reach out to us and we'll coordinate all of the details from there.
 
 ## Built on Transparency
 
