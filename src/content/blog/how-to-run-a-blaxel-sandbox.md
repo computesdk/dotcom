@@ -43,6 +43,7 @@ BL_WORKSPACE=your_blaxel_workspace
 ### Install the ComputeSDK package
 
 ```bash
+cd blaxel-basic
 npm install computesdk
 ```
 
@@ -80,7 +81,8 @@ COMPUTESDK_API_KEY=your_computesdk_api_key
 ### We need to create the API route to create the sandbox
 
 ComputeSDK makes this easy, just import the basic `computesdk` package.\
-ComputeSDK auto-detects your sandbox provider variables from your .env file
+ComputeSDK auto-detects your sandbox provider variables from your .env file\
+Create a new `route.ts` file in `app/api/sandbox` and paste the following code:
 
 ```typescript
 // app/api/sandbox/route.ts
@@ -100,7 +102,7 @@ export async function POST() {
 ### Next, we'll edit the page.tsx file
 
 We'll keep it simple and just add one button to run our sandbox test with.\
-Paste this code into Page.tsx
+Replace the content on Page.tsx with this code:
 
 ```typescript
 // app/page.tsx
@@ -129,13 +131,17 @@ export default function Home() {
 ```
 
 ### Now, our first test
-
+Run `npm run dev` in your terminal to start the dev server.\
+Open `localhost:3000`\
 Click the button on the main page.
 <!-- markdownlint-disable-next-line MD033 -->
 <img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/blog/create-sandbox-button-ui.png" alt="screenshot of next.js app button" title="sandbox test button" />
 
 Then check your Blaxel dashboard.\
 You should see a new sandbox created!
+
+<!-- markdownlint-disable-next-line MD033 -->
+<img style="margin: 12px auto; border-radius: 10px;" width="800px" src="/blog/blaxel/blaxel-sandbox-list-ui.png" alt="screenshot of Blaxel.ai sandbox list UI" title="Blaxel sandbox list uI" />
 
 Success!
 
@@ -149,7 +155,7 @@ Now, let's take the next step and run a primitive Vite app inside of our sandbox
 
 ### Update /api/sandbox/route.ts
 
-Add the following to your `route.ts` file directly below this in your code:
+Add the following to your `app/api/sandbox/route.ts` file directly below this in your code:
 
 ```typescript
 const sandbox = await compute.sandbox.create();
