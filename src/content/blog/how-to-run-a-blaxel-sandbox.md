@@ -285,7 +285,7 @@ Now, after you click the "Create Blaxel Sandbox" button on your localhost homepa
 
 1. See a new sandbox created in your Blaxel dashboard.
 2. See a preview URL in your terminal output like this:\
-`unique-sandbox-id-5173.preview.computesdk.com`
+`unique-sandbox-id-5173.sandbox.edge.computesdk.com`
 3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Blaxel sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->
