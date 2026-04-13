@@ -1,9 +1,9 @@
 ---
-import { fetchLatestResults } from "../../../utils/benchmark-data";
-import { capitalize } from "../../../components/benchmarkConstants";
+import { fetchLatestResults } from "../../../../utils/benchmark-data";
+import { capitalize } from "../../../../components/benchmarkConstants";
 
 export async function getStaticPaths() {
-  const { fetchLatestResults } = await import("../../../utils/benchmark-data");
+  const { fetchLatestResults } = await import("../../../../utils/benchmark-data");
   const results = await fetchLatestResults("sequential_tti");
   const providers = results.map((r: any) => r.provider);
   const testTypes = ["sequential-tti", "burst-tti", "staggered-tti"];
@@ -25,9 +25,9 @@ const TEST_TYPES_MAP: Record<string, { anchor: string; label: string }> = {
 const { provider, testType } = Astro.props as { provider: string; testType: string };
 const meta = TEST_TYPES_MAP[testType];
 const displayName = capitalize(provider);
-const redirectUrl = `/benchmarks/${provider}/#${meta.anchor}`;
-const ogImage = `https://www.computesdk.com/benchmarks/og/${provider}/${testType}.png`;
-const pageUrl = `https://www.computesdk.com/benchmarks/${provider}/${testType}`;
+const redirectUrl = `/benchmarks/sandboxes/${provider}/#${meta.anchor}`;
+const ogImage = `https://www.computesdk.com/benchmarks/sandboxes/og/${provider}/${testType}.png`;
+const pageUrl = `https://www.computesdk.com/benchmarks/sandboxes/${provider}/${testType}`;
 const title = `${displayName} ${meta.label} Benchmark | ComputeSDK`;
 const description = `${meta.label} benchmark results for ${displayName} sandboxes on ComputeSDK.`;
 ---
@@ -37,7 +37,7 @@ const description = `${meta.label} benchmark results for ${displayName} sandboxe
 <head>
   <meta charset="utf-8">
   <meta name="robots" content="noindex, nofollow">
-  <link rel="canonical" href={`https://www.computesdk.com/benchmarks/${provider}/`}>
+  <link rel="canonical" href={`https://www.computesdk.com/benchmarks/sandboxes/${provider}/`}>
   <title>{title}</title>
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>

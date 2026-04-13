@@ -58,7 +58,7 @@ function CopyableSectionHeading({ label, anchor, provider }: { label: string; an
   const [copied, setCopied] = useState(false)
 
   const handleClick = useCallback(() => {
-    const url = `${window.location.origin}/benchmarks/${provider}/${anchor}`
+    const url = `${window.location.origin}/benchmarks/sandboxes/${provider}/${anchor}`
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)

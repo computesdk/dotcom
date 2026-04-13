@@ -1,0 +1,34 @@
+---
+title: Benchmarks
+description: Performance benchmarks for sandbox compute providers on ComputeSDK.
+template: splash
+head:
+  - tag: link
+    attrs:
+      rel: canonical
+      href: https://www.computesdk.com/benchmarks/
+---
+
+import PageLayout from '../../../components/layouts/PageLayout.astro';
+
+<PageLayout>
+  <div class="max-w-3xl mx-auto px-4 py-16">
+    <h1 class="text-3xl font-semibold tracking-tight mb-4">Benchmarks</h1>
+    <p class="text-gray-600 dark:text-gray-400 mb-8">Performance benchmarks for sandbox compute providers on ComputeSDK.</p>
+    <ul class="space-y-4">
+      <li>
+        <a href="/benchmarks/sandboxes" class="text-lg font-medium hover:underline">Sandbox Benchmarks</a>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Compare sandbox startup times across E2B, Modal, Vercel, Daytona, and more.</p>
+      </li>
+    </ul>
+  </div>
+</PageLayout>
+
+<style>{`
+  .nova-page-frame-header {
+    position: relative !important;
+  }
+  .main-frame {
+    padding-top: 0 !important;
+  }
+`}</style>

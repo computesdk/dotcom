@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
-import { fetchLatestResults } from "../../../utils/benchmark-data";
-import { generateLeaderboardOgImage } from "../../../utils/og-image";
+import { fetchLatestResults } from "../../../../utils/benchmark-data";
+import { generateLeaderboardOgImage } from "../../../../utils/og-image";
 
 export const GET: APIRoute = async () => {
   // Only fetch latest to get the timestamp

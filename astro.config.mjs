@@ -171,37 +171,37 @@ export default defineConfig({
         nav: [
             {
               label:'Features',
-              href: '/features'
+              href: '/features/'
             },
             {
               label:'Use Cases',
-              href: '/use-cases'
+              href: '/use-cases/'
             },
             {
               label:'Providers',
-              href: '/providers'
+              href: '/providers/'
             },
             {
               label:'Benchmarks',
-              href: '/benchmarks'
+              href: '/benchmarks/'
             },
             {
               label:'Pricing',
-              href: '/pricing'
+              href: '/pricing/'
             },
             {
               label: 'Docs',
-              href: '/docs/getting-started/introduction',
+              href: '/docs/getting-started/introduction/',
             },
             {
               label:'Blog',
-              href: '/blog'
+              href: '/blog/'
             }
           ],
            }),
            starlightLlmsTxt({
             projectName: 'ComputeSDK',
-            description: 'A secure, local-first SDK that allows you to run code in isolated sandbox environments',
+            description: 'A secure SDK that allows you to run code in isolated sandbox environments',
             details: 'ComputeSDK provides a unified interface for executing code across multiple cloud providers and local environments. Perfect for AI applications, educational platforms, and any system requiring secure code execution.',
             customSets: [
                {
@@ -226,8 +226,8 @@ export default defineConfig({
                }
             ],
             promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
-            demote: ['contact', 'benchmarks', 'blog/**', 'privacy', 'terms'],
-            exclude: ['contact*', 'benchmarks', 'blog/**', 'privacy', 'terms'],
+            demote: ['contact', 'benchmarks/sandboxes', 'blog/**', 'privacy', 'terms'],
+            exclude: ['contact*', 'benchmarks/sandboxes', 'blog/**', 'privacy', 'terms'],
             minify: {
               note: true,
               tip: false,
@@ -304,7 +304,7 @@ export default defineConfig({
         page !== 'https://www.computesdk.com/features/sandboxes/' &&
         page !== 'https://www.computesdk.com/old-index/' &&
         page !== 'https://www.computesdk.com/refund/' &&
-        !/\/benchmarks\/[^/]+\/(sequential-tti|burst-tti|staggered-tti)\/?$/.test(page)
+        !/\/benchmarks\/sandboxes\/[^/]+\/(sequential-tti|burst-tti|staggered-tti)\/?$/.test(page)
     }),
   ],
 
