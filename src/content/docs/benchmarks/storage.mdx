@@ -1,0 +1,26 @@
+---
+title: Storage Provider Leaderboard
+description: Compare object storage performance — upload/download latency and throughput for AWS S3, Cloudflare R2, and Tigris.
+template: splash
+head:
+  - tag: link
+    attrs:
+      rel: canonical
+      href: https://www.computesdk.com/benchmarks/storage/
+---
+
+import PageLayout from '../../../components/layouts/PageLayout.astro';
+import StoragePage from '../../../components/StoragePage.astro';
+
+<PageLayout>
+  <StoragePage />
+</PageLayout>
+
+<style>{`
+  .nova-page-frame-header {
+    position: relative !important;
+  }
+  .main-frame {
+    padding-top: 0 !important;
+  }
+`}</style>

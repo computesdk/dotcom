@@ -1,4 +1,4 @@
-import type { ProviderResult } from "../components/benchmarkConstants";
+import type { ProviderResult, StorageResult, StorageHistoryPoint } from "../components/benchmarkConstants";
 
 const BASE_URL =
   "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
@@ -105,6 +105,100 @@ export async function fetchHistoryData(
         }
       }
       if (Object.keys(point.providers).length > 0) {
+        history.push(point);
+      }
+    }
+  }
+
+  return { history, timestamp };
+}
+
+export async function fetchLatestStorageResults(
+  fileSize: string,
+): Promise<StorageResult[]> {
+  const res = await fetch(`${BASE_URL}/storage/${fileSize}/latest.json`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching storage/${fileSize}`);
+  const data = await res.json();
+  return (data.results as StorageResult[])
+    .filter(
+      (r) =>
+        !r.skipped &&
+        r.summary?.uploadMs?.median != null &&
+        r.summary.uploadMs.median > 0,
+    )
+    .sort((a, b) => a.summary.uploadMs.median - b.summary.uploadMs.median);
+}
+
+export async function fetchStorageHistoryData(
+  fileSize: string,
+): Promise<{ history: StorageHistoryPoint[]; timestamp: string }> {
+  const githubHeaders: Record<string, string> = {
+    Accept: "application/vnd.github.v3+json",
+  };
+  const githubToken = import.meta.env.GITHUB_TOKEN;
+  if (githubToken) {
+    githubHeaders["Authorization"] = `Bearer ${githubToken}`;
+  }
+
+  const latestRes = await fetch(`${BASE_URL}/storage/${fileSize}/latest.json`);
+  if (!latestRes.ok) throw new Error(`HTTP ${latestRes.status}`);
+  const latestData = await latestRes.json();
+  const timestamp = new Date(latestData.timestamp).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+  });
+
+  const listRes = await fetch(`${API_URL}/storage/${fileSize}`, {
+    headers: githubHeaders,
+  });
+  if (!listRes.ok) return { history: [], timestamp };
+
+  const files = (await listRes.json()) as Array<{
+    name: string;
+    download_url: string;
+  }>;
+  const jsonFiles = files
+    .filter(
+      (f) =>
+        f.name.endsWith(".json") &&
+        f.name !== "latest.json" &&
+        f.name !== ".gitkeep",
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const history: StorageHistoryPoint[] = [];
+
+  for (let i = 0; i < jsonFiles.length; i += HISTORY_BATCH_SIZE) {
+    const batch = jsonFiles.slice(i, i + HISTORY_BATCH_SIZE);
+    const batchResults = await Promise.all(
+      batch.map(async (file) => {
+        try {
+          const fileRes = await fetch(file.download_url);
+          if (!fileRes.ok) return null;
+          return await fileRes.json();
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    for (const fileData of batchResults) {
+      if (!fileData) continue;
+      const ts = fileData.timestamp as string;
+      const point: StorageHistoryPoint = {
+        date: new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      };
+      for (const r of fileData.results as StorageResult[]) {
+        if (!r.skipped && r.summary?.uploadMs?.median != null) {
+          point[`${r.provider}_uploadMs`] = Math.round(r.summary.uploadMs.median);
+          point[`${r.provider}_downloadMs`] = Math.round(r.summary.downloadMs.median);
+          point[`${r.provider}_throughputMbps`] = Math.round(r.summary.throughputMbps.median * 10) / 10;
+          if (r.compositeScore != null) {
+            point[`${r.provider}_compositeScore`] = r.compositeScore;
+          }
+        }
+      }
+      if (Object.keys(point).length > 1) {
         history.push(point);
       }
     }

@@ -226,8 +226,8 @@ export default defineConfig({
                }
             ],
             promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
-            demote: ['contact', 'benchmarks/sandboxes', 'blog/**', 'privacy', 'terms'],
-            exclude: ['contact*', 'benchmarks/sandboxes', 'blog/**', 'privacy', 'terms'],
+            demote: ['contact', 'benchmarks/sandboxes', 'benchmarks/storage', 'blog/**', 'privacy', 'terms'],
+            exclude: ['contact*', 'benchmarks/sandboxes', 'benchmarks/storage*', 'blog/**', 'privacy', 'terms'],
             minify: {
               note: true,
               tip: false,

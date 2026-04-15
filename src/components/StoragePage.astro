@@ -1,0 +1,140 @@
+---
+import SponsorLogos from "./SponsorLogos.astro";
+import { StorageDashboard } from "./StorageDashboard";
+import { fetchLatestStorageResults, fetchStorageHistoryData } from "../utils/benchmark-data";
+import type { StorageResult, StorageHistoryPoint } from "./benchmarkConstants";
+
+const FILE_SIZE = "10mb";
+
+const providerLogos: Record<string, string> = {
+  "aws-s3": "/benchmarks/normal-aws-s3-light.svg",
+  "cloudflare-r2": "/benchmarks/normal-cloudflare-light.svg",
+  "tigris": "/benchmarks/normal-tigris-light.svg",
+};
+
+const providerLogosDark: Record<string, string> = {
+  "aws-s3": "/benchmarks/normal-aws-s3-dark.svg",
+  "cloudflare-r2": "/benchmarks/normal-cloudflare-dark.svg",
+  "tigris": "/benchmarks/normal-tigris-dark.svg",
+};
+
+let fetchError = false;
+let active: StorageResult[] = [];
+let historyData: StorageHistoryPoint[] = [];
+let timestamp = "";
+
+try {
+  const [results, historyResult] = await Promise.all([
+    fetchLatestStorageResults(FILE_SIZE),
+    fetchStorageHistoryData(FILE_SIZE),
+  ]);
+  active = results;
+  historyData = historyResult.history;
+  timestamp = historyResult.timestamp;
+} catch {
+  fetchError = true;
+}
+
+const storageData = { active, historyData, timestamp };
+---
+
+<div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+  <!-- Sticky header -->
+  <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
+    <div class="border-b border-gray-200/50 dark:border-gray-700/50">
+      <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:py-12 md:px-6">
+        <div class="sm:flex sm:flex-row items-center md:justify-between gap-3">
+          <div>
+            <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Storage Benchmarks</h1>
+            <p class="my-2 text-sm text-gray-700 dark:text-gray-400">Upload/download latency and throughput benchmarks for object storage providers. 10 MB file size, 100 iterations.</p>
+          </div>
+          <div class="m-0 text-left md:text-right">
+            <div class="items-center">
+              <a
+                href="https://github.com/computesdk/benchmarks"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center h-8 gap-1.5 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-xs md:text-sm font-medium text-gray-900 dark:text-white transition-all no-underline"
+              >
+                <svg class="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z" /></svg>
+                View on Github
+              </a>
+            </div>
+            {timestamp && (
+              <span class="text-xs text-gray-700 dark:text-gray-400">Last run: {timestamp}</span>
+            )}
+          </div>
+        </div>
+        <div class="mt-12 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
+          <SponsorLogos tier="all" size="sm" layout="stacked" align="left" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {fetchError ? (
+    <div class="max-w-4xl mx-auto my-0 py-16 text-center">
+      <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
+    </div>
+  ) : (
+    <div class="mt-0">
+      <StorageDashboard
+        client:visible
+        data={storageData}
+        providerLogos={providerLogos}
+        providerLogosDark={providerLogosDark}
+      />
+
+      <div class="md:max-w-7xl md:mx-auto px-4 md:px-6">
+        <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+          Want to see a provider added?
+        </p>
+        <p class="text-center mt-1">
+          <a href="https://x.com/computesdk" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 bg-black dark:bg-white text-white dark:text-black text-sm font-medium rounded-full hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+            Let us know on X
+            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            </svg>
+          </a>
+        </p>
+      </div>
+    </div>
+  )}
+
+  <!-- Methodology -->
+  <div id="methodology" class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-6 scroll-mt-16">
+    <h2 class="text-base text-md font-semibold text-gray-900 dark:text-white mb-6">Methodology</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+      <div class="mt-0">
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">What We Measure</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          Each benchmark uploads and then downloads a <strong class="text-gray-900 dark:text-white">10 MB file</strong> to a bucket in each provider, measuring the time for each operation independently.
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          Three metrics are captured per iteration: <strong class="text-gray-900 dark:text-white">upload latency</strong>, <strong class="text-gray-900 dark:text-white">download latency</strong>, and <strong class="text-gray-900 dark:text-white">throughput</strong> (Mbps, computed from total transferred bytes over total operation time).
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          Each provider is tested with <strong class="text-gray-900 dark:text-white">100 iterations</strong> per run. Benchmarks run automatically via GitHub Actions on a recurring schedule. All results are committed to the <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">public benchmarks repo</a>.
+        </p>
+      </div>
+
+      <div class="mt-0">
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">How We Score</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          The <strong class="text-gray-900 dark:text-white">Composite Score</strong> is a weighted blend of upload and download latency metrics multiplied by the success rate. Latency is scored against a fixed 5-second ceiling: <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">100 &times; (1 &minus; value / 5,000ms)</code>.
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          The weighted score is multiplied by the success rate (0–1), so providers that fail frequently are penalized proportionally.
+        </p>
+        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1.5 list-none p-0 m-0">
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Upload median: 40%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Download median: 40%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Upload P95: 10%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Download P95: 10%</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
