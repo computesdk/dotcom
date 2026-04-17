@@ -51,7 +51,7 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 10 }}
-          tickFormatter={(value: number) => isComposite ? `${Math.round(value)}` : `${(value / 1000).toFixed(1)}s`}
+          tickFormatter={(value: number) => isComposite ? `${Math.round(value)}` : `${Math.round(value)}ms`}
           width={40}
         />
         <Tooltip
@@ -67,7 +67,7 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
                     style={{ backgroundColor: color }}
                   />
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {isComposite ? "Score" : selectedMetric.toUpperCase()}: <span className="font-mono font-medium text-gray-900 dark:text-white">{isComposite ? (value as number).toFixed(1) : `${((value as number) / 1000).toFixed(2)}s`}</span>
+                    {isComposite ? "Score" : selectedMetric.toUpperCase()}: <span className="font-mono font-medium text-gray-900 dark:text-white">{isComposite ? (value as number).toFixed(1) : `${Math.round(value as number)}ms`}</span>
                   </span>
                 </div>
               </div>

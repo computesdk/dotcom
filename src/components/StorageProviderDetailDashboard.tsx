@@ -18,12 +18,14 @@ const STORAGE_METRIC_LABELS: Record<StorageMetric, string> = {
   compositeScore: "Calculated Score"
 }
 
-function StatCard({ label, value, sublabel }: { label: string; value: string; sublabel?: string }) {
+function StatCard({ label, value, sublabel, sublabel2 }: { label: string; value: string; sublabel?: string; sublabel2?: string }) {
   return (
     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 px-4 py-3">
       <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{label}</div>
       <div className="mt-1 font-mono text-xl font-semibold text-gray-900 dark:text-white">{value}</div>
+      <div className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">Median</div>
       {sublabel && <div className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">{sublabel}</div>}
+      {sublabel2 && <div className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">{sublabel2}</div>}
     </div>
   )
 }
@@ -161,16 +163,19 @@ export function StorageProviderDetailDashboard({
                   label="Upload"
                   value={`${result.summary.uploadMs.median.toFixed(0)}ms`}
                   sublabel={`P95: ${result.summary.uploadMs.p95.toFixed(0)}ms`}
+                  sublabel2={`P99: ${result.summary.uploadMs.p99.toFixed(0)}ms`}
                 />
                 <StatCard
                   label="Download"
                   value={`${result.summary.downloadMs.median.toFixed(0)}ms`}
                   sublabel={`P95: ${result.summary.downloadMs.p95.toFixed(0)}ms`}
+                  sublabel2={`P99: ${result.summary.downloadMs.p99.toFixed(0)}ms`}
                 />
                 <StatCard
                   label="Throughput"
                   value={`${result.summary.throughputMbps.median.toFixed(0)} Mbps`}
                   sublabel={`P95: ${result.summary.throughputMbps.p95.toFixed(0)} Mbps`}
+                  sublabel2={`P99: ${result.summary.throughputMbps.p99.toFixed(0)} Mbps`}
                 />
               </div>
             </>

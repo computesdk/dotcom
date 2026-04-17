@@ -28,9 +28,9 @@ const TEST_TYPE_LABELS: Record<TestType, { label: string; description: string }>
   staggered_tti: { label: "Staggered TTI", description: "Sandboxes launched with 200ms delays between each." },
 }
 
-const formatMs = (ms: number) => `${(ms / 1000).toFixed(2)}s`
+const formatMs = (ms: number) => `${Math.round(ms)}ms`
 
-function StatCard({ label, value, sublabel, active, onClick }: { label: string; value: string; sublabel?: string; active?: boolean; onClick?: () => void }) {
+function StatCard({ label, value, active, onClick }: { label: string; value: string; active?: boolean; onClick?: () => void }) {
   return (
     <button
       type="button"
@@ -47,9 +47,6 @@ function StatCard({ label, value, sublabel, active, onClick }: { label: string; 
       <div className="mt-1 font-mono text-xl font-semibold text-gray-900 dark:text-white">
         {value}
       </div>
-      {sublabel && (
-        <div className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">{sublabel}</div>
-      )}
     </button>
   )
 }
@@ -150,42 +147,43 @@ function TestTypeSection({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <StatCard
-          label="Median"
-          value={formatMs(result.summary.ttiMs.median)}
-          active={selectedMetric === "median"}
-          onClick={() => setSelectedMetric("median")}
-        />
-        <StatCard
-          label="P95"
-          value={formatMs(result.summary.ttiMs.p95)}
-          active={selectedMetric === "p95"}
-          onClick={() => setSelectedMetric("p95")}
-        />
-        <StatCard
-          label="P99"
-          value={formatMs(result.summary.ttiMs.p99)}
-          active={selectedMetric === "p99"}
-          onClick={() => setSelectedMetric("p99")}
-        />
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {historyData.length > 0 && (
-          <div className="min-w-0 overflow-hidden">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              {METRIC_LABELS[selectedMetric]} Over Time
-            </h3>
-            <ProviderHistoryChart
-              historyData={historyData}
-              provider={provider}
-              selectedMetric={selectedMetric}
+        <div className="min-w-0 overflow-hidden">
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <StatCard
+              label="Median"
+              value={formatMs(result.summary.ttiMs.median)}
+              active={selectedMetric === "median"}
+              onClick={() => setSelectedMetric("median")}
+            />
+            <StatCard
+              label="P95"
+              value={formatMs(result.summary.ttiMs.p95)}
+              active={selectedMetric === "p95"}
+              onClick={() => setSelectedMetric("p95")}
+            />
+            <StatCard
+              label="P99"
+              value={formatMs(result.summary.ttiMs.p99)}
+              active={selectedMetric === "p99"}
+              onClick={() => setSelectedMetric("p99")}
             />
           </div>
-        )}
+          {historyData.length > 0 && (
+            <>
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                {METRIC_LABELS[selectedMetric]} Over Time
+              </h3>
+              <ProviderHistoryChart
+                historyData={historyData}
+                provider={provider}
+                selectedMetric={selectedMetric}
+              />
+            </>
+          )}
+        </div>
         {result.iterations && result.iterations.length > 0 && (
-          <div className="min-w-0 overflow-hidden">
+          <div className="min-w-0 overflow-hidden flex flex-col justify-end">
             <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Iteration Distribution
             </h3>
