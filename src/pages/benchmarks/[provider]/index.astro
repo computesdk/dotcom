@@ -41,6 +41,7 @@ const providerLogos: Record<string, string> = {
   justbash: "/benchmarks/normal-justbash-light.svg",
   "just-bash": "/benchmarks/normal-justbash-light.svg",
   cloudflare: "/benchmarks/normal-cloudflare-light.svg",
+  archil: "/benchmarks/normal-archil-light.svg",
 }
 
 const providerLogosDark: Record<string, string> = {
@@ -56,6 +57,7 @@ const providerLogosDark: Record<string, string> = {
   justbash: "/benchmarks/normal-justbash-dark.svg",
   "just-bash": "/benchmarks/normal-justbash-dark.svg",
   cloudflare: "/benchmarks/normal-cloudflare-dark.svg",
+  archil: "/benchmarks/normal-archil-dark.svg",
 }
 
 export async function getStaticPaths() {
@@ -271,7 +273,7 @@ const displayName = capitalize(provider)
                 </div>
               </div>
               <div class="pt-6 border-t md:border-0 md:pt-0 md:mt-0 border-gray-200/50 dark:border-gray-700/50">
-                <SponsorLogos size="sm" layout="stacked" align="left" mdAlign="center" tier="tier-1" label="Sponsored by:" />
+                <SponsorLogos size="sm" layout="stacked" align="left" mdAlign="center" tier="tier-1" label="Sponsored by:" exclude={displayName} />
               </div>
             </div>
           </div>
