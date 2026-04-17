@@ -1,0 +1,184 @@
+---
+import SponsorLogos from "./SponsorLogos.astro";
+
+const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
+const excluded = new Set(["railway", "render", "justbash", "just-bash"]);
+
+interface ProviderResult {
+  provider: string;
+  skipped?: boolean;
+  summary: { ttiMs: { median: number } };
+}
+
+interface StorageResult {
+  provider: string;
+  skipped?: boolean;
+  summary: { uploadMs: { median: number } };
+}
+
+let providerCount = 0;
+let storageProviderCount = 0;
+let lastUpdated = "";
+
+try {
+  const [sandboxRes, storageRes] = await Promise.allSettled([
+    fetch(`${BASE_URL}/sequential_tti/latest.json`),
+    fetch(`${BASE_URL}/storage/10mb/latest.json`),
+  ]);
+
+  if (sandboxRes.status === "fulfilled" && sandboxRes.value.ok) {
+    const data = await sandboxRes.value.json();
+    const active: ProviderResult[] = (data.results as ProviderResult[])
+      .filter((r) => !r.skipped && !excluded.has(r.provider) && r.summary?.ttiMs?.median > 0);
+    providerCount = active.length;
+    lastUpdated = new Date(data.timestamp).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
+  if (storageRes.status === "fulfilled" && storageRes.value.ok) {
+    const data = await storageRes.value.json();
+    storageProviderCount = (data.results as StorageResult[])
+      .filter((r) => !r.skipped && r.summary?.uploadMs?.median > 0).length;
+  }
+} catch {
+  // fetch failed at build time — stats will be empty
+}
+
+
+---
+
+<div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+
+  <!-- Hero -->
+  <div class="border-b border-gray-200/50 dark:border-gray-700/50">
+    <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:py-12 md:px-6">
+      <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Benchmarks</h1>
+      <p class="my-2 text-sm text-gray-700 dark:text-gray-400">Reproducible performance measurements across providers. Open methodology, raw data, no marketing spin.</p>
+    </div>
+  </div>
+
+  <!-- Category cards -->
+  <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Sandboxes — live -->
+      <div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all duration-200">
+        <div class="flex items-center gap-2 mb-1">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">
+            <a href="/benchmarks/sandboxes" class="no-underline hover:underline text-gray-900 dark:text-white">Sandbox Benchmarks</a>
+          </h2>
+        </div>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+          Performance benchmarks for sandbox environments — cold start latency, execution throughput, and reliability across providers.
+        </p>
+
+        <!-- Stats -->
+        <div class="mt-auto grid grid-cols-3 gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">{providerCount > 0 ? providerCount : "—"} Providers</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">3 Test Types</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">Runs Daily</p>
+          </div>
+        </div>
+
+        <!-- Sponsors -->
+        <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+          <p class="mt-0 text-xs text-gray-500 dark:text-gray-400">Sponsored by:</p>
+          <SponsorLogos tier="all" size="sm" layout="stacked" align="left" />
+        </div>
+
+        <!-- CTA link -->
+        <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+          <a href="/benchmarks/sandboxes" class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-white no-underline hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+            View benchmarks
+            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Browsers — coming soon -->
+      <div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 opacity-60">
+        <div class="flex items-center gap-2 mb-1">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">Browser Benchmarks</h2>
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 uppercase tracking-wide">Soon</span>
+        </div>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+          Headless browser benchmarks — page load, rendering performance, scripting throughput, and resource consumption across providers.
+        </p>
+
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-1.5 mb-5">
+          {["page load", "rendering", "Playwright"].map((tag) => (
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <!-- Storage — live -->
+      <div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all duration-200">
+        <div class="flex items-center gap-2 mb-1">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">
+            <a href="/benchmarks/storage" class="no-underline hover:underline text-gray-900 dark:text-white">Storage Benchmarks</a>
+          </h2>
+        </div>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+          Object storage benchmarks across providers — upload/download latency, throughput, and reliability for S3-compatible APIs.
+        </p>
+
+        <!-- Stats -->
+        <div class="mt-auto grid grid-cols-3 gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">{storageProviderCount > 0 ? storageProviderCount : "3"} Providers</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">3 Metrics</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">Runs Daily</p>
+          </div>
+        </div>
+
+        <!-- CTA link -->
+        <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+          <a href="/benchmarks/storage" class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-white no-underline hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+            View benchmarks
+            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    {lastUpdated && (
+      <p class="mt-6 text-xs text-gray-600 dark:text-gray-400">
+        Last benchmark run: {lastUpdated} &nbsp;·&nbsp; <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors no-underline">View raw data on GitHub ↗</a>
+      </p>
+    )}
+  </div>
+
+  <!-- Footer bar -->
+  <div class="border-t border-gray-200/50 dark:border-gray-700/50">
+    <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-4">
+      <p class="text-xs text-gray-600 dark:text-gray-400 text-center">
+        All benchmarks run on standardized infrastructure &nbsp;·&nbsp; Results updated on a recurring schedule &nbsp;·&nbsp; Open methodology
+      </p>
+    </div>
+  </div>
+
+</div>

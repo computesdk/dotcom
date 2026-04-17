@@ -1,6 +1,6 @@
 import type { APIRoute, GetStaticPaths } from "astro";
-import { fetchLatestResults } from "../../../utils/benchmark-data";
-import { generateProviderOgImage } from "../../../utils/og-image";
+import { fetchLatestResults } from "../../../../utils/benchmark-data";
+import { generateProviderOgImage } from "../../../../utils/og-image";
 
 const TEST_TYPES = ["sequential_tti", "burst_tti", "staggered_tti"] as const;
 

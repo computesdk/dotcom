@@ -52,7 +52,7 @@ export function BenchmarkProviderToggle({
     return (
       <a
         key={result.provider}
-        href={`/benchmarks/${result.provider}`}
+        href={`/benchmarks/sandboxes/${result.provider}`}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors no-underline cursor-pointer ${
           index === 0
             ? "dark:bg-gray-700/50 border-gray-200 dark:border-gray-700/50 shadow-sm"

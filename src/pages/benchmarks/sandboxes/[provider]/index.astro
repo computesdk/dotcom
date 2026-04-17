@@ -1,11 +1,11 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro"
-import PageLayout from "../../../components/layouts/PageLayout.astro"
-import ClaimProfileCTA from "../../../components/ClaimProfileCTA.astro"
-import SponsorLogos from "../../../components/SponsorLogos.astro"
-import { ProviderDetailDashboard } from "../../../components/ProviderDetailDashboard"
-import { capitalize } from "../../../components/benchmarkConstants"
-import type { ProviderResult, HistoryDataPoint } from "../../../components/benchmarkConstants"
+import PageLayout from "../../../../components/layouts/PageLayout.astro"
+import ClaimProfileCTA from "../../../../components/ClaimProfileCTA.astro"
+import SponsorLogos from "../../../../components/SponsorLogos.astro"
+import { ProviderDetailDashboard } from "../../../../components/ProviderDetailDashboard"
+import { capitalize } from "../../../../components/benchmarkConstants"
+import type { ProviderResult, HistoryDataPoint } from "../../../../components/benchmarkConstants"
 
 interface TestTypeData {
   active: ProviderResult[]
@@ -189,12 +189,12 @@ const displayName = capitalize(provider)
     description: `Detailed benchmark results and performance data for ${displayName} sandboxes on ComputeSDK.`,
     template: "splash",
     head: [
-      { tag: "link", attrs: { rel: "canonical", href: `https://www.computesdk.com/benchmarks/${provider}/` } },
-      { tag: "meta", attrs: { property: "og:image", content: `https://www.computesdk.com/benchmarks/og/${provider}.png` } },
-      { tag: "meta", attrs: { property: "og:url", content: `https://www.computesdk.com/benchmarks/${provider}/` } },
+      { tag: "link", attrs: { rel: "canonical", href: `https://www.computesdk.com/benchmarks/sandboxes/${provider}/` } },
+      { tag: "meta", attrs: { property: "og:image", content: `https://www.computesdk.com/benchmarks/sandboxes/og/${provider}.png` } },
+      { tag: "meta", attrs: { property: "og:url", content: `https://www.computesdk.com/benchmarks/sandboxes/${provider}/` } },
       { tag: "meta", attrs: { property: "og:type", content: "website" } },
       { tag: "meta", attrs: { name: "twitter:card", content: "summary_large_image" } },
-      { tag: "meta", attrs: { name: "twitter:image", content: `https://www.computesdk.com/benchmarks/og/${provider}.png` } },
+      { tag: "meta", attrs: { name: "twitter:image", content: `https://www.computesdk.com/benchmarks/sandboxes/og/${provider}.png` } },
     ],
   }}
 >
@@ -208,7 +208,7 @@ const displayName = capitalize(provider)
               <div class="md:max-w-7xl md:mx-auto relative">
                 <div class="flex px-4 md:px-6 py-4 gap-2 overflow-x-auto provider-nav-scroll" id="provider-nav">
                   <a
-                    href="/benchmarks"
+                    href="/benchmarks/sandboxes"
                     class="shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-lg text-sm no-underline transition-all"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 dark:text-gray-500"><path d="m15 18-6-6 6-6"/></svg>
@@ -221,7 +221,7 @@ const displayName = capitalize(provider)
                     const logomarkDark = `/benchmarks/${p.provider}-logomark-dark.svg`
                     return (
                       <a
-                        href={`/benchmarks/${p.provider}`}
+                        href={`/benchmarks/sandboxes/${p.provider}`}
                         class:list={[
                           "shrink-0 min-w-28 inline-flex flex-col items-center gap-1 py-2 rounded-lg border text-sm no-underline transition-all relative",
                           isCurrent
@@ -308,7 +308,7 @@ const displayName = capitalize(provider)
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Benchmarks", "item": "https://www.computesdk.com/benchmarks" },
+    { "@type": "ListItem", "position": 1, "name": "Benchmarks", "item": "https://www.computesdk.com/benchmarks/sandboxes" },
     { "@type": "ListItem", "position": 2, "name": displayName }
   ]
 })} />
