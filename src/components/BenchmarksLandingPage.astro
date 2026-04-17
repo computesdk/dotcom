@@ -106,27 +106,6 @@ try {
         </div>
       </div>
 
-      <!-- Browsers — coming soon -->
-      <div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 opacity-60">
-        <div class="flex items-center gap-2 mb-1">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">Browser Benchmarks</h2>
-          <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 uppercase tracking-wide">Soon</span>
-        </div>
-
-        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
-          Headless browser benchmarks — page load, rendering performance, scripting throughput, and resource consumption across providers.
-        </p>
-
-        <!-- Tags -->
-        <div class="flex flex-wrap gap-1.5 mb-5">
-          {["page load", "rendering", "Playwright"].map((tag) => (
-            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-
       <!-- Storage — live -->
       <div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all duration-200">
         <div class="flex items-center gap-2 mb-1">
@@ -160,6 +139,27 @@ try {
               <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
             </svg>
           </a>
+        </div>
+      </div>
+
+      <!-- Browsers — coming soon -->
+      <div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 opacity-60">
+        <div class="flex items-center gap-2 mb-1">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">Browser Benchmarks</h2>
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 uppercase tracking-wide">Soon</span>
+        </div>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+          Headless browser benchmarks — page load, rendering performance, scripting throughput, and resource consumption across providers.
+        </p>
+
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-1.5 mb-5">
+          {["page load", "rendering", "Playwright"].map((tag) => (
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+              {tag}
+            </span>
+          ))}
         </div>
       </div>
 
