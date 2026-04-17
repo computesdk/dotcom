@@ -1,6 +1,7 @@
 ---
 interface Props {
   tier?: "all" | "tier-1"
+  names?: string[]
   size?: "xs" | "sm" | "md" | "lg"
   layout?: "inline" | "stacked"
   align?: "left" | "center" | "right"
@@ -8,7 +9,7 @@ interface Props {
   label?: string
 }
 
-const { tier = "all", size = "md", layout = "inline", align = "center", mdAlign, label } = Astro.props
+const { tier = "all", names, size = "md", layout = "inline", align = "center", mdAlign, label } = Astro.props
 
 const allSponsors = [
   { 
@@ -37,9 +38,11 @@ const allSponsors = [
   },
 ]
 
-const sponsors = tier === "all" 
-  ? allSponsors 
-  : allSponsors.filter(s => s.tier === tier)
+const sponsors = names
+  ? allSponsors.filter(s => names.includes(s.name))
+  : tier === "all"
+    ? allSponsors
+    : allSponsors.filter(s => s.tier === tier)
 
 const sizeClasses = {
   xs: "h-4",
