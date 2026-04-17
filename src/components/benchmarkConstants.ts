@@ -74,6 +74,7 @@ export const PROVIDER_COLORS: Record<string, string> = {
   runloop: "#14b8a6",
   justbash: "#303137",
   "just-bash": "#303137",
+  archil: "#991b1b",
 }
 
 export type Metric = "median" | "p95" | "p99" | "compositeScore"

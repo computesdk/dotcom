@@ -7,9 +7,10 @@ interface Props {
   align?: "left" | "center" | "right"
   mdAlign?: "left" | "center" | "right"
   label?: string
+  exclude?: string
 }
 
-const { tier = "all", names, size = "md", layout = "inline", align = "center", mdAlign, label } = Astro.props
+const { tier = "all", size = "md", layout = "inline", align = "center", mdAlign, label, exclude } = Astro.props
 
 const allSponsors = [
   { 
@@ -38,11 +39,9 @@ const allSponsors = [
   },
 ]
 
-const sponsors = names
-  ? allSponsors.filter(s => names.includes(s.name))
-  : tier === "all"
-    ? allSponsors
-    : allSponsors.filter(s => s.tier === tier)
+const excludeName = exclude?.toLowerCase()
+const sponsors = (tier === "all" ? allSponsors : allSponsors.filter(s => s.tier === tier))
+  .filter(s => excludeName ? s.name.toLowerCase() !== excludeName : true)
 
 const sizeClasses = {
   xs: "h-4",
