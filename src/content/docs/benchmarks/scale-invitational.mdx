@@ -1,0 +1,38 @@
+---
+title: "Scale Invitational 2026 — 100,000 Concurrent Sandboxes"
+description: "The most ambitious sandbox scale test ever run. Any provider can participate. All results published openly. June 1st, 2026."
+template: splash
+head:
+  - tag: link
+    attrs:
+      rel: canonical
+      href: https://www.computesdk.com/benchmarks/scale-off/
+  - tag: meta
+    attrs:
+      property: og:title
+      content: "Scale Invitational 2026 — 100,000 Concurrent Sandboxes"
+  - tag: meta
+    attrs:
+      property: og:description
+      content: "The most ambitious sandbox scale test ever run. Any provider can participate. All results published openly. June 1st, 2026."
+  - tag: meta
+    attrs:
+      property: og:image
+      content: https://www.computesdk.com/benchmarks/scale-invitational-og.png
+---
+
+import PageLayout from '../../../components/layouts/PageLayout.astro';
+import ScaleInvitational from '../../../components/ScaleInvitational.astro';
+
+<PageLayout>
+  <ScaleInvitational />
+</PageLayout>
+
+<style>{`
+  .nova-page-frame-header {
+    position: relative !important;
+  }
+  .main-frame {
+    padding-top: 0 !important;
+  }
+`}</style>

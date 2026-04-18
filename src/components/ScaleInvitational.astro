@@ -1,0 +1,276 @@
+---
+import SponsorLogos from "./SponsorLogos.astro";
+
+const lumaUrl = "https://luma.com/aye07ar2";
+const xPostUrl = "https://x.com/computesdk/status/2041184560168280571?s=20";
+const eventDate = "June 1, 2026";
+
+const metrics = [
+  { label: "Concurrent Sandboxes", value: "100,000" },
+  { label: "Cold-Start Latencies", value: "p50/p95/p99" },
+  { label: "Success Rate", value: "Measured" },
+];
+
+const timeline = [
+  { phase: "Now", description: "Providers request to join the Scale Invitational on X." },
+  { phase: "May 2026", description: "Invitations confirmed. Methodology finalized and published." },
+  { phase: "June 1, 2026", description: "Testing day. All participants run the same workload simultaneously." },
+  { phase: "June 2026", description: "Full results, deep-dive analysis, and permanent results pages published." },
+];
+---
+
+<div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+
+  <!-- Hero -->
+  <div class="border-b border-gray-200/50 dark:border-gray-700/50">
+    <div class="md:max-w-7xl md:mx-auto py-4 px-4 md:py-12 md:px-6">
+      <!-- Event badge + breadcrumb -->
+      <div class="">
+        <span class="inline-flex items-center gap-1.5 bg-emerald-600/10 dark:bg-emerald-900/50 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 ring-1 ring-inset ring-emerald-600/20 rounded-full uppercase tracking-wider">
+          <a href="/benchmarks/sandboxes" class="hover:text-emerald-500 dark:hover:text-emerald-200 transition-colors no-underline">Benchmarks</a>
+          <svg class="size-2.5 shrink-0 opacity-60" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Scale Invitational 2026
+        </span>
+      </div>
+
+      <h1 class="mt-12 text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white leading-[1.05]">
+        100,000<br />
+        <span class="text-emerald-600 dark:text-emerald-400">Concurrent Sandboxes.</span><br />
+        June 1st.
+      </h1>
+
+      <p class="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-2xl leading-relaxed">
+        The most ambitious sandbox scale test ever run. Any provider can participate. All results published openly on June 1st, 2026.
+      </p>
+
+      <div class="mt-8 flex flex-wrap gap-4">
+        <a
+          href={lumaUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors no-underline"
+        >
+          RSVP to stay in the loop
+          <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
+        <a
+          href={xPostUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-3 text-sm font-semibold text-gray-900 dark:text-white hover:border-gray-400 dark:hover:border-gray-500 transition-colors no-underline"
+        >
+          Nominate a provider on X ↗
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sponsors -->
+  <div class="mt-0 border-b border-gray-200/50 dark:border-gray-700/50">
+    <div class="md:max-w-7xl md:mx-auto py-8 px-4 md:px-6">
+      <SponsorLogos label="Sponsored by:" layout="stacked" align="left" size="lg" />
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <!-- <div class="border-b border-gray-200/50 dark:border-gray-700/50 bg-gray-50/50 dark:bg-gray-800/30">
+    <div class="md:max-w-7xl md:mx-auto px-4 md:px-6">
+      <div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-gray-700">
+        {metrics.map((m) => (
+          <div class="py-6 px-4 md:px-8 text-center">
+            <p class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{m.value}</p>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{m.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div> -->
+
+  <!-- Body -->
+  <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-16">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+      <!-- Left: main content -->
+      <div class="lg:col-span-2 space-y-12">
+
+        <!-- Why it matters -->
+        <section>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Why this matters</h2>
+          <div class="prose prose-gray dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 space-y-4">
+            <p>
+              Cold-start benchmarks are useful, but they only tell part of the story. As AI agents, code interpreters, and large-scale testing workloads grow, the real differentiator is scaling performance under extreme load.
+            </p>
+            <p>
+              We run <a href="/benchmarks/sandboxes" class="text-emerald-600 dark:text-emerald-400 hover:underline no-underline">daily benchmarks</a> that measure sandbox performance. The Scale Invitational goes further — it answers the question every production team eventually asks: <strong class="text-gray-900 dark:text-white">can you actually handle 100K at once?</strong>
+            </p>
+            <p>
+              No marketing claims. No cherry-picked results. One standardized workload, every participant runs it simultaneously, everything published.
+            </p>
+          </div>
+        </section>
+
+        <!-- What's being tested -->
+        <section>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">What we're testing</h2>
+          <div class="bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 rounded-xl overflow-hidden">
+            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+              {[
+                {
+                  title: "Scale to 100,000 concurrent sandboxes",
+                  description: "Every participant must successfully launch and sustain 100K sandboxes simultaneously under production-like conditions.",
+                },
+                {
+                  title: "Cold-start latency — p50, p95, p99",
+                  description: "Full latency distribution from request to ready sandbox, measured at scale rather than in isolation.",
+                },
+                {
+                  title: "Success rate",
+                  description: "What percentage of the 100K sandboxes came up successfully? Failures count.",
+                },
+              ].map((item) => (
+                <div class="p-5 md:p-6">
+                  <div class="flex gap-3">
+                    <div class="mt-0.5 shrink-0">
+                      <div class="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
+                        <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="mt-0">
+                      <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{item.title}</h3>
+                      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{item.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- Who can participate -->
+        <section>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Who can participate</h2>
+          <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+            The Scale Invitational is open to any sandbox provider willing to run the workload under the same conditions as everyone else.
+          </p>
+          <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+            We've already started inviting consistent top performers from our Benchmark Friday series. We're also opening the floor to the community.
+          </p>
+          <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-5 md:p-6">
+            <p class="text-sm font-semibold text-emerald-900 dark:text-emerald-200 mb-1">Know a provider that should compete?</p>
+            <p class="text-sm text-emerald-700 dark:text-emerald-300 leading-relaxed">
+              Reply to our <a href={xPostUrl} target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:no-underline">post on X</a> and cc/tag them directly. If they're interested, they can reach out and we'll coordinate all the details.
+            </p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right: sidebar -->
+      <div class="space-y-6">
+
+        <!-- CTA card -->
+        <div class="bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 rounded-xl p-6">
+          <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Event Details</p>
+          <div class="space-y-3">
+            <div class="flex items-start gap-3">
+              <svg class="size-4 text-gray-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+              </svg>
+              <div class="mt-0">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">{eventDate}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Testing day</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <svg class="size-4 text-gray-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5" />
+              </svg>
+              <div class="mt-0">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">100,000 concurrent sandboxes</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Same workload, every participant</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <svg class="size-4 text-gray-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+              </svg>
+              <div class="mt-0">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">Open results</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Published permanently for the community</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 pt-5 border-t border-gray-100 dark:border-gray-800">
+            <a
+              href={lumaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center gap-2 w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors no-underline"
+            >
+              RSVP on Luma
+              <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 rounded-xl p-6">
+          <ol class="space-y-4 pl-0">
+            {timeline.map((step, i) => (
+              <li class="flex gap-3">
+                <div class="flex flex-col items-center">
+                  <div class={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${i === 0 ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'}`}>
+                    {i + 1}
+                  </div>
+                  {i < timeline.length - 1 && <div class="w-px flex-1 bg-gray-200 dark:bg-gray-700 mt-1.5 mb-0 min-h-[12px]"></div>}
+                </div>
+                <div class="mt-0">
+                  <p class={`text-xs font-semibold uppercase tracking-wide mb-0.5 ${i === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500'}`}>{step.phase}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-300 leading-snug">{step.description}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <!-- Transparency note -->
+        <div class="ring-1 ring-gray-200 dark:ring-gray-800 rounded-xl p-5">
+          <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Built on transparency</p>
+          <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+            No pay-to-play. No cherry-picked results. The same methodology behind our <a href="/benchmarks/sandboxes" class="text-emerald-600 dark:text-emerald-400 hover:underline no-underline">daily benchmarks</a> — just at a scale nobody's attempted before.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer bar -->
+  <div class="border-t border-gray-200/50 dark:border-gray-700/50">
+    <div class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-4">
+      <p class="text-xs text-gray-600 dark:text-gray-400 text-center">
+        Open methodology &nbsp;·&nbsp; Raw data published &nbsp;·&nbsp; <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="hover:text-gray-600 dark:hover:text-gray-400 no-underline transition-colors">View benchmarks on GitHub ↗</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Benchmarks", "item": "https://www.computesdk.com/benchmarks/sandboxes" },
+    { "@type": "ListItem", "position": 2, "name": "Scale Invitational", "item": "https://www.computesdk.com/benchmarks/scale-invitational" }
+  ]
+})} />
