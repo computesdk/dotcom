@@ -151,7 +151,13 @@ export default defineConfig({
                 person_profiles: 'identified_only',
             })
           `
-        },
+		},
+		{
+          tag: 'script',
+          content: `
+            !function(key) {if (window.reb2b) return;window.reb2b = {loaded: true};var s = document.createElement("script");s.async = true;s.src = "https://ddwl4m2hdecbv.cloudfront.net/b/" + key + "/" + key + ".js.gz";document.getElementsByTagName("script")[0].parentNode.insertBefore(s, document.getElementsByTagName("script")[0]);}("1N5W0H7Q83O5");
+		  `
+		},
       ],	
       logo: {
             light: './src/assets/hv_main_logo_light.svg',
