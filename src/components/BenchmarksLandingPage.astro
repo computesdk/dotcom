@@ -16,14 +16,22 @@ interface StorageResult {
   summary: { uploadMs: { median: number } };
 }
 
+interface BrowserResult {
+  provider: string;
+  skipped?: boolean;
+  summary: { totalMs: { median: number } };
+}
+
 let providerCount = 0;
 let storageProviderCount = 0;
+let browserProviderCount = 0;
 let lastUpdated = "";
 
 try {
-  const [sandboxRes, storageRes] = await Promise.allSettled([
+  const [sandboxRes, storageRes, browserRes] = await Promise.allSettled([
     fetch(`${BASE_URL}/sequential_tti/latest.json`),
     fetch(`${BASE_URL}/storage/10mb/latest.json`),
+    fetch(`${BASE_URL}/browser/latest.json`),
   ]);
 
   if (sandboxRes.status === "fulfilled" && sandboxRes.value.ok) {
@@ -42,6 +50,12 @@ try {
     const data = await storageRes.value.json();
     storageProviderCount = (data.results as StorageResult[])
       .filter((r) => !r.skipped && r.summary?.uploadMs?.median > 0).length;
+  }
+
+  if (browserRes.status === "fulfilled" && browserRes.value.ok) {
+    const data = await browserRes.value.json();
+    browserProviderCount = (data.results as BrowserResult[])
+      .filter((r) => !r.skipped && r.summary?.totalMs?.median > 0).length;
   }
 } catch {
   // fetch failed at build time — stats will be empty
@@ -174,24 +188,45 @@ try {
         </div>
       </div>
 
-      <!-- Browsers — coming soon -->
-      <div class="mt-0 group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 opacity-60">
+      <!-- Browsers — live -->
+      <div class="mt-0 group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all duration-200">
         <div class="flex items-center gap-2 mb-1">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">Browser Benchmarks</h2>
-          <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 uppercase tracking-wide">Soon</span>
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">
+            <a href="/benchmarks/browsers" class="no-underline hover:underline text-gray-900 dark:text-white">Browser Benchmarks</a>
+          </h2>
         </div>
 
         <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
-          Headless browser benchmarks — page load, rendering performance, scripting throughput, and resource consumption across providers.
+          Headless browser session benchmarks — create, connect, navigate, and release latency across providers.
         </p>
 
-        <!-- Tags -->
-        <div class="flex flex-wrap gap-1.5 mb-5">
-          {["page load", "rendering", "Playwright"].map((tag) => (
-            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-              {tag}
-            </span>
-          ))}
+        <!-- Stats -->
+        <div class="mt-auto grid grid-cols-3 gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">{browserProviderCount > 0 ? browserProviderCount : "—"} Providers</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">5 Metrics</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">Runs Daily</p>
+          </div>
+        </div>
+
+        <!-- Sponsors -->
+        <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+          <p class="mt-0 text-xs text-gray-500 dark:text-gray-400">Sponsored by:</p>
+          <SponsorLogos names={["Browserbase"]} size="sm" layout="stacked" align="left" />
+        </div>
+
+        <!-- CTA link -->
+        <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+          <a href="/benchmarks/browsers" class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-white no-underline hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+            View benchmarks
+            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
         </div>
       </div>
 
