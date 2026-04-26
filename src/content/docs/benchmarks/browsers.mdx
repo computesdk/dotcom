@@ -1,0 +1,26 @@
+---
+title: Browser Provider Leaderboard
+description: Compare headless browser performance — create, connect, navigate, and release latency for Browserbase and Kernel.
+template: splash
+head:
+  - tag: link
+    attrs:
+      rel: canonical
+      href: https://www.computesdk.com/benchmarks/browsers/
+---
+
+import PageLayout from '../../../components/layouts/PageLayout.astro';
+import BrowserPage from '../../../components/BrowserPage.astro';
+
+<PageLayout>
+  <BrowserPage />
+</PageLayout>
+
+<style>{`
+  .nova-page-frame-header {
+    position: relative !important;
+  }
+  .main-frame {
+    padding-top: 0 !important;
+  }
+`}</style>

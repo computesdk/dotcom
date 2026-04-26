@@ -62,6 +62,57 @@ export const STORAGE_METRIC_LABELS: Record<StorageMetric, string> = {
   throughputMbps: "Throughput",
 }
 
+export interface BrowserResult {
+  provider: string
+  mode?: string
+  summary: {
+    createMs: { median: number; p95: number; p99: number }
+    connectMs: { median: number; p95: number; p99: number }
+    navigateMs: { median: number; p95: number; p99: number }
+    releaseMs: { median: number; p95: number; p99: number }
+    totalMs: { median: number; p95: number; p99: number }
+  }
+  compositeScore?: number
+  successRate?: number
+  skipped?: boolean
+  skipReason?: string
+  iterations?: Array<{
+    createMs: number
+    connectMs: number
+    navigateMs: number
+    releaseMs: number
+    totalMs: number
+    error?: string
+  }>
+}
+
+export interface BrowserHistoryPoint {
+  date: string
+  [key: string]: number | string
+}
+
+export const BROWSER_PROVIDER_COLORS: Record<string, string> = {
+  browserbase: "#f97316", // Orange
+  kernel: "#10b981",      // Green
+}
+
+export type BrowserMetric =
+  | "createMs"
+  | "connectMs"
+  | "navigateMs"
+  | "releaseMs"
+  | "totalMs"
+  | "compositeScore"
+
+export const BROWSER_METRIC_LABELS: Record<BrowserMetric, string> = {
+  compositeScore: "Composite Score",
+  createMs: "Create",
+  connectMs: "Connect",
+  navigateMs: "Navigate",
+  releaseMs: "Release",
+  totalMs: "Total",
+}
+
 export const PROVIDER_COLORS: Record<string, string> = {
   e2b: "#10b981",
   daytona: "#3b82f6",
@@ -93,5 +144,7 @@ export function capitalize(s: string): string {
   if (s === "aws-s3") return "AWS S3"
   if (s === "cloudflare-r2") return "Cloudflare R2"
   if (s === "tigris") return "Tigris"
+  if (s === "browserbase") return "Browserbase"
+  if (s === "kernel") return "Kernel"
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
