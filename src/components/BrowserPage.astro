@@ -35,6 +35,15 @@ const browserData = { active, historyData, timestamp };
 ---
 
 <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+  <!-- Coming soon overlay -->
+  <div class="fixed inset-0 z-50 backdrop-blur-md bg-white/40 dark:bg-gray-900/40 flex items-center justify-center">
+    <div class="text-center px-6">
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase tracking-wide mb-4">In progress</span>
+      <h2 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white m-0 mb-4">Coming Soon</h2>
+      <p class="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-md mx-auto">Browser benchmarks are on the way.</p>
+    </div>
+  </div>
+
   <!-- Sticky header -->
   <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
     <div class="border-b border-gray-200/50 dark:border-gray-700/50">
