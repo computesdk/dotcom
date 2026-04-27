@@ -192,10 +192,6 @@ export default defineConfig({
               href: '/benchmarks/'
             },
             {
-              label:'Pricing',
-              href: '/pricing/'
-            },
-            {
               label: 'Docs',
               href: '/docs/getting-started/introduction/',
             },
