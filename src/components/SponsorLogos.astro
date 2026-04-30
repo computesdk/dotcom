@@ -25,10 +25,11 @@ const allSponsors = [
     logo: "/latitude-logo.svg",
     tier: "tier-1"
   },
-  { 
-    name: "Browserbase", 
+  {
+    name: "Browserbase",
     href: "https://www.browserbase.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
     logo: "/browserbase-logo.svg",
+    logoDark: "/browserbase-logo-dark.svg",
     tier: "tier-2"
   },
   { 
@@ -95,7 +96,14 @@ const mdJustifyStr = mdAlign ? mdJustifyClasses[mdAlign] : ""
     <div class={`flex items-center ${gapClasses[size]}`}>
       {sponsors.map((s) => (
         <a href={s.href} target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity">
-          <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:invert`} />
+          {s.logoDark ? (
+            <>
+              <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain m-0 dark:hidden`} />
+              <img src={s.logoDark} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain m-0 hidden dark:inline-block`} />
+            </>
+          ) : (
+            <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:invert`} />
+          )}
         </a>
       ))}
     </div>
@@ -106,7 +114,14 @@ const mdJustifyStr = mdAlign ? mdJustifyClasses[mdAlign] : ""
     <div class={`flex items-center ${gapClasses[size]}`}>
       {sponsors.map((s) => (
         <a href={s.href} target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity">
-          <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:invert`} />
+          {s.logoDark ? (
+            <>
+              <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:hidden`} />
+              <img src={s.logoDark} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain hidden dark:inline-block`} />
+            </>
+          ) : (
+            <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:invert`} />
+          )}
         </a>
       ))}
     </div>
