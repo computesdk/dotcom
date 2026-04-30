@@ -50,6 +50,12 @@ interface BrowserDashboardProps {
   providerLogosDark: Record<string, string>
 }
 
+const COMING_SOON_PROVIDERS: { slug: string; name: string }[] = [
+  { slug: "browser-use", name: "Browser Use" },
+  { slug: "anchor-browser", name: "Anchor Browser" },
+  { slug: "steel", name: "Steel" },
+]
+
 const METRICS: BrowserMetric[] = [
   "compositeScore",
   "totalMs",
@@ -270,7 +276,41 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
             const ranked = [...data.active]
               .map((r) => ({ ...r, metricValue: getMetricValue(r, selectedMetric) }))
               .sort((a, b) => isHigher ? b.metricValue - a.metricValue : a.metricValue - b.metricValue)
-            const midpoint = Math.ceil(ranked.length / 2)
+            const activeSlugs = new Set(data.active.map((r) => r.provider))
+            const comingSoon = COMING_SOON_PROVIDERS.filter((p) => !activeSlugs.has(p.slug))
+            const renderComingSoonCard = ({ slug, name }: { slug: string; name: string }) => {
+              const logoLight = providerLogos[slug]
+              const logoDark = providerLogosDark[slug]
+              return (
+                <div
+                  key={`coming-soon-${slug}`}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg border border-dashed border-gray-200 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30"
+                >
+                  <div className="shrink-0 w-6 text-center">
+                    <span className="text-sm font-mono font-medium text-gray-400 dark:text-gray-600">—</span>
+                  </div>
+                  <div className="shrink-0 w-40 flex items-center">
+                    {logoLight ? (
+                      <>
+                        <img src={logoLight} alt={`${name} logo`} className="w-full h-full object-contain scale-80 dark:hidden" />
+                        <img src={logoDark || logoLight} alt="" className="w-full h-full object-contain scale-80 hidden dark:block" />
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full shrink-0 bg-gray-300 dark:bg-gray-600" />
+                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{name}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1" />
+                  <div className="shrink-0">
+                    <span className="inline-block text-[10px] uppercase tracking-wide font-medium text-gray-500 dark:text-gray-400 px-3 py-2.5 rounded-full border border-gray-200 dark:border-gray-700">
+                      Coming soon
+                    </span>
+                  </div>
+                </div>
+              )
+            }
             const renderCard = (result: typeof ranked[0], index: number) => {
               const logoLight = providerLogos[result.provider]
               const logoDark = providerLogosDark[result.provider]
@@ -292,8 +332,8 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                   <div className="shrink-0 w-40 flex items-center">
                     {logoLight ? (
                       <>
-                        <img src={logoLight} alt={`${capitalize(result.provider)} logo`} className="w-full h-full object-contain dark:hidden" />
-                        <img src={logoDark || logoLight} alt="" className="w-full h-full object-contain hidden dark:block" />
+                        <img src={logoLight} alt={`${capitalize(result.provider)} logo`} className="w-full h-full object-contain scale-80 dark:hidden" />
+                        <img src={logoDark || logoLight} alt="" className="w-full h-full object-contain scale-80 hidden dark:block" />
                       </>
                     ) : (
                       <div className="flex items-center gap-2">
@@ -322,14 +362,15 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                 </a>
               )
             }
+            const allCards = [
+              ...ranked.map((r, i) => renderCard(r, i)),
+              ...comingSoon.map(renderComingSoonCard),
+            ]
+            const splitAt = Math.ceil(allCards.length / 2)
             return (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 px-4 md:px-6">
-                <div className="flex flex-col gap-2">
-                  {ranked.slice(0, midpoint).map((r, i) => renderCard(r, i))}
-                </div>
-                <div className="flex flex-col gap-2">
-                  {ranked.slice(midpoint).map((r, i) => renderCard(r, midpoint + i))}
-                </div>
+                <div className="flex flex-col gap-2">{allCards.slice(0, splitAt)}</div>
+                <div className="flex flex-col gap-2">{allCards.slice(splitAt)}</div>
               </div>
             )
           })()}
