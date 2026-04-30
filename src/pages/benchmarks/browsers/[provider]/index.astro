@@ -13,11 +13,13 @@ const HISTORY_BATCH_SIZE = 10;
 const providerLogos: Record<string, string> = {
   browserbase: "/benchmarks/normal-browserbase-light.svg",
   kernel: "/benchmarks/normal-kernel-light.svg",
+  hyperbrowser: "/benchmarks/normal-hyperbrowser-light.svg",
 };
 
 const providerLogosDark: Record<string, string> = {
   browserbase: "/benchmarks/normal-browserbase-dark.svg",
   kernel: "/benchmarks/normal-kernel-dark.svg",
+  hyperbrowser: "/benchmarks/normal-hyperbrowser-dark.svg",
 };
 
 export async function getStaticPaths() {
@@ -96,14 +98,24 @@ try {
         if (!fileData) continue;
         const ts = fileData.timestamp as string;
         const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-        const point: BrowserHistoryPoint = { date: dateLabel };
+        const point: BrowserHistoryPoint = { date: dateLabel, dateTs: new Date(ts).getTime() };
         for (const r of fileData.results as BrowserResult[]) {
           if (r.provider === provider && !r.skipped && r.summary?.totalMs?.median != null) {
             point[`${r.provider}_createMs`] = Math.round(r.summary.createMs.median);
+            point[`${r.provider}_createMs_p95`] = Math.round(r.summary.createMs.p95);
+            point[`${r.provider}_createMs_p99`] = Math.round(r.summary.createMs.p99);
             point[`${r.provider}_connectMs`] = Math.round(r.summary.connectMs.median);
+            point[`${r.provider}_connectMs_p95`] = Math.round(r.summary.connectMs.p95);
+            point[`${r.provider}_connectMs_p99`] = Math.round(r.summary.connectMs.p99);
             point[`${r.provider}_navigateMs`] = Math.round(r.summary.navigateMs.median);
+            point[`${r.provider}_navigateMs_p95`] = Math.round(r.summary.navigateMs.p95);
+            point[`${r.provider}_navigateMs_p99`] = Math.round(r.summary.navigateMs.p99);
             point[`${r.provider}_releaseMs`] = Math.round(r.summary.releaseMs.median);
+            point[`${r.provider}_releaseMs_p95`] = Math.round(r.summary.releaseMs.p95);
+            point[`${r.provider}_releaseMs_p99`] = Math.round(r.summary.releaseMs.p99);
             point[`${r.provider}_totalMs`] = Math.round(r.summary.totalMs.median);
+            point[`${r.provider}_totalMs_p95`] = Math.round(r.summary.totalMs.p95);
+            point[`${r.provider}_totalMs_p99`] = Math.round(r.summary.totalMs.p99);
             if (r.compositeScore != null) {
               point[`${r.provider}_compositeScore`] = r.compositeScore;
             }

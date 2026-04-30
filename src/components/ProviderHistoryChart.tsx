@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 import { ChartContainer } from "./ui/chart"
 import type { ChartConfig } from "./ui/chart"
@@ -12,6 +12,7 @@ interface ProviderHistoryChartProps {
 }
 
 export function ProviderHistoryChart({ historyData, provider, selectedMetric = "median" }: ProviderHistoryChartProps) {
+  const [chartScale, setChartScale] = useState<"full" | "zoom">("zoom")
   const color = PROVIDER_COLORS[provider] || "#6b7280"
   const isComposite = selectedMetric === "compositeScore"
   const dataKey = `${provider}_${selectedMetric}`
@@ -24,6 +25,18 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
   }), [provider, color])
 
   const hasData = historyData.some((d) => d[dataKey] != null)
+  const lineZoomDomain = useMemo<[number, number] | null>(() => {
+    if (chartScale !== "zoom") return null
+    const values = historyData
+      .map((d) => d[dataKey])
+      .filter((v): v is number => typeof v === "number" && Number.isFinite(v))
+    if (!values.length) return null
+    const min = Math.min(...values)
+    const max = Math.max(...values)
+    const spread = Math.max(max - min, isComposite ? 0.1 : 50)
+    const pad = isComposite ? Math.max(spread * 0.15, 0.5) : Math.max(spread * 0.15, 100)
+    return [Math.max(0, min - pad), max + pad]
+  }, [chartScale, historyData, dataKey, isComposite])
 
   if (!hasData) {
     return (
@@ -34,8 +47,28 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
   }
 
   return (
-    <ChartContainer config={chartConfig} className="h-[200px] w-full min-h-[200px]">
-      <LineChart
+    <div>
+      <div className="inline-flex h-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400 mb-3">
+        {([
+          { value: "full", label: "Full" },
+          { value: "zoom", label: "Zoom" },
+        ] as const).map(({ value, label }) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setChartScale(value)}
+            className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-medium transition-all ${
+              chartScale === value
+                ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      <ChartContainer config={chartConfig} className="h-[200px] w-full min-h-[200px]">
+        <LineChart
         data={historyData}
         margin={{ top: 10, right: 10, left: 0, bottom: 5 }}
       >
@@ -48,6 +81,7 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
           interval="preserveStartEnd"
         />
         <YAxis
+          domain={chartScale === "zoom" && lineZoomDomain ? lineZoomDomain : undefined}
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 10 }}
@@ -83,7 +117,8 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
           activeDot={{ r: 5, strokeWidth: 0 }}
           connectNulls
         />
-      </LineChart>
-    </ChartContainer>
+        </LineChart>
+      </ChartContainer>
+    </div>
   )
 }

@@ -5,6 +5,8 @@ import type { ChartConfig } from "./ui/chart"
 import { STORAGE_PROVIDER_COLORS, capitalize } from "./benchmarkConstants"
 import type { StorageResult, StorageHistoryPoint, StorageMetric } from "./benchmarkConstants"
 
+type ChartScale = "full" | "zoom"
+
 interface StorageProviderDetailProps {
   provider: string
   result: StorageResult
@@ -113,6 +115,7 @@ export function StorageProviderDetailDashboard({
   historyData,
 }: StorageProviderDetailProps) {
   const [selectedMetric, setSelectedMetric] = useState<StorageMetric>("uploadMs")
+  const [chartScale, setChartScale] = useState<ChartScale>("zoom")
   const color = STORAGE_PROVIDER_COLORS[provider] || "#6b7280"
 
   const lineConfig: ChartConfig = {
@@ -133,6 +136,22 @@ export function StorageProviderDetailDashboard({
   )
 
   const METRICS: StorageMetric[] = ["uploadMs", "downloadMs", "throughputMbps"]
+
+  const lineZoomDomain = useMemo<[number, number] | null>(() => {
+    if (chartScale !== "zoom" || historyData.length === 0) return null
+    const key = `${provider}_${selectedMetric}`
+    const values: number[] = []
+    for (const point of historyData) {
+      const value = point[key]
+      if (typeof value === "number" && Number.isFinite(value)) values.push(value)
+    }
+    if (values.length === 0) return null
+    const min = Math.min(...values)
+    const max = Math.max(...values)
+    const spread = Math.max(max - min, selectedMetric === "throughputMbps" ? 1 : 25)
+    const pad = selectedMetric === "throughputMbps" ? Math.max(spread * 0.15, 2) : Math.max(spread * 0.15, 50)
+    return [Math.max(0, min - pad), max + pad]
+  }, [chartScale, historyData, provider, selectedMetric])
 
   return (
     <div className="not-content">
@@ -189,21 +208,42 @@ export function StorageProviderDetailDashboard({
           <div className="md:max-w-7xl md:mx-auto px-4 md:px-6 py-6 md:py-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base font-semibold text-gray-900 dark:text-white">Performance Over Time</h2>
-              <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
-                {METRICS.map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => setSelectedMetric(m)}
-                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium transition-all ${
-                      selectedMetric === m
-                        ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
-                        : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
-                    }`}
-                  >
-                    {STORAGE_METRIC_LABELS[m]}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+                  {METRICS.map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => setSelectedMetric(m)}
+                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium transition-all ${
+                        selectedMetric === m
+                          ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                          : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+                      }`}
+                    >
+                      {STORAGE_METRIC_LABELS[m]}
+                    </button>
+                  ))}
+                </div>
+                <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+                  {([
+                    { value: "full", label: "Full" },
+                    { value: "zoom", label: "Zoom" },
+                  ] as const).map(({ value, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setChartScale(value)}
+                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium transition-all ${
+                        chartScale === value
+                          ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                          : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
             <ChartContainer config={lineConfig} className="aspect-auto h-[240px] w-full min-h-[240px] min-w-0">
@@ -211,6 +251,7 @@ export function StorageProviderDetailDashboard({
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tick={{ fontSize: 11 }} />
                 <YAxis
+                  domain={chartScale === "zoom" && lineZoomDomain ? lineZoomDomain : undefined}
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}

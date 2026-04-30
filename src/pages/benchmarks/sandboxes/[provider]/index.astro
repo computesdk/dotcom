@@ -135,7 +135,7 @@ async function fetchTestType(testType: string): Promise<TestTypeData> {
           const ts = fileData.timestamp as string
           if (new Date(ts) <= cutoffDate) continue
           const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" })
-          const point: HistoryDataPoint = { date: dateLabel }
+          const point: HistoryDataPoint = { date: dateLabel, dateTs: new Date(ts).getTime() }
           for (const r of fileData.results as ProviderResult[]) {
             if (r.provider === provider && !r.skipped && r.summary?.ttiMs?.median != null && r.summary.ttiMs.median > 0) {
               const t = r.summary.ttiMs

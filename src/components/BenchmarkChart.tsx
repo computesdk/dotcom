@@ -16,9 +16,10 @@ interface BenchmarkChartProps {
   onToggleProvider: (provider: string) => void
   timeRange: "30" | "60" | "90" | "all"
   selectedMetric: Metric
+  scaleMode: "full" | "zoom"
 }
 
-export function BenchmarkChart({ historyData, providers, hiddenProviders, onToggleProvider, timeRange, selectedMetric }: BenchmarkChartProps) {
+export function BenchmarkChart({ historyData, providers, hiddenProviders, onToggleProvider, timeRange, selectedMetric, scaleMode }: BenchmarkChartProps) {
   const isComposite = selectedMetric === "compositeScore"
   const chartConfig = useMemo(() => {
     const config: ChartConfig = {}
@@ -33,9 +34,35 @@ export function BenchmarkChart({ historyData, providers, hiddenProviders, onTogg
 
   const filteredHistory = useMemo(() => {
     if (timeRange === "all") return historyData
-    const days = parseInt(timeRange)
-    return historyData.slice(-days)
+    const days = parseInt(timeRange, 10)
+    const now = new Date()
+    const cutoff = new Date(now)
+    cutoff.setDate(now.getDate() - days)
+    return historyData.filter((point) => {
+      if (typeof point.dateTs === "number") return point.dateTs >= cutoff.getTime()
+      const parsed = new Date(`${point.date}, ${now.getFullYear()}`)
+      return !Number.isNaN(parsed.getTime()) && parsed >= cutoff
+    })
   }, [historyData, timeRange])
+
+  const zoomDomain = useMemo<[number, number] | null>(() => {
+    if (scaleMode !== "zoom" || filteredHistory.length === 0) return null
+    const values: number[] = []
+    for (const point of filteredHistory) {
+      for (const provider of providers) {
+        if (hiddenProviders.has(provider)) continue
+        const key = `${provider}_${selectedMetric}`
+        const value = point[key]
+        if (typeof value === "number" && Number.isFinite(value)) values.push(value)
+      }
+    }
+    if (values.length === 0) return null
+    const min = Math.min(...values)
+    const max = Math.max(...values)
+    const spread = Math.max(max - min, isComposite ? 0.1 : 50)
+    const pad = isComposite ? Math.max(spread * 0.15, 0.5) : Math.max(spread * 0.15, 100)
+    return [Math.max(0, min - pad), max + pad]
+  }, [scaleMode, filteredHistory, providers, hiddenProviders, selectedMetric, isComposite])
 
   const handleLegendClick = useCallback(
     (e: any) => {
@@ -99,6 +126,7 @@ export function BenchmarkChart({ historyData, providers, hiddenProviders, onTogg
           tick={{ fontSize: 11 }}
         />
         <YAxis
+          domain={scaleMode === "zoom" && zoomDomain ? zoomDomain : undefined}
           tickLine={false}
           axisLine={false}
           tickMargin={8}

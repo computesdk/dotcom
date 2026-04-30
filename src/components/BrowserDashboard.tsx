@@ -13,28 +13,30 @@ import {
   Legend,
 } from "recharts"
 import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  flexRender,
-  type SortingState,
-  type ColumnDef,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+  BROWSER_PROVIDER_COLORS,
+  BROWSER_METRIC_LABELS,
+  capitalize,
+  type BrowserMetric,
+  type BrowserResult,
+  type BrowserHistoryPoint,
+} from "./benchmarkConstants"
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "./ui/chart"
-import type { ChartConfig } from "./ui/chart"
 import {
-  BROWSER_PROVIDER_COLORS,
-  BROWSER_METRIC_LABELS,
-  capitalize,
-} from "./benchmarkConstants"
-import type { BrowserResult, BrowserHistoryPoint, BrowserMetric } from "./benchmarkConstants"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select"
+import type { ChartConfig } from "./ui/chart"
+import { BrowserDataTable } from "./BrowserDataTable"
 
 type TimeRange = "30" | "60" | "90" | "all"
+type CompositeScale = "full" | "zoom"
 
 interface BrowserData {
   active: BrowserResult[]
@@ -47,6 +49,12 @@ interface BrowserDashboardProps {
   providerLogos: Record<string, string>
   providerLogosDark: Record<string, string>
 }
+
+const COMING_SOON_PROVIDERS: { slug: string; name: string }[] = [
+  { slug: "browser-use", name: "Browser Use" },
+  { slug: "anchor-browser", name: "Anchor Browser" },
+  { slug: "steel", name: "Steel" },
+]
 
 const METRICS: BrowserMetric[] = [
   "compositeScore",
@@ -96,14 +104,9 @@ function useIsMobile(breakpoint = 640) {
   return isMobile
 }
 
-function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
-  if (sorted === "asc") return <ArrowUp className="h-3 w-3" />
-  if (sorted === "desc") return <ArrowDown className="h-3 w-3" />
-  return <ArrowUpDown className="h-3 w-3 opacity-40" />
-}
-
 export function BrowserDashboard({ data, providerLogos, providerLogosDark }: BrowserDashboardProps) {
   const [selectedMetric, setSelectedMetric] = useState<BrowserMetric>("compositeScore")
+  const [compositeScale, setCompositeScale] = useState<CompositeScale>("zoom")
   const [hiddenProviders, setHiddenProviders] = useState<Set<string>>(new Set())
   const [timeRange, setTimeRange] = useState<TimeRange>("all")
   const [isStuck, setIsStuck] = useState(false)
@@ -184,86 +187,35 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
 
   const filteredHistory = useMemo(() => {
     if (timeRange === "all") return data.historyData
-    const days = parseInt(timeRange)
-    return data.historyData.slice(-days)
+    const days = parseInt(timeRange, 10)
+    const now = new Date()
+    const cutoff = new Date(now)
+    cutoff.setDate(now.getDate() - days)
+    return data.historyData.filter((point) => {
+      if (typeof point.dateTs === "number") return point.dateTs >= cutoff.getTime()
+      const parsed = new Date(`${point.date}, ${now.getFullYear()}`)
+      return !Number.isNaN(parsed.getTime()) && parsed >= cutoff
+    })
   }, [data.historyData, timeRange])
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: "compositeScore", desc: true }])
-
-  const columns = useMemo<ColumnDef<BrowserResult>[]>(
-    () => [
-      {
-        id: "provider",
-        accessorKey: "provider",
-        header: "Provider",
-        cell: ({ row }) => {
-          const p = row.original.provider
-          return (
-            <a href={`/benchmarks/browsers/${p}`} className="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity">
-              <span className="font-medium text-gray-900 dark:text-white">{capitalize(p)}</span>
-            </a>
-          )
-        },
-        enableSorting: false,
-        size: 180,
-        meta: { align: "left" },
-      },
-      {
-        id: "compositeScore",
-        accessorFn: (r) => r.compositeScore ?? 0,
-        header: "Score",
-        cell: ({ getValue }) => <span className="font-mono text-xs">{(getValue() as number).toFixed(1)}</span>,
-        sortDescFirst: true,
-        size: 80,
-      },
-      {
-        id: "totalMs",
-        accessorFn: (r) => r.summary.totalMs.median,
-        header: "Total (med)",
-        cell: ({ getValue }) => <span className="font-mono text-xs">{(getValue() as number).toFixed(0)}ms</span>,
-        size: 110,
-      },
-      {
-        id: "createMs",
-        accessorFn: (r) => r.summary.createMs.median,
-        header: "Create (med)",
-        cell: ({ getValue }) => <span className="font-mono text-xs">{(getValue() as number).toFixed(0)}ms</span>,
-        size: 110,
-      },
-      {
-        id: "connectMs",
-        accessorFn: (r) => r.summary.connectMs.median,
-        header: "Connect (med)",
-        cell: ({ getValue }) => <span className="font-mono text-xs">{(getValue() as number).toFixed(0)}ms</span>,
-        size: 110,
-      },
-      {
-        id: "navigateMs",
-        accessorFn: (r) => r.summary.navigateMs.median,
-        header: "Navigate (med)",
-        cell: ({ getValue }) => <span className="font-mono text-xs">{(getValue() as number).toFixed(0)}ms</span>,
-        size: 110,
-      },
-      {
-        id: "successRate",
-        accessorFn: (r) => r.successRate ?? 1,
-        header: "Success",
-        cell: ({ getValue }) => <span className="font-mono text-xs">{Math.round((getValue() as number) * 100)}%</span>,
-        sortDescFirst: true,
-        size: 80,
-      },
-    ],
-    []
-  )
-
-  const table = useReactTable({
-    data: data.active,
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  })
+  const compositeZoomDomain = useMemo<[number, number] | null>(() => {
+    if (selectedMetric !== "compositeScore" || compositeScale !== "zoom" || filteredHistory.length === 0) return null
+    const values: number[] = []
+    for (const point of filteredHistory) {
+      for (const provider of providers) {
+        if (hiddenProviders.has(provider)) continue
+        const key = `${provider}_compositeScore`
+        const value = point[key]
+        if (typeof value === "number" && Number.isFinite(value)) values.push(value)
+      }
+    }
+    if (values.length === 0) return null
+    const min = Math.min(...values)
+    const max = Math.max(...values)
+    const spread = Math.max(max - min, 0.1)
+    const pad = Math.max(spread * 0.15, 0.5)
+    return [Math.max(0, min - pad), Math.min(100, max + pad)]
+  }, [selectedMetric, compositeScale, filteredHistory, providers, hiddenProviders])
 
   return (
     <div className="not-content mt-0">
@@ -289,15 +241,21 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
             ))}
           </div>
           <div className="sm:hidden">
-            <select
-              value={selectedMetric}
-              onChange={(e) => setSelectedMetric(e.target.value as BrowserMetric)}
-              className="h-9 rounded-lg text-sm font-medium text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3"
-            >
-              {METRICS.map((metric) => (
-                <option key={metric} value={metric}>{BROWSER_METRIC_LABELS[metric]}</option>
-              ))}
-            </select>
+            <Select value={selectedMetric} onValueChange={(value) => setSelectedMetric(value as BrowserMetric)}>
+              <SelectTrigger className="w-[170px] h-9 rounded-lg text-sm font-medium text-gray-900 dark:text-white border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {METRICS.map((metric) => (
+                  <SelectItem key={metric} value={metric} className="text-sm" title={METRIC_DESCRIPTIONS[metric]}>
+                    <div>
+                      <div>{BROWSER_METRIC_LABELS[metric]}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 font-normal">{METRIC_DESCRIPTIONS[metric]}</div>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <a href="#methodology" className="hidden sm:inline-flex items-center gap-1 text-xs text-gray-900 hover:text-gray-400 dark:hover:text-gray-300 transition-colors underline">
             <Info size={14} />
@@ -318,7 +276,41 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
             const ranked = [...data.active]
               .map((r) => ({ ...r, metricValue: getMetricValue(r, selectedMetric) }))
               .sort((a, b) => isHigher ? b.metricValue - a.metricValue : a.metricValue - b.metricValue)
-            const midpoint = Math.ceil(ranked.length / 2)
+            const activeSlugs = new Set(data.active.map((r) => r.provider))
+            const comingSoon = COMING_SOON_PROVIDERS.filter((p) => !activeSlugs.has(p.slug))
+            const renderComingSoonCard = ({ slug, name }: { slug: string; name: string }) => {
+              const logoLight = providerLogos[slug]
+              const logoDark = providerLogosDark[slug]
+              return (
+                <div
+                  key={`coming-soon-${slug}`}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg border border-dashed border-gray-200 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30"
+                >
+                  <div className="shrink-0 w-6 text-center">
+                    <span className="text-sm font-mono font-medium text-gray-400 dark:text-gray-600">—</span>
+                  </div>
+                  <div className="shrink-0 w-40 flex items-center">
+                    {logoLight ? (
+                      <>
+                        <img src={logoLight} alt={`${name} logo`} className="w-full h-full object-contain scale-80 dark:hidden" />
+                        <img src={logoDark || logoLight} alt="" className="w-full h-full object-contain scale-80 hidden dark:block" />
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full shrink-0 bg-gray-300 dark:bg-gray-600" />
+                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{name}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1" />
+                  <div className="shrink-0">
+                    <span className="inline-block text-[10px] uppercase tracking-wide font-medium text-gray-500 dark:text-gray-400 px-3 py-2.5 rounded-full border border-gray-200 dark:border-gray-700">
+                      Coming soon
+                    </span>
+                  </div>
+                </div>
+              )
+            }
             const renderCard = (result: typeof ranked[0], index: number) => {
               const logoLight = providerLogos[result.provider]
               const logoDark = providerLogosDark[result.provider]
@@ -340,8 +332,8 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                   <div className="shrink-0 w-40 flex items-center">
                     {logoLight ? (
                       <>
-                        <img src={logoLight} alt={`${capitalize(result.provider)} logo`} className="w-full h-full object-contain dark:hidden" />
-                        <img src={logoDark || logoLight} alt="" className="w-full h-full object-contain hidden dark:block" />
+                        <img src={logoLight} alt={`${capitalize(result.provider)} logo`} className="w-full h-full object-contain scale-80 dark:hidden" />
+                        <img src={logoDark || logoLight} alt="" className="w-full h-full object-contain scale-80 hidden dark:block" />
                       </>
                     ) : (
                       <div className="flex items-center gap-2">
@@ -356,7 +348,7 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                       <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
                         {selectedMetric === "compositeScore"
                           ? (result.compositeScore ?? 0).toFixed(1)
-                          : `${result.summary[selectedMetric].median.toFixed(0)}ms`
+                          : `${(result.summary[selectedMetric].median / 1000).toFixed(2)}s`
                         }
                       </span>
                       <span className="text-[10px] text-gray-500 dark:text-gray-400">
@@ -370,14 +362,15 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                 </a>
               )
             }
+            const allCards = [
+              ...ranked.map((r, i) => renderCard(r, i)),
+              ...comingSoon.map(renderComingSoonCard),
+            ]
+            const splitAt = Math.ceil(allCards.length / 2)
             return (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 px-4 md:px-6">
-                <div className="flex flex-col gap-2">
-                  {ranked.slice(0, midpoint).map((r, i) => renderCard(r, i))}
-                </div>
-                <div className="flex flex-col gap-2">
-                  {ranked.slice(midpoint).map((r, i) => renderCard(r, midpoint + i))}
-                </div>
+                <div className="flex flex-col gap-2">{allCards.slice(0, splitAt)}</div>
+                <div className="flex flex-col gap-2">{allCards.slice(splitAt)}</div>
               </div>
             )
           })()}
@@ -386,31 +379,54 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
 
       <div className="md:max-w-7xl md:mx-auto px-4 md:px-6">
         {/* Performance Over Time */}
-        {filteredHistory.length > 0 && (
-          <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
+        <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
                 Performance Over Time
               </h2>
-              <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
-                {TIME_RANGES.map(({ value, label }) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setTimeRange(value)}
-                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm text-gray-600 font-medium transition-all ${
-                      timeRange === value
-                        ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
-                        : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                {selectedMetric === "compositeScore" && (
+                  <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+                    {([
+                      { value: "full", label: "Full" },
+                      { value: "zoom", label: "Zoom" },
+                    ] as const).map(({ value, label }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setCompositeScale(value)}
+                        className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm text-gray-600 font-medium ring-offset-white dark:ring-offset-gray-950 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
+                          compositeScale === value
+                            ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                            : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+                  {TIME_RANGES.map(({ value, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setTimeRange(value)}
+                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm text-gray-600 font-medium ring-offset-white dark:ring-offset-gray-950 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
+                        timeRange === value
+                          ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                          : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-            <ChartContainer config={lineChartConfig} className="aspect-auto h-[300px] w-full min-h-[300px] min-w-0">
-              <LineChart data={filteredHistory} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
+            {filteredHistory.length > 0 ? (
+              <ChartContainer config={lineChartConfig} className="aspect-auto h-[300px] w-full min-h-[300px] min-w-0">
+                <LineChart data={filteredHistory} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis
                   dataKey="date"
@@ -420,6 +436,7 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                   tick={{ fontSize: 11 }}
                 />
                 <YAxis
+                  domain={selectedMetric === "compositeScore" && compositeScale === "zoom" && compositeZoomDomain ? compositeZoomDomain : undefined}
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
@@ -439,7 +456,7 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                         const formatted =
                           selectedMetric === "compositeScore"
                             ? numValue.toFixed(1)
-                            : `${numValue.toFixed(0)}ms`
+                            : `${(numValue / 1000).toFixed(2)}s`
                         return (
                           <div className="flex w-full items-center justify-between gap-4">
                             <div className="flex items-center gap-1.5">
@@ -500,25 +517,26 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                     />
                   )
                 })}
-              </LineChart>
-            </ChartContainer>
+                </LineChart>
+              </ChartContainer>
+            ) : (
+              <div className="h-[300px] min-h-[300px] w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 flex items-center justify-center">
+                <p className="text-sm text-gray-500 dark:text-gray-400">No history data available yet.</p>
+              </div>
+            )}
           </div>
-        )}
 
         {/* Bar chart */}
         {chartData.length > 0 && (
           <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
             <h2 className="text-base text-md font-semibold text-gray-900 dark:text-white mb-1 text-left">
               {BROWSER_METRIC_LABELS[selectedMetric]}
-              {isHigher && selectedMetric !== "compositeScore" && (
-                <span className="ml-2 text-xs font-normal text-gray-400 dark:text-gray-500">higher is better</span>
-              )}
             </h2>
             <ChartContainer config={barChartConfig} className="aspect-auto w-full min-w-0" style={{ height: `${barChartHeight}px`, minHeight: `${barChartHeight}px` }}>
               <BarChart
                 data={chartData}
                 layout="vertical"
-                margin={{ top: 5, right: isMobile ? 80 : 120, left: isMobile ? 0 : 20, bottom: 5 }}
+                margin={{ top: 5, right: isMobile ? 50 : 100, left: isMobile ? 0 : 20, bottom: 5 }}
               >
                 <CartesianGrid horizontal={true} vertical={false} strokeDasharray="3 3" />
                 <XAxis
@@ -540,7 +558,7 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                   axisLine={false}
                   tickMargin={8}
                   tick={{ fontSize: 11, fill: "currentColor" }}
-                  width={isMobile ? 80 : 100}
+                  width={isMobile ? 60 : 80}
                   className="text-gray-600 dark:text-gray-400"
                 />
                 <ChartTooltip
@@ -551,7 +569,7 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                       formatter={(value, name, props) => {
                         const d = props.payload
                         return (
-                          <div className="flex flex-col gap-2 w-[220px]">
+                          <div className="flex flex-col gap-2 w-[180px]">
                             <div className="flex items-center gap-2 mb-1">
                               <div className="h-2.5 w-2.5 shrink-0 rounded-[2px]" style={{ backgroundColor: BROWSER_PROVIDER_COLORS[d.provider] || "#6b7280" }} />
                               <span className="font-semibold text-gray-900 dark:text-gray-50">{d.displayName}</span>
@@ -559,23 +577,23 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                             <div className="flex flex-col gap-1.5 text-xs">
                               <div className="flex justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">Total</span>
-                                <span className="font-mono font-medium text-gray-900 dark:text-gray-50">{d.totalMs.toFixed(0)}ms</span>
+                                <span className="font-mono font-medium text-gray-900 dark:text-gray-50">{(d.totalMs / 1000).toFixed(2)}s</span>
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">Create</span>
-                                <span className="font-mono text-gray-600 dark:text-gray-300">{d.createMs.toFixed(0)}ms</span>
+                                <span className="font-mono text-gray-600 dark:text-gray-300">{(d.createMs / 1000).toFixed(2)}s</span>
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">Connect</span>
-                                <span className="font-mono text-gray-600 dark:text-gray-300">{d.connectMs.toFixed(0)}ms</span>
+                                <span className="font-mono text-gray-600 dark:text-gray-300">{(d.connectMs / 1000).toFixed(2)}s</span>
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">Navigate</span>
-                                <span className="font-mono text-gray-600 dark:text-gray-300">{d.navigateMs.toFixed(0)}ms</span>
+                                <span className="font-mono text-gray-600 dark:text-gray-300">{(d.navigateMs / 1000).toFixed(2)}s</span>
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">Release</span>
-                                <span className="font-mono text-gray-600 dark:text-gray-300">{d.releaseMs.toFixed(0)}ms</span>
+                                <span className="font-mono text-gray-600 dark:text-gray-300">{(d.releaseMs / 1000).toFixed(2)}s</span>
                               </div>
                             </div>
                           </div>
@@ -584,7 +602,7 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
                     />
                   }
                 />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={28}>
+                <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
                   <LabelList
                     dataKey="value"
                     position="right"
@@ -612,49 +630,7 @@ export function BrowserDashboard({ data, providerLogos, providerLogosDark }: Bro
           <h2 className="text-base text-md font-semibold text-gray-900 dark:text-white mb-3">
             Detailed Metrics
           </h2>
-          {data.active.length > 0 && (
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id} className="bg-white dark:bg-gray-800/50">
-                      {headerGroup.headers.map((header) => (
-                        <th
-                          key={header.id}
-                          style={{ width: header.getSize() }}
-                          className={`p-3 text-xs font-medium text-gray-900 dark:text-gray-400 uppercase tracking-wider ${
-                            (header.column.columnDef.meta as any)?.align === "left" ? "text-left" : "text-center"
-                          } ${header.column.getCanSort() ? "cursor-pointer select-none font-semibold hover:text-gray-500 dark:hover:text-white" : ""}`}
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          <div className={`flex items-center gap-1 ${(header.column.columnDef.meta as any)?.align === "left" ? "justify-start" : "justify-center"}`}>
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {header.column.getCanSort() && <SortIcon sorted={header.column.getIsSorted()} />}
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody className="divide-y bg-white dark:bg-gray-900/50 divide-gray-200 dark:divide-gray-700">
-                  {table.getRowModel().rows.map((row) => (
-                    <tr key={row.id} className="hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors">
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className={`py-2 px-6 text-gray-900 dark:text-white whitespace-nowrap ${
-                            (cell.column.columnDef.meta as any)?.align === "left" ? "text-left" : "text-center"
-                          }`}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <BrowserDataTable activeResults={data.active} />
         </div>
       </div>
     </div>
