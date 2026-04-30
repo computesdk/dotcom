@@ -99,7 +99,7 @@ const mdJustifyStr = mdAlign ? mdJustifyClasses[mdAlign] : ""
           {s.logoDark ? (
             <>
               <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain m-0 dark:hidden`} />
-              <img src={s.logoDark} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain m-0 hidden dark:inline-block`} />
+              <img src={s.logoDark} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain m-0 hidden dark:block`} />
             </>
           ) : (
             <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:invert`} />
