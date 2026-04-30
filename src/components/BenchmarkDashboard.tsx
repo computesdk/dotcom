@@ -16,6 +16,7 @@ import type { ProviderResult, HistoryDataPoint, Metric } from "./benchmarkConsta
 
 type TestType = "sequential_tti" | "burst_tti" | "staggered_tti"
 type TimeRange = "30" | "60" | "90" | "all"
+type ChartScale = "full" | "zoom"
 
 interface TestTypeData {
   active: ProviderResult[]
@@ -65,6 +66,7 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
   const [selectedMetric, setSelectedMetric] = useState<Metric>("compositeScore")
   const [hiddenProviders, setHiddenProviders] = useState<Set<string>>(new Set())
   const [timeRange, setTimeRange] = useState<TimeRange>("all")
+  const [chartScale, setChartScale] = useState<ChartScale>("zoom")
   const [isStuck, setIsStuck] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
@@ -183,6 +185,25 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
                 Performance Over Time
               </h2>
               <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+                {([
+                  { value: "full", label: "Full" },
+                  { value: "zoom", label: "Zoom" },
+                ] as const).map(({ value, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setChartScale(value)}
+                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm text-gray-600 font-medium ring-offset-white dark:ring-offset-gray-950 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
+                      chartScale === value
+                        ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                        : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
                 {TIME_RANGES.map(({ value, label }) => (
                   <button
                     key={value}
@@ -206,6 +227,7 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
               onToggleProvider={toggleProvider}
               timeRange={timeRange}
               selectedMetric={selectedMetric}
+              scaleMode={chartScale}
             />
           </div>
         )}

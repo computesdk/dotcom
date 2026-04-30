@@ -250,7 +250,60 @@ export async function fetchBrowserHistoryData(): Promise<{
   const listRes = await fetch(`${API_URL}/browser`, {
     headers: githubHeaders,
   });
-  if (!listRes.ok) return { history: [], timestamp };
+  if (!listRes.ok) {
+    const fallbackHistory: BrowserHistoryPoint[] = [];
+    const now = new Date();
+    const dateCandidates: string[] = [];
+    for (let i = 45; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      dateCandidates.push(`${yyyy}-${mm}-${dd}`);
+    }
+
+    const fileResults = await Promise.all(
+      dateCandidates.map(async (dateKey) => {
+        try {
+          const res = await fetch(`${BASE_URL}/browser/${dateKey}.json`);
+          if (!res.ok) return null;
+          return await res.json();
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    for (const fileData of fileResults) {
+      if (!fileData) continue;
+      const ts = fileData.timestamp as string;
+      const point: BrowserHistoryPoint = {
+        date: new Date(ts).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
+        dateTs: new Date(ts).getTime(),
+      };
+      for (const r of fileData.results as BrowserResult[]) {
+        if (!r.skipped && r.summary?.totalMs?.median != null) {
+          point[`${r.provider}_createMs`] = Math.round(r.summary.createMs.median);
+          point[`${r.provider}_connectMs`] = Math.round(r.summary.connectMs.median);
+          point[`${r.provider}_navigateMs`] = Math.round(r.summary.navigateMs.median);
+          point[`${r.provider}_releaseMs`] = Math.round(r.summary.releaseMs.median);
+          point[`${r.provider}_totalMs`] = Math.round(r.summary.totalMs.median);
+          if (r.compositeScore != null) {
+            point[`${r.provider}_compositeScore`] = r.compositeScore;
+          }
+        }
+      }
+      if (Object.keys(point).length > 1) {
+        fallbackHistory.push(point);
+      }
+    }
+
+    return { history: fallbackHistory, timestamp };
+  }
 
   const files = (await listRes.json()) as Array<{
     name: string;
@@ -289,6 +342,7 @@ export async function fetchBrowserHistoryData(): Promise<{
           month: "short",
           day: "numeric",
         }),
+        dateTs: new Date(ts).getTime(),
       };
       for (const r of fileData.results as BrowserResult[]) {
         if (!r.skipped && r.summary?.totalMs?.median != null) {

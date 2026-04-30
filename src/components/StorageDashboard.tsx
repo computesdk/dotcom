@@ -35,6 +35,7 @@ import {
 import type { StorageResult, StorageHistoryPoint, StorageMetric } from "./benchmarkConstants"
 
 type TimeRange = "30" | "60" | "90" | "all"
+type ChartScale = "full" | "zoom"
 
 interface StorageData {
   active: StorageResult[]
@@ -101,6 +102,7 @@ export function StorageDashboard({ data, providerLogos, providerLogosDark }: Sto
   const [selectedMetric, setSelectedMetric] = useState<StorageMetric>("compositeScore")
   const [hiddenProviders, setHiddenProviders] = useState<Set<string>>(new Set())
   const [timeRange, setTimeRange] = useState<TimeRange>("all")
+  const [chartScale, setChartScale] = useState<ChartScale>("zoom")
   const [isStuck, setIsStuck] = useState(false)
   const sentinelRef = useRef<HTMLDivElement>(null)
   const isMobile = useIsMobile()
@@ -179,9 +181,40 @@ export function StorageDashboard({ data, providerLogos, providerLogosDark }: Sto
 
   const filteredHistory = useMemo(() => {
     if (timeRange === "all") return data.historyData
-    const days = parseInt(timeRange)
-    return data.historyData.slice(-days)
+    const days = parseInt(timeRange, 10)
+    const now = new Date()
+    const cutoff = new Date(now)
+    cutoff.setDate(now.getDate() - days)
+    return data.historyData.filter((point) => {
+      if (typeof point.dateTs === "number") return point.dateTs >= cutoff.getTime()
+      const parsed = new Date(`${point.date}, ${now.getFullYear()}`)
+      return !Number.isNaN(parsed.getTime()) && parsed >= cutoff
+    })
   }, [data.historyData, timeRange])
+
+  const lineZoomDomain = useMemo<[number, number] | null>(() => {
+    if (chartScale !== "zoom" || filteredHistory.length === 0) return null
+    const values: number[] = []
+    const metricKey = selectedMetric === "compositeScore" ? "compositeScore" : selectedMetric
+    for (const point of filteredHistory) {
+      for (const provider of providers) {
+        if (hiddenProviders.has(provider)) continue
+        const key = `${provider}_${metricKey}`
+        const value = point[key]
+        if (typeof value === "number" && Number.isFinite(value)) values.push(value)
+      }
+    }
+    if (values.length === 0) return null
+    const min = Math.min(...values)
+    const max = Math.max(...values)
+    const spread = Math.max(max - min, selectedMetric === "throughputMbps" ? 1 : selectedMetric === "compositeScore" ? 0.1 : 50)
+    const pad = selectedMetric === "compositeScore"
+      ? Math.max(spread * 0.15, 0.5)
+      : selectedMetric === "throughputMbps"
+        ? Math.max(spread * 0.15, 2)
+        : Math.max(spread * 0.15, 100)
+    return [Math.max(0, min - pad), max + pad]
+  }, [chartScale, filteredHistory, selectedMetric, providers, hiddenProviders])
 
   // --- Data table ---
   const [sorting, setSorting] = useState<SortingState>([{ id: "compositeScore", desc: true }])
@@ -386,21 +419,42 @@ export function StorageDashboard({ data, providerLogos, providerLogosDark }: Sto
               <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
                 Performance Over Time
               </h2>
-              <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
-                {TIME_RANGES.map(({ value, label }) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setTimeRange(value)}
-                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm text-gray-600 font-medium transition-all ${
-                      timeRange === value
-                        ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
-                        : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+                  {([
+                    { value: "full", label: "Full" },
+                    { value: "zoom", label: "Zoom" },
+                  ] as const).map(({ value, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setChartScale(value)}
+                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm text-gray-600 font-medium ring-offset-white dark:ring-offset-gray-950 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
+                        chartScale === value
+                          ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                          : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+                  {TIME_RANGES.map(({ value, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setTimeRange(value)}
+                      className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm text-gray-600 font-medium transition-all ${
+                        timeRange === value
+                          ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                          : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
             <ChartContainer config={lineChartConfig} className="aspect-auto h-[300px] w-full min-h-[300px] min-w-0">
@@ -414,6 +468,7 @@ export function StorageDashboard({ data, providerLogos, providerLogosDark }: Sto
                   tick={{ fontSize: 11 }}
                 />
                 <YAxis
+                  domain={chartScale === "zoom" && lineZoomDomain ? lineZoomDomain : undefined}
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}

@@ -44,7 +44,8 @@ export interface ProviderResult {
 
 export interface HistoryDataPoint {
   date: string
-  [provider: string]: number | string
+  dateTs?: number
+  [provider: string]: number | string | undefined
 }
 
 export const STORAGE_PROVIDER_COLORS: Record<string, string> = {
@@ -88,7 +89,8 @@ export interface BrowserResult {
 
 export interface BrowserHistoryPoint {
   date: string
-  [key: string]: number | string
+  dateTs?: number
+  [key: string]: number | string | undefined
 }
 
 export const BROWSER_PROVIDER_COLORS: Record<string, string> = {
