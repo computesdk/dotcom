@@ -209,6 +209,7 @@ export default defineConfig({
             projectName: 'ComputeSDK',
             description: 'A secure SDK that allows you to run code in isolated sandbox environments',
             details: 'ComputeSDK provides a unified interface for executing code across multiple cloud providers and local environments. Perfect for AI applications, educational platforms, and any system requiring secure code execution.',
+            rawContent: true,
             customSets: [
                {
                  label: 'Getting Started',

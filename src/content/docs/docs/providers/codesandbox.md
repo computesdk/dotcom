@@ -2,7 +2,7 @@
 title: "CodeSandbox"
 description: ""
 sidebar:
-  order: 5
+  order: 6
 ---
 
 CodeSandbox provider for ComputeSDK - Execute code in CodeSandbox development environments.
@@ -32,9 +32,9 @@ const compute = codesandbox({
 // Create sandbox
 const sandbox = await compute.sandbox.create();
 
-// Execute code
-const result = await sandbox.runCode('print("Hello from CodeSandbox!")');
-console.log(result.output); // "Hello from CodeSandbox!"
+// Run a command
+const result = await sandbox.runCommand('echo "Hello from CodeSandbox!"');
+console.log(result.stdout); // "Hello from CodeSandbox!"
 
 // Clean up
 await sandbox.destroy();
@@ -52,15 +52,3 @@ interface CodesandboxConfig {
   timeout?: number;
 }
 ```
-
-## Runtime Detection
-
-The provider automatically detects the runtime based on code patterns:
-
-**Python indicators:**
-- `print` statements
-- `import` statements  
-- `def` function definitions
-- Python-specific syntax (`f"`, `__`, etc.)
-
-**Default:** Node.js for all other cases

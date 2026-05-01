@@ -2,7 +2,7 @@
 title: "Namespace"
 description: ""
 sidebar:
-  order: 11
+  order: 13
 ---
 
 Namespace provider for ComputeSDK - Deploy and manage containerized sandboxes on Namespace's cloud infrastructure.
@@ -81,6 +81,6 @@ interface NamespaceConfig {
 
 ## Next Steps
 
-- Learn about [sandbox lifecycle management](/docs/reference/computesandbox)
+- Learn about [sandbox lifecycle management](/docs/reference/compute.sandbox)
 - Explore [Sandbox methods](/docs/reference/sandbox)
 - View the [@computesdk/namespace package](https://github.com/computesdk/computesdk/blob/main/packages/namespace/README.md)

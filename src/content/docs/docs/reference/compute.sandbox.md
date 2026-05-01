@@ -28,7 +28,7 @@ Create a new compute sandbox instance.
 - `sandboxId` (string): Unique identifier for the sandbox
 - `provider` (string): Provider hosting the sandbox (e.g., 'e2b', 'modal', 'vercel')
 - `filesystem` (SandboxFileSystem): File system operations interface
-- Core methods: `runCode()`, `runCommand()`, `getInfo()`, `getUrl()`, `destroy()`
+- Core methods: `runCommand()`, `getInfo()`, `getUrl()`, `destroy()`
 - See [Sandbox API Reference](./Sandbox.md) for complete interface documentation
 
 **CreateSandboxOptions interface:**
@@ -159,7 +159,7 @@ try {
 let sandbox;
 try {
   sandbox = await compute.sandbox.create();
-  await sandbox.runCode('console.log("Hello")');
+  await sandbox.runCommand('echo "Hello"');
 } finally {
   if (sandbox) {
     await sandbox.destroy();
@@ -193,7 +193,7 @@ Retrieve an existing sandbox instance by its unique identifier.
 - `sandboxId` (string): Unique identifier for the sandbox
 - `provider` (string): Provider hosting the sandbox
 - `filesystem` (SandboxFileSystem): File system operations interface
-- Core methods: `runCode()`, `runCommand()`, `getInfo()`, `getUrl()`, `destroy()`
+- Core methods: `runCommand()`, `getInfo()`, `getUrl()`, `destroy()`
 - See [Sandbox API Reference](./Sandbox.md) for complete interface documentation
 
 **Examples:**
@@ -208,8 +208,8 @@ const sandboxId = 'sb_abc123...';
 const sandbox = await compute.sandbox.getById(sandboxId);
 
 if (sandbox) {
-  const result = await sandbox.runCode('console.log("Reconnected!")');
-  console.log(result.output);  // "Reconnected!"
+  const result = await sandbox.runCommand('echo "Reconnected!"');
+  console.log(result.stdout);  // "Reconnected!"
 }
 
 // Store ID and reconnect later
@@ -232,7 +232,7 @@ if (sandbox === null) {
   const newSandbox = await compute.sandbox.create();
 } else {
   console.log('Sandbox found - using existing one');
-  await sandbox.runCode('print("Still active!")');
+  await sandbox.runCommand('echo "Still active!"');
 }
 
 // Graceful handling of missing sandbox

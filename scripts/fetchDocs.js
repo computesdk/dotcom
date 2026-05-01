@@ -4,9 +4,9 @@ import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 
-// === CONFIG for computesdk/computesdk-core ===
+// === CONFIG for computesdk/computesdk ===
 const owner = "computesdk";
-const repo = "computesdk-core";
+const repo = "computesdk";
 const repoDocsPath = "docs"; // GitHub repo folder
 const localDocsPath = path.resolve("src/content/docs/docs"); // Local Astro docs folder
 

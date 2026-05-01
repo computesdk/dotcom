@@ -2,7 +2,7 @@
 title: "Daytona"
 description: ""
 sidebar:
-  order: 6
+  order: 7
 ---
 
 Daytona provider for ComputeSDK - Execute code in Daytona development workspaces.
@@ -32,9 +32,9 @@ const compute = daytona({
 // Create sandbox
 const sandbox = await compute.sandbox.create();
 
-// Execute code
-const result = await sandbox.runCode('print("Hello from Daytona!")');
-console.log(result.output); // "Hello from Daytona!"
+// Run a command
+const result = await sandbox.runCommand('echo "Hello from Daytona!"');
+console.log(result.stdout); // "Hello from Daytona!"
 
 // Clean up
 await sandbox.destroy();
@@ -46,21 +46,9 @@ await sandbox.destroy();
 interface DaytonaConfig {
   /** Daytona API key - if not provided, will use DAYTONA_API_KEY env var */
   apiKey?: string;
-  /** Default runtime environment */
-  runtime?: 'node' | 'python';
+  /** Default runtime environment (e.g. 'node', 'python') */
+  runtime?: string;
   /** Execution timeout in milliseconds */
   timeout?: number;
 }
 ```
-
-## Runtime Detection
-
-The provider automatically detects the runtime based on code patterns:
-
-**Python indicators:**
-- `print` statements
-- `import` statements  
-- `def` function definitions
-- Python-specific syntax (`f"`, `__`, etc.)
-
-**Default:** Node.js for all other cases

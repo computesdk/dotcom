@@ -2,7 +2,7 @@
 title: "Cloudflare"
 description: ""
 sidebar:
-  order: 4
+  order: 5
 ---
 
 Cloudflare provider for ComputeSDK - Execute code in secure, isolated sandboxes on Cloudflare's edge network.
@@ -66,9 +66,9 @@ const compute = cloudflare({
 // Create sandbox
 const sandbox = await compute.sandbox.create();
 
-// Execute code
-const result = await sandbox.runCode('print("Hello from Cloudflare!")');
-console.log(result.output); // "Hello from Cloudflare!"
+// Run a command
+const result = await sandbox.runCommand('echo "Hello from Cloudflare!"');
+console.log(result.stdout); // "Hello from Cloudflare!"
 
 // Clean up
 await sandbox.destroy();
@@ -133,26 +133,12 @@ interface CloudflareConfig {
   sandboxSecret?: string;
   /** Durable Object binding (direct mode only - see below) */
   sandboxBinding?: any;
-  /** Default runtime: 'python' | 'node' | 'bun' | 'deno' */
-  runtime?: Runtime;
   /** Execution timeout in milliseconds */
   timeout?: number;
   /** Environment variables to pass to sandbox */
   envVars?: Record<string, string>;
 }
 ```
-
-## Runtime Detection
-
-The provider automatically detects the runtime based on code patterns:
-
-**Python indicators:**
-- `print` statements
-- `import` statements
-- `def` function definitions
-- Python-specific syntax (`f"`, `__`, etc.)
-
-**Default:** Node.js for all other cases
 
 ## Limitations
 
