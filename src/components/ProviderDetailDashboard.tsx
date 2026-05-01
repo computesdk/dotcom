@@ -21,7 +21,7 @@ interface ProviderDetailDashboardProps {
   totalProviders: number
 }
 
-const TEST_TYPES: TestType[] = ["sequential_tti", "burst_tti", "staggered_tti"]
+const TEST_TYPES: TestType[] = ["burst_tti", "sequential_tti", "staggered_tti"]
 const TEST_TYPE_LABELS: Record<TestType, { label: string; description: string }> = {
   sequential_tti: { label: "Sequential TTI", description: "Sandboxes launched one at a time, waiting for each to become interactive before starting the next." },
   burst_tti: { label: "Burst TTI", description: "All sandboxes launched concurrently in a single burst." },
