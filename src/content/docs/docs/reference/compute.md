@@ -318,7 +318,7 @@ Affinity is **preferred, not exclusive**: if the owning provider fails, ComputeS
 
 ## `compute.sandbox.*`
 
-The full sandbox API is documented in [compute.sandbox](./compute.sandbox.md). Summary of available methods:
+The full sandbox API is documented in [compute.sandbox](./computesandbox/). Summary of available methods:
 
 | Method | Purpose |
 |--------|---------|
@@ -438,7 +438,7 @@ async function runUserCode(userId: string, code: string) {
 
 ## Related
 
-- [compute.sandbox](./compute.sandbox.md) — sandbox lifecycle methods
+- [compute.sandbox](./computesandbox/) — sandbox lifecycle methods
 - [Sandbox](./Sandbox.md) — sandbox instance methods (code, commands, filesystem, terminal)
 - [Introduction](../getting-started/introduction.md) — high-level overview
 - [Installation](../getting-started/installation.md) — provider setup and credentials
