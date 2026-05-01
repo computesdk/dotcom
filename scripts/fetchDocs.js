@@ -41,20 +41,6 @@ if ((repoPath.includes('providers') || repoPath.includes('getting-started')) && 
   return frontmatter + content;
 }
 
-// Astro/Starlight strips dots when generating URL slugs, so a markdown link
-// like [x](./foo.bar.md) doesn't get resolved (the slug is `foobar`, not
-// `foo.bar`) and renders as a literal broken `.md` href. Rewrite relative
-// `.md` links whose basename contains a dot to the dot-stripped slug.
-function fixDottedMdLinks(markdown) {
-  return markdown.replace(/\]\((\.\/[^)\s]*?)\.md(#[^)]*)?\)/g, (match, prefix, hash) => {
-    const lastSlash = prefix.lastIndexOf('/');
-    const base = prefix.slice(lastSlash + 1);
-    if (!base.includes('.')) return match;
-    const dir = prefix.slice(0, lastSlash + 1);
-    return `](${dir}${base.replace(/\./g, '')}/${hash || ''})`;
-  });
-}
-
 // Recursive function to sync files
 async function fetchFolder(repoPath, localPath) {
   const { data } = await octokit.repos.getContent({
@@ -108,8 +94,6 @@ async function fetchFolder(repoPath, localPath) {
         orderIndex = item.name === 'more.md' ? 30 : i + 1;
       }
       
-      markdown = fixDottedMdLinks(markdown);
-
       // Ensure Astro frontmatter exists
       markdown = ensureFrontmatter(markdown, item.name, item.path, orderIndex);
 
