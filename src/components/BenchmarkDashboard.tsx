@@ -62,7 +62,7 @@ const TIME_RANGES: { value: TimeRange; label: string }[] = [
 ]
 
 export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark }: BenchmarkDashboardProps) {
-  const [selectedTest, setSelectedTest] = useState<TestType>("sequential_tti")
+  const [selectedTest, setSelectedTest] = useState<TestType>("burst_tti")
   const [selectedMetric, setSelectedMetric] = useState<Metric>("compositeScore")
   const [hiddenProviders, setHiddenProviders] = useState<Set<string>>(new Set())
   const [timeRange, setTimeRange] = useState<TimeRange>("all")

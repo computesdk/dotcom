@@ -67,7 +67,7 @@ const providerLogosDark: Record<string, string> = {
 export async function getStaticPaths() {
   const excludedSet = new Set(["railway", "render"])
   try {
-    const res = await fetch("https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/sequential_tti/latest.json")
+    const res = await fetch("https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/burst_tti/latest.json")
     if (!res.ok) return []
     const data = await res.json()
     const providers = data.results
@@ -170,7 +170,7 @@ try {
   for (let i = 0; i < TEST_TYPES.length; i++) {
     datasets[TEST_TYPES[i]] = results[i]
   }
-  allProviders = datasets.sequential_tti?.active || []
+  allProviders = datasets.burst_tti?.active || []
   totalProviders = allProviders.length
   const rankIndex = allProviders.findIndex((r) => r.provider === provider)
   providerRank = rankIndex >= 0 ? rankIndex + 1 : 0
@@ -271,8 +271,8 @@ const displayName = capitalize(provider)
                   )}
                 </h1>
                 <div class="mt-3 items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                  {datasets.sequential_tti?.timestamp && (
-                    <p>Last benchmarked {datasets.sequential_tti.timestamp}</p>
+                  {datasets.burst_tti?.timestamp && (
+                    <p>Last benchmarked {datasets.burst_tti.timestamp}</p>
                   )}
                 </div>
               </div>
