@@ -96,6 +96,11 @@ export interface BrowserHistoryPoint {
 export const BROWSER_PROVIDER_COLORS: Record<string, string> = {
   browserbase: "#f97316", // Orange
   kernel: "#10b981",      // Green
+  steel: "#4682b4",       // Steel blue
+  hyperbrowser: "#a855f7",  // Purple
+  anchorbrowser: "#ec4899", // Pink
+  borwseruse: "#eab308",    // Yellow
+  notte: "#ef4444",         // Red
 }
 
 export type BrowserMetric =
