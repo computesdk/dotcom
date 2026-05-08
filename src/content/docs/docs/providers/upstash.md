@@ -2,7 +2,7 @@
 title: "Upstash"
 description: ""
 sidebar:
-  order: 15
+  order: 16
 ---
 
 Upstash provider for ComputeSDK
