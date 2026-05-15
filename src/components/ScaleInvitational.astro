@@ -1,7 +1,8 @@
 ---
 import SponsorLogos from "./SponsorLogos.astro";
 
-const lumaUrl = "https://luma.com/aye07ar2";
+const lumaUrl = "https://lu.ma/aye07ar2";
+const lumaEventId = "aye07ar2";
 const xPostUrl = "https://x.com/computesdk/status/2041184560168280571?s=20";
 const eventDate = "June 1, 2026";
 
@@ -9,6 +10,51 @@ const metrics = [
   { label: "Concurrent Sandboxes", value: "100,000" },
   { label: "Cold-Start Latencies", value: "p50/p95/p99" },
   { label: "Success Rate", value: "Measured" },
+];
+
+const participants = [
+  {
+    name: "Modal",
+    logoLight: "/modal-logo-light.svg",
+    logoDark: "/modal-logo-dark.svg",
+    description: "Serverless cloud platform built for AI and ML workloads, with fast cold starts and GPU support.",
+    results: null,
+  },
+  {
+    name: "E2B",
+    logoLight: "/E2B-logo-light.svg",
+    logoDark: "/E2B-logo-dark.svg",
+    description: "Lightweight Linux microVMs designed for running AI-generated code safely and at scale.",
+    results: null,
+  },
+  {
+    name: "Runloop",
+    logoLight: "/runloop-logo-light.svg",
+    logoDark: "/runloop-logo-dark.svg",
+    description: "Sandbox infrastructure purpose-built for AI coding agents, with sub-second cold starts.",
+    results: null,
+  },
+  {
+    name: "Declaw",
+    logoLight: "/declaw-logo-light.svg",
+    logoDark: "/declaw-logo-dark.svg",
+    description: "Isolated sandbox environments built for fast, secure code execution at any scale.",
+    results: null,
+  },
+  {
+    name: "Northflank",
+    logoLight: "/benchmarks/normal-northflank-light.svg",
+    logoDark: "/benchmarks/normal-northflank-dark.svg",
+    description: "Container platform with flexible build and deployment primitives for production workloads.",
+    results: null,
+  },
+  {
+    name: "Tensorlake",
+    logoLight: "/benchmarks/normal-tensorlake-light.svg",
+    logoDark: "/benchmarks/normal-tensorlake-dark.svg",
+    description: "Cloud infrastructure optimized for AI and data-intensive workloads at scale.",
+    results: null,
+  },
 ];
 
 const timeline = [
@@ -49,9 +95,9 @@ const timeline = [
       <div class="mt-8 flex flex-wrap gap-4">
         <a
           href={lumaUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors no-underline"
+          data-luma-action="checkout"
+          data-luma-event-id={lumaEventId}
+          class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors no-underline cursor-pointer"
         >
           RSVP to stay in the loop
           <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -171,6 +217,51 @@ const timeline = [
           </div>
         </section>
 
+        <!-- Participants -->
+        <section>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Meet the Participants</h2>
+          <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+            Six providers. One workload. All results published June 2026.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {participants.map((p) => (
+              <div class="bg-white mt-0 dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 rounded-xl p-5 flex flex-col gap-4">
+                <!-- Logo / name -->
+                <div class="h-8 flex items-center">
+                  {p.logoLight && p.logoDark ? (
+                    <>
+                      <img src={p.logoLight} alt={p.name} class="h-7 w-auto dark:hidden" />
+                      <img src={p.logoDark} alt={p.name} class="h-7 w-auto hidden dark:block" />
+                    </>
+                  ) : (
+                    <span class="text-base font-bold text-gray-900 dark:text-white tracking-tight">{p.name}</span>
+                  )}
+                </div>
+
+                <!-- Description -->
+                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed flex-1">{p.description}</p>
+
+                <!-- Results slot -->
+                <div class="pt-3 border-t border-gray-100 dark:border-gray-800">
+                  {p.results ? (
+                    <a href={p.results} class="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline no-underline">
+                      View results
+                      <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                      </svg>
+                    </a>
+                  ) : (
+                    <span class="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500">
+                      <span class="inline-block w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+                      Results publishing June 2026
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
       </div>
 
       <!-- Right: sidebar -->
@@ -211,11 +302,11 @@ const timeline = [
           <div class="mt-5 pt-5 border-t border-gray-100 dark:border-gray-800">
             <a
               href={lumaUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center gap-2 w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors no-underline"
+              data-luma-action="checkout"
+              data-luma-event-id={lumaEventId}
+              class="flex items-center justify-center gap-2 w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors no-underline cursor-pointer"
             >
-              RSVP on Luma
+              RSVP
               <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
               </svg>
@@ -265,6 +356,8 @@ const timeline = [
   </div>
 
 </div>
+
+<script is:inline id="luma-checkout" src="https://embed.lu.ma/checkout-button.js"></script>
 
 <script is:inline type="application/ld+json" set:html={JSON.stringify({
   "@context": "https://schema.org",
