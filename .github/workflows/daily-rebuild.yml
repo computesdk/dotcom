@@ -5,6 +5,10 @@ on:
     - cron: '0 6 * * *'
   workflow_dispatch:
 
+concurrency:
+  group: daily-rebuild
+  cancel-in-progress: false
+
 jobs:
   empty-commit:
     runs-on: ubuntu-latest
@@ -19,4 +23,4 @@ jobs:
       - name: Push empty commit
         run: |
           git commit --allow-empty -m "chore: trigger daily rebuild"
-          git push
+          git push origin HEAD:${{ github.ref_name }}
