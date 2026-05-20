@@ -176,14 +176,6 @@ export default defineConfig({
       [starlightThemeNova({
         nav: [
             {
-              label:'Features',
-              href: '/features/'
-            },
-            {
-              label:'Use Cases',
-              href: '/use-cases/'
-            },
-            {
               label:'Providers',
               href: '/providers/'
             },
@@ -294,7 +286,9 @@ export default defineConfig({
     sitemap({
       filter: (page) =>
         page !== 'https://www.computesdk.com/sidekick/' &&
+        page !== 'https://www.computesdk.com/features/' &&
         page !== 'https://www.computesdk.com/features/sandboxes/' &&
+        page !== 'https://www.computesdk.com/use-cases/' &&
         page !== 'https://www.computesdk.com/old-index/' &&
         page !== 'https://www.computesdk.com/refund/' &&
         !/\/benchmarks\/sandboxes\/[^/]+\/(sequential-tti|burst-tti|staggered-tti)\/?$/.test(page)

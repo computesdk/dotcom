@@ -12,22 +12,10 @@ import SplashMobileMenu from './SplashMobileMenu.astro'
 import CustomMobileMenu from './CustomMobileMenu.astro'
 
 const navItems = [
-  {
-    label: 'Product',
-    children: [
-      { label: 'Features', href: '/features' },
-      { label: 'Use Cases', href: '/use-cases' },
-      { label: 'Providers', href: '/providers' },
-    ],
-  },
-  {
-    label: 'Resources',
-    children: [
-      { label: 'Docs', href: '/docs/getting-started/introduction' },
-      { label: 'Blog', href: '/blog' },
-    ],
-  },
+  { label: 'Providers', href: '/providers' },
   { label: 'Benchmarks', href: '/benchmarks' },
+  { label: 'Docs', href: '/docs/getting-started/introduction' },
+  { label: 'Blog', href: '/blog' },
 ]
 ---
 
@@ -36,25 +24,9 @@ const navItems = [
     <SiteTitle />
   </div>
   <nav class="nova-header-nav">
-    {navItems.map((item) =>
-      'href' in item ? (
-        <a class="nova-header-nav-link" href={item.href}>{item.label}</a>
-      ) : (
-        <div class="nova-header-dropdown px-2">
-          <button class="nova-header-nav-link nova-dropdown-trigger" type="button">
-            {item.label}
-            <svg class="nova-dropdown-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          <div class="nova-dropdown-menu">
-            {item.children.map((child) => (
-              <a class="nova-dropdown-item" href={child.href}>{child.label}</a>
-            ))}
-          </div>
-        </div>
-      )
-    )}
+    {navItems.map((item) => (
+      <a class="nova-header-nav-link" href={item.href}>{item.label}</a>
+    ))}
   </nav>
   <div class="flex items-center justify-center">
   <div class="nova-header-search">
