@@ -185,7 +185,7 @@ export default defineConfig({
             },
             {
               label: 'Docs',
-              href: '/docs/getting-started/introduction/',
+              href: 'https://docs.computesdk.com/getting-started/introduction',
             },
             {
               label:'Blog',
