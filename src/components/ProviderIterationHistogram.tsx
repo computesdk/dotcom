@@ -9,6 +9,10 @@ interface ProviderIterationHistogramProps {
   provider: string
 }
 
+function formatMs(ms: number) {
+  return ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${Math.round(ms)}ms`
+}
+
 export function ProviderIterationHistogram({ iterations, provider }: ProviderIterationHistogramProps) {
   const color = PROVIDER_COLORS[provider] || "#6b7280"
 
@@ -42,8 +46,8 @@ export function ProviderIterationHistogram({ iterations, provider }: ProviderIte
       const rangeEnd = rangeStart + bucketSize
       const count = bucketMap.get(i) || 0
       result.push({
-        label: `${Math.round(rangeStart)}ms`,
-        rangeLabel: `${Math.round(rangeStart)}ms – ${Math.round(rangeEnd)}ms`,
+        label: formatMs(rangeStart),
+        rangeLabel: `${formatMs(rangeStart)} – ${formatMs(rangeEnd)}`,
         count,
       })
     }
