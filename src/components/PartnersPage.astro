@@ -1,0 +1,131 @@
+---
+type Partner = { name: string; href: string; logo: string; logoDark?: string; description: string }
+
+const tier1Partners: Partner[] = [
+  {
+    name: "Archil",
+    href: "https://archil.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
+    logo: "/archil-logo.svg",
+    description: "",
+  },
+  {
+    name: "Latitude",
+    href: "https://latitude.sh/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
+    logo: "/latitude-logo.svg",
+    description: "",
+  },
+]
+
+const tier2Partners: Partner[] = [
+  {
+    name: "Browserbase",
+    href: "https://www.browserbase.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
+    logo: "/browserbase-logo.svg",
+    logoDark: "/browserbase-logo-dark.svg",
+    description: "",
+  },
+  {
+    name: "Tigris",
+    href: "https://www.tigrisdata.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
+    logo: "/tigris-logo.svg",
+    description: "",
+  },
+]
+---
+
+<div class="bg-white dark:bg-gray-950 min-h-screen">
+
+  <!-- Hero -->
+  <div class="border-b border-gray-200 dark:border-gray-800 py-8">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+        Partners
+      </h1>
+      <p class="mt-6 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        ComputeSDK is made better by the companies and teams who partner with us.
+      </p>
+    </div>
+  </div>
+
+  <!-- Partners Grid -->
+  <div class="border-b border-gray-200 dark:border-gray-800 mt-0 py-8">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+
+      <!-- Strategic Partners -->
+      <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-6">Strategic Partners</h2>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {tier1Partners.map((partner) => (
+          <a
+            href={partner.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex flex-col rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-8 no-underline hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 transition-all duration-200"
+          >
+            <img src={partner.logo} alt={partner.name} class="h-8 w-auto object-contain object-left dark:invert mb-6" />
+            <div class="mt-auto flex items-center text-sm font-medium text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-700 dark:group-hover:text-emerald-300">
+              Visit {partner.name}
+              <svg class="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Divider -->
+      <div class="my-12"></div>
+
+      <!-- Category Partners -->
+      <h2 class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-6">Category Partners</h2>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {tier2Partners.map((partner) => (
+          <a
+            href={partner.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex flex-col rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-8 no-underline hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30 transition-all duration-200"
+          >
+            {partner.logoDark ? (
+              <>
+                <img src={partner.logo} alt={partner.name} class="h-8 w-auto object-contain object-left mb-6 dark:hidden" />
+                <img src={partner.logoDark} alt={partner.name} class="h-8 w-auto object-contain object-left mb-6 hidden dark:block" />
+              </>
+            ) : (
+              <img src={partner.logo} alt={partner.name} class="h-8 w-auto object-contain object-left dark:invert mb-6" />
+            )}
+            <div class="mt-auto flex items-center text-sm font-medium text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-700 dark:group-hover:text-emerald-300">
+              Visit {partner.name}
+              <svg class="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CTA: Become a Partner -->
+  <div class="py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div class="rounded-3xl bg-gray-900 dark:bg-gray-800 px-8 py-16 sm:px-16 text-center ring-1 ring-gray-800 dark:ring-gray-700">
+        <h2 class="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+          Become a Partner
+        </h2>
+        <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
+          Partner with ComputeSDK to reach developers building AI agents, code execution platforms, and sandboxed applications. We'd love to explore how we can work together.
+        </p>
+        <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href="mailto:garrison@computesdk.com?subject=Partnership%20Inquiry"
+            class="inline-flex items-center rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 no-underline transition-colors"
+          >
+            Get in touch
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
