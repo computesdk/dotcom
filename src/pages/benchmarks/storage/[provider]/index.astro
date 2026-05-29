@@ -4,6 +4,7 @@ import PageLayout from "../../../../components/layouts/PageLayout.astro";
 import SponsorLogos from "../../../../components/SponsorLogos.astro";
 import { StorageProviderDetailDashboard } from "../../../../components/StorageProviderDetailDashboard";
 import { capitalize } from "../../../../components/benchmarkConstants";
+import Breadcrumbs from "../../../../components/Breadcrumbs.astro";
 import type { StorageResult, StorageHistoryPoint } from "../../../../components/benchmarkConstants";
 
 const FILE_SIZE = "10mb";
@@ -180,6 +181,11 @@ const displayName = capitalize(provider);
         <div class="md:max-w-7xl md:mx-auto mt-0 py-8 px-4 md:py-10 md:px-6">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
+              <Breadcrumbs items={[
+                { label: "Benchmarks", href: "/benchmarks" },
+                { label: "Storage Benchmarks", href: "/benchmarks/storage" },
+                { label: displayName },
+              ]} />
               <h1 class="text-xl md:text-3xl font-semibold tracking-tight text-gray-900 dark:text-white m-0">
                 {providerLogos[provider] ? (
                   <div class="flex flex-col gap-3">

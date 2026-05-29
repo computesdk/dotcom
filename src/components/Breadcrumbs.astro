@@ -1,0 +1,49 @@
+---
+interface BreadcrumbItem {
+  label: string
+  href?: string
+}
+
+interface Props {
+  items: BreadcrumbItem[]
+}
+
+const { items } = Astro.props
+const BASE = "https://www.computesdk.com"
+
+const schemaItems = items.map((item, i) => ({
+  "@type": "ListItem",
+  position: i + 1,
+  name: item.label,
+  ...(item.href ? { item: `${BASE}${item.href}` } : {}),
+}))
+---
+
+<nav aria-label="Breadcrumb" class="mb-8">
+  <ol class="flex flex-wrap items-center gap-1 text-xs text-gray-500 dark:text-gray-400 list-none p-0 m-0">
+    {items.map((item, index) => (
+      <li class="flex items-center gap-1 m-0 p-0">
+        {index > 0 && (
+          <svg class="size-3 shrink-0 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m9 18 6-6-6-6" />
+          </svg>
+        )}
+        {item.href ? (
+          <a href={item.href} class="hover:text-gray-900 dark:hover:text-white transition-colors no-underline">
+            {item.label}
+          </a>
+        ) : (
+          <span class="text-gray-900 dark:text-white font-medium" aria-current="page">
+            {item.label}
+          </span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: schemaItems,
+})} />

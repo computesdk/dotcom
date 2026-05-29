@@ -3,6 +3,7 @@ import SponsorLogos from "./SponsorLogos.astro";
 import { StorageDashboard } from "./StorageDashboard";
 import { fetchLatestStorageResults, fetchStorageHistoryData } from "../utils/benchmark-data";
 import type { StorageResult, StorageHistoryPoint } from "./benchmarkConstants";
+import Breadcrumbs from "./Breadcrumbs.astro";
 
 const FILE_SIZE = "10mb";
 
@@ -42,7 +43,11 @@ const storageData = { active, historyData, timestamp };
   <!-- Sticky header -->
   <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
     <div class="border-b border-gray-200/50 dark:border-gray-700/50">
-      <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:py-12 md:px-6">
+      <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:pb-12 md:pt-6 md:px-6">
+        <Breadcrumbs items={[
+          { label: "Benchmarks", href: "/benchmarks" },
+          { label: "Storage Benchmarks" },
+        ]} />
         <div class="sm:flex sm:flex-row items-center md:justify-between gap-3">
           <div>
             <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Storage Benchmarks</h1>

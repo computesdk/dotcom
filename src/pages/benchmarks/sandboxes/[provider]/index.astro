@@ -3,6 +3,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro"
 import PageLayout from "../../../../components/layouts/PageLayout.astro"
 import ClaimProfileCTA from "../../../../components/ClaimProfileCTA.astro"
 import SponsorLogos from "../../../../components/SponsorLogos.astro"
+import Breadcrumbs from "../../../../components/Breadcrumbs.astro"
 import { ProviderDetailDashboard } from "../../../../components/ProviderDetailDashboard"
 import { capitalize } from "../../../../components/benchmarkConstants"
 import type { ProviderResult, HistoryDataPoint } from "../../../../components/benchmarkConstants"
@@ -259,6 +260,11 @@ const displayName = capitalize(provider)
           <div class="md:max-w-7xl md:mx-auto mt-0 py-8 px-4 md:py-10 md:px-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
+                <Breadcrumbs items={[
+                  { label: "Benchmarks", href: "/benchmarks" },
+                  { label: "Sandbox Benchmarks", href: "/benchmarks/sandboxes" },
+                  { label: displayName },
+                ]} />
                 <h1 class="text-xl md:text-3xl font-semibold tracking-tight text-gray-900 dark:text-white m-0">
                   {providerLogos[provider] ? (
                     <div class="flex flex-col gap-3">
@@ -310,14 +316,6 @@ const displayName = capitalize(provider)
   </PageLayout>
 </StarlightPage>
 
-<script is:inline type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Benchmarks", "item": "https://www.computesdk.com/benchmarks/sandboxes" },
-    { "@type": "ListItem", "position": 2, "name": displayName }
-  ]
-})} />
 
 <style is:global>
   .provider-nav-scroll {
