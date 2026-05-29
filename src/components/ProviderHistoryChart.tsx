@@ -85,8 +85,8 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 10 }}
-          tickFormatter={(value: number) => isComposite ? `${Math.round(value)}` : `${Math.round(value)}ms`}
-          width={40}
+          tickFormatter={(value: number) => isComposite ? `${Math.round(value)}` : value >= 1000 ? `${(value / 1000).toFixed(2)}s` : `${Math.round(value)}ms`}
+          width={55}
         />
         <Tooltip
           content={({ active, payload, label }) => {

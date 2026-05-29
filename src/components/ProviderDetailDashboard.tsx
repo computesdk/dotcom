@@ -28,7 +28,7 @@ const TEST_TYPE_LABELS: Record<TestType, { label: string; description: string }>
   staggered_tti: { label: "Staggered TTI", description: "Sandboxes launched with 200ms delays between each." },
 }
 
-const formatMs = (ms: number) => `${Math.round(ms)}ms`
+const formatMs = (ms: number) => ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${Math.round(ms)}ms`
 
 function StatCard({ label, value, active, onClick }: { label: string; value: string; active?: boolean; onClick?: () => void }) {
   return (
