@@ -118,6 +118,7 @@ export const BROWSER_METRIC_LABELS: Record<BrowserMetric, string> = {
 export const PROVIDER_COLORS: Record<string, string> = {
   e2b: "#10b981",
   daytona: "#3b82f6",
+  northflank: "#00AAFF",
   vercel: "#71717a",
   modal: "#8b5cf6",
   blaxel: "#f97316",
