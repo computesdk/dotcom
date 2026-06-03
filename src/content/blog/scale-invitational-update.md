@@ -13,7 +13,7 @@ featured: true
 
 <br>
 
-**tl;dr** *We have moved the Scale Invitational to June 17th after underestimating the complexity of orchestrating and measuring 100,000 sandboxes **concurrently**.
+**tl;dr** *We have moved the Scale Invitational to June 17th after underestimating the complexity of orchestrating and measuring 100,000 sandboxes **concurrently**.*
 
 <br>
 
