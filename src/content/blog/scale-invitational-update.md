@@ -13,7 +13,7 @@ featured: true
 
 <br>
 
-**tl;dr** *We have moved the Scale Invitational to June 17th after underestimating the complexity of orchestrating and measuring 100,000 sandboxes across multiple VMs. We've uncovered flaws in our initial design that we need to fix in order to truly measure provider performance.*
+**tl;dr** *We have moved the Scale Invitational to June 17th after underestimating the complexity of orchestrating and measuring 100,000 sandboxes **concurrently**.
 
 <br>
 
