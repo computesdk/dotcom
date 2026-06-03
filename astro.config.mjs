@@ -22,6 +22,7 @@ export default defineConfig({
   redirects: {
     '/docs': '/docs/getting-started/introduction',
     '/docs/reference': '/docs/reference/overview',
+    '/blog/how-to-run-a-railway-sandbox': '/providers',
   },
   integrations: [
     react({
