@@ -1,5 +1,5 @@
 ---
-title: "What 100,000 Sandboxes Taught Us"
+title: "What 100,000 concurrent sandboxes has taught us so far"
 description: "An honest look at our experience building a 100,000 concurrent sandbox test."
 date: "2026-06-04"
 tags: [sandboxes, benchmarks, scaling]
