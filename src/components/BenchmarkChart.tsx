@@ -16,10 +16,11 @@ interface BenchmarkChartProps {
   onToggleProvider: (provider: string) => void
   timeRange: "30" | "60" | "90" | "all"
   selectedMetric: Metric
-  scaleMode: "full" | "zoom"
+  scaleMode: "linear" | "log"
 }
 
 export function BenchmarkChart({ historyData, providers, hiddenProviders, onToggleProvider, timeRange, selectedMetric, scaleMode }: BenchmarkChartProps) {
+  const isLog = scaleMode === "log"
   const isComposite = selectedMetric === "compositeScore"
   const chartConfig = useMemo(() => {
     const config: ChartConfig = {}
@@ -45,24 +46,6 @@ export function BenchmarkChart({ historyData, providers, hiddenProviders, onTogg
     })
   }, [historyData, timeRange])
 
-  const zoomDomain = useMemo<[number, number] | null>(() => {
-    if (scaleMode !== "zoom" || filteredHistory.length === 0) return null
-    const values: number[] = []
-    for (const point of filteredHistory) {
-      for (const provider of providers) {
-        if (hiddenProviders.has(provider)) continue
-        const key = `${provider}_${selectedMetric}`
-        const value = point[key]
-        if (typeof value === "number" && Number.isFinite(value)) values.push(value)
-      }
-    }
-    if (values.length === 0) return null
-    const min = Math.min(...values)
-    const max = Math.max(...values)
-    const spread = Math.max(max - min, isComposite ? 0.1 : 50)
-    const pad = isComposite ? Math.max(spread * 0.15, 0.5) : Math.max(spread * 0.15, 100)
-    return [Math.max(0, min - pad), max + pad]
-  }, [scaleMode, filteredHistory, providers, hiddenProviders, selectedMetric, isComposite])
 
   const handleLegendClick = useCallback(
     (e: any) => {
@@ -126,7 +109,8 @@ export function BenchmarkChart({ historyData, providers, hiddenProviders, onTogg
           tick={{ fontSize: 11 }}
         />
         <YAxis
-          domain={scaleMode === "zoom" && zoomDomain ? zoomDomain : undefined}
+          scale={isLog ? "log" : "linear"}
+          domain={isLog ? ["auto", "auto"] : undefined}
           tickLine={false}
           axisLine={false}
           tickMargin={8}
@@ -175,8 +159,8 @@ export function BenchmarkChart({ historyData, providers, hiddenProviders, onTogg
               name={provider}
               stroke={`var(--color-${provider})`}
               strokeWidth={2}
-              dot={{ r: 3, strokeWidth: 0, fill: `var(--color-${provider})` }}
-              activeDot={{ r: 5, strokeWidth: 0 }}
+              dot={{ r: 1, strokeWidth: 0, fill: `var(--color-${provider})` }}
+              activeDot={{ r: 3, strokeWidth: 0 }}
               connectNulls
               hide={hiddenProviders.has(provider)}
             />
