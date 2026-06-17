@@ -46,6 +46,7 @@ const providerLogos: Record<string, string> = {
   upstash: "/benchmarks/normal-upstash-light.svg",
   declaw: "/benchmarks/normal-declaw-light.svg",
   tensorlake: "/benchmarks/normal-tensorlake-light.svg",
+  isorun: "/benchmarks/normal-isorun-light.svg",
 }
 
 const providerLogosDark: Record<string, string> = {
@@ -65,6 +66,7 @@ const providerLogosDark: Record<string, string> = {
   upstash: "/benchmarks/normal-upstash-dark.svg",
   declaw: "/benchmarks/normal-declaw-dark.svg",
   tensorlake: "/benchmarks/normal-tensorlake-dark.svg",
+  isorun: "/benchmarks/normal-isorun-dark.svg",
 }
 
 export async function getStaticPaths() {
@@ -236,8 +238,8 @@ const displayName = capitalize(provider)
                             : "border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-lg",
                         ]}
                       >
-                        <img src={logomarkLight} alt={`${pName} logo`} class="h-5 object-contain dark:hidden" />
-                        <img src={logomarkDark} alt="" class="h-5 w-5 mt-0 object-contain hidden dark:block" />
+                        <img src={logomarkLight} alt={`${pName} logo`} class="h-5 object-contain dark:hidden" onerror="this.style.display='none'" />
+                        <img src={logomarkDark} alt="" class="h-5 w-5 mt-0 object-contain hidden dark:block" onerror="this.style.display='none'" />
                         <span class:list={["text-xs font-medium", isCurrent ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"]}>{pName}</span>
                       </a>
                     )

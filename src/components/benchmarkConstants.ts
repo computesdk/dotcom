@@ -129,6 +129,7 @@ export const PROVIDER_COLORS: Record<string, string> = {
   "just-bash": "#303137",
   archil: "#991b1b",
   tensorlake: "#82C38C",
+  isorun: "#ec4899",
 }
 
 export type Metric = "median" | "p95" | "p99" | "compositeScore"
