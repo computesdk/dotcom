@@ -3,8 +3,8 @@ import SponsorLogos from "./SponsorLogos.astro";
 
 const lumaUrl = "https://lu.ma/aye07ar2";
 const lumaEventId = "aye07ar2";
-const xPostUrl = "https://x.com/computesdk/status/2041184560168280571?s=20";
-const eventDate = "June 17th, 2026";
+const xPostUrl = "https://x.com/computesdk";
+const eventDate = "June 19th, 2026";
 
 const metrics = [
   { label: "Concurrent Sandboxes", value: "100,000" },
@@ -43,9 +43,16 @@ const participants = [
   },
   {
     name: "Tensorlake",
-    logoLight: "/benchmarks/normal-tensorlake-light.svg",
-    logoDark: "/benchmarks/normal-tensorlake-dark.svg",
+    logoLight: "/benchmarks/tensorlake-logo-light.svg",
+    logoDark: "/benchmarks/tensorlake-logo-dark.svg",
     description: "Cloud infrastructure optimized for AI and data-intensive workloads at scale.",
+    results: null,
+  },
+  {
+    name: "Isorun",
+    logoLight: "/benchmarks/isorun-logo-light.svg",
+    logoDark: "/benchmarks/isorun-logo-dark.svg",
+    description: "Isolated sandbox environments built for fast, secure code execution at any scale.",
     results: null,
   },
 ];
@@ -53,7 +60,7 @@ const participants = [
 const timeline = [
   { phase: "Now", description: "Providers request to join the Scale Invitational on X." },
   { phase: "May 2026", description: "Invitations confirmed. Methodology finalized and published." },
-  { phase: "June 17th, 2026", description: "Testing day. All participants run the same workload simultaneously." },
+  { phase: "June 19th, 2026", description: "Testing day. All participants run the same workload simultaneously." },
   { phase: "June 2026", description: "Full results, deep-dive analysis, and permanent results pages published." },
 ];
 ---
@@ -78,21 +85,20 @@ const timeline = [
       <h1 class="mt-12 text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white leading-[1.05]">
         100,000<br />
         <span class="text-emerald-600 dark:text-emerald-400">Concurrent Sandboxes.</span><br />
-        June 17th.
+        June 19th.
       </h1>
 
       <p class="mt-6 text-lg text-gray-600 dark:text-gray-300 max-w-2xl leading-relaxed">
-        The most ambitious sandbox scale test ever run. Any provider can participate. All results published openly on June 17th, 2026.
+        The most ambitious sandbox scale test ever run. Any provider can participate. All results published openly on June 19th, 2026.
       </p>
 
       <div class="mt-8 flex flex-wrap gap-4">
         <a
-          href={lumaUrl}
-          data-luma-action="checkout"
-          data-luma-event-id={lumaEventId}
+          href="https://platform.computesdk.com/scale-invitational"
+          target="_blank"
           class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors no-underline cursor-pointer"
         >
-          RSVP to stay in the loop
+          View results
           <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
           </svg>
@@ -103,7 +109,7 @@ const timeline = [
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-3 text-sm font-semibold text-gray-900 dark:text-white hover:border-gray-400 dark:hover:border-gray-500 transition-colors no-underline"
         >
-          Nominate a provider on X ↗
+          View release on X ↗
         </a>
       </div>
 
@@ -193,23 +199,6 @@ const timeline = [
           </div>
         </section>
 
-        <!-- Who can participate -->
-        <section>
-          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Who can participate</h2>
-          <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-            The Scale Invitational is open to any sandbox provider willing to run the workload under the same conditions as everyone else.
-          </p>
-          <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-            We've already started inviting consistent top performers from our Benchmark Friday series. We're also opening the floor to the community.
-          </p>
-          <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-5 md:p-6">
-            <p class="text-sm font-semibold text-emerald-900 dark:text-emerald-200 mb-1">Know a provider that should compete?</p>
-            <p class="text-sm text-emerald-700 dark:text-emerald-300 leading-relaxed">
-              Reply to our <a href={xPostUrl} target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:no-underline">post on X</a> and cc/tag them directly. If they're interested, they can reach out and we'll coordinate all the details.
-            </p>
-          </div>
-        </section>
-
         <!-- Participants -->
         <section>
           <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Meet the Participants</h2>
@@ -294,12 +283,11 @@ const timeline = [
           </div>
           <div class="mt-5 pt-5 border-t border-gray-100 dark:border-gray-800">
             <a
-              href={lumaUrl}
-              data-luma-action="checkout"
-              data-luma-event-id={lumaEventId}
+              href="https://platform.computesdk.com/scale-invitational"
+              target="_blank"
               class="flex items-center justify-center gap-2 w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors no-underline cursor-pointer"
             >
-              RSVP
+              View Results
               <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
               </svg>
