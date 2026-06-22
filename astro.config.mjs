@@ -292,6 +292,7 @@ export default defineConfig({
         page !== 'https://www.computesdk.com/use-cases/' &&
         page !== 'https://www.computesdk.com/old-index/' &&
         page !== 'https://www.computesdk.com/refund/' &&
+        page !== 'https://www.computesdk.com/og-preview/' &&
         !/\/benchmarks\/sandboxes\/[^/]+\/(sequential-tti|burst-tti|staggered-tti)\/?$/.test(page)
     }),
   ],
