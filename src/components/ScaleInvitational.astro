@@ -1,8 +1,6 @@
 ---
 import SponsorLogos from "./SponsorLogos.astro";
 
-const lumaUrl = "https://lu.ma/aye07ar2";
-const lumaEventId = "aye07ar2";
 const xPostUrl = "https://x.com/computesdk";
 const eventDate = "June 19th, 2026";
 
@@ -120,6 +118,26 @@ const timeline = [
   <div class="mt-0 border-b border-gray-200/50 dark:border-gray-700/50">
     <div class="md:max-w-7xl md:mx-auto py-8 px-4 md:px-6">
       <SponsorLogos label="Sponsored by:" layout="stacked" align="left" size="lg" />
+    </div>
+  </div>
+
+  <!-- Benchmarks powered by -->
+  <div class="mt-0 border-b border-gray-200/50 dark:border-gray-700/50">
+    <div class="md:max-w-7xl md:mx-auto py-8 px-4 md:px-6">
+      <div class="flex flex-col gap-3 max-w-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-[9px] font-bold tracking-widest text-emerald-600 dark:text-emerald-400 shrink-0 uppercase">Benchmarks powered by:</span>
+        </div>
+        <a
+          href="https://namespace.so/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=scale-invitational-sponsor-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-start h-10 hover:opacity-75 transition-opacity"
+        >
+          <img src="/benchmarks/normal-namespace-light.svg" alt="Namespace" class="h-10 w-auto object-contain dark:hidden" />
+          <img src="/benchmarks/normal-namespace-dark.svg" alt="Namespace" class="h-10 w-auto object-contain hidden dark:block" />
+        </a>
+      </div>
     </div>
   </div>
 
