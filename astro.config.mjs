@@ -5,12 +5,19 @@ import starlightThemeNova from 'starlight-theme-nova';
 import starlightLlmsTxt from 'starlight-llms-txt'
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import vercel from '@astrojs/vercel';
 
 import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://www.computesdk.com/',
+  output: 'static',
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true,
+    },
+  }),
   markdown: {
     shikiConfig: {
       themes: {
@@ -170,6 +177,7 @@ export default defineConfig({
 		    ],
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/computesdk/computesdk' }],
       components: {
+        Head: './src/components/Head.astro',
         Header: './src/components/Header.astro',
         SocialIcons: './src/components/SocialIcons.astro',
       },
@@ -301,6 +309,11 @@ export default defineConfig({
     host: true,
   },
   vite: {
+    define: {
+      'import.meta.env.PUBLIC_VERCEL_ANALYTICS_ID': JSON.stringify(
+        process.env.VERCEL_ANALYTICS_ID
+      ),
+    },
     plugins: [tailwindcss()],
     server: {
       host: true,
