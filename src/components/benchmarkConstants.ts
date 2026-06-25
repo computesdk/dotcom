@@ -98,6 +98,70 @@ export const BROWSER_PROVIDER_COLORS: Record<string, string> = {
   kernel: "#10b981",      // Green
 }
 
+export const BROWSER_THROUGHPUT_PROVIDER_COLORS: Record<string, string> = {
+  browserbase: "#f97316",  // Orange
+  kernel: "#10b981",       // Green
+  hyperbrowser: "#3b82f6", // Blue
+  steel: "#8b5cf6",        // Purple
+}
+
+export type ActionType = "navigate" | "waitForSelector" | "screenshot" | "textContent" | "click" | "goBack"
+
+export const ACTION_TYPE_LABELS: Record<ActionType, string> = {
+  navigate: "Navigate",
+  waitForSelector: "Wait For Selector",
+  screenshot: "Screenshot",
+  textContent: "Text Content",
+  click: "Click",
+  goBack: "Go Back",
+}
+
+export interface BrowserThroughputResult {
+  provider: string
+  mode?: string
+  summary: {
+    actionsPerSecond: { median: number; p95: number; p99: number }
+    taskMs: { median: number; p95: number; p99: number }
+    totalMs: { median: number; p95: number; p99: number }
+    createMs: { median: number; p95: number; p99: number }
+    perActionType: Partial<Record<ActionType, { median: number; p95: number; p99: number }>>
+  }
+  compositeScore?: number | null
+  successRate?: number | null
+  skipped?: boolean
+  skipReason?: string
+  iterations?: Array<{
+    createMs: number
+    connectMs: number
+    releaseMs: number
+    totalMs: number
+    taskMs: number
+    actionsCompleted: number
+    actionsPerSecond: number
+  }>
+}
+
+export interface BrowserThroughputHistoryPoint {
+  date: string
+  dateTs?: number
+  [key: string]: number | string | undefined
+}
+
+export type BrowserThroughputMetric =
+  | "compositeScore"
+  | "actionsPerSecond"
+  | "taskMs"
+  | "totalMs"
+  | "screenshotMs"
+
+export const BROWSER_THROUGHPUT_METRIC_LABELS: Record<BrowserThroughputMetric, string> = {
+  compositeScore: "Composite Score",
+  actionsPerSecond: "Actions/sec",
+  taskMs: "Task Duration",
+  totalMs: "Total Duration",
+  screenshotMs: "Screenshot",
+}
+
 export type BrowserMetric =
   | "createMs"
   | "connectMs"
@@ -150,5 +214,7 @@ export function capitalize(s: string): string {
   if (s === "tigris") return "Tigris"
   if (s === "browserbase") return "Browserbase"
   if (s === "kernel") return "Kernel"
+  if (s === "hyperbrowser") return "Hyperbrowser"
+  if (s === "steel") return "Steel"
   return s.charAt(0).toUpperCase() + s.slice(1)
 }

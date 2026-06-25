@@ -1,0 +1,26 @@
+---
+title: Browser Throughput Benchmark
+description: Per-action throughput benchmark for headless browser providers — actions per second, task duration, and per-action type latency inside a running session.
+template: splash
+head:
+  - tag: link
+    attrs:
+      rel: canonical
+      href: https://www.computesdk.com/benchmarks/browsers/browser-throughput/
+---
+
+import PageLayout from '../../../../components/layouts/PageLayout.astro';
+import BrowserThroughputPage from '../../../../components/BrowserThroughputPage.astro';
+
+<PageLayout>
+  <BrowserThroughputPage />
+</PageLayout>
+
+<style>{`
+  .nova-page-frame-header {
+    position: relative !important;
+  }
+  .main-frame {
+    padding-top: 0 !important;
+  }
+`}</style>

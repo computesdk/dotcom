@@ -1,16 +1,14 @@
 ---
 import SponsorLogos from "./SponsorLogos.astro";
-import { BrowserDashboard } from "./BrowserDashboard";
-import { fetchLatestBrowserResults, fetchBrowserHistoryData } from "../utils/benchmark-data";
-import type { BrowserResult, BrowserHistoryPoint } from "./benchmarkConstants";
+import { BrowserThroughputDashboard } from "./BrowserThroughputDashboard";
+import { fetchLatestBrowserThroughputResults, fetchBrowserThroughputHistoryData } from "../utils/benchmark-data";
+import type { BrowserThroughputResult, BrowserThroughputHistoryPoint } from "./benchmarkConstants";
 import Breadcrumbs from "./Breadcrumbs.astro";
 
 const providerLogos: Record<string, string> = {
   browserbase: "/benchmarks/normal-browserbase-light.svg",
   kernel: "/benchmarks/normal-kernel-light.svg",
   hyperbrowser: "/benchmarks/normal-hyperbrowser-light.svg",
-  "browser-use": "/benchmarks/normal-browser-use-light.svg",
-  "anchor-browser": "/benchmarks/normal-anchor-browser-light.png",
   steel: "/benchmarks/normal-steel-light.svg",
 };
 
@@ -18,20 +16,18 @@ const providerLogosDark: Record<string, string> = {
   browserbase: "/benchmarks/normal-browserbase-dark.svg",
   kernel: "/benchmarks/normal-kernel-dark.svg",
   hyperbrowser: "/benchmarks/normal-hyperbrowser-dark.svg",
-  "browser-use": "/benchmarks/normal-browser-use-dark.svg",
-  "anchor-browser": "/benchmarks/normal-anchor-browser-dark.png",
   steel: "/benchmarks/normal-steel-dark.svg",
 };
 
 let fetchError = false;
-let active: BrowserResult[] = [];
-let historyData: BrowserHistoryPoint[] = [];
+let active: BrowserThroughputResult[] = [];
+let historyData: BrowserThroughputHistoryPoint[] = [];
 let timestamp = "";
 
 try {
   const [results, historyResult] = await Promise.all([
-    fetchLatestBrowserResults(),
-    fetchBrowserHistoryData(),
+    fetchLatestBrowserThroughputResults(),
+    fetchBrowserThroughputHistoryData(),
   ]);
   active = results;
   historyData = historyResult.history;
@@ -40,7 +36,7 @@ try {
   fetchError = true;
 }
 
-const browserData = { active, historyData, timestamp };
+const throughputData = { active, historyData, timestamp };
 ---
 
 <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
@@ -50,12 +46,13 @@ const browserData = { active, historyData, timestamp };
       <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:pb-12 md:pt-6 md:px-6">
         <Breadcrumbs items={[
           { label: "Benchmarks", href: "/benchmarks" },
-          { label: "Browser Benchmarks" },
+          { label: "Browser Benchmarks", href: "/benchmarks/browsers" },
+          { label: "Throughput" },
         ]} />
         <div class="sm:flex sm:flex-row items-center md:justify-between gap-3">
           <div>
-            <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Browser Benchmarks</h1>
-            <p class="my-2 text-sm text-gray-700 dark:text-gray-400">Headless browser session benchmarks — create, connect, navigate, and release latency across providers. 100 iterations per run.</p>
+            <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Browser Throughput</h1>
+            <p class="my-2 text-sm text-gray-700 dark:text-gray-400">Per-action throughput inside a running session — 50 sequential actions across 10 sessions per provider.</p>
           </div>
           <div class="m-0 text-left md:text-right">
             <div class="items-center">
@@ -87,12 +84,12 @@ const browserData = { active, historyData, timestamp };
     </div>
   ) : (
     <div class="mt-0">
-      <BrowserDashboard
+      <BrowserThroughputDashboard
         client:only="react"
-        data={browserData}
+        data={throughputData}
         providerLogos={providerLogos}
         providerLogosDark={providerLogosDark}
-        currentBenchmark="lifecycle"
+        currentBenchmark="throughput"
       />
 
       <div class="md:max-w-7xl md:mx-auto px-4 md:px-6">
@@ -119,31 +116,31 @@ const browserData = { active, historyData, timestamp };
       <div class="mt-0">
         <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">What We Measure</h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          Each benchmark provisions a headless browser session, connects over CDP, navigates to a target page, and releases the session, measuring the time for each phase independently.
+          Each session executes <strong class="text-gray-900 dark:text-white">50 sequential actions</strong> inside a single running browser: a repeating 10-step loop of navigate → waitForSelector → screenshot → textContent → click → waitForSelector → screenshot → textContent → goBack → waitForSelector, run 5 times against Wikipedia.
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          Five metrics are captured per iteration: <strong class="text-gray-900 dark:text-white">create</strong>, <strong class="text-gray-900 dark:text-white">connect</strong>, <strong class="text-gray-900 dark:text-white">navigate</strong>, <strong class="text-gray-900 dark:text-white">release</strong>, and <strong class="text-gray-900 dark:text-white">total</strong> end-to-end latency.
+          Every action is timed individually. A failed action does not abort the session — the loop continues and the failure is recorded. This lets us observe degradation patterns rather than discarding unlucky sessions.
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-          Each provider is tested with <strong class="text-gray-900 dark:text-white">100 iterations</strong> per run. Benchmarks run automatically via GitHub Actions on a recurring schedule. All results are committed to the <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">public benchmarks repo</a>.
+          Each provider runs <strong class="text-gray-900 dark:text-white">10 sessions</strong> per benchmark run. All sessions use stealth mode and a 1920×1080 viewport to match realistic agent conditions. Benchmarks run daily via GitHub Actions and results are committed to the <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">public benchmarks repo</a>.
         </p>
       </div>
 
       <div class="mt-0">
         <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">How We Score</h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          The <strong class="text-gray-900 dark:text-white">Composite Score</strong> is a weighted blend of total-latency percentiles multiplied by the success rate. Latency is scored against a fixed 10-second ceiling: <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">100 &times; (1 &minus; value / 10,000ms)</code>.
+          The <strong class="text-gray-900 dark:text-white">Composite Score</strong> (0–100, higher is better) weights four axes that matter for agent workloads, then multiplies by success rate so flaky providers can't hide behind fast averages.
         </p>
-        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          The weighted score is multiplied by the success rate (0–1), so providers that fail frequently are penalized proportionally.
-        </p>
-        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1.5 list-none p-0 m-0">
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Total median: 60%</strong></li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Total P95: 25%</strong></li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Total P99: 15%</strong></li>
+        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1.5 list-none p-0 m-0 mb-3">
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Actions/sec median: 40%</strong> — primary throughput signal</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Task duration median: 25%</strong> — typical session cost</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Task duration p95: 20%</strong> — tail consistency</li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Screenshot median: 15%</strong> — vision-agent proxy</li>
         </ul>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          The final score is multiplied by <strong class="text-gray-900 dark:text-white">success rate</strong> — the fraction of sessions that completed all 50 actions. A provider that fails 1 in 10 actions is penalized proportionally.
+        </p>
       </div>
     </div>
   </div>
-
 </div>

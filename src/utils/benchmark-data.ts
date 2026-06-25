@@ -4,6 +4,8 @@ import type {
   StorageHistoryPoint,
   BrowserResult,
   BrowserHistoryPoint,
+  BrowserThroughputResult,
+  BrowserThroughputHistoryPoint,
 } from "../components/benchmarkConstants";
 
 const BASE_URL =
@@ -363,6 +365,118 @@ export async function fetchBrowserHistoryData(): Promise<{
   }
 
   return { history, timestamp };
+}
+
+export async function fetchLatestBrowserThroughputResults(): Promise<BrowserThroughputResult[]> {
+  const res = await fetch(`${BASE_URL}/browser-throughput/latest.json`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching browser-throughput`);
+  const data = await res.json();
+  return (data.results as BrowserThroughputResult[])
+    .filter(
+      (r) =>
+        !r.skipped &&
+        r.summary?.actionsPerSecond?.median != null &&
+        r.summary.actionsPerSecond.median > 0,
+    )
+    .map((r) => ({ ...r, compositeScore: computeThroughputScore(r) }))
+    .sort((a, b) => (b.compositeScore ?? 0) - (a.compositeScore ?? 0));
+}
+
+export async function fetchBrowserThroughputHistoryData(): Promise<{
+  history: BrowserThroughputHistoryPoint[];
+  timestamp: string;
+}> {
+  const githubHeaders: Record<string, string> = {
+    Accept: "application/vnd.github.v3+json",
+  };
+  const githubToken = import.meta.env.GITHUB_TOKEN;
+  if (githubToken) {
+    githubHeaders["Authorization"] = `Bearer ${githubToken}`;
+  }
+
+  const latestRes = await fetch(`${BASE_URL}/browser-throughput/latest.json`);
+  if (!latestRes.ok) throw new Error(`HTTP ${latestRes.status}`);
+  const latestData = await latestRes.json();
+  const timestamp = new Date(latestData.timestamp).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+  });
+
+  const listRes = await fetch(`${API_URL}/browser-throughput`, { headers: githubHeaders });
+  if (!listRes.ok) return { history: [], timestamp };
+
+  const files = (await listRes.json()) as Array<{ name: string; download_url: string }>;
+  const jsonFiles = files
+    .filter(
+      (f) =>
+        f.name.endsWith(".json") &&
+        f.name !== "latest.json" &&
+        f.name !== ".gitkeep",
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const history: BrowserThroughputHistoryPoint[] = [];
+
+  for (let i = 0; i < jsonFiles.length; i += HISTORY_BATCH_SIZE) {
+    const batch = jsonFiles.slice(i, i + HISTORY_BATCH_SIZE);
+    const batchResults = await Promise.all(
+      batch.map(async (file) => {
+        try {
+          const fileRes = await fetch(file.download_url);
+          if (!fileRes.ok) return null;
+          return await fileRes.json();
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    for (const fileData of batchResults) {
+      if (!fileData) continue;
+      const ts = fileData.timestamp as string;
+      const point: BrowserThroughputHistoryPoint = {
+        date: new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        dateTs: new Date(ts).getTime(),
+      };
+      for (const r of fileData.results as BrowserThroughputResult[]) {
+        if (!r.skipped && r.summary?.actionsPerSecond?.median != null) {
+          const score = computeThroughputScore(r);
+          point[`${r.provider}_actionsPerSecond`] = Math.round(r.summary.actionsPerSecond.median * 100) / 100;
+          point[`${r.provider}_taskMs`] = Math.round(r.summary.taskMs.median);
+          point[`${r.provider}_totalMs`] = Math.round(r.summary.totalMs.median);
+          point[`${r.provider}_screenshotMs`] = Math.round(r.summary.perActionType.screenshot?.median ?? 0);
+          point[`${r.provider}_compositeScore`] = score;
+        }
+      }
+      if (Object.keys(point).length > 2) {
+        history.push(point);
+      }
+    }
+  }
+
+  return { history, timestamp };
+}
+
+export function computeThroughputScore(r: BrowserThroughputResult): number {
+  const aps = r.summary.actionsPerSecond.median;
+  const taskMed = r.summary.taskMs.median;
+  const taskP95 = r.summary.taskMs.p95;
+  const screenshotMed = r.summary.perActionType.screenshot?.median ?? 0;
+
+  const iters = r.iterations ?? [];
+  const successRate =
+    iters.length > 0
+      ? iters.filter((it) => it.actionsCompleted === 50).length / iters.length
+      : 1;
+
+  const scoreAps = Math.min(100, (aps / 10) * 100);
+  const scoreTaskMed = Math.max(0, 100 * (1 - taskMed / 30000));
+  const scoreTaskP95 = Math.max(0, 100 * (1 - taskP95 / 30000));
+  const scoreScreenshot = screenshotMed > 0 ? Math.max(0, 100 * (1 - screenshotMed / 30000)) : 50;
+
+  const weighted =
+    0.4 * scoreAps + 0.25 * scoreTaskMed + 0.2 * scoreTaskP95 + 0.15 * scoreScreenshot;
+  return Math.round(weighted * successRate * 10) / 10;
 }
 
 export function computeCompositeScore(
