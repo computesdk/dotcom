@@ -52,6 +52,8 @@ export const STORAGE_PROVIDER_COLORS: Record<string, string> = {
   "aws-s3": "#f97316",       // Orange
   "cloudflare-r2": "#f59e0b", // Amber
   "tigris": "#06b6d4",        // Cyan
+  "azure-blob": "#0078d4",    // Azure blue
+  "vercel-blob": "#71717a",   // Zinc
 }
 
 export type StorageMetric = "uploadMs" | "downloadMs" | "throughputMbps" | "compositeScore"
@@ -212,6 +214,8 @@ export function capitalize(s: string): string {
   if (s === "aws-s3") return "AWS S3"
   if (s === "cloudflare-r2") return "Cloudflare R2"
   if (s === "tigris") return "Tigris"
+  if (s === "azure-blob") return "Azure Blob"
+  if (s === "vercel-blob") return "Vercel Blob"
   if (s === "browserbase") return "Browserbase"
   if (s === "kernel") return "Kernel"
   if (s === "hyperbrowser") return "Hyperbrowser"
