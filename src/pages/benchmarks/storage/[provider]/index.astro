@@ -16,12 +16,16 @@ const providerLogos: Record<string, string> = {
   "aws-s3": "/benchmarks/normal-s3-light.svg",
   "cloudflare-r2": "/benchmarks/normal-cloudflare-light.svg",
   "tigris": "/benchmarks/normal-tigris-light.svg",
+  "azure-blob": "/benchmarks/normal-azure-light.svg",
+  "vercel-blob": "/benchmarks/normal-vercel-light.svg",
 };
 
 const providerLogosDark: Record<string, string> = {
   "aws-s3": "/benchmarks/normal-s3-dark.svg",
   "cloudflare-r2": "/benchmarks/normal-cloudflare-dark.svg",
   "tigris": "/benchmarks/normal-tigris-dark.svg",
+  "azure-blob": "/benchmarks/normal-azure-dark.svg",
+  "vercel-blob": "/benchmarks/normal-vercel-dark.svg",
 };
 
 export async function getStaticPaths() {
@@ -152,8 +156,8 @@ const displayName = capitalize(provider);
                 {[...allResults].sort((a, b) => a.provider.localeCompare(b.provider)).map((p) => {
                   const isCurrent = p.provider === provider;
                   const pName = capitalize(p.provider);
-                  // aws-s3 → s3, cloudflare-r2 → cloudflare, tigris → tigris
-                  const logomarkKey = p.provider === "aws-s3" ? "s3" : p.provider === "cloudflare-r2" ? "cloudflare" : p.provider;
+                  // aws-s3 → s3, cloudflare-r2 → cloudflare, azure-blob → azure, vercel-blob → vercel, tigris → tigris
+                  const logomarkKey = p.provider === "aws-s3" ? "s3" : p.provider === "cloudflare-r2" ? "cloudflare" : p.provider === "azure-blob" ? "azure" : p.provider === "vercel-blob" ? "vercel" : p.provider;
                   const logomarkLight = `/benchmarks/${logomarkKey}-logomark-light.svg`;
                   const logomarkDark = `/benchmarks/${logomarkKey}-logomark-dark.svg`;
                   return (
