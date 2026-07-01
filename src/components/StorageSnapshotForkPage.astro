@@ -1,18 +1,17 @@
 ---
 import SponsorLogos from "./SponsorLogos.astro";
-import { StorageDashboard } from "./StorageDashboard";
-import { fetchLatestStorageResults, fetchStorageHistoryData } from "../utils/benchmark-data";
-import type { StorageResult, StorageHistoryPoint } from "./benchmarkConstants";
+import { StorageSnapshotForkDashboard } from "./StorageSnapshotForkDashboard";
+import { fetchLatestSnapshotForkResults, fetchSnapshotForkHistoryData } from "../utils/benchmark-data";
+import type { SnapshotForkResult, SnapshotForkHistoryPoint } from "./benchmarkConstants";
 import Breadcrumbs from "./Breadcrumbs.astro";
 
-const FILE_SIZE = "10mb";
+const DATASET = "small";
 
 const providerLogos: Record<string, string> = {
   "aws-s3": "/benchmarks/normal-s3-light.svg",
   "cloudflare-r2": "/benchmarks/normal-cloudflare-light.svg",
   "tigris": "/benchmarks/normal-tigris-light.svg",
   "azure-blob": "/benchmarks/normal-azure-light.svg",
-  "vercel-blob": "/benchmarks/normal-vercel-light.svg",
 };
 
 const providerLogosDark: Record<string, string> = {
@@ -20,18 +19,17 @@ const providerLogosDark: Record<string, string> = {
   "cloudflare-r2": "/benchmarks/normal-cloudflare-dark.svg",
   "tigris": "/benchmarks/normal-tigris-dark.svg",
   "azure-blob": "/benchmarks/normal-azure-dark.svg",
-  "vercel-blob": "/benchmarks/normal-vercel-dark.svg",
 };
 
 let fetchError = false;
-let active: StorageResult[] = [];
-let historyData: StorageHistoryPoint[] = [];
+let active: SnapshotForkResult[] = [];
+let historyData: SnapshotForkHistoryPoint[] = [];
 let timestamp = "";
 
 try {
   const [results, historyResult] = await Promise.all([
-    fetchLatestStorageResults(FILE_SIZE),
-    fetchStorageHistoryData(FILE_SIZE),
+    fetchLatestSnapshotForkResults(DATASET),
+    fetchSnapshotForkHistoryData(DATASET),
   ]);
   active = results;
   historyData = historyResult.history;
@@ -40,7 +38,7 @@ try {
   fetchError = true;
 }
 
-const storageData = { active, historyData, timestamp };
+const snapshotForkData = { active, historyData, timestamp };
 ---
 
 <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
@@ -50,12 +48,13 @@ const storageData = { active, historyData, timestamp };
       <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:pb-12 md:pt-6 md:px-6">
         <Breadcrumbs items={[
           { label: "Benchmarks", href: "/benchmarks" },
-          { label: "Storage Benchmarks" },
+          { label: "Storage Benchmarks", href: "/benchmarks/storage" },
+          { label: "Snapshot / Fork" },
         ]} />
         <div class="sm:flex sm:flex-row items-center md:justify-between gap-3">
           <div>
-            <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Storage Benchmarks</h1>
-            <p class="my-2 text-sm text-gray-700 dark:text-gray-400">Upload/download latency and throughput benchmarks for object storage providers. 10 MB file size, 100 iterations.</p>
+            <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Storage Snapshot / Fork</h1>
+            <p class="my-2 text-sm text-gray-700 dark:text-gray-400">Snapshot creation and fork latency across object storage providers — how fast can a provider branch your bucket?</p>
           </div>
           <div class="m-0 text-left md:text-right">
             <div class="items-center">
@@ -87,12 +86,12 @@ const storageData = { active, historyData, timestamp };
     </div>
   ) : (
     <div class="mt-0">
-      <StorageDashboard
-        client:visible
-        data={storageData}
+      <StorageSnapshotForkDashboard
+        client:only="react"
+        data={snapshotForkData}
         providerLogos={providerLogos}
         providerLogosDark={providerLogosDark}
-        currentBenchmark="lifecycle"
+        currentBenchmark="snapshot-fork"
       />
 
       <div class="md:max-w-7xl md:mx-auto px-4 md:px-6">
@@ -119,32 +118,31 @@ const storageData = { active, historyData, timestamp };
       <div class="mt-0">
         <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">What We Measure</h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          Each benchmark uploads and then downloads a <strong class="text-gray-900 dark:text-white">10 MB file</strong> to a bucket in each provider, measuring the time for each operation independently.
+          Each iteration seeds a <strong class="text-gray-900 dark:text-white">small dataset</strong> (10 objects × 1 MB = 10 MB) into the provider bucket, then times four operations: <strong class="text-gray-900 dark:text-white">snapshot create</strong>, <strong class="text-gray-900 dark:text-white">fork from snapshot</strong>, <strong class="text-gray-900 dark:text-white">fork from live</strong>, and a <strong class="text-gray-900 dark:text-white">first object read</strong> from the fork to confirm time-to-usable.
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          Three metrics are captured per iteration: <strong class="text-gray-900 dark:text-white">upload latency</strong>, <strong class="text-gray-900 dark:text-white">download latency</strong>, and <strong class="text-gray-900 dark:text-white">throughput</strong> (Mbps, computed from total transferred bytes over total operation time).
+          Every created resource (objects, snapshot, forks) is torn down in a <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">finally</code> block so a failure mid-iteration does not leak storage or siblings.
         </p>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-          Each provider is tested with <strong class="text-gray-900 dark:text-white">100 iterations</strong> per run. Benchmarks run automatically via GitHub Actions on a recurring schedule. All results are committed to the <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">public benchmarks repo</a>.
+          Each provider runs <strong class="text-gray-900 dark:text-white">100 iterations</strong> per benchmark run. Benchmarks run daily via GitHub Actions and results are committed to the <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">public benchmarks repo</a>.
         </p>
       </div>
 
       <div class="mt-0">
         <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">How We Score</h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          The <strong class="text-gray-900 dark:text-white">Composite Score</strong> is a weighted blend of upload and download latency metrics multiplied by the success rate. Latency is scored against a fixed 5-second ceiling: <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">100 &times; (1 &minus; value / 5,000ms)</code>.
-        </p>
-        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
-          The weighted score is multiplied by the success rate (0–1), so providers that fail frequently are penalized proportionally.
+          The <strong class="text-gray-900 dark:text-white">Composite Score</strong> (0–100, higher is better) scores each latency metric against a 60-second ceiling: <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">100 × (1 − value / 60,000ms)</code>, weighted as follows, then multiplied by success rate.
         </p>
         <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1.5 list-none p-0 m-0">
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Upload median: 40%</strong></li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Download median: 40%</strong></li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Upload P95: 10%</strong></li>
-          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Download P95: 10%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Snapshot create median: 40%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Fork (from snapshot) median: 35%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Fork (from live) median: 15%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">First read median: 10%</strong></li>
         </ul>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mt-3">
+          Providers with native zero-copy semantics (e.g. Tigris) create snapshots and forks in near-constant time. Copy-based emulation (S3, R2, Azure) scales with object count and total bytes, which becomes visible at larger dataset sizes.
+        </p>
       </div>
     </div>
   </div>
-
 </div>

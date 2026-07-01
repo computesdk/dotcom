@@ -1,0 +1,253 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import PageLayout from "../../../../../components/layouts/PageLayout.astro";
+import SponsorLogos from "../../../../../components/SponsorLogos.astro";
+import { StorageSnapshotForkProviderDetailDashboard } from "../../../../../components/StorageSnapshotForkProviderDetailDashboard";
+import { capitalize } from "../../../../../components/benchmarkConstants";
+import Breadcrumbs from "../../../../../components/Breadcrumbs.astro";
+import type { SnapshotForkResult, SnapshotForkHistoryPoint } from "../../../../../components/benchmarkConstants";
+
+const DATASET = "small";
+const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
+const API_URL = "https://api.github.com/repos/computesdk/benchmarks/contents/results";
+const HISTORY_BATCH_SIZE = 10;
+
+const providerLogos: Record<string, string> = {
+  "aws-s3": "/benchmarks/normal-s3-light.svg",
+  "cloudflare-r2": "/benchmarks/normal-cloudflare-light.svg",
+  "tigris": "/benchmarks/normal-tigris-light.svg",
+  "azure-blob": "/benchmarks/normal-azure-light.svg",
+};
+
+const providerLogosDark: Record<string, string> = {
+  "aws-s3": "/benchmarks/normal-s3-dark.svg",
+  "cloudflare-r2": "/benchmarks/normal-cloudflare-dark.svg",
+  "tigris": "/benchmarks/normal-tigris-dark.svg",
+  "azure-blob": "/benchmarks/normal-azure-dark.svg",
+};
+
+export async function getStaticPaths() {
+  try {
+    const BASE = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
+    const res = await fetch(`${BASE}/snapshot-fork/small/latest.json`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    const providers = (data.results as SnapshotForkResult[])
+      .filter((r) => !r.skipped && r.summary?.snapshotCreateMs?.median != null && r.summary.snapshotCreateMs.median > 0)
+      .map((r) => r.provider);
+    return providers.map((provider: string) => ({
+      params: { provider },
+      props: { provider },
+    }));
+  } catch {
+    return [];
+  }
+}
+
+const { provider } = Astro.props as { provider: string };
+
+const githubHeaders: Record<string, string> = {
+  Accept: "application/vnd.github.v3+json",
+};
+const githubToken = import.meta.env.GITHUB_TOKEN;
+if (githubToken) {
+  githubHeaders["Authorization"] = `Bearer ${githubToken}`;
+}
+
+let fetchError = false;
+let result: SnapshotForkResult | null = null;
+let allResults: SnapshotForkResult[] = [];
+let historyData: SnapshotForkHistoryPoint[] = [];
+let timestamp = "";
+
+try {
+  const res = await fetch(`${BASE_URL}/snapshot-fork/${DATASET}/latest.json`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  timestamp = new Date(data.timestamp).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  allResults = (data.results as SnapshotForkResult[])
+    .filter((r) => !r.skipped && r.summary?.snapshotCreateMs?.median != null && r.summary.snapshotCreateMs.median > 0)
+    .sort((a, b) => (b.compositeScore ?? 0) - (a.compositeScore ?? 0));
+
+  result = allResults.find((r) => r.provider === provider) || null;
+
+  // Fetch history for this provider
+  const listRes = await fetch(`${API_URL}/snapshot-fork/${DATASET}`, { headers: githubHeaders });
+  if (listRes.ok) {
+    const files = (await listRes.json()) as Array<{ name: string; download_url: string }>;
+    const jsonFiles = files
+      .filter((f) => f.name.endsWith(".json") && f.name !== "latest.json" && f.name !== ".gitkeep")
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    for (let i = 0; i < jsonFiles.length; i += HISTORY_BATCH_SIZE) {
+      const batch = jsonFiles.slice(i, i + HISTORY_BATCH_SIZE);
+      const batchResults = await Promise.all(
+        batch.map(async (file) => {
+          try {
+            const fileRes = await fetch(file.download_url);
+            if (!fileRes.ok) return null;
+            return await fileRes.json();
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      for (const fileData of batchResults) {
+        if (!fileData) continue;
+        const ts = fileData.timestamp as string;
+        const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        const point: SnapshotForkHistoryPoint = {
+          date: dateLabel,
+          dateTs: new Date(ts).getTime(),
+        };
+        for (const r of fileData.results as SnapshotForkResult[]) {
+          if (r.provider === provider && !r.skipped && r.summary?.snapshotCreateMs?.median != null) {
+            point[`${r.provider}_snapshotCreateMs`] = Math.round(r.summary.snapshotCreateMs.median);
+            point[`${r.provider}_forkFromSnapshotMs`] = Math.round(r.summary.forkFromSnapshotMs.median);
+            point[`${r.provider}_forkFromLiveMs`] = Math.round(r.summary.forkFromLiveMs.median);
+            point[`${r.provider}_forkFirstReadMs`] = Math.round(r.summary.forkFirstReadMs.median);
+            if (r.compositeScore != null) {
+              point[`${r.provider}_compositeScore`] = r.compositeScore;
+            }
+          }
+        }
+        if (Object.keys(point).length > 2) {
+          historyData.push(point);
+        }
+      }
+    }
+  }
+} catch {
+  fetchError = true;
+}
+
+const displayName = capitalize(provider);
+
+// Logomark key mapping for provider nav
+function logomarkKey(p: string): string {
+  if (p === "aws-s3") return "s3";
+  if (p === "cloudflare-r2") return "cloudflare";
+  if (p === "azure-blob") return "azure";
+  return p;
+}
+---
+
+<StarlightPage
+  frontmatter={{
+    title: `${displayName} Snapshot / Fork Benchmark`,
+    description: `Detailed snapshot and fork benchmark results for ${displayName} — snapshot create, fork from snapshot, fork from live, and first-read latency.`,
+    template: "splash",
+  }}
+>
+  <PageLayout>
+  <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+
+    <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+      <div class="border-b border-gray-200/50 dark:border-gray-700/50">
+
+        <!-- Provider nav strip -->
+        {allResults.length > 0 && (
+          <div class="border-b mt-0 border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-900/30">
+            <div class="md:max-w-7xl md:mx-auto relative">
+              <div class="flex px-4 md:px-6 py-4 gap-2 overflow-x-auto provider-nav-scroll" id="provider-nav">
+                <a
+                  href="/benchmarks/storage/snapshot-fork"
+                  class="shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-lg text-sm no-underline transition-all"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 dark:text-gray-500"><path d="m15 18-6-6 6-6"/></svg>
+                  <span class="text-xs font-medium text-gray-500 dark:text-gray-400">All</span>
+                </a>
+                {[...allResults].sort((a, b) => a.provider.localeCompare(b.provider)).map((p) => {
+                  const isCurrent = p.provider === provider;
+                  const pName = capitalize(p.provider);
+                  const lmKey = logomarkKey(p.provider);
+                  const logomarkLight = `/benchmarks/${lmKey}-logomark-light.svg`;
+                  const logomarkDark = `/benchmarks/${lmKey}-logomark-dark.svg`;
+                  return (
+                    <a
+                      href={`/benchmarks/storage/snapshot-fork/${p.provider}`}
+                      class:list={[
+                        "shrink-0 min-w-28 inline-flex flex-col items-center gap-1 py-2 px-3 rounded-lg border text-sm no-underline transition-all",
+                        isCurrent
+                          ? "border-gray-900 dark:border-white bg-white dark:bg-gray-800 shadow-lg"
+                          : "border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-lg",
+                      ]}
+                    >
+                      <img src={logomarkLight} alt={`${pName} logo`} class="h-5 w-5 object-contain dark:hidden" />
+                      <img src={logomarkDark} alt="" class="h-5 w-5 object-contain hidden dark:block" />
+                      <span class:list={["text-xs font-medium", isCurrent ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"]}>{pName}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <!-- Provider hero -->
+        <div class="md:max-w-7xl md:mx-auto mt-0 py-8 px-4 md:py-10 md:px-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <Breadcrumbs items={[
+                { label: "Benchmarks", href: "/benchmarks" },
+                { label: "Storage Benchmarks", href: "/benchmarks/storage" },
+                { label: "Snapshot / Fork", href: "/benchmarks/storage/snapshot-fork" },
+                { label: displayName },
+              ]} />
+              <h1 class="text-xl md:text-3xl font-semibold tracking-tight text-gray-900 dark:text-white m-0">
+                {providerLogos[provider] ? (
+                  <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-4">
+                      <img src={providerLogos[provider]} alt={displayName} class="h-8 w-auto object-contain dark:hidden" />
+                      <img src={providerLogosDark[provider] || providerLogos[provider]} alt="" class="h-8 w-auto mt-0 object-contain hidden dark:block" />
+                    </div>
+                    <span class="text-lg md:text-2xl">Snapshot / Fork</span>
+                  </div>
+                ) : (
+                  <>{displayName} Snapshot / Fork</>
+                )}
+              </h1>
+              {timestamp && (
+                <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Last benchmarked {timestamp}</p>
+              )}
+            </div>
+            <div class="pt-6 border-t md:border-0 md:pt-0 md:mt-0 border-gray-200/50 dark:border-gray-700/50">
+              <SponsorLogos size="sm" layout="stacked" align="left" mdAlign="center" tier="tier-1" label="Sponsored by:" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {fetchError || !result ? (
+      <div class="max-w-4xl mx-auto my-0 py-16 text-center">
+        <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
+      </div>
+    ) : (
+      <StorageSnapshotForkProviderDetailDashboard
+        client:visible
+        provider={provider}
+        result={result}
+        historyData={historyData}
+      />
+    )}
+
+  </div>
+  </PageLayout>
+</StarlightPage>
+
+<style is:global>
+  .provider-nav-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .provider-nav-scroll::-webkit-scrollbar {
+    display: none;
+  }
+</style>

@@ -207,6 +207,59 @@ export const METRIC_LABELS: Record<Metric, string> = {
   p99: "P99 TTI",
 }
 
+export interface SnapshotForkResult {
+  provider: string
+  mode?: string
+  dataset?: string
+  summary: {
+    snapshotCreateMs: { median: number; p95: number; p99: number }
+    forkFromSnapshotMs: { median: number; p95: number; p99: number }
+    forkFromLiveMs: { median: number; p95: number; p99: number }
+    forkFirstReadMs: { median: number; p95: number; p99: number }
+  }
+  compositeScore?: number
+  successRate?: number
+  skipped?: boolean
+  skipReason?: string
+  iterations?: Array<{
+    snapshotCreateMs: number
+    forkFromSnapshotMs: number
+    forkFromLiveMs: number
+    forkFirstReadMs: number
+    verified: boolean
+    error?: string
+  }>
+}
+
+export interface SnapshotForkHistoryPoint {
+  date: string
+  dateTs?: number
+  [key: string]: number | string | undefined
+}
+
+export type SnapshotForkMetric =
+  | "compositeScore"
+  | "snapshotCreateMs"
+  | "forkFromSnapshotMs"
+  | "forkFromLiveMs"
+  | "forkFirstReadMs"
+
+export const SNAPSHOT_FORK_METRIC_LABELS: Record<SnapshotForkMetric, string> = {
+  compositeScore: "Composite Score",
+  snapshotCreateMs: "Snapshot Create",
+  forkFromSnapshotMs: "Fork (from snapshot)",
+  forkFromLiveMs: "Fork (from live)",
+  forkFirstReadMs: "First Read",
+}
+
+export const SNAPSHOT_FORK_PROVIDER_COLORS: Record<string, string> = {
+  "aws-s3": "#f97316",
+  "cloudflare-r2": "#f59e0b",
+  "tigris": "#06b6d4",
+  "azure-blob": "#0078d4",
+  "vercel-blob": "#71717a",
+}
+
 export function capitalize(s: string): string {
   if (s.toLowerCase() === "e2b") return "E2B"
   if (s.toLowerCase() === "codesandbox") return "CodeSandbox"
