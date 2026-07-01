@@ -52,8 +52,7 @@ interface BrowserDashboardProps {
 }
 
 const COMING_SOON_PROVIDERS: { slug: string; name: string }[] = [
-  { slug: "browser-use", name: "Browser Use" },
-  { slug: "anchor-browser", name: "Anchor Browser" },
+  { slug: "anchor-browser", name: "Anchor" },
   { slug: "steel", name: "Steel" },
 ]
 

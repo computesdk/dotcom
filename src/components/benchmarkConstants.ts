@@ -96,15 +96,20 @@ export interface BrowserHistoryPoint {
 }
 
 export const BROWSER_PROVIDER_COLORS: Record<string, string> = {
-  browserbase: "#f97316", // Orange
-  kernel: "#10b981",      // Green
+  browserbase: "#f97316",   // Orange
+  kernel: "#10b981",        // Green
+  notte: "#f43f5e",         // Rose
+  "browser-use": "#06b6d4", // Cyan
+  browseruse: "#06b6d4",    // Cyan
 }
 
 export const BROWSER_THROUGHPUT_PROVIDER_COLORS: Record<string, string> = {
-  browserbase: "#f97316",  // Orange
-  kernel: "#10b981",       // Green
-  hyperbrowser: "#3b82f6", // Blue
-  steel: "#8b5cf6",        // Purple
+  browserbase: "#f97316",   // Orange
+  kernel: "#10b981",        // Green
+  hyperbrowser: "#3b82f6",  // Blue
+  steel: "#8b5cf6",         // Purple
+  notte: "#f43f5e",         // Rose
+  "browser-use": "#06b6d4", // Cyan
 }
 
 export type ActionType = "navigate" | "waitForSelector" | "screenshot" | "textContent" | "click" | "goBack"
@@ -270,6 +275,7 @@ export function capitalize(s: string): string {
   if (s === "azure-blob") return "Azure Blob"
   if (s === "vercel-blob") return "Vercel Blob"
   if (s === "browserbase") return "Browserbase"
+  if (s === "browseruse" || s === "browser-use") return "Browser Use"
   if (s === "kernel") return "Kernel"
   if (s === "hyperbrowser") return "Hyperbrowser"
   if (s === "steel") return "Steel"

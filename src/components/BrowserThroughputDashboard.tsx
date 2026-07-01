@@ -54,7 +54,6 @@ interface BrowserThroughputDashboardProps {
 }
 
 const COMING_SOON_PROVIDERS: { slug: string; name: string }[] = [
-  { slug: "browser-use", name: "Browser Use" },
   { slug: "anchor-browser", name: "Anchor Browser" },
 ]
 
