@@ -201,6 +201,9 @@ export const PROVIDER_COLORS: Record<string, string> = {
   archil: "#991b1b",
   tensorlake: "#82C38C",
   isorun: "#ec4899",
+  beam: "#f97316",
+  createos: "#3b82f6",
+  superserve: "#10b981",
 }
 
 export type Metric = "median" | "p95" | "p99" | "compositeScore"
@@ -274,6 +277,8 @@ export function capitalize(s: string): string {
   if (s === "tigris") return "Tigris"
   if (s === "azure-blob") return "Azure Blob"
   if (s === "vercel-blob") return "Vercel Blob"
+  if (s === "createos") return "CreateOS"
+  if (s === "superserve") return "Superserve"
   if (s === "browserbase") return "Browserbase"
   if (s === "browseruse" || s === "browser-use") return "Browser Use"
   if (s === "kernel") return "Kernel"
