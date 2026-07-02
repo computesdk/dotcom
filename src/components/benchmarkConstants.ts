@@ -268,6 +268,14 @@ export const SNAPSHOT_FORK_PROVIDER_COLORS: Record<string, string> = {
   "vercel-blob": "#71717a",
 }
 
+// Some sandbox providers publish results under a "-sandbox" suffixed slug
+// (e.g. "createos-sandbox") while the site keys logos/colors/names/URLs on the
+// bare name. Strip the suffix so everything lines up now and keeps working once
+// providers drop it upstream.
+export function normalizeProvider(provider: string): string {
+  return provider.replace(/-sandbox$/, "")
+}
+
 export function capitalize(s: string): string {
   if (s.toLowerCase() === "e2b") return "E2B"
   if (s.toLowerCase() === "codesandbox") return "CodeSandbox"

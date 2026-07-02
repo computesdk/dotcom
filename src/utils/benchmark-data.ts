@@ -9,6 +9,7 @@ import type {
   SnapshotForkResult,
   SnapshotForkHistoryPoint,
 } from "../components/benchmarkConstants";
+import { normalizeProvider } from "../components/benchmarkConstants";
 
 const BASE_URL =
   "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
@@ -41,6 +42,7 @@ export async function fetchLatestResults(
         r.summary?.ttiMs?.median != null &&
         r.summary.ttiMs.median > 0,
     )
+    .map((r) => ({ ...r, provider: normalizeProvider(r.provider) }))
     .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
 }
 
@@ -111,7 +113,7 @@ export async function fetchHistoryData(
           r.summary?.ttiMs?.median != null &&
           r.summary.ttiMs.median > 0
         ) {
-          point.providers[r.provider] = Math.round(r.summary.ttiMs.median);
+          point.providers[normalizeProvider(r.provider)] = Math.round(r.summary.ttiMs.median);
         }
       }
       if (Object.keys(point.providers).length > 0) {
