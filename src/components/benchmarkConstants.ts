@@ -204,6 +204,8 @@ export const PROVIDER_COLORS: Record<string, string> = {
   beam: "#f97316",
   createos: "#3b82f6",
   superserve: "#10b981",
+  tenki: "#0ea5e9",
+  lelantos: "#7c3aed",
 }
 
 export type Metric = "median" | "p95" | "p99" | "compositeScore"
