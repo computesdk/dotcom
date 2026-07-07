@@ -382,7 +382,6 @@ export async function fetchLatestBrowserThroughputResults(): Promise<BrowserThro
         r.summary?.actionsPerSecond?.median != null &&
         r.summary.actionsPerSecond.median > 0,
     )
-    .map((r) => ({ ...r, compositeScore: computeThroughputScore(r) }))
     .sort((a, b) => (b.compositeScore ?? 0) - (a.compositeScore ?? 0));
 }
 
@@ -444,12 +443,13 @@ export async function fetchBrowserThroughputHistoryData(): Promise<{
       };
       for (const r of fileData.results as BrowserThroughputResult[]) {
         if (!r.skipped && r.summary?.actionsPerSecond?.median != null) {
-          const score = computeThroughputScore(r);
           point[`${r.provider}_actionsPerSecond`] = Math.round(r.summary.actionsPerSecond.median * 100) / 100;
           point[`${r.provider}_taskMs`] = Math.round(r.summary.taskMs.median);
           point[`${r.provider}_totalMs`] = Math.round(r.summary.totalMs.median);
           point[`${r.provider}_screenshotMs`] = Math.round(r.summary.perActionType.screenshot?.median ?? 0);
-          point[`${r.provider}_compositeScore`] = score;
+          if (r.compositeScore != null) {
+            point[`${r.provider}_compositeScore`] = r.compositeScore;
+          }
         }
       }
       if (Object.keys(point).length > 2) {
@@ -459,28 +459,6 @@ export async function fetchBrowserThroughputHistoryData(): Promise<{
   }
 
   return { history, timestamp };
-}
-
-export function computeThroughputScore(r: BrowserThroughputResult): number {
-  const aps = r.summary.actionsPerSecond.median;
-  const taskMed = r.summary.taskMs.median;
-  const taskP95 = r.summary.taskMs.p95;
-  const screenshotMed = r.summary.perActionType.screenshot?.median ?? 0;
-
-  const iters = r.iterations ?? [];
-  const successRate =
-    iters.length > 0
-      ? iters.filter((it) => it.actionsCompleted === 50).length / iters.length
-      : 1;
-
-  const scoreAps = Math.min(100, (aps / 10) * 100);
-  const scoreTaskMed = Math.max(0, 100 * (1 - taskMed / 30000));
-  const scoreTaskP95 = Math.max(0, 100 * (1 - taskP95 / 30000));
-  const scoreScreenshot = screenshotMed > 0 ? Math.max(0, 100 * (1 - screenshotMed / 30000)) : 50;
-
-  const weighted =
-    0.4 * scoreAps + 0.25 * scoreTaskMed + 0.2 * scoreTaskP95 + 0.15 * scoreScreenshot;
-  return Math.round(weighted * successRate * 10) / 10;
 }
 
 export async function fetchLatestSnapshotForkResults(
