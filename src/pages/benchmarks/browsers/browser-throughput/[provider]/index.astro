@@ -6,7 +6,6 @@ import { BrowserThroughputProviderDetailDashboard } from "../../../../../compone
 import { capitalize } from "../../../../../components/benchmarkConstants";
 import Breadcrumbs from "../../../../../components/Breadcrumbs.astro";
 import type { BrowserThroughputResult, BrowserThroughputHistoryPoint } from "../../../../../components/benchmarkConstants";
-import { computeThroughputScore } from "../../../../../utils/benchmark-data";
 
 const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
 const API_URL = "https://api.github.com/repos/computesdk/benchmarks/contents/results";
@@ -17,6 +16,10 @@ const providerLogos: Record<string, string> = {
   kernel: "/benchmarks/normal-kernel-light.svg",
   hyperbrowser: "/benchmarks/normal-hyperbrowser-light.svg",
   steel: "/benchmarks/normal-steel-light.svg",
+  "browser-use": "/benchmarks/normal-browser-use-light.svg",
+  browseruse: "/benchmarks/normal-browser-use-light.svg",
+  "anchor-browser": "/benchmarks/normal-anchor-browser-light.svg",
+  notte: "/benchmarks/normal-notte-light.svg",
 };
 
 const providerLogosDark: Record<string, string> = {
@@ -24,6 +27,10 @@ const providerLogosDark: Record<string, string> = {
   kernel: "/benchmarks/normal-kernel-dark.svg",
   hyperbrowser: "/benchmarks/normal-hyperbrowser-dark.svg",
   steel: "/benchmarks/normal-steel-dark.svg",
+  "browser-use": "/benchmarks/normal-browser-use-dark.svg",
+  browseruse: "/benchmarks/normal-browser-use-dark.svg",
+  "anchor-browser": "/benchmarks/normal-anchor-browser-dark.svg",
+  notte: "/benchmarks/normal-notte-dark.svg",
 };
 
 export async function getStaticPaths() {
@@ -83,7 +90,6 @@ try {
         r.summary?.actionsPerSecond?.median != null &&
         r.summary.actionsPerSecond.median > 0
     )
-    .map((r) => ({ ...r, compositeScore: computeThroughputScore(r) }))
     .sort((a, b) => (b.compositeScore ?? 0) - (a.compositeScore ?? 0));
 
   result = allResults.find((r) => r.provider === provider) || null;
@@ -139,7 +145,9 @@ try {
             point[`${r.provider}_screenshotMs`] = Math.round(
               r.summary.perActionType.screenshot?.median ?? 0
             );
-            point[`${r.provider}_compositeScore`] = computeThroughputScore(r);
+            if (r.compositeScore != null) {
+              point[`${r.provider}_compositeScore`] = r.compositeScore;
+            }
           }
         }
         if (Object.keys(point).length > 2) {
