@@ -192,10 +192,6 @@ export default defineConfig({
       [starlightThemeNova({
         nav: [
             {
-              label:'Providers',
-              href: '/providers/'
-            },
-            {
               label:'Benchmarks',
               href: '/benchmarks/'
             },
@@ -308,6 +304,7 @@ export default defineConfig({
         page !== 'https://www.computesdk.com/old-index/' &&
         page !== 'https://www.computesdk.com/refund/' &&
         page !== 'https://www.computesdk.com/og-preview/' &&
+        !page.startsWith('https://www.computesdk.com/providers/') &&
         !/\/benchmarks\/sandboxes\/[^/]+\/(sequential-tti|burst-tti|staggered-tti)\/?$/.test(page)
     }),
   ],
