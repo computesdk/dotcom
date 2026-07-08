@@ -202,6 +202,10 @@ export default defineConfig({
             {
               label:'Blog',
               href: '/blog/'
+            },
+            {
+              label:'Become a partner',
+              href: '/partners/'
             }
           ],
            }),
