@@ -201,6 +201,7 @@ export const PROVIDER_COLORS: Record<string, string> = {
   archil: "#991b1b",
   tensorlake: "#82C38C",
   isorun: "#ec4899",
+  "cloud-run": "#4285F4",
   beam: "#f97316",
   createos: "#3b82f6",
   superserve: "#10b981",
@@ -278,6 +279,19 @@ export function normalizeProvider(provider: string): string {
   return provider.replace(/-sandbox$/, "")
 }
 
+// The upstream benchmark API's provider slug doesn't always match the
+// provider's logomark asset filename (e.g. Google Cloud Run publishes
+// results as "cloud-run", but its logomark files are named
+// "google-cloud-run-logomark-*.svg" for clarity). Map those cases here;
+// everything else uses the raw slug as-is.
+const LOGOMARK_SLUG_OVERRIDES: Record<string, string> = {
+  "cloud-run": "google-cloud-run",
+}
+
+export function logomarkSlug(provider: string): string {
+  return LOGOMARK_SLUG_OVERRIDES[provider] ?? provider
+}
+
 export function capitalize(s: string): string {
   if (s.toLowerCase() === "e2b") return "E2B"
   if (s.toLowerCase() === "codesandbox") return "CodeSandbox"
@@ -294,5 +308,6 @@ export function capitalize(s: string): string {
   if (s === "kernel") return "Kernel"
   if (s === "hyperbrowser") return "Hyperbrowser"
   if (s === "steel") return "Steel"
+  if (s === "cloud-run") return "Cloud Run"
   return s.charAt(0).toUpperCase() + s.slice(1)
 }

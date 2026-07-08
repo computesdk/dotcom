@@ -4,7 +4,7 @@ import PageLayout from "../../../../components/layouts/PageLayout.astro"
 import ClaimProfileCTA from "../../../../components/ClaimProfileCTA.astro"
 import Breadcrumbs from "../../../../components/Breadcrumbs.astro"
 import { ProviderDetailDashboard } from "../../../../components/ProviderDetailDashboard"
-import { capitalize, normalizeProvider } from "../../../../components/benchmarkConstants"
+import { capitalize, normalizeProvider, logomarkSlug } from "../../../../components/benchmarkConstants"
 import type { ProviderResult, HistoryDataPoint } from "../../../../components/benchmarkConstants"
 
 interface TestTypeData {
@@ -50,6 +50,9 @@ const providerLogos: Record<string, string> = {
   beam: "/benchmarks/normal-beam-light.svg",
   createos: "/benchmarks/normal-createos-light.svg",
   superserve: "/benchmarks/normal-superserve-light.svg",
+  tenki: "/benchmarks/normal-tenki-light.svg",
+  lelantos: "/benchmarks/normal-lelantos-light.svg",
+  "cloud-run": "/benchmarks/normal-google-cloud-run-light.svg",
 }
 
 const providerLogosDark: Record<string, string> = {
@@ -74,6 +77,9 @@ const providerLogosDark: Record<string, string> = {
   beam: "/benchmarks/normal-beam-dark.svg",
   createos: "/benchmarks/normal-createos-dark.svg",
   superserve: "/benchmarks/normal-superserve-dark.svg",
+  tenki: "/benchmarks/normal-tenki-dark.svg",
+  lelantos: "/benchmarks/normal-lelantos-dark.svg",
+  "cloud-run": "/benchmarks/normal-google-cloud-run-dark.svg",
 }
 
 export async function getStaticPaths() {
@@ -235,8 +241,8 @@ const displayName = capitalize(provider)
                   {[...allProviders].sort((a, b) => a.provider.localeCompare(b.provider)).map((p) => {
                     const isCurrent = p.provider === provider
                     const pName = capitalize(p.provider)
-                    const logomarkLight = `/benchmarks/${p.provider}-logomark-light.svg`
-                    const logomarkDark = `/benchmarks/${p.provider}-logomark-dark.svg`
+                    const logomarkLight = `/benchmarks/${logomarkSlug(p.provider)}-logomark-light.svg`
+                    const logomarkDark = `/benchmarks/${logomarkSlug(p.provider)}-logomark-dark.svg`
                     return (
                       <a
                         href={`/benchmarks/sandboxes/${p.provider}`}
