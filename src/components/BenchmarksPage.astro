@@ -2,6 +2,7 @@
 import FAQAccordion from "./FAQAccordion.astro";
 import { BenchmarkDashboard } from "./BenchmarkDashboard";
 import Breadcrumbs from "./Breadcrumbs.astro";
+import PromoBlade from "./benchmarks/PromoBlade.astro";
 import { normalizeProvider } from "./benchmarkConstants";
 
 interface ProviderResult {
@@ -218,10 +219,11 @@ const benchmarksFAQs = [
 ---
 
 <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+  <PromoBlade />
   <!-- Sticky header -->
   <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
     <div class="border-b border-gray-200/50 dark:border-gray-700/50">
-      <div class="md:max-w-7xl md:mx-auto px-4 md:pb-12 md:pt-6 md:px-6">
+      <div class="md:max-w-7xl md:mx-auto px-4 pt-6 md:pb-12 md:pt-6 md:px-6">
         <Breadcrumbs items={[
           { label: "Benchmarks", href: "/benchmarks" },
           { label: "Sandbox Benchmarks" },

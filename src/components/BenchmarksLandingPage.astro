@@ -1,4 +1,6 @@
 ---
+import PromoBlade from "./benchmarks/PromoBlade.astro";
+
 const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
 const excluded = new Set(["railway", "render", "justbash", "just-bash"]);
 
@@ -63,6 +65,7 @@ try {
 ---
 
 <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+  <PromoBlade />
 
   <!-- Hero -->
   <div class="border-b border-gray-200/50 dark:border-gray-700/50">
