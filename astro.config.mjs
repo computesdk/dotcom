@@ -20,7 +20,9 @@ export default defineConfig({
     },
   },
   redirects: {
-    '/blog/how-to-run-a-railway-sandbox': '/docs/providers',
+    '/docs': '/docs/getting-started/introduction',
+    '/docs/reference': '/docs/reference/overview',
+    '/blog/how-to-run-a-railway-sandbox': '/providers',
   },
   integrations: [
     react({
@@ -195,7 +197,7 @@ export default defineConfig({
             },
             {
               label: 'Docs',
-              href: '/docs',
+              href: 'https://docs.computesdk.com/getting-started/introduction',
             },
             {
               label:'Blog',
