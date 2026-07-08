@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/docs",
+      "destination": "https://proxy.gitbook.site/sites/site_6H7tk"
+    },
+    {
+      "source": "/docs/:match*",
+      "destination": "https://proxy.gitbook.site/sites/site_6H7tk/:match*"
+    }
+  ]
+}
