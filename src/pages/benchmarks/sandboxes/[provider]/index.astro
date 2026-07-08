@@ -2,7 +2,6 @@
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro"
 import PageLayout from "../../../../components/layouts/PageLayout.astro"
 import ClaimProfileCTA from "../../../../components/ClaimProfileCTA.astro"
-import SponsorLogos from "../../../../components/SponsorLogos.astro"
 import Breadcrumbs from "../../../../components/Breadcrumbs.astro"
 import { ProviderDetailDashboard } from "../../../../components/ProviderDetailDashboard"
 import { capitalize, normalizeProvider } from "../../../../components/benchmarkConstants"
@@ -295,9 +294,6 @@ const displayName = capitalize(provider)
                     <p>Last benchmarked {datasets.burst_tti.timestamp}</p>
                   )}
                 </div>
-              </div>
-              <div class="pt-6 border-t md:border-0 md:pt-0 md:mt-0 border-gray-200/50 dark:border-gray-700/50">
-                <SponsorLogos size="sm" layout="stacked" align="left" mdAlign="center" tier="tier-1" label="Sponsored by:" exclude={displayName} />
               </div>
             </div>
           </div>

@@ -1,6 +1,5 @@
 ---
 import FAQAccordion from "./FAQAccordion.astro";
-import SponsorLogos from "./SponsorLogos.astro";
 import { BenchmarkDashboard } from "./BenchmarkDashboard";
 import Breadcrumbs from "./Breadcrumbs.astro";
 import { normalizeProvider } from "./benchmarkConstants";
@@ -246,9 +245,6 @@ const benchmarksFAQs = [
               Last run: {datasets.burst_tti?.timestamp || ""}
             </span>
           </div>
-        </div>
-        <div class="mt-12 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
-          <SponsorLogos tier="all" size="sm" layout="stacked" align="left" />
         </div>
       </div>
     </div>

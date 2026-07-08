@@ -1,5 +1,4 @@
 ---
-import SponsorLogos from "./SponsorLogos.astro";
 import { BrowserThroughputDashboard } from "./BrowserThroughputDashboard";
 import { fetchLatestBrowserThroughputResults, fetchBrowserThroughputHistoryData } from "../utils/benchmark-data";
 import type { BrowserThroughputResult, BrowserThroughputHistoryPoint } from "./benchmarkConstants";
@@ -78,9 +77,6 @@ const throughputData = { active, historyData, timestamp };
               <span class="text-xs text-gray-700 dark:text-gray-400">Last run: {timestamp}</span>
             )}
           </div>
-        </div>
-        <div class="mt-12 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
-          <SponsorLogos tier="all" size="sm" layout="stacked" align="left" />
         </div>
       </div>
     </div>

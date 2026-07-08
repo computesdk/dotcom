@@ -1,7 +1,6 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import PageLayout from "../../../../../components/layouts/PageLayout.astro";
-import SponsorLogos from "../../../../../components/SponsorLogos.astro";
 import { StorageSnapshotForkProviderDetailDashboard } from "../../../../../components/StorageSnapshotForkProviderDetailDashboard";
 import { capitalize } from "../../../../../components/benchmarkConstants";
 import Breadcrumbs from "../../../../../components/Breadcrumbs.astro";
@@ -216,9 +215,6 @@ function logomarkKey(p: string): string {
               {timestamp && (
                 <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Last benchmarked {timestamp}</p>
               )}
-            </div>
-            <div class="pt-6 border-t md:border-0 md:pt-0 md:mt-0 border-gray-200/50 dark:border-gray-700/50">
-              <SponsorLogos size="sm" layout="stacked" align="left" mdAlign="center" tier="tier-1" label="Sponsored by:" />
             </div>
           </div>
         </div>

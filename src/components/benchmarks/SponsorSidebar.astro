@@ -1,0 +1,36 @@
+---
+import { SPONSORS, TIERS } from "./sponsorData";
+---
+
+<aside class="hidden xl:flex flex-col w-64 shrink-0 sticky top-12 h-[calc(100vh-3rem)] overflow-y-auto pb-20 px-4 gap-4 border-l border-gray-200 dark:border-gray-700">
+  <span class="text-[11px] font-semibold tracking-wide text-gray-400 dark:text-gray-500 uppercase">Partners</span>
+
+  {TIERS.map((tier) => {
+    const tierSponsors = SPONSORS.filter((s) => s.tier === tier.key);
+    if (tierSponsors.length === 0) return null;
+    return (
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <span class={`h-px flex-1 ${tier.lineColor} opacity-60`} />
+          <span class={`text-[9px] font-bold tracking-widest shrink-0 ${tier.textColor}`}>
+            {tier.label}
+          </span>
+          <span class={`h-px flex-1 ${tier.lineColor} opacity-60`} />
+        </div>
+        <div class="flex flex-col gap-3 mt-0">
+          {tierSponsors.map((s) => (
+            <a
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class={`flex items-center justify-center ${tier.slotHeight} hover:opacity-75 transition-opacity`}
+            >
+              <img src={s.logo} alt={s.name} loading="lazy" decoding="async" class={`${tier.logoHeight} w-auto object-contain block dark:hidden`} />
+              <img src={s.logoDark} alt={s.name} loading="lazy" decoding="async" class={`${tier.logoHeight} w-auto object-contain hidden dark:block`} />
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  })}
+</aside>

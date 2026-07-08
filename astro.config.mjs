@@ -34,6 +34,21 @@ export default defineConfig({
 		    favicon: '/favicon.ico',
       head: [
         {
+          tag: 'link',
+          attrs: {
+            rel: 'preconnect',
+            href: 'https://logos.computesdk.com',
+            crossorigin: 'anonymous',
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'dns-prefetch',
+            href: 'https://logos.computesdk.com',
+          },
+        },
+        {
           tag: 'meta',
           attrs: {
             property: 'og:image',

@@ -1,5 +1,4 @@
 ---
-import SponsorLogos from "./SponsorLogos.astro";
 import { StorageDashboard } from "./StorageDashboard";
 import { fetchLatestStorageResults, fetchStorageHistoryData } from "../utils/benchmark-data";
 import type { StorageResult, StorageHistoryPoint } from "./benchmarkConstants";
@@ -73,9 +72,6 @@ const storageData = { active, historyData, timestamp };
               <span class="text-xs text-gray-700 dark:text-gray-400">Last run: {timestamp}</span>
             )}
           </div>
-        </div>
-        <div class="mt-12 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
-          <SponsorLogos tier="all" size="sm" layout="stacked" align="left" />
         </div>
       </div>
     </div>
