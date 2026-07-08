@@ -226,53 +226,6 @@ const displayName = capitalize(provider)
     <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
       <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
         <div class="border-b border-gray-200/50 dark:border-gray-700/50">
-          <!-- Provider navigation strip -->
-          {allProviders.length > 0 && (
-            <div class="border-b mt-0 border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-900/30">
-              <div class="md:max-w-7xl md:mx-auto relative">
-                <div class="flex px-4 md:px-6 py-4 gap-2 overflow-x-auto provider-nav-scroll" id="provider-nav">
-                  <a
-                    href="/benchmarks/sandboxes"
-                    class="shrink-0 inline-flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-lg text-sm no-underline transition-all"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 dark:text-gray-500"><path d="m15 18-6-6 6-6"/></svg>
-                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">All</span>
-                  </a>
-                  {[...allProviders].sort((a, b) => a.provider.localeCompare(b.provider)).map((p) => {
-                    const isCurrent = p.provider === provider
-                    const pName = capitalize(p.provider)
-                    const logomarkLight = `/benchmarks/${logomarkSlug(p.provider)}-logomark-light.svg`
-                    const logomarkDark = `/benchmarks/${logomarkSlug(p.provider)}-logomark-dark.svg`
-                    return (
-                      <a
-                        href={`/benchmarks/sandboxes/${p.provider}`}
-                        class:list={[
-                          "shrink-0 min-w-28 inline-flex flex-col items-center gap-1 py-2 rounded-lg border text-sm no-underline transition-all relative",
-                          isCurrent
-                            ? "border-gray-900 dark:border-white bg-white dark:bg-gray-800 shadow-lg"
-                            : "border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-lg",
-                        ]}
-                      >
-                        <img src={logomarkLight} alt={`${pName} logo`} class="h-5 object-contain dark:hidden" onerror="this.style.display='none'" />
-                        <img src={logomarkDark} alt="" class="h-5 w-5 mt-0 object-contain hidden dark:block" onerror="this.style.display='none'" />
-                        <span class:list={["text-xs font-medium", isCurrent ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"]}>{pName}</span>
-                      </a>
-                    )
-                  })}
-              </div>
-              <button
-                id="provider-nav-arrow"
-                type="button"
-                aria-label="Scroll to see more providers"
-                class="absolute right-0 top-0 bottom-0 flex mt-0 items-center px-2 z-10 bg-gray-100/80 dark:bg-gray-900/70 "
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 dark:text-gray-500">
-                  <path d="m9 18 6-6-6-6"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-          )}
           <!-- Provider hero -->
           <div class="md:max-w-7xl md:mx-auto mt-0 py-8 px-4 md:py-10 md:px-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
