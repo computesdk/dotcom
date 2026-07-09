@@ -5,6 +5,7 @@ import { BrowserThroughputProviderDetailDashboard } from "../../../../../compone
 import { capitalize, logomarkSlug } from "../../../../../components/benchmarkConstants";
 import Breadcrumbs from "../../../../../components/Breadcrumbs.astro";
 import type { BrowserThroughputResult, BrowserThroughputHistoryPoint } from "../../../../../components/benchmarkConstants";
+import { fetchGithubDirectoryListing, fetchGithubFile } from "../../../../../utils/github-history";
 
 const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
 const API_URL = "https://api.github.com/repos/computesdk/benchmarks/contents/results";
@@ -94,9 +95,8 @@ try {
   result = allResults.find((r) => r.provider === provider) || null;
 
   // Fetch history
-  const listRes = await fetch(`${API_URL}/browser-throughput`, { headers: githubHeaders });
-  if (listRes.ok) {
-    const files = (await listRes.json()) as Array<{ name: string; download_url: string }>;
+  const files = await fetchGithubDirectoryListing(`${API_URL}/browser-throughput`, githubHeaders);
+  if (files.length) {
     const jsonFiles = files
       .filter(
         (f) =>
@@ -109,15 +109,7 @@ try {
     for (let i = 0; i < jsonFiles.length; i += HISTORY_BATCH_SIZE) {
       const batch = jsonFiles.slice(i, i + HISTORY_BATCH_SIZE);
       const batchResults = await Promise.all(
-        batch.map(async (file) => {
-          try {
-            const fileRes = await fetch(file.download_url);
-            if (!fileRes.ok) return null;
-            return await fileRes.json();
-          } catch {
-            return null;
-          }
-        })
+        batch.map((file) => fetchGithubFile(file.download_url))
       );
 
       for (const fileData of batchResults) {
