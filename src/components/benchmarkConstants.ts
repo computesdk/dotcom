@@ -207,6 +207,7 @@ export const PROVIDER_COLORS: Record<string, string> = {
   superserve: "#10b981",
   tenki: "#0ea5e9",
   lelantos: "#7c3aed",
+  lightning: "#facc15",
 }
 
 export type Metric = "median" | "p95" | "p99" | "compositeScore"
@@ -286,6 +287,7 @@ export function normalizeProvider(provider: string): string {
 // everything else uses the raw slug as-is.
 const LOGOMARK_SLUG_OVERRIDES: Record<string, string> = {
   "cloud-run": "google-cloud-run",
+  lightning: "lightning-ai",
 }
 
 export function logomarkSlug(provider: string): string {
@@ -309,5 +311,6 @@ export function capitalize(s: string): string {
   if (s === "hyperbrowser") return "Hyperbrowser"
   if (s === "steel") return "Steel"
   if (s === "cloud-run") return "Cloud Run"
+  if (s === "lightning") return "Lightning AI"
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
