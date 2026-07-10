@@ -1,5 +1,27 @@
 ---
 import { SPONSORS, TIERS } from "./sponsorData";
+
+const GRID_COLS: Record<string, string> = {
+  gold: "grid-cols-1",
+  silver: "grid-cols-2",
+  bronze: "grid-cols-3",
+  platform: "grid-cols-1",
+};
+
+// Tailwind needs literal class names to generate CSS, so this translates each
+// tier's `logoHeight` (from sponsorData.ts) into its `max-h-*` counterpart
+// rather than maintaining a second, separately-edited height per tier.
+const MAX_HEIGHT_FROM_HEIGHT: Record<string, string> = {
+  "h-6": "max-h-6",
+  "h-8": "max-h-8",
+  "h-10": "max-h-10",
+  "h-11": "max-h-11",
+  "h-12": "max-h-12",
+  "h-14": "max-h-14",
+  "h-16": "max-h-16",
+  "h-18": "max-h-18",
+  "h-20": "max-h-20",
+};
 ---
 
 <aside class="hidden xl:flex flex-col w-64 shrink-0 border-l border-gray-200 dark:border-gray-700 mt-0">
@@ -18,14 +40,14 @@ import { SPONSORS, TIERS } from "./sponsorData";
       const tierSponsors = SPONSORS.filter((s) => s.tier === tier.key);
       return (
         <div class="flex flex-col gap-1 mt-0">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-">
             <span class={`h-px flex-1 ${tier.lineColor} opacity-60`} />
             <span class={`text-[9px] font-bold tracking-widest shrink-0 ${tier.textColor}`}>
               {tier.label}
             </span>
             <span class={`h-px flex-1 ${tier.lineColor} opacity-60`} />
           </div>
-          <div class="flex flex-col gap-3 mt-0">
+          <div class={`grid ${GRID_COLS[tier.key]} gap-0 mt-0`}>
             {tierSponsors.length > 0 ? (
               tierSponsors.map((s) => (
                 <a
@@ -34,12 +56,14 @@ import { SPONSORS, TIERS } from "./sponsorData";
                   rel="noopener noreferrer"
                   class={`flex items-center justify-center ${tier.slotHeight} hover:opacity-75 transition-opacity`}
                 >
-                  <img src={s.logo} alt={s.name} loading="lazy" decoding="async" class={`${tier.logoHeight} w-auto object-contain block dark:hidden`} />
-                  <img src={s.logoDark} alt={s.name} loading="lazy" decoding="async" class={`${tier.logoHeight} w-auto object-contain hidden dark:block`} />
+                  <div class="w-full flex items-center justify-center" style={s.scale ? `transform: scale(${s.scale})` : undefined}>
+                    <img src={s.logo} alt={s.name} loading="lazy" decoding="async" class={`w-full ${MAX_HEIGHT_FROM_HEIGHT[tier.logoHeight]} object-contain block dark:hidden`} />
+                    <img src={s.logoDark} alt={s.name} loading="lazy" decoding="async" class={`w-full ${MAX_HEIGHT_FROM_HEIGHT[tier.logoHeight]} object-contain hidden dark:block mt-0`} />
+                  </div>
                 </a>
               ))
             ) : (
-              <div class={`flex items-center justify-center ${tier.slotHeight} rounded border border-dashed border-gray-300 dark:border-gray-600 text-[10px] text-gray-400 dark:text-gray-500 no-underline`}
+              <div class={`col-span-full flex items-center justify-center ${tier.slotHeight} rounded text-[10px] text-gray-400 dark:text-gray-500 no-underline`}
               >
               </div>
             )}
