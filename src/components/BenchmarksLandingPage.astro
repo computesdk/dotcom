@@ -215,6 +215,29 @@ try {
 
     </div>
 
+    <!-- Custom Benchmarks banner -->
+    <a href="/custom-benchmarks" class="group mt-6 flex flex-col sm:flex-row sm:items-center gap-5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-5 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all no-underline">
+
+      <!-- Left: label + text -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Custom Benchmarks</span>
+        </div>
+        <p class="text-sm text-gray-700 dark:text-gray-300 leading-snug m-0 max-w-[85%]">
+          Need independent, third-party verification for your own claims? We'll design and run a benchmark scoped to <strong class="text-gray-900 dark:text-white font-semibold">your infrastructure and workload</strong>.
+        </p>
+      </div>
+
+      <!-- Right: CTA -->
+      <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors shrink-0 whitespace-nowrap">
+        Request a benchmark
+        <svg class="size-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        </svg>
+      </span>
+
+    </a>
+
     {lastUpdated && (
       <p class="mt-6 text-xs text-gray-600 dark:text-gray-400">
         Last benchmark run: {lastUpdated} &nbsp;·&nbsp; <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors no-underline">View raw data on GitHub ↗</a>
