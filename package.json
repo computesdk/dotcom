@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "sync:docs": "node scripts/fetchDocs.js",
+    "new-blog-post": "node scripts/new-provider-blog.mjs",
     "postinstall": "patch-package"
   },
   "dependencies": {

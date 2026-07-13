@@ -44,31 +44,17 @@ Once it has been created, be sure to create an `.env` file to add your credentia
 Add these credentials to your `.env` file and keep reading to learn how to create them.
 
 ```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
+VERCEL_TOKEN=your_vercel_token
 VERCEL_TEAM_ID=your_vercel_team_id
 VERCEL_PROJECT_ID=your_vercel_project_id
-VERCEL_TOKEN=your_vercel_token
 ```
 
-## Now install the ComputeSDK package
+## Now install ComputeSDK and the Vercel provider
+
+ComputeSDK ships as a small core package plus one package per provider, so you only install what you use.
 
 ```bash
-npm install computesdk
-```
-
-## Create a ComputeSDK account
-
-<!-- markdownlint-disable-next-line MD033 -->
-Create an account on our <a href="https://console.computesdk.com/register" target="_blank">signup page</a>.\
-Once you have created your ComputeSDK account, you'll need to generate an API key.\
-Click "API Keys" in the left-hand navigation → "Create API Key"
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/compute-api-keys.png" alt="screenshot of ComputeSDK's API key management interface" title="ComputeSDK API keys page" />
-
-Save your API key in your `env.local` file to the `COMPUTESDK_API_KEY` variable.
-
-```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
+npm install computesdk @computesdk/vercel
 ```
 
 ## Create a Vercel account
@@ -112,17 +98,24 @@ VERCEL_TEAM_ID=your_vercel_team_id
 VERCEL_PROJECT_ID=your_vercel_project_id
 ```
 
+> Prefer not to manage a token? The Vercel provider also supports OIDC auth — run `vercel env pull` to populate `VERCEL_OIDC_TOKEN` in your `.env` file and omit `token`/`teamId`/`projectId` entirely.
+
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-ComputeSDK makes this easy, just import the basic `computesdk` package.\
-ComputeSDK auto-detects your sandbox provider variables from your .env file
+Import the `vercel` factory from `@computesdk/vercel` and pass it your credentials. `compute.sandbox.create()` provisions a sandbox on Vercel.
 
 ```typescript
 // app/api/sandbox/route.ts
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { vercel } from '@computesdk/vercel';
+
+const compute = vercel({
+  token: process.env.VERCEL_TOKEN,
+  teamId: process.env.VERCEL_TEAM_ID,
+  projectId: process.env.VERCEL_PROJECT_ID,
+});
 
 export async function POST() {
 
@@ -179,22 +172,22 @@ Now navigate to your Vercel project -> sandboxes.
 You should see a running sandbox.\
 Success!
 
-ComputeSDK automatically installs our lightweight daemon upon sandbox creation. There should already be a `.compute/sandboxes/unique-sandbox-id` subfolder created in your sandbox. This is where you can run applications in your sandbox and automatically access them via the browser through our secure tunnel.
-
 ## You've successfully created your first Vercel sandbox
 
-If you want to use another sandbox provider like E2B or Daytona, all you need to do is change your provider variables. ComputeSDK automatically detects your sandbox provider from your environment variables.
+If you want to use another sandbox provider like E2B or Daytona, swap the import and factory call — install `@computesdk/e2b` and use `import { e2b } from '@computesdk/e2b'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`, `getUrl`) stays the same — that's the point of the universal `Sandbox` interface.
 
 ## Making changes within the sandbox
 
 Now, let's take the next step and run a primitive Vite app inside of our sandbox as an example of what we are able to do within the sandbox itself.
+
+Vercel sandboxes only expose ports you declare up front, so this time we pass `ports` to `create()`.
 
 ### Update /api/sandbox/route.ts
 
 Add the following to your `route.ts` file directly below this in your code:
 
 ```typescript
-const sandbox = await compute.sandbox.create();
+const sandbox = await compute.sandbox.create({ ports: [5173] });
 ```
 
 #### Create a basic Vite app inside our sandbox subfolder
@@ -220,7 +213,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.vercel.app', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.vercel.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -229,9 +222,7 @@ Customize the `vite.config.js` so we can access the local dev server.
 
 #### Run npm install using the runCommand method
 
-runCommand runs at the sandbox subfolder by default.
-(e.g., `/.compute/unique_sandbox_id/commands_run_here`)\
-So we need to cd into /app before we run npm install or start our Vite server.
+`cwd` is an optional per-call override — if you don't pass one, commands run in whatever Vercel's own sandbox default working directory is. We pass `cwd: 'app'` here simply because that's the subfolder we just scaffolded the Vite project into.
 
 ```typescript
   // Install dependencies
@@ -249,13 +240,15 @@ So we need to cd into /app before we run npm install or start our Vite server.
   });
 ```
 
-#### Use the getUrl method to output the secure preview URL via the ComputeSDK tunnel
+#### Use the getUrl method to get a preview URL
 
 ```typescript
   // Get preview URL
   const url = await sandbox.getUrl({ port: 5173 });
   console.log('previewUrl:', url)
 ```
+
+The hostname `getUrl()` returns is on Vercel's own `.vercel.run` domain, not a ComputeSDK-branded one. This only works because we declared `ports: [5173]` when we created the sandbox above — Vercel sandboxes don't expose ports you didn't ask for up front.
 
 #### Return the preview url along with the sandboxId
 
@@ -272,11 +265,17 @@ Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { vercel } from '@computesdk/vercel';
+
+const compute = vercel({
+  token: process.env.VERCEL_TOKEN,
+  teamId: process.env.VERCEL_TEAM_ID,
+  projectId: process.env.VERCEL_PROJECT_ID,
+});
 
 export async function POST() {
 
-  const sandbox = await compute.sandbox.create();
+  const sandbox = await compute.sandbox.create({ ports: [5173] });
 
   // Create basic Vite React app
   await sandbox.runCommand('npm create vite@5 app -- --template react');
@@ -292,7 +291,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.vercel.app', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.vercel.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -323,9 +322,9 @@ export async function POST() {
 
 Here is an overview of our project now:
 1. Uses ComputeSDK to create a sandbox in Vercel
-2. Uses ComputeSDK's daemon to create a basic Vite app
+2. Uses ComputeSDK's `runCommand` to scaffold a basic Vite app inside it
 3. Uses ComputeSDK to run a dev server (port 5173) on the sandbox
-4. Uses ComputeSDK to connect to the Vite app running on the 5173 port in our browser.
+4. Uses ComputeSDK's `getUrl` to connect to the Vite app running on the 5173 port in our browser
 
 Now, after you click the "Create Vercel Sandbox" button on your localhost homepage you should:
 
@@ -335,8 +334,7 @@ Now, after you click the "Create Vercel Sandbox" button on your localhost homepa
 <!-- markdownlint-disable-next-line MD033 -->
 <img style="margin: 24px auto; border-radius: 10px;" width="700px" src="/blog/vercel/vercel-logs-screenshot.png" alt="Screenshot of Vercel's logs page" title="Vercel's logs page" />
 
-3. See a preview URL like this in your terminal (if you're running locally):\
-`unique-sandbox-id-5173.preview.computesdk.com`
+3. See a preview URL logged to your terminal (if you're running locally), on Vercel's own `.vercel.run` domain.
 4. If you visit that URL you should see the boilerplate Vite React app running in your Vercel sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->
@@ -349,15 +347,13 @@ You have done the following:
 - created a Vercel sandbox with ComputeSDK
 - used our runCommand, writeFile, and getUrl methods (these work with any provider)
 - ran a Vite app inside the sandbox
-- accessed the app running within the sandbox through our secure tunnel
+- accessed the app running within the sandbox through its preview URL
 
 ComputeSDK makes it easy to standardize this process across providers.\
 So now that you've written this code in Vercel, you can easily adjust this code to run in any sandbox provider.
 
 **Happy Sandboxing!**
 
-[Sign up with ComputeSDK](https://console.computesdk.com/register)
-
-Want to get sandboxes running in your application?\
+Have questions?\
 Want to be added as a provider?\
-Reach out to us at [email@computesdk.com](mailto:email@computesdk.com)
+Reach out to us at [support@computesdk.com](mailto:support@computesdk.com)
