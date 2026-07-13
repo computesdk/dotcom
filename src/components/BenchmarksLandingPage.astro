@@ -1,0 +1,248 @@
+---
+import PromoBlade from "./benchmarks/PromoBlade.astro";
+
+const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
+const excluded = new Set(["railway", "render", "justbash", "just-bash"]);
+
+interface ProviderResult {
+  provider: string;
+  skipped?: boolean;
+  summary: { ttiMs: { median: number } };
+}
+
+interface StorageResult {
+  provider: string;
+  skipped?: boolean;
+  summary: { uploadMs: { median: number } };
+}
+
+interface BrowserResult {
+  provider: string;
+  skipped?: boolean;
+  summary: { totalMs: { median: number } };
+}
+
+let providerCount = 0;
+let storageProviderCount = 0;
+let browserProviderCount = 0;
+let lastUpdated = "";
+
+try {
+  const [sandboxRes, storageRes, browserRes] = await Promise.allSettled([
+    fetch(`${BASE_URL}/sequential_tti/latest.json`),
+    fetch(`${BASE_URL}/storage/10mb/latest.json`),
+    fetch(`${BASE_URL}/browser/latest.json`),
+  ]);
+
+  if (sandboxRes.status === "fulfilled" && sandboxRes.value.ok) {
+    const data = await sandboxRes.value.json();
+    const active: ProviderResult[] = (data.results as ProviderResult[])
+      .filter((r) => !r.skipped && !excluded.has(r.provider) && r.summary?.ttiMs?.median > 0);
+    providerCount = active.length;
+    lastUpdated = new Date(data.timestamp).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
+  if (storageRes.status === "fulfilled" && storageRes.value.ok) {
+    const data = await storageRes.value.json();
+    storageProviderCount = (data.results as StorageResult[])
+      .filter((r) => !r.skipped && r.summary?.uploadMs?.median > 0).length;
+  }
+
+  if (browserRes.status === "fulfilled" && browserRes.value.ok) {
+    const data = await browserRes.value.json();
+    browserProviderCount = (data.results as BrowserResult[])
+      .filter((r) => !r.skipped && r.summary?.totalMs?.median > 0).length;
+  }
+} catch {
+  // fetch failed at build time — stats will be empty
+}
+
+
+---
+
+<div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+  <PromoBlade />
+
+  <!-- Hero -->
+  <div class="border-b border-gray-200/50 dark:border-gray-700/50">
+    <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:py-12 md:px-6">
+      <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Benchmarks</h1>
+      <p class="my-2 text-sm text-gray-700 dark:text-gray-400">Reproducible performance measurements across providers. Open methodology, raw data, no marketing spin.</p>
+    </div>
+  </div>
+
+  <!-- Scale Invitational card -->
+  <div class="mt-0 md:max-w-7xl md:mx-auto px-4 md:px-6 py-6">
+    <a href="/benchmarks/scale-invitational" class="group flex flex-col sm:flex-row sm:items-center gap-5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-900/15 px-6 py-5 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-sm transition-all no-underline">
+
+      <!-- Left: label + text -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+          <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Scale Invitational 2026</span>
+        </div>
+        <p class="text-sm text-gray-700 dark:text-gray-300 leading-snug m-0">
+          A one-time test of <strong class="text-gray-900 dark:text-white font-semibold">100,000 concurrent sandboxes</strong> across every participating provider. Results published June 19th.
+        </p>
+      </div>
+
+      <!-- Right: CTA -->
+      <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors shrink-0 whitespace-nowrap">
+        Learn more
+        <svg class="size-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        </svg>
+      </span>
+
+    </a>
+  </div>
+
+  <!-- Category cards -->
+  <div class="mt-0 md:max-w-7xl md:mx-auto px-4 md:px-6 pb-24">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Sandboxes — live -->
+      <div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all duration-200">
+        <div class="flex items-center gap-2 mb-1">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">
+            <a href="/benchmarks/sandboxes" class="no-underline hover:underline text-gray-900 dark:text-white">Sandbox Benchmarks</a>
+          </h2>
+        </div>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+          Performance benchmarks for sandbox environments — cold start latency, execution throughput, and reliability across providers.
+        </p>
+
+        <!-- Stats -->
+        <div class="mt-auto grid grid-cols-3 gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">{providerCount > 0 ? providerCount : "—"} Providers</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">3 Test Types</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">Runs Daily</p>
+          </div>
+        </div>
+
+        <!-- CTA link -->
+        <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+          <a href="/benchmarks/sandboxes" class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-white no-underline hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+            View benchmarks
+            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Storage — live -->
+      <div class="mt-0 group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all duration-200">
+        <div class="flex items-center gap-2 mb-1">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">
+            <a href="/benchmarks/storage" class="no-underline hover:underline text-gray-900 dark:text-white">Storage Benchmarks</a>
+          </h2>
+        </div>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+          Object storage benchmarks across providers — upload/download latency, throughput, and reliability.
+        </p>
+
+        <!-- Stats -->
+        <div class="mt-auto grid grid-cols-3 gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">{storageProviderCount > 0 ? storageProviderCount : "3"} Providers</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">3 Metrics</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">Runs Daily</p>
+          </div>
+        </div>
+
+        <!-- CTA link -->
+        <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+          <a href="/benchmarks/storage" class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-white no-underline hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+            View benchmarks
+            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Browsers — live -->
+      <div class="mt-0 group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all duration-200">
+        <div class="flex items-center gap-2 mb-1">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white m-0">
+            <a href="/benchmarks/browsers/browser-throughput" class="no-underline hover:underline text-gray-900 dark:text-white">Browser Benchmarks</a>
+          </h2>
+        </div>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
+          Headless browser session benchmarks — create, connect, navigate, and release latency across providers.
+        </p>
+
+        <!-- Stats -->
+        <div class="mt-auto grid grid-cols-3 gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">{browserProviderCount > 0 ? browserProviderCount : "—"} Providers</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">5 Metrics</p>
+          </div>
+          <div class="mt-0">
+            <p class="mt-0 text-sm text-gray-900 dark:text-gray-200">Runs Daily</p>
+          </div>
+        </div>
+
+        <!-- CTA link -->
+        <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+          <a href="/benchmarks/browsers/browser-throughput" class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-white no-underline hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+            View benchmarks
+            <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Custom Benchmarks banner -->
+    <a href="/custom-benchmarks" class="group mt-6 flex flex-col sm:flex-row sm:items-center gap-5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-5 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all no-underline">
+
+      <!-- Left: label + text -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Custom Benchmarks</span>
+        </div>
+        <p class="text-sm text-gray-700 dark:text-gray-300 leading-snug m-0 max-w-[85%]">
+          Need independent, third-party verification for your own claims? We'll design and run a benchmark scoped to <strong class="text-gray-900 dark:text-white font-semibold">your infrastructure and workload</strong>.
+        </p>
+      </div>
+
+      <!-- Right: CTA -->
+      <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors shrink-0 whitespace-nowrap">
+        Request a benchmark
+        <svg class="size-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        </svg>
+      </span>
+
+    </a>
+
+    {lastUpdated && (
+      <p class="mt-6 text-xs text-gray-600 dark:text-gray-400">
+        Last benchmark run: {lastUpdated} &nbsp;·&nbsp; <a href="https://github.com/computesdk/benchmarks" target="_blank" rel="noopener noreferrer" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors no-underline">View raw data on GitHub ↗</a>
+      </p>
+    )}
+  </div>
+
+</div>

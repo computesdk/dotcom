@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 import { ChartContainer } from "./ui/chart"
 import type { ChartConfig } from "./ui/chart"
@@ -12,9 +12,15 @@ interface ProviderHistoryChartProps {
 }
 
 export function ProviderHistoryChart({ historyData, provider, selectedMetric = "median" }: ProviderHistoryChartProps) {
-  const color = PROVIDER_COLORS[provider] || "#6b7280"
   const isComposite = selectedMetric === "compositeScore"
+  const [chartScale, setChartScale] = useState<"linear" | "log">(isComposite ? "linear" : "log")
+  const color = PROVIDER_COLORS[provider] || "#6b7280"
   const dataKey = `${provider}_${selectedMetric}`
+  const isLog = chartScale === "log"
+
+  useEffect(() => {
+    setChartScale(isComposite ? "linear" : "log")
+  }, [isComposite])
 
   const chartConfig: ChartConfig = useMemo(() => ({
     [provider]: {
@@ -34,8 +40,34 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
   }
 
   return (
-    <ChartContainer config={chartConfig} className="h-[200px] w-full min-h-[200px]">
-      <LineChart
+    <div>
+      <div className="inline-flex h-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400 mb-3">
+        {([
+          { value: "linear", label: "Linear" },
+          { value: "log", label: "Log" },
+        ] as const).map(({ value, label }) => {
+          const disabledLog = value === "log" && isComposite
+          return (
+            <button
+              key={value}
+              type="button"
+              onClick={() => !disabledLog && setChartScale(value)}
+              disabled={disabledLog}
+              className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-medium transition-all ${
+                disabledLog
+                  ? "opacity-30 cursor-not-allowed"
+                  : chartScale === value
+                  ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                  : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+              }`}
+            >
+              {label}
+            </button>
+          )
+        })}
+      </div>
+      <ChartContainer config={chartConfig} className="h-[200px] w-full min-h-[200px]">
+        <LineChart
         data={historyData}
         margin={{ top: 10, right: 10, left: 0, bottom: 5 }}
       >
@@ -48,11 +80,13 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
           interval="preserveStartEnd"
         />
         <YAxis
+          scale={isLog ? "log" : "linear"}
+          domain={isLog ? ["auto", "auto"] : undefined}
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 10 }}
-          tickFormatter={(value: number) => isComposite ? `${Math.round(value)}` : `${(value / 1000).toFixed(1)}s`}
-          width={40}
+          tickFormatter={(value: number) => isComposite ? `${Math.round(value)}` : value >= 1000 ? `${(value / 1000).toFixed(2)}s` : `${Math.round(value)}ms`}
+          width={55}
         />
         <Tooltip
           content={({ active, payload, label }) => {
@@ -67,7 +101,7 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
                     style={{ backgroundColor: color }}
                   />
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {isComposite ? "Score" : selectedMetric.toUpperCase()}: <span className="font-mono font-medium text-gray-900 dark:text-white">{isComposite ? (value as number).toFixed(1) : `${((value as number) / 1000).toFixed(2)}s`}</span>
+                    {isComposite ? "Score" : selectedMetric.toUpperCase()}: <span className="font-mono font-medium text-gray-900 dark:text-white">{isComposite ? (value as number).toFixed(1) : `${Math.round(value as number)}ms`}</span>
                   </span>
                 </div>
               </div>
@@ -79,11 +113,12 @@ export function ProviderHistoryChart({ historyData, provider, selectedMetric = "
           dataKey={dataKey}
           stroke={color}
           strokeWidth={2}
-          dot={{ r: 3, strokeWidth: 0, fill: color }}
-          activeDot={{ r: 5, strokeWidth: 0 }}
+          dot={{ r: 1, strokeWidth: 0, fill: color }}
+          activeDot={{ r: 3, strokeWidth: 0 }}
           connectNulls
         />
-      </LineChart>
-    </ChartContainer>
+        </LineChart>
+      </ChartContainer>
+    </div>
   )
 }

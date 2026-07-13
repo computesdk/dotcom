@@ -1,0 +1,177 @@
+---
+import { fetchLatestResults } from "../utils/benchmark-data";
+
+const TEST_TYPES = [
+  { slug: "sequential-tti", label: "Sequential TTI" },
+  { slug: "burst-tti",      label: "Burst TTI"       },
+  { slug: "staggered-tti",  label: "Staggered TTI"   },
+];
+
+let providers: string[] = [];
+try {
+  const results = await fetchLatestResults("sequential_tti");
+  providers = results.map((r) => r.provider);
+} catch {
+  // fallback to known providers if fetch fails at build time
+  providers = ["e2b", "modal", "daytona", "vercel", "namespace", "blaxel", "codesandbox", "hopx", "runloop", "cloudflare"];
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OG Preview — ComputeSDK</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #0a0a0f;
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 0.25rem;
+    }
+    .subtitle {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin: 0 0 3rem;
+    }
+    section {
+      margin-bottom: 3rem;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #64748b;
+      margin: 0 0 0.75rem;
+    }
+    .provider-label {
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: capitalize;
+      margin: 0 0 1rem;
+    }
+    .card-label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin: 0 0 0.5rem;
+    }
+    .og-img {
+      display: block;
+      width: 600px;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: 1200 / 630;
+      border-radius: 0.5rem;
+      border: 1px solid #1e293b;
+      transition: border-color 0.15s;
+    }
+    .og-img:hover {
+      border-color: #3b82f6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .divider {
+      height: 1px;
+      background: #1e293b;
+      margin: 2rem 0 3rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>OG Image Preview</h1>
+  <p class="subtitle">Non-indexed internal page. All OG images for computesdk.com.</p>
+
+  <!-- Static default (Starlight / docs pages) -->
+  <section>
+    <p class="section-label">Default (All Starlight / Docs Pages)</p>
+    <a href="/og-preview-image.png" target="_blank" rel="noopener noreferrer">
+      <img
+        src="/og-preview-image.png"
+        width={1200}
+        height={630}
+        alt="Default OG"
+        class="og-img"
+      />
+    </a>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Benchmark leaderboard -->
+  <section>
+    <p class="section-label">Benchmarks — Leaderboard</p>
+    <a href="/benchmarks/sandboxes/og/index.png" target="_blank" rel="noopener noreferrer">
+      <img
+        src="/benchmarks/sandboxes/og/index.png"
+        width={1200}
+        height={630}
+        alt="Benchmarks leaderboard OG"
+        class="og-img"
+      />
+    </a>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Per-provider -->
+  {providers.map((provider) => (
+    <section>
+      <p class="provider-label">{provider}</p>
+
+      <!-- Summary card (all test types) -->
+      <div class="grid" style="margin-bottom: 1.5rem;">
+        <div class="card">
+          <p class="card-label">All Test Types (Summary)</p>
+          <a href={`/benchmarks/sandboxes/og/${provider}.png`} target="_blank" rel="noopener noreferrer">
+            <img
+              src={`/benchmarks/sandboxes/og/${provider}.png`}
+              width={1200}
+              height={630}
+              alt={`${provider} summary OG`}
+              class="og-img"
+            />
+          </a>
+        </div>
+      </div>
+
+      <!-- Per-test-type cards -->
+      <div class="grid">
+        {TEST_TYPES.map(({ slug, label }) => (
+          <div class="card">
+            <p class="card-label">{label}</p>
+            <a href={`/benchmarks/sandboxes/og/${provider}/${slug}.png`} target="_blank" rel="noopener noreferrer">
+              <img
+                src={`/benchmarks/sandboxes/og/${provider}/${slug}.png`}
+                width={1200}
+                height={630}
+                alt={`${provider} ${label} OG`}
+                class="og-img"
+              />
+            </a>
+          </div>
+        ))}
+      </div>
+
+      {providers.indexOf(provider) < providers.length - 1 && <div class="divider" />}
+    </section>
+  ))}
+</body>
+</html>

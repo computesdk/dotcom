@@ -16,9 +16,11 @@ interface BenchmarkChartProps {
   onToggleProvider: (provider: string) => void
   timeRange: "30" | "60" | "90" | "all"
   selectedMetric: Metric
+  scaleMode: "linear" | "log"
 }
 
-export function BenchmarkChart({ historyData, providers, hiddenProviders, onToggleProvider, timeRange, selectedMetric }: BenchmarkChartProps) {
+export function BenchmarkChart({ historyData, providers, hiddenProviders, onToggleProvider, timeRange, selectedMetric, scaleMode }: BenchmarkChartProps) {
+  const isLog = scaleMode === "log"
   const isComposite = selectedMetric === "compositeScore"
   const chartConfig = useMemo(() => {
     const config: ChartConfig = {}
@@ -33,9 +35,17 @@ export function BenchmarkChart({ historyData, providers, hiddenProviders, onTogg
 
   const filteredHistory = useMemo(() => {
     if (timeRange === "all") return historyData
-    const days = parseInt(timeRange)
-    return historyData.slice(-days)
+    const days = parseInt(timeRange, 10)
+    const now = new Date()
+    const cutoff = new Date(now)
+    cutoff.setDate(now.getDate() - days)
+    return historyData.filter((point) => {
+      if (typeof point.dateTs === "number") return point.dateTs >= cutoff.getTime()
+      const parsed = new Date(`${point.date}, ${now.getFullYear()}`)
+      return !Number.isNaN(parsed.getTime()) && parsed >= cutoff
+    })
   }, [historyData, timeRange])
+
 
   const handleLegendClick = useCallback(
     (e: any) => {
@@ -99,6 +109,8 @@ export function BenchmarkChart({ historyData, providers, hiddenProviders, onTogg
           tick={{ fontSize: 11 }}
         />
         <YAxis
+          scale={isLog ? "log" : "linear"}
+          domain={isLog ? ["auto", "auto"] : undefined}
           tickLine={false}
           axisLine={false}
           tickMargin={8}
@@ -147,8 +159,8 @@ export function BenchmarkChart({ historyData, providers, hiddenProviders, onTogg
               name={provider}
               stroke={`var(--color-${provider})`}
               strokeWidth={2}
-              dot={{ r: 3, strokeWidth: 0, fill: `var(--color-${provider})` }}
-              activeDot={{ r: 5, strokeWidth: 0 }}
+              dot={{ r: 1, strokeWidth: 0, fill: `var(--color-${provider})` }}
+              activeDot={{ r: 3, strokeWidth: 0 }}
               connectNulls
               hide={hiddenProviders.has(provider)}
             />

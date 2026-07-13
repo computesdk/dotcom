@@ -1,0 +1,26 @@
+---
+title: Benchmarks
+description: Performance benchmarks for sandbox compute providers on ComputeSDK.
+template: splash
+head:
+  - tag: link
+    attrs:
+      rel: canonical
+      href: https://www.computesdk.com/benchmarks/
+---
+
+import PageLayout from '../../../components/layouts/PageLayout.astro';
+import BenchmarksLandingPage from '../../../components/BenchmarksLandingPage.astro';
+
+<PageLayout>
+  <BenchmarksLandingPage />
+</PageLayout>
+
+<style>{`
+  .nova-page-frame-header {
+    position: relative !important;
+  }
+  .main-frame {
+    padding-top: 0 !important;
+  }
+`}</style>

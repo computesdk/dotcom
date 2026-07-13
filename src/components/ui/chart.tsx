@@ -82,7 +82,21 @@ ${colorConfig
   )
 }
 
-const ChartTooltip = RechartsPrimitive.Tooltip
+function ChartTooltip({
+  wrapperStyle,
+  ...props
+}: React.ComponentProps<typeof RechartsPrimitive.Tooltip>) {
+  // Recharts portals the tooltip and legend into the same container as
+  // separate position:absolute, z-index:auto siblings, so without an
+  // explicit z-index the legend (which mounts after) paints over the
+  // tooltip regardless of which one is actually active.
+  return (
+    <RechartsPrimitive.Tooltip
+      wrapperStyle={{ zIndex: 50, ...wrapperStyle }}
+      {...props}
+    />
+  )
+}
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
@@ -156,7 +170,7 @@ const ChartTooltipContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-2.5 py-1.5 text-xs shadow-xl",
+          "grid min-w-32 items-start gap-1.5 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-2.5 py-1.5 text-xs shadow-xl",
           className
         )}
       >

@@ -1,0 +1,75 @@
+---
+import { SPONSORS, TIERS } from "./sponsorData";
+
+const GRID_COLS: Record<string, string> = {
+  gold: "grid-cols-1",
+  silver: "grid-cols-2",
+  bronze: "grid-cols-3",
+  platform: "grid-cols-1",
+};
+
+// Tailwind needs literal class names to generate CSS, so this translates each
+// tier's `logoHeight` (from sponsorData.ts) into its `max-h-*` counterpart
+// rather than maintaining a second, separately-edited height per tier.
+const MAX_HEIGHT_FROM_HEIGHT: Record<string, string> = {
+  "h-6": "max-h-6",
+  "h-8": "max-h-8",
+  "h-10": "max-h-10",
+  "h-11": "max-h-11",
+  "h-12": "max-h-12",
+  "h-14": "max-h-14",
+  "h-16": "max-h-16",
+  "h-18": "max-h-18",
+  "h-20": "max-h-20",
+};
+---
+
+<aside class="hidden xl:flex flex-col w-64 shrink-0 border-l border-gray-200 dark:border-gray-700 mt-0">
+  <div class="sticky top-4 h-[calc(100vh-3rem)] overflow-y-auto flex flex-col pb-20 px-4 mt-0 gap-4">
+    <div class="flex items-center justify-between">
+      <span class="text-[11px] font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase">Partners</span>
+      <a
+        href="/partners/"
+        class="text-[10px] no-underline text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+      >
+        Become a Partner
+      </a>
+    </div>
+
+    {TIERS.map((tier) => {
+      const tierSponsors = SPONSORS.filter((s) => s.tier === tier.key);
+      return (
+        <div class="flex flex-col gap-1 mt-0">
+          <div class="flex items-center gap-">
+            <span class={`h-px flex-1 ${tier.lineColor} opacity-60`} />
+            <span class={`text-[9px] font-bold tracking-widest shrink-0 ${tier.textColor}`}>
+              {tier.label}
+            </span>
+            <span class={`h-px flex-1 ${tier.lineColor} opacity-60`} />
+          </div>
+          <div class={`grid ${GRID_COLS[tier.key]} gap-0 mt-0`}>
+            {tierSponsors.length > 0 ? (
+              tierSponsors.map((s) => (
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class={`flex items-center justify-center ${tier.slotHeight} hover:opacity-75 transition-opacity`}
+                >
+                  <div class="w-full flex items-center justify-center" style={s.scale ? `transform: scale(${s.scale})` : undefined}>
+                    <img src={s.logo} alt={s.name} loading="lazy" decoding="async" class={`w-full ${MAX_HEIGHT_FROM_HEIGHT[tier.logoHeight]} object-contain block dark:hidden`} />
+                    <img src={s.logoDark} alt={s.name} loading="lazy" decoding="async" class={`w-full ${MAX_HEIGHT_FROM_HEIGHT[tier.logoHeight]} object-contain hidden dark:block mt-0`} />
+                  </div>
+                </a>
+              ))
+            ) : (
+              <div class={`col-span-full flex items-center justify-center ${tier.slotHeight} rounded text-[10px] text-gray-400 dark:text-gray-500 no-underline`}
+              >
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</aside>

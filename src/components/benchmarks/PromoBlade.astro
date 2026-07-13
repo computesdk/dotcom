@@ -1,0 +1,30 @@
+---
+const UTM = "?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link"
+const LOGO_API = "https://logos.computesdk.com/api/svg"
+const logoUrl = (brandId: string, variant: "logo-light" | "logo-dark") =>
+  `${LOGO_API}/${brandId}/bounded/${variant}`
+---
+
+<a
+  href={`https://cloud.google.com/run${UTM}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="group flex items-center justify-center gap-3 w-full border-b border-gray-200/50 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-900/60 px-4 py-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300 no-underline hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors"
+>
+  <img
+    src={logoUrl("google-cloud-run", "logo-light")}
+    alt="Google Cloud Run logo"
+    class="h-4 sm:h-5 w-auto object-contain shrink-0 dark:hidden mt-0"
+  />
+  <img
+    src={logoUrl("google-cloud-run", "logo-dark")}
+    alt="Google Cloud Run logo"
+    class="h-4 sm:h-5 w-auto object-contain shrink-0 hidden dark:block"
+  />
+  <span>
+    Agents, sandboxes, & vibe-coded apps are powered by Cloud Run.
+  </span>
+  <svg class="size-3.5 shrink-0 text-gray-400 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+  </svg>
+</a>

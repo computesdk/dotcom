@@ -37,7 +37,7 @@ export function BenchmarkDataTable({ activeResults }: BenchmarkDataTableProps) {
         cell: ({ row }) => {
           const provider = row.original.provider
           return (
-            <a href={`/benchmarks/${provider}`} className="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity">
+            <a href={`/benchmarks/sandboxes/${provider}`} className="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity">
               <span className="font-medium text-gray-900 dark:text-white">
                 {capitalize(provider)}
               </span>

@@ -1,0 +1,200 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import PageLayout from "../../../../components/layouts/PageLayout.astro";
+import { BrowserProviderDetailDashboard } from "../../../../components/BrowserProviderDetailDashboard";
+import { capitalize, logomarkSlug } from "../../../../components/benchmarkConstants";
+import Breadcrumbs from "../../../../components/Breadcrumbs.astro";
+import type { BrowserResult, BrowserHistoryPoint } from "../../../../components/benchmarkConstants";
+import { fetchGithubDirectoryListing, fetchGithubFile } from "../../../../utils/github-history";
+
+const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
+const API_URL = "https://api.github.com/repos/computesdk/benchmarks/contents/results";
+const HISTORY_BATCH_SIZE = 10;
+
+const providerLogos: Record<string, string> = {
+  browserbase: "/benchmarks/normal-browserbase-light.svg",
+  kernel: "/benchmarks/normal-kernel-light.svg",
+  hyperbrowser: "/benchmarks/normal-hyperbrowser-light.svg",
+  steel: "/benchmarks/normal-steel-light.svg",
+};
+
+const providerLogosDark: Record<string, string> = {
+  browserbase: "/benchmarks/normal-browserbase-dark.svg",
+  kernel: "/benchmarks/normal-kernel-dark.svg",
+  hyperbrowser: "/benchmarks/normal-hyperbrowser-dark.svg",
+  steel: "/benchmarks/normal-steel-dark.svg",
+};
+
+export async function getStaticPaths() {
+  try {
+    const BASE = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
+    const res = await fetch(`${BASE}/browser/latest.json`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    const providers = (data.results as BrowserResult[])
+      .filter((r) => !r.skipped && r.summary?.totalMs?.median != null && r.summary.totalMs.median > 0)
+      .map((r) => r.provider);
+    return providers.map((provider: string) => ({
+      params: { provider },
+      props: { provider },
+    }));
+  } catch {
+    return [];
+  }
+}
+
+const { provider } = Astro.props as { provider: string };
+
+const githubHeaders: Record<string, string> = {
+  Accept: "application/vnd.github.v3+json",
+};
+const githubToken = import.meta.env.GITHUB_TOKEN;
+if (githubToken) {
+  githubHeaders["Authorization"] = `Bearer ${githubToken}`;
+}
+
+let fetchError = false;
+let result: BrowserResult | null = null;
+let allResults: BrowserResult[] = [];
+let historyData: BrowserHistoryPoint[] = [];
+let timestamp = "";
+
+try {
+  const res = await fetch(`${BASE_URL}/browser/latest.json`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  timestamp = new Date(data.timestamp).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  allResults = (data.results as BrowserResult[])
+    .filter((r) => !r.skipped && r.summary?.totalMs?.median != null && r.summary.totalMs.median > 0)
+    .sort((a, b) => (b.compositeScore ?? 0) - (a.compositeScore ?? 0));
+
+  result = allResults.find((r) => r.provider === provider) || null;
+
+  // Fetch history
+  const files = await fetchGithubDirectoryListing(`${API_URL}/browser`, githubHeaders);
+  if (files.length) {
+    const jsonFiles = files
+      .filter((f) => f.name.endsWith(".json") && f.name !== "latest.json" && f.name !== ".gitkeep")
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    for (let i = 0; i < jsonFiles.length; i += HISTORY_BATCH_SIZE) {
+      const batch = jsonFiles.slice(i, i + HISTORY_BATCH_SIZE);
+      const batchResults = await Promise.all(
+        batch.map((file) => fetchGithubFile(file.download_url))
+      );
+
+      for (const fileData of batchResults) {
+        if (!fileData) continue;
+        const ts = fileData.timestamp as string;
+        const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        const point: BrowserHistoryPoint = { date: dateLabel, dateTs: new Date(ts).getTime() };
+        for (const r of fileData.results as BrowserResult[]) {
+          if (r.provider === provider && !r.skipped && r.summary?.totalMs?.median != null) {
+            point[`${r.provider}_createMs`] = Math.round(r.summary.createMs.median);
+            point[`${r.provider}_createMs_p95`] = Math.round(r.summary.createMs.p95);
+            point[`${r.provider}_createMs_p99`] = Math.round(r.summary.createMs.p99);
+            point[`${r.provider}_connectMs`] = Math.round(r.summary.connectMs.median);
+            point[`${r.provider}_connectMs_p95`] = Math.round(r.summary.connectMs.p95);
+            point[`${r.provider}_connectMs_p99`] = Math.round(r.summary.connectMs.p99);
+            point[`${r.provider}_navigateMs`] = Math.round(r.summary.navigateMs.median);
+            point[`${r.provider}_navigateMs_p95`] = Math.round(r.summary.navigateMs.p95);
+            point[`${r.provider}_navigateMs_p99`] = Math.round(r.summary.navigateMs.p99);
+            point[`${r.provider}_releaseMs`] = Math.round(r.summary.releaseMs.median);
+            point[`${r.provider}_releaseMs_p95`] = Math.round(r.summary.releaseMs.p95);
+            point[`${r.provider}_releaseMs_p99`] = Math.round(r.summary.releaseMs.p99);
+            point[`${r.provider}_totalMs`] = Math.round(r.summary.totalMs.median);
+            point[`${r.provider}_totalMs_p95`] = Math.round(r.summary.totalMs.p95);
+            point[`${r.provider}_totalMs_p99`] = Math.round(r.summary.totalMs.p99);
+            if (r.compositeScore != null) {
+              point[`${r.provider}_compositeScore`] = r.compositeScore;
+            }
+          }
+        }
+        if (Object.keys(point).length > 1) {
+          historyData.push(point);
+        }
+      }
+    }
+  }
+} catch {
+  fetchError = true;
+}
+
+const displayName = capitalize(provider);
+---
+
+<StarlightPage
+  frontmatter={{
+    title: `${displayName} Browser Benchmarks`,
+    description: `Detailed browser benchmark results for ${displayName} — create, connect, navigate, release latency, and historical performance.`,
+    template: "splash",
+  }}
+>
+  <PageLayout>
+  <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+
+    <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+      <div class="border-b border-gray-200/50 dark:border-gray-700/50">
+
+        <!-- Provider hero -->
+        <div class="md:max-w-7xl md:mx-auto mt-0 py-8 px-4 md:py-10 md:px-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <Breadcrumbs items={[
+                { label: "Benchmarks", href: "/benchmarks" },
+                { label: "Browser Benchmarks", href: "/benchmarks/browsers" },
+                { label: displayName },
+              ]} />
+              <h1 class="text-xl md:text-3xl font-semibold tracking-tight text-gray-900 dark:text-white m-0">
+                {providerLogos[provider] ? (
+                  <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-4">
+                      <img src={providerLogos[provider]} alt={displayName} class="h-8 w-auto object-contain dark:hidden" />
+                      <img src={providerLogosDark[provider] || providerLogos[provider]} alt="" class="h-8 w-auto mt-0 object-contain hidden dark:block" />
+                    </div>
+                    <span class="text-lg md:text-2xl">Browser Benchmarks</span>
+                  </div>
+                ) : (
+                  <>{displayName} Browser Benchmarks</>
+                )}
+              </h1>
+              {timestamp && (
+                <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Last benchmarked {timestamp}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {fetchError || !result ? (
+      <div class="max-w-4xl mx-auto my-0 py-16 text-center">
+        <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
+      </div>
+    ) : (
+      <BrowserProviderDetailDashboard
+        client:visible
+        provider={provider}
+        result={result}
+        historyData={historyData}
+      />
+    )}
+
+  </div>
+  </PageLayout>
+</StarlightPage>
+
+<style is:global>
+  .provider-nav-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .provider-nav-scroll::-webkit-scrollbar {
+    display: none;
+  }
+</style>

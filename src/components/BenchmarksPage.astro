@@ -1,7 +1,9 @@
 ---
 import FAQAccordion from "./FAQAccordion.astro";
-import SponsorLogos from "./SponsorLogos.astro";
 import { BenchmarkDashboard } from "./BenchmarkDashboard";
+import Breadcrumbs from "./Breadcrumbs.astro";
+import PromoBlade from "./benchmarks/PromoBlade.astro";
+import { normalizeProvider } from "./benchmarkConstants";
 
 interface ProviderResult {
   provider: string;
@@ -15,7 +17,8 @@ interface ProviderResult {
 
 interface HistoryDataPoint {
   date: string;
-  [provider: string]: number | string;
+  dateTs?: number;
+  [provider: string]: number | string | undefined;
 }
 
 interface TestTypeData {
@@ -59,6 +62,7 @@ async function fetchTestType(testType: string): Promise<TestTypeData> {
   });
   data.active = results
     .filter((r) => !r.skipped && r.summary?.ttiMs?.median != null && r.summary.ttiMs.median > 0)
+    .map((r) => ({ ...r, provider: normalizeProvider(r.provider) }))
     .sort((a, b) => a.summary.ttiMs.median - b.summary.ttiMs.median);
 
   // Fetch history
@@ -93,23 +97,24 @@ async function fetchTestType(testType: string): Promise<TestTypeData> {
           const ts = fileData.timestamp as string;
           if (new Date(ts) <= cutoffDate) continue;
           const dateLabel = new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-          const point: HistoryDataPoint = { date: dateLabel };
+          const point: HistoryDataPoint = { date: dateLabel, dateTs: new Date(ts).getTime() };
           for (const r of fileData.results as ProviderResult[]) {
             if (!r.skipped && r.summary?.ttiMs?.median != null && r.summary.ttiMs.median > 0 && !excludedProviders.has(r.provider)) {
+              const rProvider = normalizeProvider(r.provider);
               const t = r.summary.ttiMs;
               // Store metrics with compound keys for the line chart
-              point[`${r.provider}_median`] = Math.round(t.median);
-              point[`${r.provider}_p95`] = Math.round(t.p95);
-              point[`${r.provider}_p99`] = Math.round(t.p99);
+              point[`${rProvider}_median`] = Math.round(t.median);
+              point[`${rProvider}_p95`] = Math.round(t.p95);
+              point[`${rProvider}_p99`] = Math.round(t.p99);
               // Compute composite score: median 60%, p95 25%, p99 15%
               const ceil = 10_000;
               const score = (v: number) => Math.max(0, 100 * (1 - v / ceil));
               const weighted = score(t.median) * 0.6 + score(t.p95) * 0.25 + score(t.p99) * 0.15;
               const sr = r.successRate ?? 1;
-              point[`${r.provider}_compositeScore`] = Math.round(weighted * sr * 10) / 10;
+              point[`${rProvider}_compositeScore`] = Math.round(weighted * sr * 10) / 10;
               // Keep plain provider key for backwards compat (median)
-              point[r.provider] = Math.round(t.median);
-              allProviders.add(r.provider);
+              point[rProvider] = Math.round(t.median);
+              allProviders.add(rProvider);
             }
           }
           historyPoints.push(point);
@@ -141,6 +146,7 @@ const providerLogos: Record<string, string> = {
   blaxel: "/benchmarks/normal-blaxel-light.svg",
   modal: "/benchmarks/normal-modal-light.svg",
   daytona: "/benchmarks/normal-daytona-light.svg",
+  northflank: "/benchmarks/normal-northflank-light.svg",
   namespace: "/benchmarks/normal-namespace-light.svg",
   hopx: "/benchmarks/normal-hopx-light.svg",
   codesandbox: "/benchmarks/normal-codesandbox-light.svg",
@@ -148,6 +154,18 @@ const providerLogos: Record<string, string> = {
   justbash: "/benchmarks/normal-justbash-light.svg",
   "just-bash": "/benchmarks/normal-justbash-light.svg",
   cloudflare: "/benchmarks/normal-cloudflare-light.svg",
+  archil: "/benchmarks/normal-archil-light.svg",
+  upstash: "/benchmarks/normal-upstash-light.svg",
+  declaw: "/benchmarks/normal-declaw-light.svg",
+  tensorlake: "/benchmarks/normal-tensorlake-light.svg",
+  isorun: "/benchmarks/normal-isorun-light.svg",
+  beam: "/benchmarks/normal-beam-light.svg",
+  createos: "/benchmarks/normal-createos-light.svg",
+  superserve: "/benchmarks/normal-superserve-light.svg",
+  tenki: "/benchmarks/normal-tenki-light.svg",
+  lelantos: "/benchmarks/normal-lelantos-light.svg",
+  "cloud-run": "/benchmarks/normal-google-cloud-run-light.svg",
+  lightning: "/benchmarks/normal-lightning-ai-light.svg",
 };
 
 const providerLogosDark: Record<string, string> = {
@@ -156,6 +174,7 @@ const providerLogosDark: Record<string, string> = {
   blaxel: "/benchmarks/normal-blaxel-dark.svg",
   modal: "/benchmarks/normal-modal-dark.svg",
   daytona: "/benchmarks/normal-daytona-dark.svg",
+  northflank: "/benchmarks/normal-northflank-dark.svg",
   namespace: "/benchmarks/normal-namespace-dark.svg",
   hopx: "/benchmarks/normal-hopx-dark.svg",
   codesandbox: "/benchmarks/normal-codesandbox-dark.svg",
@@ -163,6 +182,18 @@ const providerLogosDark: Record<string, string> = {
   justbash: "/benchmarks/normal-justbash-dark.svg",
   "just-bash": "/benchmarks/normal-justbash-dark.svg",
   cloudflare: "/benchmarks/normal-cloudflare-dark.svg",
+  archil: "/benchmarks/normal-archil-dark.svg",
+  upstash: "/benchmarks/normal-upstash-dark.svg",
+  declaw: "/benchmarks/normal-declaw-dark.svg",
+  tensorlake: "/benchmarks/normal-tensorlake-dark.svg",
+  isorun: "/benchmarks/normal-isorun-dark.svg",
+  beam: "/benchmarks/normal-beam-dark.svg",
+  createos: "/benchmarks/normal-createos-dark.svg",
+  superserve: "/benchmarks/normal-superserve-dark.svg",
+  tenki: "/benchmarks/normal-tenki-dark.svg",
+  lelantos: "/benchmarks/normal-lelantos-dark.svg",
+  "cloud-run": "/benchmarks/normal-google-cloud-run-dark.svg",
+  lightning: "/benchmarks/normal-lightning-ai-dark.svg",
 };
 
 const benchmarksFAQs = [
@@ -190,10 +221,15 @@ const benchmarksFAQs = [
 ---
 
 <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+  <PromoBlade />
   <!-- Sticky header -->
   <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
     <div class="border-b border-gray-200/50 dark:border-gray-700/50">
-      <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:py-12 md:px-6">
+      <div class="md:max-w-7xl md:mx-auto px-4 pt-6 md:pb-12 md:pt-6 md:px-6">
+        <Breadcrumbs items={[
+          { label: "Benchmarks", href: "/benchmarks" },
+          { label: "Sandbox Benchmarks" },
+        ]} />
         <div class="sm:flex sm:flex-row items-center md:justify-between gap-3">
           <div>
             <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">Sandbox Benchmarks</h1>
@@ -212,12 +248,9 @@ const benchmarksFAQs = [
               </a>
             </div>
             <span class="text-xs text-gray-700 dark:text-gray-400">
-              Last run: {datasets.sequential_tti?.timestamp || ""}
+              Last run: {datasets.burst_tti?.timestamp || ""}
             </span>
           </div>
-        </div>
-        <div class="mt-12 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
-          <SponsorLogos tier="all" size="sm" layout="stacked" align="left" />
         </div>
       </div>
     </div>

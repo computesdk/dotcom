@@ -9,6 +9,10 @@ interface ProviderIterationHistogramProps {
   provider: string
 }
 
+function formatMs(ms: number) {
+  return ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${Math.round(ms)}ms`
+}
+
 export function ProviderIterationHistogram({ iterations, provider }: ProviderIterationHistogramProps) {
   const color = PROVIDER_COLORS[provider] || "#6b7280"
 
@@ -42,8 +46,8 @@ export function ProviderIterationHistogram({ iterations, provider }: ProviderIte
       const rangeEnd = rangeStart + bucketSize
       const count = bucketMap.get(i) || 0
       result.push({
-        label: `${(rangeStart / 1000).toFixed(1)}s`,
-        rangeLabel: `${(rangeStart / 1000).toFixed(2)}s - ${(rangeEnd / 1000).toFixed(2)}s`,
+        label: formatMs(rangeStart),
+        rangeLabel: `${formatMs(rangeStart)} – ${formatMs(rangeEnd)}`,
         count,
       })
     }
@@ -68,7 +72,7 @@ export function ProviderIterationHistogram({ iterations, provider }: ProviderIte
 
   return (
     <div>
-      <ChartContainer config={chartConfig} className="h-[200px] w-full">
+      <ChartContainer config={chartConfig} className="h-[220px] w-full">
         <BarChart
           data={buckets}
           margin={{ top: 5, right: 10, left: 0, bottom: 5 }}

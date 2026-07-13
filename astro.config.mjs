@@ -22,6 +22,7 @@ export default defineConfig({
   redirects: {
     '/docs': '/docs/getting-started/introduction',
     '/docs/reference': '/docs/reference/overview',
+    '/blog/how-to-run-a-railway-sandbox': '/providers',
   },
   integrations: [
     react({
@@ -32,6 +33,21 @@ export default defineConfig({
       description: 'ComputeSDK: The Universal Sandbox Interface.',
 		    favicon: '/favicon.ico',
       head: [
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'preconnect',
+            href: 'https://logos.computesdk.com',
+            crossorigin: 'anonymous',
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'dns-prefetch',
+            href: 'https://logos.computesdk.com',
+          },
+        },
         {
           tag: 'meta',
           attrs: {
@@ -151,7 +167,13 @@ export default defineConfig({
                 person_profiles: 'identified_only',
             })
           `
-        },
+		},
+		{
+          tag: 'script',
+          content: `
+            !function(key) {if (window.reb2b) return;window.reb2b = {loaded: true};var s = document.createElement("script");s.async = true;s.src = "https://ddwl4m2hdecbv.cloudfront.net/b/" + key + "/" + key + ".js.gz";document.getElementsByTagName("script")[0].parentNode.insertBefore(s, document.getElementsByTagName("script")[0]);}("1N5W0H7Q83O5");
+		  `
+		},
       ],	
       logo: {
             light: './src/assets/hv_main_logo_light.svg',
@@ -170,39 +192,28 @@ export default defineConfig({
       [starlightThemeNova({
         nav: [
             {
-              label:'Features',
-              href: '/features'
-            },
-            {
-              label:'Use Cases',
-              href: '/use-cases'
-            },
-            {
-              label:'Providers',
-              href: '/providers'
-            },
-            {
               label:'Benchmarks',
-              href: '/benchmarks'
-            },
-            {
-              label:'Pricing',
-              href: '/pricing'
+              href: '/benchmarks/'
             },
             {
               label: 'Docs',
-              href: '/docs/getting-started/introduction',
+              href: 'https://docs.computesdk.com/getting-started/introduction',
             },
             {
               label:'Blog',
-              href: '/blog'
+              href: '/blog/'
+            },
+            {
+              label:'Become a partner',
+              href: '/partners/'
             }
           ],
            }),
            starlightLlmsTxt({
             projectName: 'ComputeSDK',
-            description: 'A secure, local-first SDK that allows you to run code in isolated sandbox environments',
+            description: 'A secure SDK that allows you to run code in isolated sandbox environments',
             details: 'ComputeSDK provides a unified interface for executing code across multiple cloud providers and local environments. Perfect for AI applications, educational platforms, and any system requiring secure code execution.',
+            rawContent: true,
             customSets: [
                {
                  label: 'Getting Started',
@@ -226,8 +237,8 @@ export default defineConfig({
                }
             ],
             promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
-            demote: ['contact', 'benchmarks', 'blog/**', 'privacy', 'terms'],
-            exclude: ['contact*', 'benchmarks', 'blog/**', 'privacy', 'terms'],
+            demote: ['contact', 'benchmarks/sandboxes', 'benchmarks/storage', 'benchmarks/browsers', 'blog/**', 'privacy', 'terms'],
+            exclude: ['contact*', 'benchmarks/sandboxes', 'benchmarks/storage*', 'benchmarks/browsers*', 'blog/**', 'privacy', 'terms'],
             minify: {
               note: true,
               tip: false,
@@ -253,30 +264,20 @@ export default defineConfig({
                     { label: 'compute', link: '/docs/reference/compute' },
                     { label: 'compute.sandbox', link: '/docs/reference/computesandbox' },
                     { label: 'Sandbox (interface)', link: '/docs/reference/sandbox' },
-                    { label: 'compute.events', link: '/docs/reference/computeevents' },
                 ],
             },
-            {
-                label: 'Concepts',
-                items: [
-                    { label: 'Overlays', link: '/docs/concepts/overlays' },
-                    { label: 'Servers', link: '/docs/concepts/servers' },
-                    { label: 'Client Access', link: '/docs/concepts/client-access' },
-                ],
-            },
-            {
-                label: 'Packages',
-                items: [
-                  { label: 'computesdk', link: 'https://github.com/computesdk/computesdk/blob/main/packages/computesdk/README.md', attrs: { target: '_blank' } },
-                  { label: '@computesdk/events', link: 'https://github.com/computesdk/computesdk/blob/main/packages/events/README.md', attrs: { target: '_blank' } },
-                  { label: '@computesdk/provider', link: 'https://github.com/computesdk/computesdk/blob/main/packages/provider/README.md', attrs: { target: '_blank' } },
-                  { label: '@computesdk/railway', link: 'https://github.com/computesdk/computesdk/blob/main/packages/railway/README.md', attrs: { target: '_blank' } },
-                  { label: '@computesdk/vercel', link: 'https://github.com/computesdk/computesdk/blob/main/packages/vercel/README.md', attrs: { target: '_blank' } },
-                  { label: '@computesdk/modal', link: 'https://github.com/computesdk/computesdk/blob/main/packages/modal/README.md', attrs: { target: '_blank' } },
-                  { label: '@computesdk/e2b', link: 'https://github.com/computesdk/computesdk/blob/main/packages/e2b/README.md', attrs: { target: '_blank' } },
-                  { label: '@computesdk/daytona', link: 'https://github.com/computesdk/computesdk/blob/main/packages/daytona/README.md', attrs: { target: '_blank' } },
-                ],
-            },
+            // {
+            //     label: 'Packages',
+            //     items: [
+            //       { label: 'computesdk', link: 'https://github.com/computesdk/computesdk/blob/main/packages/computesdk/README.md', attrs: { target: '_blank' } },
+            //       { label: '@computesdk/provider', link: 'https://github.com/computesdk/computesdk/blob/main/packages/provider/README.md', attrs: { target: '_blank' } },
+            //       { label: '@computesdk/railway', link: 'https://github.com/computesdk/computesdk/blob/main/packages/railway/README.md', attrs: { target: '_blank' } },
+            //       { label: '@computesdk/vercel', link: 'https://github.com/computesdk/computesdk/blob/main/packages/vercel/README.md', attrs: { target: '_blank' } },
+            //       { label: '@computesdk/modal', link: 'https://github.com/computesdk/computesdk/blob/main/packages/modal/README.md', attrs: { target: '_blank' } },
+            //       { label: '@computesdk/e2b', link: 'https://github.com/computesdk/computesdk/blob/main/packages/e2b/README.md', attrs: { target: '_blank' } },
+            //       { label: '@computesdk/daytona', link: 'https://github.com/computesdk/computesdk/blob/main/packages/daytona/README.md', attrs: { target: '_blank' } },
+            //     ],
+            // },
             // {
             //     label: 'Frameworks',
             //     autogenerate: { directory: 'docs/frameworks' },
@@ -301,10 +302,14 @@ export default defineConfig({
     sitemap({
       filter: (page) =>
         page !== 'https://www.computesdk.com/sidekick/' &&
+        page !== 'https://www.computesdk.com/features/' &&
         page !== 'https://www.computesdk.com/features/sandboxes/' &&
+        page !== 'https://www.computesdk.com/use-cases/' &&
         page !== 'https://www.computesdk.com/old-index/' &&
         page !== 'https://www.computesdk.com/refund/' &&
-        !/\/benchmarks\/[^/]+\/(sequential-tti|burst-tti|staggered-tti)\/?$/.test(page)
+        page !== 'https://www.computesdk.com/og-preview/' &&
+        !page.startsWith('https://www.computesdk.com/providers/') &&
+        !/\/benchmarks\/sandboxes\/[^/]+\/(sequential-tti|burst-tti|staggered-tti)\/?$/.test(page)
     }),
   ],
 

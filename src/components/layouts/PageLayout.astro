@@ -1,7 +1,19 @@
 ---
 import Footer from "../Footer.astro";
+import SponsorSidebar from "../benchmarks/SponsorSidebar.astro";
+import { SponsorBanner } from "../benchmarks/SponsorBanner";
+
+const pathname = Astro.url.pathname;
+const isBenchmarks = pathname === "/benchmarks" || pathname.startsWith("/benchmarks/");
 ---
-<div class="border border-gray-200 dark:border-gray-700 border-t-0 border-b-0 mt-0 mb-0 mx-2 md:mx-24">
-    <slot />
+<div class:list={[
+  "border border-gray-200 dark:border-gray-700 border-t-0 border-b-0 mt-0 mb-0 mx-2 md:mx-24",
+  isBenchmarks && "xl:mx-8 xl:flex xl:items-stretch",
+]}>
+    <div class:list={["min-w-0", isBenchmarks && "flex-1"]}>
+      <slot />
+    </div>
+    {isBenchmarks && <SponsorSidebar />}
 </div>
+{isBenchmarks && <SponsorBanner client:media="(max-width: 1279px)" />}
 <Footer />

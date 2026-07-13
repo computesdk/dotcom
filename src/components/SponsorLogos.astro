@@ -1,32 +1,36 @@
 ---
 interface Props {
   tier?: "all" | "tier-1"
+  names?: string[]
   size?: "xs" | "sm" | "md" | "lg"
   layout?: "inline" | "stacked"
   align?: "left" | "center" | "right"
   mdAlign?: "left" | "center" | "right"
   label?: string
+  exclude?: string
 }
 
-const { tier = "all", size = "md", layout = "inline", align = "center", mdAlign, label } = Astro.props
+const { tier = "all", names, size = "md", layout = "inline", align = "center", mdAlign, label, exclude } = Astro.props
 
 const allSponsors = [
-  { 
-    name: "Archil", 
-    href: "https://archil.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
-    logo: "/archil-logo.svg",
-    tier: "tier-1"
-  },
-  { 
-    name: "Latitude", 
-    href: "https://latitude.so/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
+  {
+    name: "Latitude",
+    href: "https://latitude.sh/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
     logo: "/latitude-logo.svg",
     tier: "tier-1"
   },
-  { 
-    name: "Browserbase", 
+  {
+    name: "Google Cloud Run",
+    href: "https://cloud.google.com/run?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
+    logo: "/benchmarks/normal-google-cloud-run-light.svg",
+    logoDark: "/benchmarks/normal-google-cloud-run-dark.svg",
+    tier: "tier-1"
+  },
+  {
+    name: "Browserbase",
     href: "https://www.browserbase.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
     logo: "/browserbase-logo.svg",
+    logoDark: "/browserbase-logo-dark.svg",
     tier: "tier-2"
   },
   { 
@@ -35,11 +39,25 @@ const allSponsors = [
     logo: "/tigris-logo.svg",
     tier: "tier-2"
   },
+  { 
+    name: "Neon", 
+    href: "https://neon.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
+    logo: "/neon-logo-light.svg",
+    tier: "tier-2"
+  },
+  { 
+    name: "Gitbook", 
+    href: "https://www.gitbook.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
+    logo: "/gitbook-logo-light.svg",
+    tier: "tier-2"
+  },
 ]
 
-const sponsors = tier === "all" 
-  ? allSponsors 
-  : allSponsors.filter(s => s.tier === tier)
+const excludeName = exclude?.toLowerCase()
+const sponsors = (names
+  ? allSponsors.filter(s => names.includes(s.name))
+  : tier === "all" ? allSponsors : allSponsors.filter(s => s.tier === tier))
+  .filter(s => excludeName ? s.name.toLowerCase() !== excludeName : true)
 
 const sizeClasses = {
   xs: "h-4",
@@ -88,10 +106,17 @@ const mdJustifyStr = mdAlign ? mdJustifyClasses[mdAlign] : ""
 {layout === "stacked" ? (
   <div class={`flex flex-col ${alignClasses[align]} ${mdAlignStr} gap-4 mt-0`}>
     <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{labelText}</span>
-    <div class={`flex items-center ${gapClasses[size]}`}>
+    <div class={`flex flex-wrap items-center gap-y-6 ${justifyClasses[align]} ${gapClasses[size]}`}>
       {sponsors.map((s) => (
         <a href={s.href} target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity">
-          <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:invert`} />
+          {s.logoDark ? (
+            <>
+              <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain m-0 dark:hidden`} />
+              <img src={s.logoDark} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain m-0 hidden dark:block`} />
+            </>
+          ) : (
+            <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:invert`} />
+          )}
         </a>
       ))}
     </div>
@@ -102,7 +127,14 @@ const mdJustifyStr = mdAlign ? mdJustifyClasses[mdAlign] : ""
     <div class={`flex items-center ${gapClasses[size]}`}>
       {sponsors.map((s) => (
         <a href={s.href} target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity">
-          <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:invert`} />
+          {s.logoDark ? (
+            <>
+              <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:hidden`} />
+              <img src={s.logoDark} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain hidden dark:inline-block`} />
+            </>
+          ) : (
+            <img src={s.logo} alt={s.name} class={`${sizeClasses[size]} w-auto object-contain dark:invert`} />
+          )}
         </a>
       ))}
     </div>

@@ -100,7 +100,8 @@ export function BenchmarkBarChart({ activeResults, selectedMetric }: BenchmarkBa
           <CartesianGrid horizontal={true} vertical={false} strokeDasharray="3 3" />
           <XAxis
             type="number"
-            domain={[0, isComposite ? 100 : maxValue + 500]}
+            domain={[0, maxValue * 1.12]}
+            ticks={isComposite ? [0, 25, 50, 75, 100] : undefined}
             tickLine={false}
             axisLine={false}
             tickMargin={8}
