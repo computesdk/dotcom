@@ -3,9 +3,9 @@ title: "How to run a Beam sandbox"
 description: "A step-by-step process for creating a sandbox with Beam, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-13"
 tags: [how-to, sandboxes, beam]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
@@ -170,7 +170,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['localhost', '127.0.0.1'] // add domain here
+      allowedHosts: ['.app.beam.cloud', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -203,7 +203,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-Beam resolves this through its own sandbox domain. We don't have a fixed domain to pin down here — add it to the `allowedHosts` array above once you see it in your terminal output.
+Beam's preview URLs follow the pattern `https://<sandbox-id>-<port>.app.beam.cloud` — a Beam domain, not a shared ComputeSDK one.
 
 #### Return the preview url along with the sandboxId
 
@@ -245,7 +245,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['localhost', '127.0.0.1'] // add domain here
+      allowedHosts: ['.app.beam.cloud', 'localhost', '127.0.0.1'],
     },
   })
   `;

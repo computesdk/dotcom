@@ -3,9 +3,9 @@ title: "How to run a Northflank sandbox"
 description: "A step-by-step process for creating a sandbox with Northflank, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-13"
 tags: [how-to, sandboxes, northflank]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
@@ -172,7 +172,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['localhost', '127.0.0.1'] // add domain here
+      allowedHosts: ['.code.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -205,7 +205,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-Northflank exposes the port publicly and returns its own Northflank DNS name — not a shared ComputeSDK domain. This only works because we declared the port as `protocol: 'HTTP'` and `public: true` when we created the sandbox above.
+Northflank exposes the port publicly and returns its own Northflank DNS name. This only works because we declared the port as `protocol: 'HTTP'` and `public: true` when we created the sandbox above.
 
 #### Return the preview url along with the sandboxId
 
@@ -249,7 +249,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['localhost', '127.0.0.1'] // add domain here
+      allowedHosts: ['.code.run', 'localhost', '127.0.0.1'],
     },
   })
   `;

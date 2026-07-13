@@ -213,7 +213,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.vercel.app', 'localhost', '127.0.0.1'],
+      allowedHosts: ['.vercel.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -248,7 +248,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-The hostname `getUrl()` returns is Vercel's own sandbox domain, not a ComputeSDK-branded one. This only works because we declared `ports: [5173]` when we created the sandbox above — Vercel sandboxes don't expose ports you didn't ask for up front.
+The hostname `getUrl()` returns is on Vercel's own `.vercel.run` domain, not a ComputeSDK-branded one. This only works because we declared `ports: [5173]` when we created the sandbox above — Vercel sandboxes don't expose ports you didn't ask for up front.
 
 #### Return the preview url along with the sandboxId
 
@@ -291,7 +291,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.vercel.app', 'localhost', '127.0.0.1'],
+      allowedHosts: ['.vercel.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -334,7 +334,7 @@ Now, after you click the "Create Vercel Sandbox" button on your localhost homepa
 <!-- markdownlint-disable-next-line MD033 -->
 <img style="margin: 24px auto; border-radius: 10px;" width="700px" src="/blog/vercel/vercel-logs-screenshot.png" alt="Screenshot of Vercel's logs page" title="Vercel's logs page" />
 
-3. See a preview URL logged to your terminal (if you're running locally) — the exact domain is provided by Vercel itself, not a shared ComputeSDK domain.
+3. See a preview URL logged to your terminal (if you're running locally), on Vercel's own `.vercel.run` domain.
 4. If you visit that URL you should see the boilerplate Vite React app running in your Vercel sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->

@@ -3,9 +3,9 @@ title: "How to run a Superserve sandbox"
 description: "A step-by-step process for creating a sandbox with Superserve and running a Vite dev server inside it."
 date: "2026-07-13"
 tags: [how-to, sandboxes, superserve]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 

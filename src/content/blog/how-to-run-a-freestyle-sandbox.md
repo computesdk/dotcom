@@ -3,9 +3,9 @@ title: "How to run a Freestyle sandbox"
 description: "A step-by-step process for creating a sandbox with Freestyle, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-13"
 tags: [how-to, sandboxes, freestyle]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
@@ -200,7 +200,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-Freestyle resolves this through its own sandbox domain. We don't have a fixed domain to pin down here — add it to the `allowedHosts` array above once you see it in your terminal output.
+Unlike some providers, Freestyle doesn't hand you a default preview subdomain automatically — routing a port to a public URL means verifying a domain and pointing its DNS at Freestyle first. Once you've mapped one, add it to the `allowedHosts` array above.
 
 #### Return the preview url along with the sandboxId
 

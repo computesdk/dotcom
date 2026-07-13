@@ -3,9 +3,9 @@ title: "How to run a Modal sandbox"
 description: "A step-by-step process for creating a sandbox with Modal, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-12"
 tags: [how-to, sandboxes, modal]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
@@ -168,7 +168,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.modal.run', 'localhost', '127.0.0.1'],
+      allowedHosts: ['.modal.host', '.modal.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -203,7 +203,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-Modal resolves this through its own tunnel service (`.modal.run`-style domains) — not a shared ComputeSDK one. This only works because we declared `ports: [5173]` when we created the sandbox above; Modal sandboxes don't expose ports you didn't ask for up front.
+Modal resolves this through its own tunnel service (`.modal.host`-style domains, e.g. `https://wtqcahqwhd4tu0.r5.modal.host`) — not a shared ComputeSDK one. This only works because we declared `ports: [5173]` when we created the sandbox above; Modal sandboxes don't expose ports you didn't ask for up front.
 
 #### Return the preview url along with the sandboxId
 
@@ -245,7 +245,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.modal.run', 'localhost', '127.0.0.1'],
+      allowedHosts: ['.modal.host', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -277,7 +277,7 @@ export async function POST() {
 Now, after you click the "Create Modal Sandbox" button on your localhost homepage you should:
 
 1. See a new sandbox created in your Modal dashboard.
-2. See a preview URL logged to your terminal, on a `.modal.run` tunnel domain.
+2. See a preview URL logged to your terminal, on a `.modal.host` tunnel domain.
 3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Modal sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->

@@ -3,9 +3,9 @@ title: "How to run a Runloop sandbox"
 description: "A step-by-step process for creating a sandbox with Runloop, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-12"
 tags: [how-to, sandboxes, runloop]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 

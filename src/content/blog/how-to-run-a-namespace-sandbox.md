@@ -3,9 +3,9 @@ title: "How to run a Namespace sandbox"
 description: "A step-by-step process for creating a sandbox with Namespace and running commands inside it."
 date: "2026-07-12"
 tags: [how-to, sandboxes, namespace]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 

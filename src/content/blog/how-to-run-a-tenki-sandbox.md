@@ -3,9 +3,9 @@ title: "How to run a Tenki sandbox"
 description: "A step-by-step process for creating a sandbox with Tenki, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-13"
 tags: [how-to, sandboxes, tenki]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
@@ -200,7 +200,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-Tenki resolves this to its own preview domain, in the form `https://<slug>.sb.tenki.sh` — not a shared ComputeSDK domain.
+Tenki resolves this to its own preview domain, in the form `https://<slug>.sb.tenki.sh`.
 
 #### Return the preview url along with the sandboxId
 

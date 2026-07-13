@@ -279,7 +279,7 @@ export async function POST() {
 Now, after you click the "Create E2B Sandbox" button on your localhost homepage you should:
 
 1. See a new sandbox created inside your E2B dashboard.
-2. See a preview URL logged to your terminal — the exact domain is provided by E2B itself, not a shared ComputeSDK domain.
+2. See a preview URL logged to your terminal.
 3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your E2B sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->

@@ -3,9 +3,9 @@ title: "How to run a Agentuity sandbox"
 description: "A step-by-step process for creating a sandbox with Agentuity, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-13"
 tags: [how-to, sandboxes, agentuity]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 

@@ -3,9 +3,9 @@ title: "How to run a Cloudflare sandbox"
 description: "A step-by-step process for creating a sandbox with Cloudflare, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-13"
 tags: [how-to, sandboxes, cloudflare]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
@@ -280,7 +280,7 @@ export async function POST() {
 Now, after you click the "Create Cloudflare Sandbox" button on your localhost homepage you should:
 
 1. See a new sandbox created behind your bridge Worker.
-2. See a preview URL logged to your terminal — routed through your bridge Worker, not a shared ComputeSDK domain.
+2. See a preview URL logged to your terminal — routed through your bridge Worker.
 3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Cloudflare sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->

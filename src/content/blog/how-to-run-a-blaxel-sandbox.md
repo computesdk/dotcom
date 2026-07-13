@@ -3,9 +3,9 @@ title: "How to run a Blaxel sandbox"
 description: "A step-by-step process for creating a sandbox with Blaxel, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-12"
 tags: [how-to, sandboxes, blaxel]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
@@ -209,7 +209,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-Blaxel resolves this through its own preview infrastructure, typically a `<sandbox>.preview.bl.run`-style domain — not a shared ComputeSDK domain.
+Blaxel resolves this through its own preview infrastructure, typically a `<sandbox>.preview.bl.run`-style domain.
 
 #### Return the preview url along with the sandboxId
 
@@ -283,7 +283,7 @@ export async function POST() {
 Now, after you click the "Create Blaxel Sandbox" button on your localhost homepage you should:
 
 1. See a new sandbox created in your Blaxel dashboard.
-2. See a preview URL logged to your terminal — typically a `<sandbox>.preview.bl.run`-style domain provided by Blaxel itself, not a shared ComputeSDK domain.
+2. See a preview URL logged to your terminal — typically a `<sandbox>.preview.bl.run`-style domain provided by Blaxel itself.
 3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Blaxel sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->

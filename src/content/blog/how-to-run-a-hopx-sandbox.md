@@ -3,9 +3,9 @@ title: "How to run a Hopx sandbox"
 description: "A step-by-step process for creating a sandbox with Hopx, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-12"
 tags: [how-to, sandboxes, hopx]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
@@ -271,7 +271,7 @@ export async function POST() {
 Now, after you click the "Create Hopx Sandbox" button on your localhost homepage you should:
 
 1. See a new sandbox created in your Hopx dashboard.
-2. See a preview URL logged to your terminal — HopX's own domain, not a shared ComputeSDK domain.
+2. See a preview URL logged to your terminal — HopX's own domain.
 3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Hopx sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->

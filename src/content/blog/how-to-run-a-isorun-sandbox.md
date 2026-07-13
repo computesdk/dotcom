@@ -3,9 +3,9 @@ title: "How to run a Isorun sandbox"
 description: "A step-by-step process for creating a sandbox with Isorun, running a basic Vite app inside, and accessing it securely via the browser."
 date: "2026-07-13"
 tags: [how-to, sandboxes, isorun]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
@@ -167,7 +167,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['localhost', '127.0.0.1'] // add domain here
+      allowedHosts: ['.isorun.app', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -200,7 +200,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-Isorun resolves this through its own sandbox domain. We don't have a fixed domain to pin down here — add it to the `allowedHosts` array above once you see it in your terminal output.
+Isorun's preview URLs follow the pattern `https://<port>-<run-id>.isorun.app` — an Isorun domain, not a shared ComputeSDK one.
 
 #### Return the preview url along with the sandboxId
 
@@ -241,7 +241,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['localhost', '127.0.0.1'] // add domain here
+      allowedHosts: ['.isorun.app', 'localhost', '127.0.0.1'],
     },
   })
   `;

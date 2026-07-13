@@ -3,9 +3,9 @@ title: "How to run a Google Cloud Run sandbox"
 description: "A step-by-step process for creating a sandbox with Google Cloud Run and running commands inside it."
 date: "2026-07-13"
 tags: [how-to, sandboxes, cloud-run]
-author: "Garrison Snelling"
-role: "Founder, ComputeSDK"
-image: "/Garrison-Snelling-sq.jpeg"
+author: "David Tice"
+role: "Head of Product"
+image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
