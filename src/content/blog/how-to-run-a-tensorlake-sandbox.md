@@ -1,60 +1,31 @@
-<!--
-  Template for a new "How to run a <Provider> sandbox" post.
-  The leading underscore excludes this file from Astro's `blog` content
-  collection (getCollection("blog")) — it will never render or break the build.
-
-  Do not fill this in by hand. Run `npm run new-blog-post` in dotcom/, which
-  prompts for the fields below and writes a real post from this template.
-
-  Before publishing whatever the script generates, verify against the current
-  SDK — do not trust the placeholders blindly:
-    - computesdk/docs/providers/<slug>.md for the exact config field names,
-      env vars, and the "Supported Operations" table (getUrl/filesystem/ports).
-    - computesdk/packages/<slug>/src/index.ts for how getUrl() actually
-      resolves a domain for that provider (some hardcode a suffix like
-      `.csb.app`, others delegate to the provider's own SDK with no fixed
-      pattern — don't invent an exact preview URL string you haven't seen
-      produced by real code or that provider's own docs).
-    - If you can't confirm the real preview domain, don't guess and don't
-      set `allowedHosts: true` either — use `allowedHosts: ['localhost',
-      '127.0.0.1'] // add domain here` in ALLOWED_HOSTS_DOMAIN, and have
-      PREVIEW_URL_NOTE tell the reader to add the real domain to that array
-      once they see it in their terminal output.
-    - If PROVIDER_SUPPORTS_GETURL or PROVIDER_SUPPORTS_FILESYSTEM is false,
-      or PROVIDER_NEEDS_PORTS is true, this template's default "Making
-      changes within the sandbox" section needs manual adjustment (the
-      generator script handles the common cases; unusual ones still need a
-      human pass — see how the Namespace post handles unsupported
-      filesystem/getUrl, or how Modal/Vercel pre-declare ports).
--->
 ---
-title: "How to run a {{PROVIDER_NAME}} sandbox"
-description: "A step-by-step process for creating a sandbox with {{PROVIDER_NAME}}, running a basic Vite app inside, and accessing it securely via the browser."
-date: "{{DATE}}"
-tags: [how-to, sandboxes, {{PROVIDER_SLUG}}]
+title: "How to run a Tensorlake sandbox"
+description: "A step-by-step process for creating a sandbox with Tensorlake, running a basic Vite app inside, and accessing it securely via the browser."
+date: "2026-07-13"
+tags: [how-to, sandboxes, tensorlake]
 author: "Garrison Snelling"
 role: "Founder, ComputeSDK"
 image: "/Garrison-Snelling-sq.jpeg"
 featured: false
 ---
 
-{{PROVIDER_DESCRIPTION}}
-Let's walk through the process of getting a basic application running inside a {{PROVIDER_NAME}} sandbox.
+Tensorlake provides stateful microVM sandboxes for agentic applications and LLM-generated code execution.
+Let's walk through the process of getting a basic application running inside a Tensorlake sandbox.
 
-## Why use {{PROVIDER_NAME}} as your sandbox provider?
+## Why use Tensorlake as your sandbox provider?
 
-- {{WHY_BULLET_1}}
-- {{WHY_BULLET_2}}
-- {{WHY_BULLET_3}}
+- Stateful microVM sandboxes purpose-built for agentic applications and LLM-generated code.
+- Custom container images, with a sensible ubuntu-minimal default.
+- Native snapshot support for fast sandbox restores.
 
-**Let's see how we can easily run a basic Vite app inside of a {{PROVIDER_NAME}} sandbox.**
+**Let's see how we can easily run a basic Vite app inside of a Tensorlake sandbox.**
 
 ## Let's start by creating a new Next.js project
 
 Run this command in your terminal:
 
 ```bash
-npx create-next-app@latest {{PROVIDER_SLUG}}-basic
+npx create-next-app@latest tensorlake-basic
 ```
 
 You can use all of the defaults when prompted.
@@ -64,43 +35,43 @@ You can use all of the defaults when prompted.
 Once it has been created, be sure to create an `.env` file to add your necessary credentials to.
 
 ```bash
-{{ENV_VARS_BLOCK}}
+TENSORLAKE_API_KEY=your_tensorlake_api_key
 ```
 
-### Install ComputeSDK and the {{PROVIDER_NAME}} provider
+### Install ComputeSDK and the Tensorlake provider
 
 ComputeSDK ships as a small core package plus one package per provider, so you only install what you use.
 
 ```bash
-cd {{PROVIDER_SLUG}}-basic
-npm install computesdk @computesdk/{{PROVIDER_SLUG}}
+cd tensorlake-basic
+npm install computesdk @computesdk/tensorlake
 ```
 
-## Create or log in to your {{PROVIDER_NAME}} account
+## Create or log in to your Tensorlake account
 <!-- markdownlint-disable-next-line MD033 -->
-Create a {{PROVIDER_NAME}} account or log in <a href="{{PROVIDER_WEBSITE}}" target="_blank">here</a>.\
-{{ACCOUNT_STEPS}}
+Create a Tensorlake account or log in <a href="https://tensorlake.ai" target="_blank">here</a>.\
+Create an account, then generate an API key from your Tensorlake dashboard.
 
 Save these values in your `.env` file.
 
 ```bash
-{{ENV_VARS_BLOCK}}
+TENSORLAKE_API_KEY=your_tensorlake_api_key
 ```
 
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-Import the `{{PROVIDER_FACTORY}}` factory from `@computesdk/{{PROVIDER_SLUG}}` and pass it your credentials. `compute.sandbox.create()` provisions a sandbox on {{PROVIDER_NAME}}.\
+Import the `tensorlake` factory from `@computesdk/tensorlake` and pass it your credentials. `compute.sandbox.create()` provisions a sandbox on Tensorlake.\
 Create a new `route.ts` file in `app/api/sandbox` and paste the following code:
 
 ```typescript
 // app/api/sandbox/route.ts
 import { NextResponse } from 'next/server';
-import { {{PROVIDER_FACTORY}} } from '@computesdk/{{PROVIDER_SLUG}}';
+import { tensorlake } from '@computesdk/tensorlake';
 
-const compute = {{PROVIDER_FACTORY}}({
-{{CONFIG_BLOCK}}
+const compute = tensorlake({
+  apiKey: process.env.TENSORLAKE_API_KEY,
 });
 
 export async function POST() {
@@ -137,7 +108,7 @@ export default function Home() {
         type="button"
         onClick={createSandbox}
       >
-        Create {{PROVIDER_NAME}} sandbox
+        Create Tensorlake sandbox
       </button>
     </div>
   );
@@ -152,14 +123,14 @@ Click the button on the main page.
 <!-- markdownlint-disable-next-line MD033 -->
 <img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/blog/create-sandbox-button-ui.png" alt="screenshot of next.js app button" title="sandbox test button" />
 
-Then check your {{DASHBOARD_NAME}}.\
+Then check your Tensorlake dashboard.\
 You should see a new sandbox created!
 
 Success!
 
-## You've successfully created your first {{PROVIDER_NAME}} sandbox
+## You've successfully created your first Tensorlake sandbox
 
-If you want to use another sandbox provider like {{OTHER_PROVIDER_1}} or {{OTHER_PROVIDER_2}}, swap the import and factory call — install `@computesdk/{{OTHER_PROVIDER_1_SLUG}}` and use `import { {{OTHER_PROVIDER_1_SLUG}} } from '@computesdk/{{OTHER_PROVIDER_1_SLUG}}'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`, `getUrl`) stays the same — that's the point of the universal `Sandbox` interface.
+If you want to use another sandbox provider like E2B or Daytona, swap the import and factory call — install `@computesdk/e2b` and use `import { e2b } from '@computesdk/e2b'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`, `getUrl`) stays the same — that's the point of the universal `Sandbox` interface.
 
 ## Making changes within the sandbox
 
@@ -170,7 +141,7 @@ Now, let's take the next step and run a primitive Vite app inside of our sandbox
 Add the following to your `app/api/sandbox/route.ts` file directly below this in your code:
 
 ```typescript
-const sandbox = await compute.sandbox.create({{CREATE_OPTIONS}});
+const sandbox = await compute.sandbox.create();
 ```
 
 #### Create a basic Vite app inside our sandbox subfolder
@@ -196,7 +167,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['{{ALLOWED_HOSTS_DOMAIN}}', 'localhost', '127.0.0.1'],
+      allowedHosts: ['localhost', '127.0.0.1'] // add domain here
     },
   })
   `;
@@ -229,7 +200,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-{{PREVIEW_URL_NOTE}}
+Tensorlake resolves this through its own sandbox proxy domain. We don't have a fixed domain to pin down here — add it to the `allowedHosts` array above once you see it in your terminal output.
 
 #### Return the preview url along with the sandboxId
 
@@ -246,15 +217,15 @@ Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { {{PROVIDER_FACTORY}} } from '@computesdk/{{PROVIDER_SLUG}}';
+import { tensorlake } from '@computesdk/tensorlake';
 
-const compute = {{PROVIDER_FACTORY}}({
-{{CONFIG_BLOCK}}
+const compute = tensorlake({
+  apiKey: process.env.TENSORLAKE_API_KEY,
 });
 
 export async function POST() {
 
-  const sandbox = await compute.sandbox.create({{CREATE_OPTIONS}});
+  const sandbox = await compute.sandbox.create();
 
   // Create basic Vite React app
   await sandbox.runCommand('npm create vite@5 app -- --template react');
@@ -270,7 +241,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['{{ALLOWED_HOSTS_DOMAIN}}', 'localhost', '127.0.0.1'],
+      allowedHosts: ['localhost', '127.0.0.1'] // add domain here
     },
   })
   `;
@@ -299,26 +270,26 @@ export async function POST() {
 
 ## Testing Vite app inside sandbox
 
-Now, after you click the "Create {{PROVIDER_NAME}} Sandbox" button on your localhost homepage you should:
+Now, after you click the "Create Tensorlake Sandbox" button on your localhost homepage you should:
 
-1. See a new sandbox created in your {{DASHBOARD_NAME}}.
+1. See a new sandbox created in your Tensorlake dashboard.
 2. See a preview URL logged to your terminal output.
-3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your {{PROVIDER_NAME}} sandbox!
+3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Tensorlake sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/sandbox-vite-app-in-browser.png" alt="screenshot of Vite app running in {{PROVIDER_NAME}} sandbox via ComputeSDK" title="Basic Vite App in {{PROVIDER_NAME}} sandbox" />
+<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/sandbox-vite-app-in-browser.png" alt="screenshot of Vite app running in Tensorlake sandbox via ComputeSDK" title="Basic Vite App in Tensorlake sandbox" />
 
 ## Congrats! You've successfully created your first sandbox application
 
 You have done the following:
 
-- created a {{PROVIDER_NAME}} sandbox with ComputeSDK
+- created a Tensorlake sandbox with ComputeSDK
 - used our runCommand, writeFile, and getUrl methods (these work with any provider whose sandbox supports them)
 - ran a Vite app inside the sandbox
 - accessed the app running within the sandbox through its preview URL
 
 ComputeSDK makes it easy to standardize this process across providers.\
-So now that you've written this code for {{PROVIDER_NAME}}, you can easily adjust this code to run in any sandbox provider.
+So now that you've written this code for Tensorlake, you can easily adjust this code to run in any sandbox provider.
 
 **Happy Sandboxing!**
 
