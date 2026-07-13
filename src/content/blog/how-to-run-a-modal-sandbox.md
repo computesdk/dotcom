@@ -34,16 +34,16 @@ You can use all of the defaults when prompted.
 Once it has been created, be sure to create an `.env` file to add your necessary credentials to.
 
 ```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-
 MODAL_TOKEN_ID=your_modal_token_id
 MODAL_TOKEN_SECRET=your_modal_token_secret
 ```
 
-### Install the ComputeSDK package
+### Install ComputeSDK and the Modal provider
+
+ComputeSDK ships as a small core package plus one package per provider, so you only install what you use.
 
 ```bash
-npm install computesdk
+npm install computesdk @computesdk/modal
 ```
 
 ## Create or log in to your Modal account
@@ -59,31 +59,21 @@ MODAL_TOKEN_ID=your_modal_token_id
 MODAL_TOKEN_SECRET=your_modal_token_secret
 ```
 
-## Create a ComputeSDK account
-<!-- markdownlint-disable-next-line MD033 -->
-Create an account at our <a href="https://console.computesdk.com/register" target="_blank">signup page</a>.\
-Once you have created your ComputeSDK account, you'll need to generate an API key.\
-Click "API Keys" in the left-hand navigation → "Create API Key"
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/compute-api-keys.png" alt="screenshot of ComputeSDK's API key management interface" title="ComputeSDK API keys page" />
-
-Save your API key in your `.env` file to the `COMPUTESDK_API_KEY` variable.
-
-```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-```
-
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-ComputeSDK makes this easy, just import the basic `computesdk` package.\
-ComputeSDK auto-detects your sandbox provider variables from your .env file
+Import the `modal` factory from `@computesdk/modal` and pass it your credentials. `compute.sandbox.create()` provisions a sandbox on Modal.
 
 ```typescript
 // app/api/sandbox/route.ts
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { modal } from '@computesdk/modal';
+
+const compute = modal({
+  tokenId: process.env.MODAL_TOKEN_ID,
+  tokenSecret: process.env.MODAL_TOKEN_SECRET,
+});
 
 export async function POST() {
 
@@ -139,18 +129,20 @@ Success!
 
 ## You've successfully created your first Modal sandbox
 
-If you want to use another sandbox provider like E2B or Daytona, all you need to do is change your provider variables from `MODAL_TOKEN_ID=xxxxx` and `MODAL_TOKEN_SECRET=xxxxx` to `E2B_API_KEY=xxxxx`. ComputeSDK automatically detects your sandbox provider from your environment variables.
+If you want to use another sandbox provider like E2B or Daytona, swap the import and factory call — install `@computesdk/e2b` and use `import { e2b } from '@computesdk/e2b'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`, `getUrl`) stays the same — that's the point of the universal `Sandbox` interface.
 
 ## Making changes within the sandbox
 
 Now, let's take the next step and run a primitive Vite app inside of our sandbox as an example of what we are able to do within the sandbox itself.
+
+Modal sandboxes only expose ports you declare up front, so this time we pass `ports` to `create()`.
 
 ### Update /api/sandbox/route.ts
 
 Add the following to your `route.ts` file directly below this in your code:
 
 ```typescript
-const sandbox = await compute.sandbox.create();
+const sandbox = await compute.sandbox.create({ ports: [5173] });
 ```
 
 #### Create a basic Vite app inside our sandbox subfolder
@@ -176,7 +168,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.modal.run', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.modal.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -184,6 +176,8 @@ Customize the `vite.config.js` so we can access the local dev server.
 ```
 
 #### Run npm install using the runCommand method
+
+`cwd` is an optional per-call override — if you don't pass one, commands run in whatever Modal's own sandbox default working directory is. We pass `cwd: 'app'` here simply because that's the subfolder we just scaffolded the Vite project into.
 
 ```typescript
   // Install dependencies
@@ -201,13 +195,15 @@ Customize the `vite.config.js` so we can access the local dev server.
   });
 ```
 
-#### Use the getUrl method to output the secure preview URL via the ComputeSDK tunnel
+#### Use the getUrl method to get a preview URL
 
 ```typescript
   // Get preview URL
   const url = await sandbox.getUrl({ port: 5173 });
   console.log('previewUrl:', url)
 ```
+
+Modal resolves this through its own tunnel service (`.modal.run`-style domains) — not a shared ComputeSDK one. This only works because we declared `ports: [5173]` when we created the sandbox above; Modal sandboxes don't expose ports you didn't ask for up front.
 
 #### Return the preview url along with the sandboxId
 
@@ -224,11 +220,16 @@ Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { modal } from '@computesdk/modal';
+
+const compute = modal({
+  tokenId: process.env.MODAL_TOKEN_ID,
+  tokenSecret: process.env.MODAL_TOKEN_SECRET,
+});
 
 export async function POST() {
 
-  const sandbox = await compute.sandbox.create();
+  const sandbox = await compute.sandbox.create({ ports: [5173] });
 
   // Create basic Vite React app
   await sandbox.runCommand('npm create vite@5 app -- --template react');
@@ -244,7 +245,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.modal.run', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.modal.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -276,8 +277,7 @@ export async function POST() {
 Now, after you click the "Create Modal Sandbox" button on your localhost homepage you should:
 
 1. See a new sandbox created in your Modal dashboard.
-2. See a preview URL in your terminal output like this:\
-`unique-sandbox-id-5173.preview.computesdk.com`
+2. See a preview URL logged to your terminal, on a `.modal.run` tunnel domain.
 3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Modal sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->
@@ -290,16 +290,13 @@ You have done the following:
 - created a Modal sandbox with ComputeSDK
 - used our runCommand, writeFile, and getUrl methods (these work with any provider)
 - ran a Vite app inside the sandbox
-- accessed the app running within the sandbox through our secure tunnel
+- accessed the app running within the sandbox through its preview URL
 
 ComputeSDK makes it easy to standardize this process across providers.\
 So now that you've written this code in Modal, you can easily adjust this code to run in any sandbox provider.
 
 **Happy Sandboxing!**
 
-<!-- markdownlint-disable-next-line MD033 -->
-<a href="https://console.computesdk.com/register" target="_blank" style="display: inline-block; padding: 6px 12px; background-color: #10b981; color: white; font-weight: bold; border-radius: 8px; text-decoration: none;">Sign up with ComputeSDK</a>
-
-Want to get sandboxes running in your application?\
+Have questions?\
 Want to be added as a provider?\
-Reach out to us at [email@computesdk.com](mailto:email@computesdk.com)
+Reach out to us at [support@computesdk.com](mailto:support@computesdk.com)

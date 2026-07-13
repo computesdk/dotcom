@@ -1,75 +1,101 @@
+<!--
+  Template for a new "How to run a <Provider> sandbox" post.
+  The leading underscore excludes this file from Astro's `blog` content
+  collection (getCollection("blog")) — it will never render or break the build.
+
+  Do not fill this in by hand. Run `npm run new-blog-post` in dotcom/, which
+  prompts for the fields below and writes a real post from this template.
+
+  Before publishing whatever the script generates, verify against the current
+  SDK — do not trust the placeholders blindly:
+    - computesdk/docs/providers/<slug>.md for the exact config field names,
+      env vars, and the "Supported Operations" table (getUrl/filesystem/ports).
+    - computesdk/packages/<slug>/src/index.ts for how getUrl() actually
+      resolves a domain for that provider (some hardcode a suffix like
+      `.csb.app`, others delegate to the provider's own SDK with no fixed
+      pattern — don't invent an exact preview URL string you haven't seen
+      produced by real code or that provider's own docs).
+    - If PROVIDER_SUPPORTS_GETURL or PROVIDER_SUPPORTS_FILESYSTEM is false,
+      or PROVIDER_NEEDS_PORTS is true, this template's default "Making
+      changes within the sandbox" section needs manual adjustment (the
+      generator script handles the common cases; unusual ones still need a
+      human pass — see how the Namespace post handles unsupported
+      filesystem/getUrl, or how Modal/Vercel pre-declare ports).
+-->
 ---
-title: "How to run a CodeSandbox sandbox"
-description: "A step-by-step process for creating a sandbox with CodeSandbox, running a basic Vite app inside, and accessing it securely via the browser."
-date: "2026-04-05"
-tags: [how-to, sandboxes, codesandbox]
+title: "How to run a {{PROVIDER_NAME}} sandbox"
+description: "A step-by-step process for creating a sandbox with {{PROVIDER_NAME}}, running a basic Vite app inside, and accessing it securely via the browser."
+date: "{{DATE}}"
+tags: [how-to, sandboxes, {{PROVIDER_SLUG}}]
 author: "Garrison Snelling"
 role: "Founder, ComputeSDK"
 image: "/Garrison-Snelling-sq.jpeg"
 featured: false
 ---
 
-CodeSandbox is a cloud development platform that enables instant, collaborative coding environments. It provides sandboxed environments for web development with support for modern frameworks, allowing teams to prototype, share, and iterate on code directly in the browser.
-Let's walk through the process of getting a basic application running inside a CodeSandbox sandbox.
+{{PROVIDER_DESCRIPTION}}
+Let's walk through the process of getting a basic application running inside a {{PROVIDER_NAME}} sandbox.
 
-## Why use CodeSandbox as your sandbox provider?
+## Why use {{PROVIDER_NAME}} as your sandbox provider?
 
-- CodeSandbox provides instant cloud development environments with support for modern frameworks.
-- They offer collaborative features that make it easy for teams to prototype and share code.
-- CodeSandbox's browser-based development experience means minimal setup for your team.
+- {{WHY_BULLET_1}}
+- {{WHY_BULLET_2}}
+- {{WHY_BULLET_3}}
 
-**Let's see how we can easily run a basic Vite app inside of a CodeSandbox sandbox.**
+**Let's see how we can easily run a basic Vite app inside of a {{PROVIDER_NAME}} sandbox.**
 
 ## Let's start by creating a new Next.js project
 
 Run this command in your terminal:
 
 ```bash
-npx create-next-app@latest codesandbox-basic
+npx create-next-app@latest {{PROVIDER_SLUG}}-basic
 ```
 
 You can use all of the defaults when prompted.
 
 ### Create an .env file
+
 Once it has been created, be sure to create an `.env` file to add your necessary credentials to.
 
 ```bash
-CSB_API_KEY=your_codesandbox_api_key
+{{ENV_VARS_BLOCK}}
 ```
 
-### Install ComputeSDK and the CodeSandbox provider
+### Install ComputeSDK and the {{PROVIDER_NAME}} provider
 
 ComputeSDK ships as a small core package plus one package per provider, so you only install what you use.
 
 ```bash
-npm install computesdk @computesdk/codesandbox
+cd {{PROVIDER_SLUG}}-basic
+npm install computesdk @computesdk/{{PROVIDER_SLUG}}
 ```
 
-## Create or log in to your CodeSandbox account
+## Create or log in to your {{PROVIDER_NAME}} account
 <!-- markdownlint-disable-next-line MD033 -->
-Create a CodeSandbox account or log in <a href="https://codesandbox.io" target="_blank">here</a>.\
-Once you have created an account, you'll need to get your CodeSandbox API key.\
-Go to your workspace settings and create an API key.
+Create a {{PROVIDER_NAME}} account or log in <a href="{{PROVIDER_WEBSITE}}" target="_blank">here</a>.\
+{{ACCOUNT_STEPS}}
 
-Save your API key in your `.env` file to the `CSB_API_KEY` variable.
+Save these values in your `.env` file.
 
 ```bash
-CSB_API_KEY=your_codesandbox_api_key
+{{ENV_VARS_BLOCK}}
 ```
 
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-Import the `codesandbox` factory from `@computesdk/codesandbox` and pass it your API key. `compute.sandbox.create()` provisions a sandbox on CodeSandbox.
+Import the `{{PROVIDER_FACTORY}}` factory from `@computesdk/{{PROVIDER_SLUG}}` and pass it your credentials. `compute.sandbox.create()` provisions a sandbox on {{PROVIDER_NAME}}.\
+Create a new `route.ts` file in `app/api/sandbox` and paste the following code:
 
 ```typescript
 // app/api/sandbox/route.ts
 import { NextResponse } from 'next/server';
-import { codesandbox } from '@computesdk/codesandbox';
+import { {{PROVIDER_FACTORY}} } from '@computesdk/{{PROVIDER_SLUG}}';
 
-const compute = codesandbox({
-  apiKey: process.env.CSB_API_KEY,
+const compute = {{PROVIDER_FACTORY}}({
+{{CONFIG_BLOCK}}
 });
 
 export async function POST() {
@@ -85,7 +111,7 @@ export async function POST() {
 ### Next, we'll edit the page.tsx file
 
 We'll keep it simple and just add one button to run our sandbox test with.\
-Paste this code into Page.tsx
+Replace the content on Page.tsx with this code:
 
 ```typescript
 // app/page.tsx
@@ -106,7 +132,7 @@ export default function Home() {
         type="button"
         onClick={createSandbox}
       >
-        Create CodeSandbox sandbox
+        Create {{PROVIDER_NAME}} sandbox
       </button>
     </div>
   );
@@ -115,18 +141,20 @@ export default function Home() {
 
 ### Now, our first test
 
+Run `npm run dev` in your terminal to start the dev server.\
+Open `localhost:3000`\
 Click the button on the main page.
 <!-- markdownlint-disable-next-line MD033 -->
 <img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/blog/create-sandbox-button-ui.png" alt="screenshot of next.js app button" title="sandbox test button" />
 
-Then check your CodeSandbox dashboard.\
+Then check your {{DASHBOARD_NAME}}.\
 You should see a new sandbox created!
 
 Success!
 
-## You've successfully created your first CodeSandbox sandbox
+## You've successfully created your first {{PROVIDER_NAME}} sandbox
 
-If you want to use another sandbox provider like E2B or Vercel, swap the import and factory call — install `@computesdk/e2b` and use `import { e2b } from '@computesdk/e2b'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`, `getUrl`) stays the same — that's the point of the universal `Sandbox` interface.
+If you want to use another sandbox provider like {{OTHER_PROVIDER_1}} or {{OTHER_PROVIDER_2}}, swap the import and factory call — install `@computesdk/{{OTHER_PROVIDER_1_SLUG}}` and use `import { {{OTHER_PROVIDER_1_SLUG}} } from '@computesdk/{{OTHER_PROVIDER_1_SLUG}}'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`, `getUrl`) stays the same — that's the point of the universal `Sandbox` interface.
 
 ## Making changes within the sandbox
 
@@ -134,10 +162,10 @@ Now, let's take the next step and run a primitive Vite app inside of our sandbox
 
 ### Update /api/sandbox/route.ts
 
-Add the following to your `route.ts` file directly below this in your code:
+Add the following to your `app/api/sandbox/route.ts` file directly below this in your code:
 
 ```typescript
-const sandbox = await compute.sandbox.create();
+const sandbox = await compute.sandbox.create({{CREATE_OPTIONS}});
 ```
 
 #### Create a basic Vite app inside our sandbox subfolder
@@ -163,7 +191,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.csb.app', '.codesandbox.io', 'localhost', '127.0.0.1'],
+      allowedHosts: ['{{ALLOWED_HOSTS_DOMAIN}}', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -171,8 +199,6 @@ Customize the `vite.config.js` so we can access the local dev server.
 ```
 
 #### Run npm install using the runCommand method
-
-`cwd` is an optional per-call override — if you don't pass one, commands run in whatever CodeSandbox's own sandbox default working directory is. We pass `cwd: 'app'` here simply because that's the subfolder we just scaffolded the Vite project into.
 
 ```typescript
   // Install dependencies
@@ -198,7 +224,7 @@ Customize the `vite.config.js` so we can access the local dev server.
   console.log('previewUrl:', url)
 ```
 
-CodeSandbox's preview URLs follow the pattern `https://<sandbox-id>.<cluster>.csb.app:<port>` — a CodeSandbox domain, not a shared ComputeSDK one.
+{{PREVIEW_URL_NOTE}}
 
 #### Return the preview url along with the sandboxId
 
@@ -215,15 +241,15 @@ Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { codesandbox } from '@computesdk/codesandbox';
+import { {{PROVIDER_FACTORY}} } from '@computesdk/{{PROVIDER_SLUG}}';
 
-const compute = codesandbox({
-  apiKey: process.env.CSB_API_KEY,
+const compute = {{PROVIDER_FACTORY}}({
+{{CONFIG_BLOCK}}
 });
 
 export async function POST() {
 
-  const sandbox = await compute.sandbox.create();
+  const sandbox = await compute.sandbox.create({{CREATE_OPTIONS}});
 
   // Create basic Vite React app
   await sandbox.runCommand('npm create vite@5 app -- --template react');
@@ -239,7 +265,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.csb.app', '.codesandbox.io', 'localhost', '127.0.0.1'],
+      allowedHosts: ['{{ALLOWED_HOSTS_DOMAIN}}', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -268,29 +294,29 @@ export async function POST() {
 
 ## Testing Vite app inside sandbox
 
-Now, after you click the "Create CodeSandbox Sandbox" button on your localhost homepage you should:
+Now, after you click the "Create {{PROVIDER_NAME}} Sandbox" button on your localhost homepage you should:
 
-1. See a new sandbox created in your CodeSandbox dashboard.
-2. See a preview URL logged to your terminal, in the form `https://<sandbox-id>.<cluster>.csb.app:5173`.
-3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your CodeSandbox sandbox!
+1. See a new sandbox created in your {{DASHBOARD_NAME}}.
+2. See a preview URL logged to your terminal output.
+3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your {{PROVIDER_NAME}} sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/sandbox-vite-app-in-browser.png" alt="screenshot of Vite app running in CodeSandbox sandbox via ComputeSDK" title="Basic Vite App in CodeSandbox sandbox" />
+<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/sandbox-vite-app-in-browser.png" alt="screenshot of Vite app running in {{PROVIDER_NAME}} sandbox via ComputeSDK" title="Basic Vite App in {{PROVIDER_NAME}} sandbox" />
 
 ## Congrats! You've successfully created your first sandbox application
 
 You have done the following:
 
-- created a CodeSandbox sandbox with ComputeSDK
-- used our runCommand, writeFile, and getUrl methods (these work with any provider)
+- created a {{PROVIDER_NAME}} sandbox with ComputeSDK
+- used our runCommand, writeFile, and getUrl methods (these work with any provider whose sandbox supports them)
 - ran a Vite app inside the sandbox
 - accessed the app running within the sandbox through its preview URL
 
 ComputeSDK makes it easy to standardize this process across providers.\
-So now that you've written this code in CodeSandbox, you can easily adjust this code to run in any sandbox provider.
+So now that you've written this code for {{PROVIDER_NAME}}, you can easily adjust this code to run in any sandbox provider.
 
 **Happy Sandboxing!**
 
-Have questions?\
+Want to get sandboxes running in your application?\
 Want to be added as a provider?\
-Reach out to us at [support@computesdk.com](mailto:support@computesdk.com)
+Reach out to us at [email@computesdk.com](mailto:email@computesdk.com)

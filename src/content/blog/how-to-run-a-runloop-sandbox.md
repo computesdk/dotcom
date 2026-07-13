@@ -34,15 +34,16 @@ You can use all of the defaults when prompted.
 Once it has been created, be sure to create an `.env` file to add your necessary credentials to.
 
 ```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-
 RUNLOOP_API_KEY=your_runloop_api_key
 ```
 
-### Install the ComputeSDK package
+### Install ComputeSDK and the Runloop provider
+
+ComputeSDK ships as a small core package plus one package per provider, so you only install what you use.
 
 ```bash
-npm install computesdk
+cd basic-runloop-sandbox
+npm install computesdk @computesdk/runloop
 ```
 
 ## Create or log in to your Runloop account
@@ -60,31 +61,20 @@ Save your API key in your `.env` file to the `RUNLOOP_API_KEY` variable.
 RUNLOOP_API_KEY=your_runloop_api_key
 ```
 
-## Create a ComputeSDK account
-<!-- markdownlint-disable-next-line MD033 -->
-Create an account at our <a href="https://console.computesdk.com/register" target="_blank">signup page</a>.\
-Once you have created your ComputeSDK account, you'll need to generate an API key.\
-Click "API Keys" in the left-hand navigation → "Create API Key"
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/compute-api-keys.png" alt="screenshot of ComputeSDK's API key management interface" title="ComputeSDK API keys page" />
-
-Save your API key in your `.env` file to the `COMPUTESDK_API_KEY` variable.
-
-```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-```
-
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-ComputeSDK makes this easy. To create a sandbox with any provider just import the basic `computesdk` package.\
-Use compute.sandbox.create() to create a sandbox. ComputeSDK auto-detects your sandbox provider variables from your .env file
+Import the `runloop` factory from `@computesdk/runloop` and pass it your API key. `compute.sandbox.create()` provisions a sandbox on Runloop.
 
 ```typescript
 // app/api/sandbox/route.ts
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { runloop } from '@computesdk/runloop';
+
+const compute = runloop({
+  apiKey: process.env.RUNLOOP_API_KEY,
+});
 
 export async function POST() {
 
@@ -146,7 +136,7 @@ You can view more details about your active sandbox by clicking it in Runloop's 
 <!-- markdownlint-disable-next-line MD033 -->
 <img style="margin: 12px auto; border-radius: 10px;" width="600px" src="/blog/runloop/runloop-sandbox-ui.png" alt="screenshot of Runloop sandbox UI" title="Runloop devboxes UI" />
 
-If you want to use another sandbox provider like E2B or Vercel, all you need to do is change your provider variable from `RUNLOOP_API_KEY=xxxxx` to `E2B_API_KEY=xxxxx`. ComputeSDK automatically detects your sandbox provider from your environment variables.
+If you want to use another sandbox provider like E2B or Vercel, swap the import and factory call — install `@computesdk/e2b` and use `import { e2b } from '@computesdk/e2b'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`, `getUrl`) stays the same — that's the point of the universal `Sandbox` interface.
 
 ## Making changes within the sandbox
 
@@ -183,7 +173,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.runloop.ai', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.runloop.ai', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -191,6 +181,8 @@ Customize the `vite.config.js` so we can access the local dev server.
 ```
 
 #### Run npm install using the runCommand method
+
+`cwd` is an optional per-call override — if you don't pass one, commands run in whatever Runloop's own sandbox default working directory is. We pass `cwd: 'app'` here simply because that's the subfolder we just scaffolded the Vite project into.
 
 ```typescript
   // Install dependencies
@@ -208,13 +200,15 @@ Customize the `vite.config.js` so we can access the local dev server.
   });
 ```
 
-#### Use the getUrl method to output the secure preview URL via the ComputeSDK tunnel
+#### Use the getUrl method to get a preview URL
 
 ```typescript
   // Get preview URL
   const url = await sandbox.getUrl({ port: 5173 });
   console.log('previewUrl:', url)
 ```
+
+Runloop's preview URLs follow the pattern `https://<port>-<tunnel-key>.tunnel.runloop.ai` — a Runloop domain, not a shared ComputeSDK one.
 
 #### Return the preview url along with the sandboxId
 
@@ -231,7 +225,11 @@ Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { runloop } from '@computesdk/runloop';
+
+const compute = runloop({
+  apiKey: process.env.RUNLOOP_API_KEY,
+});
 
 export async function POST() {
 
@@ -251,7 +249,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.runloop.ai', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.runloop.ai', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -283,8 +281,7 @@ export async function POST() {
 Now, after you click the "Create Runloop Sandbox" button on your localhost homepage you should:
 
 1. See a new sandbox created in your Runloop dashboard.
-2. See a preview URL in your terminal output like this:\
-`unique-sandbox-id-5173.preview.computesdk.com`
+2. See a preview URL logged to your terminal, in the form `https://5173-<tunnel-key>.tunnel.runloop.ai`.
 3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Runloop sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->
@@ -297,16 +294,13 @@ You have done the following:
 - created a Runloop sandbox with ComputeSDK
 - used our runCommand, writeFile, and getUrl methods (these work with any provider)
 - ran a Vite app inside the sandbox
-- accessed the app running within the sandbox through our secure tunnel
+- accessed the app running within the sandbox through its preview URL
 
 ComputeSDK makes it easy to standardize this process across providers.\
 So now that you've written this code in Runloop, you can easily adjust this code to run in any sandbox provider.
 
 **Happy Sandboxing!**
 
-<!-- markdownlint-disable-next-line MD033 -->
-<a href="https://console.computesdk.com/register" target="_blank" style="display: inline-block; padding: 6px 12px; background-color: #10b981; color: white; font-weight: bold; border-radius: 8px; text-decoration: none;">Register with ComputeSDK</a>
-
-Want to get sandboxes running in your application?\
+Have questions?\
 Want to be added as a provider?\
-Reach out to us at [email@computesdk.com](mailto:email@computesdk.com)
+Reach out to us at [support@computesdk.com](mailto:support@computesdk.com)

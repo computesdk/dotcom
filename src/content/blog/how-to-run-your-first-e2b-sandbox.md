@@ -32,11 +32,10 @@ npx create-next-app@latest basic-sandbox-app
 ```
 
 You can use all of the defaults when prompted.\
-Once it has been created, be sure to create an `env.local` file to add your necessary credentials to.
+Once it has been created, be sure to create an `.env` file to add your necessary credentials to.
 
 ```bash
 E2B_API_KEY=your_e2b_api_key
-COMPUTESDK_API_KEY=your_computesdk_api_key
 ```
 
 ## Create an E2B account
@@ -47,43 +46,34 @@ Go to your dashboard -> API Keys -> "Create Key"
 <!-- markdownlint-disable-next-line MD033 -->
 <img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/e2b-api-keys.png" alt="screenshot of E2B's API key management interface" title="E2B API keys page" />
 
-Save your API key in your `env.local` file to the `E2B_API_KEY` variable.
+Save your API key in your `.env` file to the `E2B_API_KEY` variable.
 
 ```bash
 E2B_API_KEY=your_e2b_api_key
 ```
 
-## Create a ComputeSDK account
-<!-- markdownlint-disable-next-line MD033 -->
-Create an account at our <a href="https://console.computesdk.com/register" target="_blank">signup page</a>.\
-Once you have created your ComputeSDK account, you'll need to generate an API key.\
-Click "API Keys" in the left-hand navigation -> "Create API Key"
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/compute-api-keys.png" alt="screenshot of ComputeSDK's API key management interface" title="ComputeSDK API keys page" />
+## Install ComputeSDK and the E2B provider
 
-Save your API key in your `env.local` file to the `COMPUTESDK_API_KEY` variable.
+ComputeSDK ships as a small core package plus one package per provider, so you only install what you use.
 
 ```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-```
-
-## Install the ComputeSDK package
-
-```bash
-npm install computesdk
+npm install computesdk @computesdk/e2b
 ```
 
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-ComputeSDK makes this easy, just import the basic `computesdk` package.\
-ComputeSDK auto-detects your sandbox provider variables from your .env file
+Import the `e2b` factory from `@computesdk/e2b` and pass it your API key. `compute.sandbox.create()` provisions a sandbox on E2B.
 
 ```typescript
 // app/api/sandbox/route.ts
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { e2b } from '@computesdk/e2b';
+
+const compute = e2b({
+  apiKey: process.env.E2B_API_KEY,
+});
 
 export async function POST() {
 
@@ -142,11 +132,9 @@ Inside, you will be able to see your filesystem.
 <!-- markdownlint-disable-next-line MD033 -->
 <img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/e2b-filesystem.png" alt="screenshot of e2b sandbox filesystem" title="E2B Sandbox filesystem UI" />
 
-ComputeSDK automatically installs our lightweight daemon upon sandbox creation. There should already be a `.compute/sandboxes/unique-sandbox-id` subfolder created in your sandbox. This is where you can run applications in your sandbox and automatically access them via the browser through our secure tunnel.
-
 ## You've successfully created your first E2B sandbox
 
-If you want to use another sandbox provider like Daytona or Modal, all you need to do is change your provider variable from `E2B_API_KEY=xxxxx` to `DAYTONA_API_KEY=xxxxx`. ComputeSDK automatically detects your sandbox provider from your environment variables.
+If you want to use another sandbox provider like Daytona or Modal, swap the import and factory call — install `@computesdk/daytona` and use `import { daytona } from '@computesdk/daytona'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`, `getUrl`) stays the same — that's the point of the universal `Sandbox` interface.
 
 ## Making changes within the sandbox
 
@@ -183,7 +171,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.e2b.app', '.e2b.dev', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.e2b.app', '.e2b.dev', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -192,9 +180,7 @@ Customize the `vite.config.js` so we can access the local dev server.
 
 #### Run npm install using the runCommand method
 
-runCommand runs at the sandbox subfolder by default.
-(e.g., `/.compute/unique_sandbox_id/commands_run_here`)\
-So we need to cd into /app before we run npm install or start our Vite server.
+`cwd` is an optional per-call override — if you don't pass one, commands run in whatever E2B's own sandbox default working directory is. We pass `cwd: 'app'` here simply because that's the subfolder we just scaffolded the Vite project into.
 
 ```typescript
   // Install dependencies
@@ -212,13 +198,15 @@ So we need to cd into /app before we run npm install or start our Vite server.
   });
 ```
 
-#### Use the getUrl method to output the secure preview URL via the ComputeSDK tunnel
+#### Use the getUrl method to get a preview URL
 
 ```typescript
   // Get preview URL
   const url = await sandbox.getUrl({ port: 5173 });
   console.log('previewUrl:', url)
 ```
+
+The hostname `getUrl()` returns is E2B's own sandbox domain, not a ComputeSDK-branded one — check your terminal's console output for the exact value it prints for your sandbox.
 
 #### Return the preview url along with the sandboxId
 
@@ -235,7 +223,11 @@ Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { e2b } from '@computesdk/e2b';
+
+const compute = e2b({
+  apiKey: process.env.E2B_API_KEY,
+});
 
 export async function POST() {
 
@@ -255,7 +247,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.e2b.app', '.e2b.dev', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.e2b.app', '.e2b.dev', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -287,10 +279,8 @@ export async function POST() {
 Now, after you click the "Create E2B Sandbox" button on your localhost homepage you should:
 
 1. See a new sandbox created inside your E2B dashboard.
-2. See a Vite app structure inside of your `home/user/.compute/sandboxes/unique-sandbox-id/` folder structure
-3. See a preview URL in your terminal output like this:\
-`unique-sandbox-id-5173.preview.computesdk.com`
-4. Finally, if you visit that URL you should see the boilerplate Vite React app running in your E2B sandbox!
+2. See a preview URL logged to your terminal — the exact domain is provided by E2B itself, not a shared ComputeSDK domain.
+3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your E2B sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->
 <img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/sandbox-vite-app-in-browser.png" alt="screenshot of Vite app running in E2B sandbox via ComputeSDK" title="Basic Vite App in E2B sandbox" />
@@ -302,15 +292,13 @@ You have done the following:
 - created an E2B sandbox with ComputeSDK
 - used our runCommand, writeFile, and getUrl methods (these work with any provider)
 - ran a Vite app inside the sandbox
-- accessed the app running within the sandbox through our secure tunnel
+- accessed the app running within the sandbox through its preview URL
 
 ComputeSDK makes it easy to standardize this process across providers.\
 So now that you've written this code in E2B, you can easily adjust this code to run in any sandbox provider.
 
 **Happy Sandboxing!**
 
-[Sign up with ComputeSDK](https://console.computesdk.com/register)
-
-Want to get sandboxes running in your application?\
+Have questions?\
 Want to be added as a provider?\
-Reach out to us at [email@computesdk.com](mailto:email@computesdk.com)
+Reach out to us at [support@computesdk.com](mailto:support@computesdk.com)

@@ -1,7 +1,7 @@
 ---
-title: "How to run a sandbox on Railway"
-description: "A step-by-step process for creating a sandbox with Railway, running a basic Vite app inside, and accessing it securely via the browser."
-date: "2026-02-08"
+title: "How to run a Railway sandbox"
+description: "A step-by-step process for creating a sandbox with Railway and running commands inside it."
+date: "2026-07-13"
 tags: [how-to, sandboxes, railway]
 author: "Garrison Snelling"
 role: "Founder, ComputeSDK"
@@ -9,146 +9,107 @@ image: "/Garrison-Snelling-sq.jpeg"
 featured: false
 ---
 
-<span style="font-size: 14px; font-style: italic;">Run locally with <a href="https://github.com/computesdk/examples/tree/main/railway-basic" target="_blank">this repo</a> or deploy with Railway or Stackblitz:</span>
-<div style="display: flex; gap: 4px;">
-  <a href="https://railway.com/deploy/yKLYhi?referralCode=-WK0PF&utm_medium=integration&utm_source=template&utm_campaign=generic" target="_blank">
-    <img src="https://railway.com/button.svg" alt="Deploy on Railway" style="height: 32px;"/>
-  </a>
-  <a href="https://stackblitz.com/edit/railway-sandbox" target="_blank">
-    <img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="open in Stackblitz" />
-  </a>
-</div>
+<span style="font-size: 14px; font-style: italic;">There's also a working Express + Vite example you can clone at <a href="https://github.com/computesdk/examples/tree/main/railway-basic" target="_blank">computesdk/examples/railway-basic</a> if you'd rather see this end-to-end outside of Next.js.</span>
 
-<br />
-Railway is a popular cloud platform for spinning up infrastructure in seconds. With ComputeSDK, you can now use this infrastructure to run sandboxes.
-Let's walk through the process of getting a basic Vite app running inside a Railway sandbox.
+Railway is a cloud platform for deploying and running applications and infrastructure. With ComputeSDK, you can use Railway's sandbox environments to run isolated, ephemeral compute alongside anything else you already run on Railway.
+Let's walk through the process of creating a Railway sandbox and running commands inside it.
 
 ## Why use Railway as your sandbox provider?
 
-- Railway offers instant deployments with automatic SSL and a developer-friendly experience.
-- They provide a generous free tier and a beautiful dashboard for monitoring your deployments.
-- Railway is perfect for teams that want self-hosted sandbox capabilities with minimal infrastructure management.
+- Railway sandboxes are ephemeral compute instances backed by the same infrastructure as your Railway deployments.
+- They're a great fit if you're already running services on Railway and want sandboxes living in the same project and environment.
+- Railway offers simple, predictable compute pricing.
 
-**Let's walk through how easily we can start using Railway sandboxes.**
+> **A note before you start:** Railway sandboxes don't currently support ComputeSDK's `getUrl()` — it throws, since Railway sandboxes can't expose ports or public URLs. `filesystem` operations are fully supported (implemented over the shell). This guide verifies things by running a command inside the sandbox instead of opening a live browser preview — if you need a public preview URL, E2B, Daytona, CodeSandbox, Blaxel, Hopx, Runloop, and Modal all support it.
 
-## Let's start by creating a new Vite app
+**Let's see how we can create a Railway sandbox and run a Vite dev server inside it.**
+
+## Let's start by creating a new Next.js project
 
 Run this command in your terminal:
 
 ```bash
-npm create vite@latest railway-basic -- --template react-ts
+npx create-next-app@latest railway-basic
 ```
+
+You can use all of the defaults when prompted.
 
 ### Create an .env file
 Once it has been created, be sure to create an `.env` file to add your necessary credentials to.
 
 ```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-
-RAILWAY_API_KEY=your_railway_api_key
-RAILWAY_PROJECT_ID=your_railway_project_id
+RAILWAY_API_TOKEN=your_railway_api_token
 RAILWAY_ENVIRONMENT_ID=your_railway_environment_id
 ```
 
-### Install the ComputeSDK package
+### Install ComputeSDK and the Railway provider
+
+ComputeSDK ships as a small core package plus one package per provider, so you only install what you use.
+
+> **Requires Node.js >= 22** — the underlying `railway` SDK depends on Node 22 APIs (e.g. global `WebSocket`).
 
 ```bash
-npm install computesdk
+cd railway-basic
+npm install computesdk @computesdk/railway
 ```
 
-## Create or log in to your Railway account and create a project
+## Create or log in to your Railway account
 <!-- markdownlint-disable-next-line MD033 -->
-### Create a Railway account 
-Log in to or create a Railway account <a href="https://railway.app/login?ref=computesdk" target="_blank">here</a>.
+Create a Railway account or log in <a href="https://railway.com" target="_blank">here</a>.\
+Once you have created an account, you'll need to gather two credentials:
 
-### Create a new project
-
+1. **API Token**: Create one at [railway.com/account/tokens](https://railway.com/account/tokens).
+2. **Environment ID**: Every Railway project has at least one environment. If you don't already have a project, create one — any option works, an empty project is fine.
 <!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/blog/railway/railway-create-project-screenshot.png" alt="screenshot of creating a new project in Railway" title="Create a new project in Railway" />
+<img style="margin: 24px auto; border-radius: 10px;" width="700px" src="/blog/railway/railway-create-project-screenshot.png" alt="screenshot of creating a new project in Railway" title="Create a new project in Railway" />
 
-You can:
-1. Use <a href="https://github.com/computesdk/examples/tree/main/railway-basic" target="_blank">this repo</a> and deploy the final version of this app
-2. Deploy our <a href="https://hub.docker.com/r/computesdk/compute" target="_blank">docker image</a> (fastest for sandbox boot times)
-3. Deploy an empty project
-
-Once you have created an account, you'll need to gather several credentials:
-
-1. **API Token**: Go to your Workspace Settings → Tokens → Create Token
-2. **Project ID**: Found in your Project Settings → Project Info
-3. **Environment ID**: Found in your URL when viewing a project:\
-   `https://railway.com/project/{PROJECT_ID}/settings?environmentId={ENVIRONMENT_ID}`
+Find your environment ID in your project's environment settings, or in the URL when viewing a project:\
+`https://railway.com/project/{PROJECT_ID}/settings?environmentId={ENVIRONMENT_ID}`
 
 Save these values in your `.env` file.
 
 ```bash
-RAILWAY_API_KEY=your_railway_api_key
-RAILWAY_PROJECT_ID=your_railway_project_id
+RAILWAY_API_TOKEN=your_railway_api_token
 RAILWAY_ENVIRONMENT_ID=your_railway_environment_id
-```
-
-## Create a ComputeSDK account
-<!-- markdownlint-disable-next-line MD033 -->
-Create an account at our <a href="https://console.computesdk.com/register" target="_blank">signup page</a>.\
-Once you have created your ComputeSDK account, you'll need to generate an API key.\
-Click "API Keys" in the left-hand navigation → "Create API Key"
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/compute-api-keys.png" alt="screenshot of ComputeSDK's API key management interface" title="ComputeSDK API keys page" />
-
-Save your API key in your `.env` file to the `COMPUTESDK_API_KEY` variable.
-
-```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
 ```
 
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-ComputeSDK makes this easy, just import the basic `computesdk` package.\
-ComputeSDK auto-detects your sandbox provider variables from your .env file
+Import the `railway` factory from `@computesdk/railway` and pass it your credentials. `compute.sandbox.create()` provisions a sandbox on Railway.\
+Create a new `route.ts` file in `app/api/sandbox` and paste the following code:
 
 ```typescript
-// server/index.ts
-import express from 'express';
-import cors from 'cors';
-import { compute } from 'computesdk';
+// app/api/sandbox/route.ts
+import { NextResponse } from 'next/server';
+import { railway } from '@computesdk/railway';
 
-const app = express();
-const PORT = 8081;
-
-app.use(cors());
-app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.json({ message: 'Server is running' });
+const compute = railway({
+  token: process.env.RAILWAY_API_TOKEN,
+  environmentId: process.env.RAILWAY_ENVIRONMENT_ID,
 });
 
-app.post('/api/sandbox', async (_req, res) => {
-  try {
-    // Create sandbox
-    const sandbox = await compute.sandbox.create();
-    console.log(`Sandbox created: ${sandbox.sandboxId}`);
+export async function POST() {
 
-    res.json({
-      sandboxId: sandbox.sandboxId,
-    });
-  } catch (error) {
-    console.error('Error creating sandbox:', error);
-    res.status(500).json({ error: 'Failed to create sandbox' });
-  }
-});
+  const sandbox = await compute.sandbox.create();
+
+  return NextResponse.json({
+    sandboxId: sandbox.sandboxId,
+  });
+}
 ```
 
-### Next, we'll edit the App.tsx file
+### Next, we'll edit the page.tsx file
 
 We'll keep it simple and just add one button to run our sandbox test with.\
-Paste this code into App.tsx
+Replace the content on Page.tsx with this code:
 
 ```typescript
-// src/page.tsx
-import './App.css';
+// app/page.tsx
+'use client';
 
-function App() {
+export default function Home() {
   const createSandbox = async () => {
     const res = await fetch('/api/sandbox', { method: 'POST' });
     const data = await res.json();
@@ -156,8 +117,8 @@ function App() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-12">
-      <h1 className="mb-8 text-4xl font-bold">Railway Sandbox Test</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center p-24">
+      <h1 className="mb-8 text-4xl font-bold">ComputeSDK Sandbox Test</h1>
       <button
         className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
         type="button"
@@ -168,239 +129,154 @@ function App() {
     </div>
   );
 }
-
-export default App;
 ```
 
 ### Now, our first test
-
+Run `npm run dev` in your terminal to start the dev server.\
+Open `localhost:3000`\
 Click the button on the main page.
 <!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="300px" src="/blog/railway/railway-test-sandbox-button.png" alt="screenshot of vite app button" title="sandbox test button" />
+<img style="margin: 12px auto; border-radius: 10px;" width="500px" src="/blog/railway/railway-test-sandbox-button.png" alt="screenshot of next.js app button" title="sandbox test button" />
 
-Now check your Railway dashboard. You should see a new service deployed in your project!
+Then check your Railway dashboard.\
+You should see a new sandbox created!
 
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="600px" src="/blog/railway/railway-deployed-service-screenshot.png" alt="screenshot of a sandbox deployed in Railway" title="deployed sandbox in Railway" />
-
-If you see something like this, you've done it!
+Success!
 
 ## You've successfully created your first Railway sandbox
 
-This is the same process no matter what provider you use, so you can use this app to create sandboxes in any provider.\
-If you want to use another sandbox provider like E2B or Modal, all you need to do is change your provider variables from `RAILWAY_API_KEY=xxxxx` to `E2B_API_KEY=xxxxx`. ComputeSDK automatically detects your sandbox provider from your environment variables.
+If you want to use another sandbox provider like E2B or Daytona, swap the import and factory call — install `@computesdk/e2b` and use `import { e2b } from '@computesdk/e2b'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`) stays the same — that's the point of the universal `Sandbox` interface.
 
 ## Making changes within the sandbox
 
-Now, let's take the next step and run a primitive Vite app inside of our sandbox as an example of what we are able to do within the sandbox itself.
+Now, let's take the next step and run a Vite dev server inside our sandbox — and since Railway doesn't support `getUrl()`, confirm it's actually running by curling it from inside the sandbox.
 
-### Configuring a local dev server and API proxy
+### Update /api/sandbox/route.ts
 
-Add the following to your `index.ts` file:
+Add the following to your `app/api/sandbox/route.ts` file directly below this in your code:
 
 ```typescript
-import express from 'express';
-import cors from 'cors';
-import WebSocket from 'ws';
-import { compute } from 'computesdk';
-import 'dotenv/config';
-
-const app = express();
-const PORT = 8081;
-
-app.use(cors());
-app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.json({ message: 'Server is running' });
-});
+const sandbox = await compute.sandbox.create();
 ```
 
-#### Update vite.config.ts
+#### Create a basic Vite app inside our sandbox subfolder
 
 ```typescript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
-
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8081',
-        changeOrigin: true,
-      },
-    },
-  },
-});
-```
-
-### Now we can send requests to the sandbox via ComputeSDK
-
-#### Let's create a basic Vite app inside our sandbox
-
-```typescript
-// Create basic Vite React app
+// Scaffold Vite React app
 await sandbox.runCommand('npm create vite@5 app -- --template react');
-```
-
-#### Use the writeFile method
-
-Customize the `vite.config.js` so we can access the local dev server.
-
-```typescript
-// Custom vite.config.js to allow access to sandbox at port 5173
-  const viteConfig = `import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    host: '0.0.0.0',
-    port: 5173,
-    strictPort: true,
-    hmr: false,
-    allowedHosts: ['.railway.app', 'localhost', '127.0.0.1', '.computesdk.com'],
-  },
-})
-`;
-  await sandbox.filesystem.writeFile('app/vite.config.js', viteConfig);
 ```
 
 #### Run npm install using the runCommand method
 
+`cwd` is an optional per-call override — if you don't pass one, commands run in whatever Railway's own sandbox default working directory is. We pass `cwd: 'app'` here simply because that's the subfolder we just scaffolded the Vite project into.
+
 ```typescript
   // Install dependencies
-  const installResult = await sandbox.runCommand('npm install', {
-    cwd: 'app'
-  });
+  await sandbox.runCommand('npm install', {
+    cwd: 'app',
+  })
 ```
 
 #### Start local dev server in the background with runCommand
 
 ```typescript
-  // Start dev server
-  sandbox.runCommand('npm run dev', {
-    cwd: 'app'
+  // Start dev server, binding to 0.0.0.0 so we can reach it from inside the sandbox
+  sandbox.runCommand('npm run dev -- --host 0.0.0.0 > vite.log 2>&1', {
+    cwd: 'app',
   });
 ```
 
-#### Use the getUrl method to output the secure preview URL via the ComputeSDK tunnel
+#### Confirm the dev server is running with a curl check
+
+Since Railway's `getUrl()` throws (no port exposure API), we verify the server is up by running a command inside the sandbox instead of returning a public preview URL.
 
 ```typescript
-  // Get preview URL
-  const url = await sandbox.getUrl({ port: 5173 });
-  console.log('previewUrl:', url)
+  // Give the dev server a moment to start, then check it from inside the sandbox
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  const healthCheck = await sandbox.runCommand(
+    'curl -s -o /dev/null -w "%{http_code}" http://localhost:5173',
+    { cwd: 'app' }
+  );
+  console.log('Vite dev server HTTP status:', healthCheck.stdout);
 ```
 
-#### Return the preview url along with the sandboxId
+#### Return the sandboxId and health check result
 
 ```typescript
-  res.json({
+  return NextResponse.json({
     sandboxId: sandbox.sandboxId,
-    url,
+    viteStatus: healthCheck.stdout,
   });
 ```
 
 #### Finished route.ts file
 
-Your `/src/index.ts` file should look like this now:
+Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
-app.post('/api/sandbox', async (_req, res) => {
-  try {
-    // Create sandbox
-    const sandbox = await compute.sandbox.create();
-    console.log(`Sandbox created: ${sandbox.sandboxId}`);
+import { NextResponse } from 'next/server';
+import { railway } from '@computesdk/railway';
 
-    // Get sandbox info
-    const info = await sandbox.getInfo();
-    console.log(`Sandbox status: ${info.status}`);
-
-    // Create basic Vite React app
-    await sandbox.runCommand('npm create vite@5 app -- --template react');
-
-    // Custom vite.config.js to allow access to sandbox at port 5173
-    const viteConfig = `import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    host: '0.0.0.0',
-    port: 5173,
-    strictPort: true,
-    hmr: false,
-    allowedHosts: ['.railway.app', 'localhost', '127.0.0.1', '.computesdk.com'],
-  },
-})
-`;
-    await sandbox.filesystem.writeFile('app/vite.config.js', viteConfig);
-
-    // Install dependencies
-    const installResult = await sandbox.runCommand('npm install', {
-      cwd: 'app'
-    });
-    console.log('npm install exit code:', installResult.exitCode);
-    console.log('npm install stdout:', installResult.stdout);
-    if (installResult.stderr)
-      console.log('npm install stderr:', installResult.stderr);
-
-    // Start dev server
-    sandbox.runCommand('npm run dev', {
-      cwd: 'app'
-    });
-    console.log('Dev server started in background');
-
-    // Get preview URL
-    const url = await sandbox.getUrl({ port: 5173 });
-    console.log('previewUrl:', url);
-
-    res.json({
-      sandboxId: sandbox.sandboxId,
-      url,
-    });
-  } catch (error) {
-    console.error('Error creating sandbox:', error);
-    res.status(500).json({ error: 'Failed to create sandbox' });
-  }
+const compute = railway({
+  token: process.env.RAILWAY_API_TOKEN,
+  environmentId: process.env.RAILWAY_ENVIRONMENT_ID,
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+export async function POST() {
+
+  const sandbox = await compute.sandbox.create();
+
+  // Create basic Vite React app
+  await sandbox.runCommand('npm create vite@5 app -- --template react');
+
+  // Install dependencies
+  await sandbox.runCommand('npm install', {
+    cwd: 'app',
+  })
+
+  // Start dev server, binding to 0.0.0.0 so we can reach it from inside the sandbox
+  sandbox.runCommand('npm run dev -- --host 0.0.0.0 > vite.log 2>&1', {
+    cwd: 'app',
+  });
+
+  // Give the dev server a moment to start, then check it from inside the sandbox
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  const healthCheck = await sandbox.runCommand(
+    'curl -s -o /dev/null -w "%{http_code}" http://localhost:5173',
+    { cwd: 'app' }
+  );
+  console.log('Vite dev server HTTP status:', healthCheck.stdout);
+
+  return NextResponse.json({
+    sandboxId: sandbox.sandboxId,
+    viteStatus: healthCheck.stdout,
+  });
+}
 ```
 
-## Testing Vite app inside sandbox
+## Testing it out
 
 Now, after you click the "Create Railway Sandbox" button on your localhost homepage you should:
 
-1. See a new service deployed in your Railway project.
-2. See a preview URL in your terminal output like this:\
-`unique-sandbox-id-5173.preview.computesdk.com`
-3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Railway sandbox!
+1. See a new sandbox created in your Railway dashboard.
+2. See `Vite dev server HTTP status: 200` logged to your terminal, and `viteStatus: "200"` in the JSON response — confirming the Vite dev server booted successfully inside the sandbox.
 
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/sandbox-vite-app-in-browser.png" alt="screenshot of Vite app running in Railway sandbox via ComputeSDK" title="Basic Vite App in Railway sandbox" />
+There's no live browser preview in this guide — Railway sandboxes don't currently expose ports or a public URL through ComputeSDK. If your use case needs a live preview, E2B, Daytona, CodeSandbox, Blaxel, Hopx, Runloop, or Modal are all better fits today.
 
 ## Congrats! You've successfully created your first sandbox application
 
 You have done the following:
 
 - created a Railway sandbox with ComputeSDK
-- used our runCommand, writeFile, and getUrl methods (these work with any provider)
-- ran a Vite app inside the sandbox
-- accessed the app running within the sandbox through our secure tunnel
+- used our runCommand and filesystem methods (these work with any provider that supports them)
+- ran a Vite dev server inside the sandbox and confirmed it booted successfully
+- confirmed what Railway sandboxes do and don't support today (no `getUrl`, `filesystem` works)
 
 ComputeSDK makes it easy to standardize this process across providers.\
-So now that you've written this code in Railway, you can easily adjust this code to run in any sandbox provider.
+So now that you've written this code for Railway, you can easily adjust this code to run in any sandbox provider — and if you need a live preview URL, swapping to a provider that supports it is a one-line import change.
 
 **Happy Sandboxing!**
 
-[Sign up with ComputeSDK](https://console.computesdk.com/register)
-
-Want to get sandboxes running in your application?\
+Have questions?\
 Want to be added as a provider?\
-Reach out to us at [email@computesdk.com](mailto:email@computesdk.com)
+Reach out to us at [support@computesdk.com](mailto:support@computesdk.com)

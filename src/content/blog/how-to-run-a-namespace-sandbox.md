@@ -1,6 +1,6 @@
 ---
 title: "How to run a Namespace sandbox"
-description: "A step-by-step process for creating a sandbox with Namespace, running a basic Vite app inside, and accessing it securely via the browser."
+description: "A step-by-step process for creating a sandbox with Namespace and running commands inside it."
 date: "2026-04-05"
 tags: [how-to, sandboxes, namespace]
 author: "Garrison Snelling"
@@ -10,7 +10,7 @@ featured: false
 ---
 
 Namespace is a cloud compute platform that provides ephemeral container instances. With granular resource configuration for vCPU, memory, architecture, and OS, Namespace gives you fine-grained control over your sandbox environments.
-Let's walk through the process of getting a basic application running inside a Namespace sandbox.
+Let's walk through the process of getting a basic sandbox running on Namespace.
 
 ## Why use Namespace as your sandbox provider?
 
@@ -18,7 +18,9 @@ Let's walk through the process of getting a basic application running inside a N
 - They offer fine-grained control over vCPU, memory, machine architecture, and operating system.
 - Namespace makes it easy to create isolated sandbox environments without managing infrastructure.
 
-**Let's see how we can easily run a basic Vite app inside of a Namespace sandbox.**
+> **A note before you start:** Namespace sandboxes don't currently support ComputeSDK's `filesystem` operations or `getUrl()` — both throw at runtime. This guide sticks to `runCommand`, which is fully supported, and shows off Namespace's resource-configuration options instead of the Vite-preview demo used in the other provider guides.
+
+**Let's see how we can create a Namespace sandbox and run commands inside it.**
 
 ## Let's start by creating a new Next.js project
 
@@ -34,15 +36,15 @@ You can use all of the defaults when prompted.
 Once it has been created, be sure to create an `.env` file to add your necessary credentials to.
 
 ```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-
 NSC_TOKEN=your_namespace_nsc_token
 ```
 
-### Install the ComputeSDK package
+### Install ComputeSDK and the Namespace provider
+
+ComputeSDK ships as a small core package plus one package per provider, so you only install what you use.
 
 ```bash
-npm install computesdk
+npm install computesdk @computesdk/namespace
 ```
 
 ## Create or log in to your Namespace account
@@ -57,31 +59,20 @@ Save your token in your `.env` file to the `NSC_TOKEN` variable.
 NSC_TOKEN=your_namespace_nsc_token
 ```
 
-## Create a ComputeSDK account
-<!-- markdownlint-disable-next-line MD033 -->
-Create an account at our <a href="https://console.computesdk.com/register" target="_blank">signup page</a>.\
-Once you have created your ComputeSDK account, you'll need to generate an API key.\
-Click "API Keys" in the left-hand navigation → "Create API Key"
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/compute-api-keys.png" alt="screenshot of ComputeSDK's API key management interface" title="ComputeSDK API keys page" />
-
-Save your API key in your `.env` file to the `COMPUTESDK_API_KEY` variable.
-
-```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-```
-
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-ComputeSDK makes this easy, just import the basic `computesdk` package.\
-ComputeSDK auto-detects your sandbox provider variables from your .env file
+Import the `namespace` factory from `@computesdk/namespace` and pass it your token. `compute.sandbox.create()` provisions a sandbox on Namespace.
 
 ```typescript
 // app/api/sandbox/route.ts
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { namespace } from '@computesdk/namespace';
+
+const compute = namespace({
+  token: process.env.NSC_TOKEN,
+});
 
 export async function POST() {
 
@@ -137,83 +128,38 @@ Success!
 
 ## You've successfully created your first Namespace sandbox
 
-If you want to use another sandbox provider like E2B or Railway, all you need to do is change your provider variable from `NSC_TOKEN=xxxxx` to `E2B_API_KEY=xxxxx`. ComputeSDK automatically detects your sandbox provider from your environment variables.
+If you want to use another sandbox provider like E2B or Daytona, swap the import and factory call — install `@computesdk/e2b` and use `import { e2b } from '@computesdk/e2b'` instead, with that provider's own credentials. The rest of your code (`runCommand`) stays the same — that's the point of the universal `Sandbox` interface.
 
-## Making changes within the sandbox
+## Customizing sandbox resources and running commands
 
-Now, let's take the next step and run a primitive Vite app inside of our sandbox as an example of what we are able to do within the sandbox itself.
+Namespace's standout feature is granular control over the machine backing your sandbox — vCPU, memory, architecture, and OS — so let's use that instead of the filesystem/preview-URL demo the other guides use.
 
 ### Update /api/sandbox/route.ts
 
-Add the following to your `route.ts` file directly below this in your code:
+Pass resource options directly to the `namespace()` factory:
 
 ```typescript
-const sandbox = await compute.sandbox.create();
+const compute = namespace({
+  token: process.env.NSC_TOKEN,
+  virtualCpu: 4,
+  memoryMegabytes: 8192,
+});
 ```
 
-#### Create a basic Vite app inside our sandbox subfolder
+#### Run a command with runCommand
+
+`filesystem` and `getUrl` both throw for Namespace sandboxes today, but `runCommand` is fully supported — you can install packages, run scripts, and inspect output just like any other provider.
 
 ```typescript
-// Scaffold Vite React app
-await sandbox.runCommand('npm create vite@5 app -- --template react');
+const result = await sandbox.runCommand('node -v && npm -v');
+console.log(result.stdout);
 ```
 
-#### Use the writeFile method
-
-Customize the `vite.config.js` so we can access the local dev server.
+#### Check sandbox status with getInfo
 
 ```typescript
-// Custom vite.config.js to allow access to sandbox at port 5173
-  const viteConfig = `import { defineConfig } from 'vite'
-  import react from '@vitejs/plugin-react'
-
-  export default defineConfig({
-    plugins: [react()],
-    server: {
-      host: '0.0.0.0',
-      port: 5173,
-      strictPort: true,
-      hmr: false,
-      allowedHosts: ['.namespace.so', 'localhost', '127.0.0.1', '.computesdk.com'],
-    },
-  })
-  `;
-  await sandbox.filesystem.writeFile('app/vite.config.js', viteConfig);
-```
-
-#### Run npm install using the runCommand method
-
-```typescript
-  // Install dependencies
-  await sandbox.runCommand('npm install', {
-    cwd: 'app',
-  })
-```
-
-#### Start local dev server in the background with runCommand
-
-```typescript
-  // Start dev server
-  sandbox.runCommand('npm run dev', {
-    cwd: 'app',
-  });
-```
-
-#### Use the getUrl method to output the secure preview URL via the ComputeSDK tunnel
-
-```typescript
-  // Get preview URL
-  const url = await sandbox.getUrl({ port: 5173 });
-  console.log('previewUrl:', url)
-```
-
-#### Return the preview url along with the sandboxId
-
-```typescript
-  return NextResponse.json({
-    sandboxId: sandbox.sandboxId,
-    url,
-  });
+const info = await sandbox.getInfo();
+console.log(`Sandbox status: ${info.status}`);
 ```
 
 #### Finished route.ts file
@@ -222,82 +168,54 @@ Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { namespace } from '@computesdk/namespace';
+
+const compute = namespace({
+  token: process.env.NSC_TOKEN,
+  virtualCpu: 4,
+  memoryMegabytes: 8192,
+});
 
 export async function POST() {
 
   const sandbox = await compute.sandbox.create();
 
-  // Create basic Vite React app
-  await sandbox.runCommand('npm create vite@5 app -- --template react');
+  const result = await sandbox.runCommand('node -v && npm -v');
+  console.log(result.stdout);
 
-  // Custom vite.config.js to allow access to sandbox at port 5173
-  const viteConfig = `import { defineConfig } from 'vite'
-  import react from '@vitejs/plugin-react'
-
-  export default defineConfig({
-    plugins: [react()],
-    server: {
-      host: '0.0.0.0',
-      port: 5173,
-      strictPort: true,
-      hmr: false,
-      allowedHosts: ['.namespace.so', 'localhost', '127.0.0.1', '.computesdk.com'],
-    },
-  })
-  `;
-  await sandbox.filesystem.writeFile('app/vite.config.js', viteConfig);
-
-  // Install dependencies
-  await sandbox.runCommand('npm install', {
-    cwd: 'app',
-  })
-
-  // Start dev server
-  sandbox.runCommand('npm run dev', {
-    cwd: 'app',
-  });
-
-  // Get preview URL
-  const url = await sandbox.getUrl({ port: 5173 });
-  console.log('previewUrl:', url)
+  const info = await sandbox.getInfo();
+  console.log(`Sandbox status: ${info.status}`);
 
   return NextResponse.json({
     sandboxId: sandbox.sandboxId,
-    url,
+    status: info.status,
+    output: result.stdout,
   });
 }
 ```
 
-## Testing Vite app inside sandbox
+## Testing it out
 
 Now, after you click the "Create Namespace Sandbox" button on your localhost homepage you should:
 
-1. See a new sandbox created in your Namespace dashboard.
-2. See a preview URL in your terminal output like this:\
-`unique-sandbox-id-5173.preview.computesdk.com`
-3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Namespace sandbox!
+1. See a new sandbox created in your Namespace dashboard, sized to the vCPU/memory you configured.
+2. See the command output (Node and npm versions) and sandbox status logged to your terminal and returned from the API route.
 
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/sandbox-vite-app-in-browser.png" alt="screenshot of Vite app running in Namespace sandbox via ComputeSDK" title="Basic Vite App in Namespace sandbox" />
+There's no live browser preview in this guide — Namespace sandboxes don't currently expose ports or a public URL through ComputeSDK. If your use case needs a live preview, one of the other provider guides (E2B, Daytona, CodeSandbox, etc.) is a better fit today.
 
 ## Congrats! You've successfully created your first sandbox application
 
 You have done the following:
 
-- created a Namespace sandbox with ComputeSDK
-- used our runCommand, writeFile, and getUrl methods (these work with any provider)
-- ran a Vite app inside the sandbox
-- accessed the app running within the sandbox through our secure tunnel
+- created a Namespace sandbox with ComputeSDK, with custom vCPU/memory
+- used our runCommand and getInfo methods
+- confirmed what Namespace sandboxes do and don't support today (no filesystem, no getUrl)
 
 ComputeSDK makes it easy to standardize this process across providers.\
-So now that you've written this code in Namespace, you can easily adjust this code to run in any sandbox provider.
+So now that you've written this code for Namespace, you can easily adjust this code to run in any sandbox provider — and if you need filesystem access or a live preview URL, swapping to a provider that supports them is a one-line import change.
 
 **Happy Sandboxing!**
 
-<!-- markdownlint-disable-next-line MD033 -->
-<a href="https://console.computesdk.com/register" target="_blank" style="display: inline-block; padding: 6px 12px; background-color: #10b981; color: white; font-weight: bold; border-radius: 8px; text-decoration: none;">Sign up with ComputeSDK</a>
-
-Want to get sandboxes running in your application?\
+Have questions?\
 Want to be added as a provider?\
-Reach out to us at [email@computesdk.com](mailto:email@computesdk.com)
+Reach out to us at [support@computesdk.com](mailto:support@computesdk.com)

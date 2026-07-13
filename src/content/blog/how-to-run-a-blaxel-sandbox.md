@@ -1,7 +1,7 @@
 ---
 title: "How to run a Blaxel sandbox"
 description: "A step-by-step process for creating a sandbox with Blaxel, running a basic Vite app inside, and accessing it securely via the browser."
-date: "2026-04-05"
+date: "2026-07-12"
 tags: [how-to, sandboxes, blaxel]
 author: "Garrison Snelling"
 role: "Founder, ComputeSDK"
@@ -34,17 +34,17 @@ You can use all of the defaults when prompted.
 Once it has been created, be sure to create an `.env` file to add your necessary credentials to.
 
 ```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-
 BL_API_KEY=your_blaxel_api_key
 BL_WORKSPACE=your_blaxel_workspace
 ```
 
-### Install the ComputeSDK package
+### Install ComputeSDK and the Blaxel provider
+
+ComputeSDK ships as a small core package plus one package per provider, so you only install what you use.
 
 ```bash
 cd blaxel-basic
-npm install computesdk
+npm install computesdk @computesdk/blaxel
 ```
 
 ## Create or log in to your Blaxel account
@@ -62,32 +62,22 @@ BL_API_KEY=your_blaxel_api_key
 BL_WORKSPACE=your_blaxel_workspace
 ```
 
-## Create a ComputeSDK account
-<!-- markdownlint-disable-next-line MD033 -->
-Create an account at our <a href="https://console.computesdk.com/register" target="_blank">signup page</a>.\
-Once you have created your ComputeSDK account, you'll need to generate an API key.\
-Click "API Keys" in the left-hand navigation → "Create API Key"
-<!-- markdownlint-disable-next-line MD033 -->
-<img style="margin: 12px auto; border-radius: 10px;" width="700px" src="/compute-api-keys.png" alt="screenshot of ComputeSDK's API key management interface" title="ComputeSDK API keys page" />
-
-Save your API key in your `.env` file to the `COMPUTESDK_API_KEY` variable.
-
-```bash
-COMPUTESDK_API_KEY=your_computesdk_api_key
-```
-
 ## Now we'll move on to creating the actual sandbox logic
 
 ### We need to create the API route to create the sandbox
 
-ComputeSDK makes this easy, just import the basic `computesdk` package.\
-ComputeSDK auto-detects your sandbox provider variables from your .env file\
+Import the `blaxel` factory from `@computesdk/blaxel` and pass it your credentials. `compute.sandbox.create()` provisions a sandbox on Blaxel.\
 Create a new `route.ts` file in `app/api/sandbox` and paste the following code:
 
 ```typescript
 // app/api/sandbox/route.ts
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { blaxel } from '@computesdk/blaxel';
+
+const compute = blaxel({
+  apiKey: process.env.BL_API_KEY,
+  workspace: process.env.BL_WORKSPACE,
+});
 
 export async function POST() {
 
@@ -147,7 +137,7 @@ Success!
 
 ## You've successfully created your first Blaxel sandbox
 
-If you want to use another sandbox provider like Modal or Daytona, all you need to do is change your provider variables from `BL_API_KEY=xxxxx` and `BL_WORKSPACE=xxxxx` to `MODAL_TOKEN_ID=xxxxx` and `MODAL_TOKEN_SECRET=xxxxx`. ComputeSDK automatically detects your sandbox provider from your environment variables.
+If you want to use another sandbox provider like Modal or Daytona, swap the import and factory call — install `@computesdk/modal` and use `import { modal } from '@computesdk/modal'` instead, with that provider's own credentials. The rest of your code (`runCommand`, `filesystem`, `getUrl`) stays the same — that's the point of the universal `Sandbox` interface.
 
 ## Making changes within the sandbox
 
@@ -184,7 +174,7 @@ Customize the `vite.config.js` so we can access the local dev server.
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.blaxel.ai', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.bl.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -192,6 +182,8 @@ Customize the `vite.config.js` so we can access the local dev server.
 ```
 
 #### Run npm install using the runCommand method
+
+`cwd` is an optional per-call override — if you don't pass one, commands run in whatever Blaxel's own sandbox default working directory is. We pass `cwd: 'app'` here simply because that's the subfolder we just scaffolded the Vite project into.
 
 ```typescript
   // Install dependencies
@@ -209,13 +201,15 @@ Customize the `vite.config.js` so we can access the local dev server.
   });
 ```
 
-#### Use the getUrl method to output the secure preview URL via the ComputeSDK tunnel
+#### Use the getUrl method to get a preview URL
 
 ```typescript
   // Get preview URL
   const url = await sandbox.getUrl({ port: 5173 });
   console.log('previewUrl:', url)
 ```
+
+Blaxel resolves this through its own preview infrastructure, typically a `<sandbox>.preview.bl.run`-style domain — not a shared ComputeSDK domain.
 
 #### Return the preview url along with the sandboxId
 
@@ -232,7 +226,12 @@ Your `/app/api/sandbox/route.ts` file should look like this now:
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { compute } from 'computesdk';
+import { blaxel } from '@computesdk/blaxel';
+
+const compute = blaxel({
+  apiKey: process.env.BL_API_KEY,
+  workspace: process.env.BL_WORKSPACE,
+});
 
 export async function POST() {
 
@@ -252,7 +251,7 @@ export async function POST() {
       port: 5173,
       strictPort: true,
       hmr: false,
-      allowedHosts: ['.blaxel.ai', 'localhost', '127.0.0.1', '.computesdk.com'],
+      allowedHosts: ['.bl.run', 'localhost', '127.0.0.1'],
     },
   })
   `;
@@ -284,8 +283,7 @@ export async function POST() {
 Now, after you click the "Create Blaxel Sandbox" button on your localhost homepage you should:
 
 1. See a new sandbox created in your Blaxel dashboard.
-2. See a preview URL in your terminal output like this:\
-`unique-sandbox-id-5173.sandbox.edge.computesdk.com`
+2. See a preview URL logged to your terminal — typically a `<sandbox>.preview.bl.run`-style domain provided by Blaxel itself, not a shared ComputeSDK domain.
 3. Finally, if you visit that URL you should see the boilerplate Vite React app running in your Blaxel sandbox!
 
 <!-- markdownlint-disable-next-line MD033 -->
@@ -298,16 +296,13 @@ You have done the following:
 - created a Blaxel sandbox with ComputeSDK
 - used our runCommand, writeFile, and getUrl methods (these work with any provider)
 - ran a Vite app inside the sandbox
-- accessed the app running within the sandbox through our secure tunnel
+- accessed the app running within the sandbox through its preview URL
 
 ComputeSDK makes it easy to standardize this process across providers.\
 So now that you've written this code in Blaxel, you can easily adjust this code to run in any sandbox provider.
 
 **Happy Sandboxing!**
 
-<!-- markdownlint-disable-next-line MD033 -->
-<a href="https://console.computesdk.com/register" target="_blank" style="display: inline-block; padding: 6px 12px; background-color: #10b981; color: white; font-weight: bold; border-radius: 8px; text-decoration: none;">Sign up with ComputeSDK</a>
-
-Want to get sandboxes running in your application?\
+Have questions?\
 Want to be added as a provider?\
-Reach out to us at [email@computesdk.com](mailto:email@computesdk.com)
+Reach out to us at [support@computesdk.com](mailto:support@computesdk.com)
