@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/daytona-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Daytona is an AI-native sandbox infrastructure platform for running and testing AI-generated code. It provisions secure, isolated sandboxes in ~200ms, making it one of the fastest providers available.
 Let's walk through the process of getting a basic application running inside a Daytona sandbox.
 

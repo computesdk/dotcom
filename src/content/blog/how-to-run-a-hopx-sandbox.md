@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/hopx-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Hopx is a cloud platform providing secure, isolated Linux micro-VM sandboxes. It enables AI coding agents and developers to safely execute untrusted code, run tests, and build applications with millisecond startup times.
 Let's walk through the process of getting a basic application running inside a Hopx sandbox.
 

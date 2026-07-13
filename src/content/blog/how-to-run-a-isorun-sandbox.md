@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/isorun-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Isorun provides isolated Linux VM sandboxes for running untrusted and AI-generated code, billed by the second.
 Let's walk through the process of getting a basic application running inside a Isorun sandbox.
 

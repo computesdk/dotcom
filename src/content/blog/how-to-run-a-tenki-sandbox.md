@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/tenki-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Tenki Cloud provides microVM sandboxes with a native filesystem, preview URLs, snapshots, and SSH.
 Let's walk through the process of getting a basic application running inside a Tenki sandbox.
 

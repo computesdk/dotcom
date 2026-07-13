@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/runloop-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Runloop is a cloud platform for running secure, isolated development environments. It provides instant devboxes with full Linux environments, enabling AI coding agents and developers to execute code, run tests, and build applications in sandboxed containers.
 Let's walk through the process of getting a basic application running inside a Runloop sandbox.
 

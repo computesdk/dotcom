@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/codesandbox-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 CodeSandbox is a cloud development platform that enables instant, collaborative coding environments. It provides sandboxed environments for web development with support for modern frameworks, allowing teams to prototype, share, and iterate on code directly in the browser.
 Let's walk through the process of getting a basic application running inside a CodeSandbox sandbox.
 

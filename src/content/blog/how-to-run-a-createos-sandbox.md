@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/createos-sandbox-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 CreateOS provides NodeOps VM sandboxes with pause, resume, and fork snapshots, wrapping the official @nodeops-createos/sandbox package.
 Let's walk through the process of getting a basic application running inside a CreateOS sandbox.
 

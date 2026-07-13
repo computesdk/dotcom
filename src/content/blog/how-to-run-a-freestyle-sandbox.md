@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/freestyle-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Freestyle is a cloud platform for running AI-generated code in isolated sandboxes.
 Let's walk through the process of getting a basic application running inside a Freestyle sandbox.
 

@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/archil-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Archil is exec-only — instead of provisioning a new long-running VM, `create()` resolves a handle to an existing Archil disk, and each command you run executes in a fresh, Archil-managed container with that disk attached.
 Let's walk through the process of attaching a sandbox to an Archil disk and running commands against it.
 

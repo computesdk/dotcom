@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/cloud-run-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Google Cloud Run is GCP's serverless container platform. The ComputeSDK Cloud Run provider runs isolated commands and filesystem operations inside Cloud Run, in one of two modes: **remote mode**, connecting to a deployed gateway service, or **direct mode**, driving the in-container sandbox CLI from inside a Cloud Run service deployed with `--sandbox-launcher`.
 Let's walk through the process of creating a Cloud Run sandbox using remote mode, the more approachable path if you don't already have a `--sandbox-launcher` service deployed.
 

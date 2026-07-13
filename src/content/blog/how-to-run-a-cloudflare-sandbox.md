@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/cloudflare-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Cloudflare's Sandbox lets you execute code in secure, isolated containers on Cloudflare's edge network. The ComputeSDK Cloudflare provider connects to Cloudflare's official Sandbox bridge Worker, which you deploy once and reuse across your apps.
 Let's walk through the process of getting a basic application running inside a Cloudflare sandbox.
 

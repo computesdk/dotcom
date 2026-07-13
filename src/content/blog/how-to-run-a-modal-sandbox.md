@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/modal-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Modal is a serverless cloud platform for running compute-intensive code. It provides instant container spin-up with GPU support, enabling developers to run ML inference, data processing, and batch jobs without managing infrastructure.
 Let's walk through the process of getting a basic application running inside a Modal sandbox.
 

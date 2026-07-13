@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/agentcore-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 AWS Bedrock AgentCore Code Interpreter provides secure, fully-managed, session-based sandboxes for running code and shell commands, with no infrastructure to provision. A ComputeSDK sandbox maps onto an AgentCore Code Interpreter session.
 Let's walk through the process of creating an AgentCore sandbox and running code inside it.
 

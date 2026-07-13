@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/superserve-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Superserve provides sandbox infrastructure to run code in isolated cloud environments powered by Firecracker microVMs.
 Let's walk through the process of creating a Superserve sandbox and running a Vite dev server inside it.
 

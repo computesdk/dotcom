@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/namespace-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Namespace is a cloud compute platform that provides ephemeral container instances. With granular resource configuration for vCPU, memory, architecture, and OS, Namespace gives you fine-grained control over your sandbox environments.
 Let's walk through the process of getting a basic sandbox running on Namespace.
 

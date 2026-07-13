@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/northflank-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Northflank is a cloud platform for deploying and running applications and infrastructure. With ComputeSDK, each sandbox is a real Northflank deployment service in your own project — commands run through Northflank's exec API, and exposed ports get a public URL on Northflank's own DNS.
 Let's walk through the process of getting a basic application running inside a Northflank sandbox.
 

@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/declaw-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Declaw runs Firecracker microVMs with a built-in security stack: PII scanning, prompt-injection defense, a TLS-intercepting egress proxy, and per-sandbox network policies.
 Let's walk through the process of getting a basic application running inside a Declaw sandbox.
 

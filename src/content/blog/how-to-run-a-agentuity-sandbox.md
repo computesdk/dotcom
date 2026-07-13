@@ -9,6 +9,8 @@ image: "/david-tice-sq.jpeg"
 featured: false
 ---
 
+<span style="font-size: 14px; font-style: italic;">You can clone <a href="https://github.com/computesdk/examples/tree/main/agentuity-basic" target="_blank">this repo</a> and update your credentials to run locally.</span>
+
 Agentuity is a cloud platform for building and running AI agents, with sandboxes for executing code safely.
 Let's walk through the process of getting a basic application running inside a Agentuity sandbox.
 
