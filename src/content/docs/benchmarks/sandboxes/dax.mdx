@@ -1,0 +1,26 @@
+---
+title: Sandbox Dax Benchmark
+description: Real-world workload benchmark for sandbox providers — cold clone, install, and typecheck of the opencode repository.
+template: splash
+head:
+  - tag: link
+    attrs:
+      rel: canonical
+      href: https://www.computesdk.com/benchmarks/sandboxes/dax/
+---
+
+import PageLayout from '../../../../components/layouts/PageLayout.astro';
+import SandboxDaxPage from '../../../../components/SandboxDaxPage.astro';
+
+<PageLayout>
+  <SandboxDaxPage />
+</PageLayout>
+
+<style>{`
+  .nova-page-frame-header {
+    position: relative !important;
+  }
+  .main-frame {
+    padding-top: 0 !important;
+  }
+`}</style>

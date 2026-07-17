@@ -114,7 +114,16 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
       {/* Test type dropdown + metric selector */}
       <div className={`${isStuck ? "fixed top-0 left-0 right-0 z-50" : ""} bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700/50`}>
         <div className="md:max-w-7xl md:mx-auto py-3 px-4 md:px-6 flex items-center gap-3">
-          <Select value={selectedTest} onValueChange={(value) => handleTestTypeChange(value as TestType)}>
+          <Select
+            value={selectedTest}
+            onValueChange={(value) => {
+              if (value === "dax") {
+                window.location.href = "/benchmarks/sandboxes/dax"
+                return
+              }
+              handleTestTypeChange(value as TestType)
+            }}
+          >
             <SelectTrigger className="w-[150px] h-9 rounded-lg text-sm font-medium text-gray-900 dark:text-white border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <SelectValue />
             </SelectTrigger>
@@ -124,6 +133,9 @@ export function BenchmarkDashboard({ datasets, providerLogos, providerLogosDark 
                   {TEST_TYPE_LABELS[testType].label}
                 </SelectItem>
               ))}
+              <SelectItem key="dax" value="dax" className="text-sm">
+                Dax
+              </SelectItem>
             </SelectContent>
           </Select>
           {/* Metric: dropdown on mobile, tabs on sm+ */}

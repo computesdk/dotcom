@@ -272,6 +272,61 @@ export const SNAPSHOT_FORK_PROVIDER_COLORS: Record<string, string> = {
   "vercel-blob": "#71717a",
 }
 
+export interface DaxResult {
+  provider: string
+  mode?: string
+  summary: {
+    totalMs: { median: number; p95: number; p99: number }
+    prepareMs: { median: number; p95: number; p99: number }
+    bunDownloadMs: { median: number; p95: number; p99: number }
+    bunUnpackMs: { median: number; p95: number; p99: number }
+    cloneMs: { median: number; p95: number; p99: number }
+    installMs: { median: number; p95: number; p99: number }
+    typecheckMs: { median: number; p95: number; p99: number }
+  }
+  successRate?: number | null
+  skipped?: boolean
+  skipReason?: string
+  iterations?: Array<{
+    totalMs: number
+    phasesCompleted?: number
+    phasesTotal?: number
+    prepareMs?: number
+    bunDownloadMs?: number
+    bunUnpackMs?: number
+    cloneMs?: number
+    installMs?: number
+    typecheckMs?: number
+    error?: string
+  }>
+  // Computed client-side from `iterations` (see fetchLatestDaxResults) since the
+  // upstream data has no single compositeScore field for this benchmark.
+  phasesCompleted?: number
+  phasesTotal?: number
+}
+
+export interface DaxHistoryPoint {
+  date: string
+  dateTs?: number
+  [key: string]: number | string | undefined
+}
+
+export type DaxMetric = "compositeScore" | "totalMs" | "prepareMs" | "cloneMs" | "installMs" | "typecheckMs"
+
+export const DAX_METRIC_LABELS: Record<DaxMetric, string> = {
+  compositeScore: "Phases Completed",
+  totalMs: "Total Duration",
+  prepareMs: "Prepare",
+  cloneMs: "Clone",
+  installMs: "Install",
+  typecheckMs: "Typecheck",
+}
+
+// The dax benchmark script always runs the same 7 phases (prepare, cache_clear,
+// bun_download, bun_unpack, clone, install, typecheck); used as a fallback when
+// a result's iterations didn't report phasesTotal (e.g. the sandbox never booted).
+export const DAX_PHASES_TOTAL = 7
+
 // Some sandbox providers publish results under a "-sandbox" suffixed slug
 // (e.g. "createos-sandbox") while the site keys logos/colors/names/URLs on the
 // bare name. Strip the suffix so everything lines up now and keeps working once
