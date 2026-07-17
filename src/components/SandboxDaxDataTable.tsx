@@ -80,6 +80,26 @@ export function SandboxDaxDataTable({ activeResults }: SandboxDaxDataTableProps)
         size: 100,
       },
       {
+        id: "bunDownloadMs",
+        accessorFn: (r) => r.summary.bunDownloadMs.median,
+        header: "Bun DL",
+        cell: ({ getValue }) => {
+          const v = getValue() as number
+          return <span className={`font-mono text-xs ${v > 0 ? "" : "text-gray-400 dark:text-gray-500"}`}>{v > 0 ? `${(v / 1000).toFixed(2)}s` : "—"}</span>
+        },
+        size: 90,
+      },
+      {
+        id: "bunUnpackMs",
+        accessorFn: (r) => r.summary.bunUnpackMs.median,
+        header: "Bun Unpack",
+        cell: ({ getValue }) => {
+          const v = getValue() as number
+          return <span className={`font-mono text-xs ${v > 0 ? "" : "text-gray-400 dark:text-gray-500"}`}>{v > 0 ? `${(v / 1000).toFixed(2)}s` : "—"}</span>
+        },
+        size: 100,
+      },
+      {
         id: "cloneMs",
         accessorFn: (r) => r.summary.cloneMs.median,
         header: "Clone",

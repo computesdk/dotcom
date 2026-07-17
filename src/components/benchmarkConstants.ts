@@ -297,6 +297,24 @@ export interface DaxResult {
     cloneMs?: number
     installMs?: number
     typecheckMs?: number
+    // Disk usage (bytes, `du -sx`) captured after clone/install/typecheck —
+    // a proxy for disk I/O and repo/dependency footprint. Only present when
+    // that phase was reached, and can be a genuine 0 on providers whose
+    // filesystem doesn't report usable `du` output (e.g. some gVisor sandboxes).
+    diskAfterClone?: number
+    diskAfterInstall?: number
+    diskAfterTypecheck?: number
+    // Environment metadata (BENCH_META) — same across iterations for a given
+    // provider, captured so results can be interpreted in context (e.g. is a
+    // provider faster because of more CPUs, not faster disk/network).
+    commit?: string
+    bunVersion?: string
+    nodeVersion?: string
+    architecture?: string
+    kernel?: string
+    logicalCpus?: string
+    cpuModel?: string
+    memoryKib?: string
     error?: string
   }>
   // Computed client-side from `iterations` (see fetchLatestDaxResults) since the
@@ -311,12 +329,14 @@ export interface DaxHistoryPoint {
   [key: string]: number | string | undefined
 }
 
-export type DaxMetric = "compositeScore" | "totalMs" | "prepareMs" | "cloneMs" | "installMs" | "typecheckMs"
+export type DaxMetric = "compositeScore" | "totalMs" | "prepareMs" | "bunDownloadMs" | "bunUnpackMs" | "cloneMs" | "installMs" | "typecheckMs"
 
 export const DAX_METRIC_LABELS: Record<DaxMetric, string> = {
   compositeScore: "Phases Completed",
   totalMs: "Total Duration",
   prepareMs: "Prepare",
+  bunDownloadMs: "Bun Download",
+  bunUnpackMs: "Bun Unpack",
   cloneMs: "Clone",
   installMs: "Install",
   typecheckMs: "Typecheck",
@@ -326,6 +346,84 @@ export const DAX_METRIC_LABELS: Record<DaxMetric, string> = {
 // bun_download, bun_unpack, clone, install, typecheck); used as a fallback when
 // a result's iterations didn't report phasesTotal (e.g. the sandbox never booted).
 export const DAX_PHASES_TOTAL = 7
+
+export function getDaxMetricValue(r: DaxResult, metric: DaxMetric): number {
+  if (metric === "compositeScore") return r.phasesCompleted ?? 0
+  return r.summary[metric]?.median ?? 0
+}
+
+export function isDaxMetricHigherBetter(metric: DaxMetric): boolean {
+  return metric === "compositeScore"
+}
+
+// A duration is only meaningful if the run actually got there. `totalMs` is
+// always recorded (even on an immediate failure) so a near-zero total reads
+// as a great score when it's really a fast failure — it's only comparable
+// once every phase completed. The per-phase durations are 0 whenever that
+// phase was never reached (see sanitizedDaxSummary in utils/benchmark-data.ts),
+// so a >0 check is enough for those.
+export function daxMetricReached(r: DaxResult, metric: DaxMetric): boolean {
+  if (metric === "compositeScore") return true
+  if (metric === "totalMs") return (r.phasesCompleted ?? 0) >= (r.phasesTotal ?? DAX_PHASES_TOTAL)
+  return (r.summary[metric]?.median ?? 0) > 0
+}
+
+export function formatDaxMetricValue(value: number, metric: DaxMetric, phasesTotal = DAX_PHASES_TOTAL): string {
+  if (metric === "compositeScore") return `${Math.round(value)}/${phasesTotal}`
+  return `${(value / 1000).toFixed(2)}s`
+}
+
+// Labels for the 7 script phases in order (prepare, cache_clear, bun_download,
+// bun_unpack, clone, install, typecheck), used to render a "how far did it
+// get" progress indicator on the provider detail page.
+export const DAX_PHASE_SEGMENT_LABELS = ["Prepare", "Cache Clear", "Bun Download", "Bun Unpack", "Clone", "Install", "Typecheck"]
+
+export function formatDaxBytes(bytes: number): string {
+  if (bytes <= 0) return "—"
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+export interface DaxEnvironment {
+  cpuModel?: string
+  logicalCpus?: string
+  memoryKib?: string
+  architecture?: string
+  kernel?: string
+  bunVersion?: string
+  nodeVersion?: string
+  commit?: string
+}
+
+// Environment metadata is the same across a provider's iterations (it
+// describes the sandbox, not the run) — pick the first iteration that
+// reported it, since a failed iteration may not have gotten far enough to.
+export function getDaxEnvironment(iterations: DaxResult["iterations"]): DaxEnvironment | null {
+  const withMeta = (iterations ?? []).find((it) => it.cpuModel || it.architecture || it.kernel)
+  if (!withMeta) return null
+  return {
+    cpuModel: withMeta.cpuModel,
+    logicalCpus: withMeta.logicalCpus,
+    memoryKib: withMeta.memoryKib,
+    architecture: withMeta.architecture,
+    kernel: withMeta.kernel,
+    bunVersion: withMeta.bunVersion,
+    nodeVersion: withMeta.nodeVersion,
+    commit: withMeta.commit,
+  }
+}
+
+// Disk usage is only meaningful from a single iteration (bytes on disk at a
+// point in time, not something to average across runs) — use the most
+// recent iteration that actually reported disk numbers.
+export function getDaxDiskUsage(iterations: DaxResult["iterations"]): { afterClone?: number; afterInstall?: number; afterTypecheck?: number } | null {
+  const withDisk = [...(iterations ?? [])].reverse().find((it) => it.diskAfterClone != null || it.diskAfterInstall != null || it.diskAfterTypecheck != null)
+  if (!withDisk) return null
+  return {
+    afterClone: withDisk.diskAfterClone,
+    afterInstall: withDisk.diskAfterInstall,
+    afterTypecheck: withDisk.diskAfterTypecheck,
+  }
+}
 
 // Some sandbox providers publish results under a "-sandbox" suffixed slug
 // (e.g. "createos-sandbox") while the site keys logos/colors/names/URLs on the

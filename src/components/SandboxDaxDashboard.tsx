@@ -6,8 +6,6 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Cell,
-  LabelList,
   LineChart,
   Line,
   Legend,
@@ -16,6 +14,10 @@ import {
   PROVIDER_COLORS,
   DAX_METRIC_LABELS,
   DAX_PHASES_TOTAL,
+  getDaxMetricValue,
+  isDaxMetricHigherBetter,
+  daxMetricReached,
+  formatDaxMetricValue,
   capitalize,
   type DaxMetric,
   type DaxResult,
@@ -48,27 +50,25 @@ interface SandboxDaxDashboardProps {
   data: SandboxDaxData
   providerLogos: Record<string, string>
   providerLogosDark: Record<string, string>
-  currentBenchmark: "tti" | "dax"
+  currentBenchmark: "burst_tti" | "dax"
 }
 
-const METRICS: DaxMetric[] = ["compositeScore", "totalMs", "prepareMs", "cloneMs", "installMs", "typecheckMs"]
+const METRICS: DaxMetric[] = ["compositeScore", "totalMs", "prepareMs", "bunDownloadMs", "bunUnpackMs", "cloneMs", "installMs", "typecheckMs"]
 
 const METRIC_DESCRIPTIONS: Record<DaxMetric, string> = {
-  compositeScore: "Median number of the 7 benchmark phases (prepare, cache clear, bun download/unpack, clone, install, typecheck) completed before failing, if any. Higher is better.",
+  compositeScore: "Median number of the 7 benchmark phases (prepare, cache clear, bun download/unpack, clone, install, typecheck) completed before failing, if any.",
   totalMs: "Median end-to-end time for the full clone + install + typecheck cycle. Lower is better.",
   prepareMs: "Median time to install system packages and Node.js inside the sandbox. Lower is better.",
+  bunDownloadMs: "Median time to download the Bun runtime — a proxy for network throughput. Lower is better.",
+  bunUnpackMs: "Median time to unpack the downloaded Bun runtime — a proxy for disk write speed. Lower is better.",
   cloneMs: "Median time for a shallow git clone of the opencode repository. Lower is better.",
   installMs: "Median time for `bun install`. Lower is better.",
   typecheckMs: "Median time for `bun typecheck`. Lower is better.",
 }
 
-function isHigherBetter(metric: DaxMetric): boolean {
-  return metric === "compositeScore"
-}
-
 type DaxSummaryMetric = Exclude<DaxMetric, "compositeScore">
 
-const PHASES: DaxSummaryMetric[] = ["prepareMs", "cloneMs", "installMs", "typecheckMs"]
+const PHASES: DaxSummaryMetric[] = ["prepareMs", "bunDownloadMs", "bunUnpackMs", "cloneMs", "installMs", "typecheckMs"]
 
 const TIME_RANGES: { value: TimeRange; label: string }[] = [
   { value: "30", label: "30d" },
@@ -77,36 +77,14 @@ const TIME_RANGES: { value: TimeRange; label: string }[] = [
   { value: "all", label: "All" },
 ]
 
-const SANDBOX_BENCHMARK_LABELS: Record<"tti" | "dax", string> = {
-  tti: "Sandbox TTI",
+const SANDBOX_BENCHMARK_LABELS: Record<"burst_tti" | "dax", string> = {
+  burst_tti: "Burst TTI",
   dax: "Dax",
 }
 
-const SANDBOX_BENCHMARK_URLS: Record<"tti" | "dax", string> = {
-  tti: "/benchmarks/sandboxes",
+const SANDBOX_BENCHMARK_URLS: Record<"burst_tti" | "dax", string> = {
+  burst_tti: "/benchmarks/sandboxes",
   dax: "/benchmarks/sandboxes/dax",
-}
-
-function getMetricValue(r: DaxResult, metric: DaxMetric): number {
-  if (metric === "compositeScore") return r.phasesCompleted ?? 0
-  return r.summary[metric]?.median ?? 0
-}
-
-// A duration is only meaningful if the run actually got there. `totalMs` is
-// always recorded (even on an immediate failure) so a near-zero total reads
-// as a great score when it's really a fast failure — it's only comparable
-// once every phase completed. The per-phase durations are 0 whenever that
-// phase was never reached (see sanitizedDaxSummary), so a >0 check is enough
-// for those.
-function daxMetricReached(r: DaxResult, metric: DaxMetric): boolean {
-  if (metric === "compositeScore") return true
-  if (metric === "totalMs") return (r.phasesCompleted ?? 0) >= (r.phasesTotal ?? DAX_PHASES_TOTAL)
-  return (r.summary[metric]?.median ?? 0) > 0
-}
-
-function formatDaxValue(value: number, metric: DaxMetric, phasesTotal = DAX_PHASES_TOTAL): string {
-  if (metric === "compositeScore") return `${Math.round(value)}/${phasesTotal}`
-  return `${(value / 1000).toFixed(2)}s`
 }
 
 function useIsMobile(breakpoint = 640) {
@@ -152,51 +130,10 @@ export function SandboxDaxDashboard({
     })
   }
 
-  const visibleResults = useMemo(
-    () => data.active.filter((r) => !hiddenProviders.has(r.provider)),
-    [data.active, hiddenProviders]
-  )
-
   const providers = useMemo(() => data.active.map((r) => r.provider), [data.active])
 
-  const isHigher = isHigherBetter(selectedMetric)
+  const isHigher = isDaxMetricHigherBetter(selectedMetric)
   const isComposite = selectedMetric === "compositeScore"
-
-  const chartData = useMemo(() => {
-    const rows = visibleResults.map((r) => ({
-      provider: r.provider,
-      displayName: capitalize(r.provider),
-      value: getMetricValue(r, selectedMetric),
-      reached: daxMetricReached(r, selectedMetric),
-      compositeScore: r.phasesCompleted ?? 0,
-      phasesTotal: r.phasesTotal ?? DAX_PHASES_TOTAL,
-      successRate: r.successRate ?? 0,
-      totalMs: r.summary.totalMs.median,
-      prepareMs: r.summary.prepareMs.median,
-      cloneMs: r.summary.cloneMs.median,
-      installMs: r.summary.installMs.median,
-      typecheckMs: r.summary.typecheckMs.median,
-    }))
-    return rows.sort((a, b) => {
-      if (a.reached !== b.reached) return a.reached ? -1 : 1
-      if (!a.reached) return a.provider.localeCompare(b.provider)
-      return isHigher ? b.value - a.value : a.value - b.value
-    })
-  }, [visibleResults, selectedMetric, isHigher])
-
-  const barChartConfig = useMemo(() => {
-    const config: ChartConfig = { value: { label: DAX_METRIC_LABELS[selectedMetric] } }
-    for (const r of data.active) {
-      config[r.provider] = {
-        label: capitalize(r.provider),
-        color: PROVIDER_COLORS[r.provider] || "#6b7280",
-      }
-    }
-    return config
-  }, [data.active, selectedMetric])
-
-  const maxBarValue = useMemo(() => Math.max(...chartData.map((d) => d.value), 0), [chartData])
-  const barChartHeight = Math.max(200, chartData.length * 50 + 60)
 
   const lineChartConfig = useMemo(() => {
     const config: ChartConfig = {}
@@ -254,14 +191,14 @@ export function SandboxDaxDashboard({
           <Select
             value={currentBenchmark}
             onValueChange={(value) => {
-              window.location.href = SANDBOX_BENCHMARK_URLS[value as "tti" | "dax"]
+              window.location.href = SANDBOX_BENCHMARK_URLS[value as "burst_tti" | "dax"]
             }}
           >
             <SelectTrigger className="w-[150px] h-9 rounded-lg text-sm font-medium text-gray-900 dark:text-white border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {(["tti", "dax"] as const).map((type) => (
+              {(["burst_tti", "dax"] as const).map((type) => (
                 <SelectItem key={type} value={type} className="text-sm">
                   {SANDBOX_BENCHMARK_LABELS[type]}
                 </SelectItem>
@@ -318,7 +255,7 @@ export function SandboxDaxDashboard({
           </div>
           {(() => {
             const ranked = [...data.active]
-              .map((r) => ({ ...r, metricValue: getMetricValue(r, selectedMetric), reached: daxMetricReached(r, selectedMetric) }))
+              .map((r) => ({ ...r, metricValue: getDaxMetricValue(r, selectedMetric), reached: daxMetricReached(r, selectedMetric) }))
               .sort((a, b) => {
                 if (a.reached !== b.reached) return a.reached ? -1 : 1
                 if (!a.reached) return a.provider.localeCompare(b.provider)
@@ -329,9 +266,10 @@ export function SandboxDaxDashboard({
               const logoLight = providerLogos[result.provider]
               const logoDark = providerLogosDark[result.provider]
               return (
-                <div
+                <a
                   key={result.provider}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border ${
+                  href={`/benchmarks/sandboxes/dax/${result.provider}`}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors no-underline cursor-pointer ${
                     index === 0
                       ? "dark:bg-gray-700/50 border-gray-200 dark:border-gray-700/50 shadow-sm"
                       : "bg-white/50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-700/50"
@@ -358,13 +296,16 @@ export function SandboxDaxDashboard({
                   <div className="flex-1" />
                   <div className="shrink-0 flex flex-col items-end">
                     <span className={`font-mono text-sm font-semibold ${result.reached ? "text-gray-900 dark:text-white" : "text-gray-400 dark:text-gray-500"}`}>
-                      {result.reached ? formatDaxValue(result.metricValue, selectedMetric, result.phasesTotal) : "Failed"}
+                      {result.reached ? formatDaxMetricValue(result.metricValue, selectedMetric, result.phasesTotal) : "Failed"}
                     </span>
                     <span className="text-[10px] text-gray-500 dark:text-gray-400">
                       {result.reached ? DAX_METRIC_LABELS[selectedMetric] : `${result.phasesCompleted ?? 0}/${result.phasesTotal ?? DAX_PHASES_TOTAL} phases`}
                     </span>
                   </div>
-                </div>
+                  <svg className="size-4 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  </svg>
+                </a>
               )
             }
 
@@ -381,225 +322,6 @@ export function SandboxDaxDashboard({
       </div>
 
       <div className="md:max-w-7xl md:mx-auto px-4 md:px-6">
-
-        {/* Performance Over Time */}
-        <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
-              Performance Over Time
-            </h2>
-            <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
-              {TIME_RANGES.map(({ value, label }) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setTimeRange(value)}
-                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm text-gray-600 font-medium transition-all ${
-                    timeRange === value
-                      ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
-                      : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-          {filteredHistory.length > 0 ? (
-            <ChartContainer config={lineChartConfig} className="aspect-auto h-[300px] w-full min-h-[300px] min-w-0">
-              <LineChart data={filteredHistory} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tick={{ fontSize: 11 }} />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tick={{ fontSize: 11 }}
-                  domain={isComposite ? [0, DAX_PHASES_TOTAL] : undefined}
-                  tickFormatter={(v: number) => isComposite ? v.toFixed(0) : `${(v / 1000).toFixed(1)}s`}
-                />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      labelFormatter={(value) => value}
-                      formatter={(value, name) => {
-                        const numValue = value as number
-                        const provider = (name as string).replace(/_(?:compositeScore|totalMs|prepareMs|cloneMs|installMs|typecheckMs)$/, "")
-                        return (
-                          <div className="flex w-full items-center justify-between gap-4">
-                            <div className="flex items-center gap-1.5">
-                              <div
-                                className="h-2.5 w-2.5 shrink-0 rounded-[2px]"
-                                style={{ backgroundColor: PROVIDER_COLORS[provider] || "#6b7280" }}
-                              />
-                              <span className="text-gray-500 dark:text-gray-400">{capitalize(provider)}</span>
-                            </div>
-                            <span className="font-mono font-medium tabular-nums text-gray-900 dark:text-gray-50">
-                              {isComposite ? `${Math.round(numValue)}/${DAX_PHASES_TOTAL}` : `${(numValue / 1000).toFixed(2)}s`}
-                            </span>
-                          </div>
-                        )
-                      }}
-                    />
-                  }
-                />
-                <Legend
-                  content={(props: any) => {
-                    const { payload } = props
-                    if (!payload) return null
-                    return (
-                      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 pt-2">
-                        {payload.map((entry: any) => {
-                          const provider = (entry.dataKey as string).replace(/_(?:compositeScore|totalMs|prepareMs|cloneMs|installMs|typecheckMs)$/, "")
-                          const isHidden = hiddenProviders.has(provider)
-                          return (
-                            <button
-                              key={provider}
-                              type="button"
-                              onClick={() => toggleProvider(provider)}
-                              className={`inline-flex items-center gap-1.5 text-xs transition-opacity ${isHidden ? "opacity-30" : "opacity-100"} hover:opacity-70`}
-                            >
-                              <span className="inline-block h-2.5 w-2.5 rounded-[2px] shrink-0" style={{ backgroundColor: entry.color }} />
-                              <span className="text-gray-700 dark:text-gray-300">{capitalize(provider)}</span>
-                            </button>
-                          )
-                        })}
-                      </div>
-                    )
-                  }}
-                />
-                {providers.map((provider) => {
-                  const dataKey = `${provider}_${selectedMetric}`
-                  return (
-                    <Line
-                      key={dataKey}
-                      type="monotone"
-                      dataKey={dataKey}
-                      name={provider}
-                      stroke={`var(--color-${provider})`}
-                      strokeWidth={2}
-                      dot={{ r: 3, strokeWidth: 0, fill: `var(--color-${provider})` }}
-                      activeDot={{ r: 5, strokeWidth: 0 }}
-                      connectNulls
-                      hide={hiddenProviders.has(provider)}
-                    />
-                  )
-                })}
-              </LineChart>
-            </ChartContainer>
-          ) : (
-            <div className="h-[300px] min-h-[300px] w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 flex items-center justify-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400">No history data available yet.</p>
-            </div>
-          )}
-        </div>
-
-        {/* Bar chart */}
-        {chartData.length > 0 && (
-          <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
-            <h2 className="text-base text-md font-semibold text-gray-900 dark:text-white mb-1 text-left">
-              {DAX_METRIC_LABELS[selectedMetric]}
-            </h2>
-            <ChartContainer config={barChartConfig} className="aspect-auto w-full min-w-0" style={{ height: `${barChartHeight}px`, minHeight: `${barChartHeight}px` }}>
-              <BarChart
-                data={chartData}
-                layout="vertical"
-                margin={{ top: 5, right: isMobile ? 60 : 110, left: isMobile ? 0 : 20, bottom: 5 }}
-              >
-                <CartesianGrid horizontal={true} vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  type="number"
-                  domain={[0, isComposite ? DAX_PHASES_TOTAL : maxBarValue * 1.2]}
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tick={{ fontSize: 11 }}
-                  tickFormatter={(v: number) => isComposite ? v.toFixed(0) : `${(v / 1000).toFixed(1)}s`}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="displayName"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tick={{ fontSize: 11, fill: "currentColor" }}
-                  width={isMobile ? 70 : 90}
-                  className="text-gray-600 dark:text-gray-400"
-                />
-                <ChartTooltip
-                  cursor={{ fill: "var(--color-gray-100)", opacity: 0.1 }}
-                  content={
-                    <ChartTooltipContent
-                      hideLabel
-                      formatter={(value, name, props) => {
-                        const d = props.payload
-                        return (
-                          <div className="flex flex-col gap-2 w-[200px]">
-                            <div className="flex items-center gap-2 mb-1">
-                              <div className="h-2.5 w-2.5 shrink-0 rounded-[2px]" style={{ backgroundColor: PROVIDER_COLORS[d.provider] || "#6b7280" }} />
-                              <span className="font-semibold text-gray-900 dark:text-gray-50">{d.displayName}</span>
-                            </div>
-                            <div className="flex flex-col gap-1.5 text-xs">
-                              <div className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Phases</span>
-                                <span className="font-mono text-gray-600 dark:text-gray-300">{d.compositeScore as number}/{d.phasesTotal as number}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Total</span>
-                                <span className="font-mono text-gray-600 dark:text-gray-300">{((d.totalMs as number) / 1000).toFixed(2)}s</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Install</span>
-                                <span className="font-mono text-gray-600 dark:text-gray-300">{((d.installMs as number) / 1000).toFixed(2)}s</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Typecheck</span>
-                                <span className="font-mono text-gray-600 dark:text-gray-300">{((d.typecheckMs as number) / 1000).toFixed(2)}s</span>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      }}
-                    />
-                  }
-                />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
-                  <LabelList
-                    dataKey="value"
-                    position="right"
-                    offset={8}
-                    fill="currentColor"
-                    fontSize={11}
-                    fontWeight={600}
-                    className="fill-gray-700 dark:fill-gray-300"
-                    content={(props: any) => {
-                      const { x, y, width, height, index } = props
-                      const row = chartData[index]
-                      if (!row) return null
-                      const label = row.reached ? formatDaxValue(row.value, selectedMetric) : "Failed"
-                      return (
-                        <text
-                          x={x + width + 8}
-                          y={y + height / 2}
-                          dy={4}
-                          fontSize={11}
-                          fontWeight={600}
-                          textAnchor="start"
-                          className={row.reached ? "fill-gray-700 dark:fill-gray-300" : "fill-gray-400 dark:fill-gray-500"}
-                        >
-                          {label}
-                        </text>
-                      )
-                    }}
-                  />
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={PROVIDER_COLORS[entry.provider] || "#6b7280"} fillOpacity={entry.reached ? 1 : 0.3} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ChartContainer>
-          </div>
-        )}
 
         {/* Per-phase breakdown */}
         <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
@@ -686,6 +408,118 @@ export function SandboxDaxDashboard({
             Detailed Metrics
           </h2>
           <SandboxDaxDataTable activeResults={data.active} />
+        </div>
+
+        {/* Performance Over Time */}
+        <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
+              Performance Over Time
+            </h2>
+            <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+              {TIME_RANGES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setTimeRange(value)}
+                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm text-gray-600 font-medium transition-all ${
+                    timeRange === value
+                      ? "bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 shadow"
+                      : "hover:text-gray-950 bg-gray-100 dark:bg-gray-800 dark:hover:text-gray-50"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {filteredHistory.length > 0 ? (
+            <ChartContainer config={lineChartConfig} className="aspect-auto h-[300px] w-full min-h-[300px] min-w-0">
+              <LineChart data={filteredHistory} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tick={{ fontSize: 11 }} />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tick={{ fontSize: 11 }}
+                  domain={isComposite ? [0, DAX_PHASES_TOTAL] : undefined}
+                  tickFormatter={(v: number) => isComposite ? v.toFixed(0) : `${(v / 1000).toFixed(1)}s`}
+                />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(value) => value}
+                      formatter={(value, name) => {
+                        const numValue = value as number
+                        const provider = (name as string).replace(/_(?:compositeScore|totalMs|prepareMs|bunDownloadMs|bunUnpackMs|cloneMs|installMs|typecheckMs)$/, "")
+                        return (
+                          <div className="flex w-full items-center justify-between gap-4">
+                            <div className="flex items-center gap-1.5">
+                              <div
+                                className="h-2.5 w-2.5 shrink-0 rounded-[2px]"
+                                style={{ backgroundColor: PROVIDER_COLORS[provider] || "#6b7280" }}
+                              />
+                              <span className="text-gray-500 dark:text-gray-400">{capitalize(provider)}</span>
+                            </div>
+                            <span className="font-mono font-medium tabular-nums text-gray-900 dark:text-gray-50">
+                              {isComposite ? `${Math.round(numValue)}/${DAX_PHASES_TOTAL}` : `${(numValue / 1000).toFixed(2)}s`}
+                            </span>
+                          </div>
+                        )
+                      }}
+                    />
+                  }
+                />
+                <Legend
+                  content={(props: any) => {
+                    const { payload } = props
+                    if (!payload) return null
+                    return (
+                      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 pt-2">
+                        {payload.map((entry: any) => {
+                          const provider = (entry.dataKey as string).replace(/_(?:compositeScore|totalMs|prepareMs|bunDownloadMs|bunUnpackMs|cloneMs|installMs|typecheckMs)$/, "")
+                          const isHidden = hiddenProviders.has(provider)
+                          return (
+                            <button
+                              key={provider}
+                              type="button"
+                              onClick={() => toggleProvider(provider)}
+                              className={`inline-flex items-center gap-1.5 text-xs transition-opacity ${isHidden ? "opacity-30" : "opacity-100"} hover:opacity-70`}
+                            >
+                              <span className="inline-block h-2.5 w-2.5 rounded-[2px] shrink-0" style={{ backgroundColor: entry.color }} />
+                              <span className="text-gray-700 dark:text-gray-300">{capitalize(provider)}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    )
+                  }}
+                />
+                {providers.map((provider) => {
+                  const dataKey = `${provider}_${selectedMetric}`
+                  return (
+                    <Line
+                      key={dataKey}
+                      type="monotone"
+                      dataKey={dataKey}
+                      name={provider}
+                      stroke={`var(--color-${provider})`}
+                      strokeWidth={2}
+                      dot={{ r: 3, strokeWidth: 0, fill: `var(--color-${provider})` }}
+                      activeDot={{ r: 5, strokeWidth: 0 }}
+                      connectNulls
+                      hide={hiddenProviders.has(provider)}
+                    />
+                  )
+                })}
+              </LineChart>
+            </ChartContainer>
+          ) : (
+            <div className="h-[300px] min-h-[300px] w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 flex items-center justify-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400">No history data available yet.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -94,7 +94,7 @@ function daxPhaseStats(iterations: DaxResult["iterations"], key: DaxPhaseKey): {
   return { median, p95: percentile(sorted, 95), p99: percentile(sorted, 99) };
 }
 
-function sanitizedDaxSummary(iterations: DaxResult["iterations"]): DaxResult["summary"] {
+export function sanitizedDaxSummary(iterations: DaxResult["iterations"]): DaxResult["summary"] {
   const summary = {} as DaxResult["summary"];
   for (const key of DAX_PHASE_KEYS) {
     summary[key] = daxPhaseStats(iterations, key);
@@ -634,6 +634,8 @@ export async function fetchDaxHistoryData(): Promise<{
           const summary = sanitizedDaxSummary(r.iterations);
           point[`${provider}_totalMs`] = Math.round(summary.totalMs.median);
           point[`${provider}_prepareMs`] = Math.round(summary.prepareMs.median);
+          point[`${provider}_bunDownloadMs`] = Math.round(summary.bunDownloadMs.median);
+          point[`${provider}_bunUnpackMs`] = Math.round(summary.bunUnpackMs.median);
           point[`${provider}_cloneMs`] = Math.round(summary.cloneMs.median);
           point[`${provider}_installMs`] = Math.round(summary.installMs.median);
           point[`${provider}_typecheckMs`] = Math.round(summary.typecheckMs.median);

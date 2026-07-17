@@ -1,0 +1,231 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import PageLayout from "../../../../../components/layouts/PageLayout.astro";
+import { SandboxDaxProviderDetailDashboard } from "../../../../../components/SandboxDaxProviderDetailDashboard";
+import { capitalize, normalizeProvider } from "../../../../../components/benchmarkConstants";
+import Breadcrumbs from "../../../../../components/Breadcrumbs.astro";
+import type { DaxResult, DaxHistoryPoint } from "../../../../../components/benchmarkConstants";
+import { fetchGithubDirectoryListing, fetchGithubFile } from "../../../../../utils/github-history";
+import { fetchLatestDaxResults, sanitizedDaxSummary } from "../../../../../utils/benchmark-data";
+
+const BASE_URL = "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results";
+const API_URL = "https://api.github.com/repos/computesdk/benchmarks/contents/results";
+const HISTORY_BATCH_SIZE = 10;
+
+const providerLogos: Record<string, string> = {
+  e2b: "/benchmarks/normal-e2b-light.svg",
+  vercel: "/benchmarks/normal-vercel-light.svg",
+  blaxel: "/benchmarks/normal-blaxel-light.svg",
+  modal: "/benchmarks/normal-modal-light.svg",
+  daytona: "/benchmarks/normal-daytona-light.svg",
+  northflank: "/benchmarks/normal-northflank-light.svg",
+  namespace: "/benchmarks/normal-namespace-light.svg",
+  hopx: "/benchmarks/normal-hopx-light.svg",
+  codesandbox: "/benchmarks/normal-codesandbox-light.svg",
+  runloop: "/benchmarks/normal-runloop-light.svg",
+  justbash: "/benchmarks/normal-justbash-light.svg",
+  "just-bash": "/benchmarks/normal-justbash-light.svg",
+  cloudflare: "/benchmarks/normal-cloudflare-light.svg",
+  archil: "/benchmarks/normal-archil-light.svg",
+  upstash: "/benchmarks/normal-upstash-light.svg",
+  declaw: "/benchmarks/normal-declaw-light.svg",
+  tensorlake: "/benchmarks/normal-tensorlake-light.svg",
+  isorun: "/benchmarks/normal-isorun-light.svg",
+  beam: "/benchmarks/normal-beam-light.svg",
+  createos: "/benchmarks/normal-createos-light.svg",
+  superserve: "/benchmarks/normal-superserve-light.svg",
+  tenki: "/benchmarks/normal-tenki-light.svg",
+  lelantos: "/benchmarks/normal-lelantos-light.svg",
+  "cloud-run": "/benchmarks/normal-google-cloud-run-light.svg",
+  lightning: "/benchmarks/normal-lightning-ai-light.svg",
+};
+
+const providerLogosDark: Record<string, string> = {
+  e2b: "/benchmarks/normal-e2b-dark.svg",
+  vercel: "/benchmarks/normal-vercel-dark.svg",
+  blaxel: "/benchmarks/normal-blaxel-dark.svg",
+  modal: "/benchmarks/normal-modal-dark.svg",
+  daytona: "/benchmarks/normal-daytona-dark.svg",
+  northflank: "/benchmarks/normal-northflank-dark.svg",
+  namespace: "/benchmarks/normal-namespace-dark.svg",
+  hopx: "/benchmarks/normal-hopx-dark.svg",
+  codesandbox: "/benchmarks/normal-codesandbox-dark.svg",
+  runloop: "/benchmarks/normal-runloop-dark.svg",
+  justbash: "/benchmarks/normal-justbash-dark.svg",
+  "just-bash": "/benchmarks/normal-justbash-dark.svg",
+  cloudflare: "/benchmarks/normal-cloudflare-dark.svg",
+  archil: "/benchmarks/normal-archil-dark.svg",
+  upstash: "/benchmarks/normal-upstash-dark.svg",
+  declaw: "/benchmarks/normal-declaw-dark.svg",
+  tensorlake: "/benchmarks/normal-tensorlake-dark.svg",
+  isorun: "/benchmarks/normal-isorun-dark.svg",
+  beam: "/benchmarks/normal-beam-dark.svg",
+  createos: "/benchmarks/normal-createos-dark.svg",
+  superserve: "/benchmarks/normal-superserve-dark.svg",
+  tenki: "/benchmarks/normal-tenki-dark.svg",
+  lelantos: "/benchmarks/normal-lelantos-dark.svg",
+  "cloud-run": "/benchmarks/normal-google-cloud-run-dark.svg",
+  lightning: "/benchmarks/normal-lightning-ai-dark.svg",
+};
+
+export async function getStaticPaths() {
+  try {
+    const res = await fetch(
+      "https://raw.githubusercontent.com/computesdk/benchmarks/refs/heads/master/results/sandbox-dax/latest.json"
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    const providers = (data.results as DaxResult[])
+      .filter((r) => !r.skipped)
+      .map((r) => normalizeProvider(r.provider));
+    return providers.map((provider: string) => ({
+      params: { provider },
+      props: { provider },
+    }));
+  } catch {
+    return [];
+  }
+}
+
+const { provider } = Astro.props as { provider: string };
+
+const githubHeaders: Record<string, string> = {
+  Accept: "application/vnd.github.v3+json",
+};
+const githubToken = import.meta.env.GITHUB_TOKEN;
+if (githubToken) {
+  githubHeaders["Authorization"] = `Bearer ${githubToken}`;
+}
+
+let fetchError = false;
+let result: DaxResult | null = null;
+let historyData: DaxHistoryPoint[] = [];
+let timestamp = "";
+
+try {
+  const res = await fetch(`${BASE_URL}/sandbox-dax/latest.json`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  timestamp = new Date(data.timestamp).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const allResults = await fetchLatestDaxResults();
+  result = allResults.find((r) => r.provider === provider) || null;
+
+  // Fetch history
+  const files = await fetchGithubDirectoryListing(`${API_URL}/sandbox-dax`, githubHeaders);
+  if (files.length) {
+    const jsonFiles = files
+      .filter((f) => f.name.endsWith(".json") && f.name !== "latest.json" && f.name !== ".gitkeep")
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    for (let i = 0; i < jsonFiles.length; i += HISTORY_BATCH_SIZE) {
+      const batch = jsonFiles.slice(i, i + HISTORY_BATCH_SIZE);
+      const batchResults = await Promise.all(batch.map((file) => fetchGithubFile(file.download_url)));
+
+      for (const fileData of batchResults) {
+        if (!fileData) continue;
+        const ts = fileData.timestamp as string;
+        const point: DaxHistoryPoint = {
+          date: new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          dateTs: new Date(ts).getTime(),
+        };
+        for (const r of fileData.results as DaxResult[]) {
+          if (normalizeProvider(r.provider) === provider && !r.skipped && r.summary?.totalMs?.median != null) {
+            const summary = sanitizedDaxSummary(r.iterations);
+            point[`${provider}_totalMs`] = Math.round(summary.totalMs.median);
+            point[`${provider}_prepareMs`] = Math.round(summary.prepareMs.median);
+            point[`${provider}_bunDownloadMs`] = Math.round(summary.bunDownloadMs.median);
+            point[`${provider}_bunUnpackMs`] = Math.round(summary.bunUnpackMs.median);
+            point[`${provider}_cloneMs`] = Math.round(summary.cloneMs.median);
+            point[`${provider}_installMs`] = Math.round(summary.installMs.median);
+            point[`${provider}_typecheckMs`] = Math.round(summary.typecheckMs.median);
+          }
+        }
+        if (Object.keys(point).length > 2) {
+          historyData.push(point);
+        }
+      }
+    }
+  }
+} catch {
+  fetchError = true;
+}
+
+const displayName = capitalize(provider);
+---
+
+<StarlightPage
+  frontmatter={{
+    title: `${displayName} Dax Benchmark`,
+    description: `Detailed dax benchmark results for ${displayName} — per-phase durations for the clone + install + typecheck cycle.`,
+    template: "splash",
+  }}
+>
+  <PageLayout>
+  <div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+
+    <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+      <div class="border-b border-gray-200/50 dark:border-gray-700/50">
+
+        <!-- Provider hero -->
+        <div class="md:max-w-7xl md:mx-auto mt-0 py-8 px-4 md:py-10 md:px-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <Breadcrumbs items={[
+                { label: "Benchmarks", href: "/benchmarks" },
+                { label: "Sandbox Benchmarks", href: "/benchmarks/sandboxes" },
+                { label: "Dax", href: "/benchmarks/sandboxes/dax" },
+                { label: displayName },
+              ]} />
+              <h1 class="text-xl md:text-3xl font-semibold tracking-tight text-gray-900 dark:text-white m-0">
+                {providerLogos[provider] ? (
+                  <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-4">
+                      <img src={providerLogos[provider]} alt={displayName} class="h-8 w-auto object-contain dark:hidden" />
+                      <img src={providerLogosDark[provider] || providerLogos[provider]} alt="" class="h-8 w-auto mt-0 object-contain hidden dark:block" />
+                    </div>
+                    <span class="text-lg md:text-2xl">Dax Benchmark</span>
+                  </div>
+                ) : (
+                  <>{displayName} Dax Benchmark</>
+                )}
+              </h1>
+              {timestamp && (
+                <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Last benchmarked {timestamp}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {fetchError || !result ? (
+      <div class="max-w-4xl mx-auto my-0 py-16 text-center">
+        <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
+      </div>
+    ) : (
+      <SandboxDaxProviderDetailDashboard
+        client:visible
+        provider={provider}
+        result={result}
+        historyData={historyData}
+      />
+    )}
+
+  </div>
+  </PageLayout>
+</StarlightPage>
+
+<style is:global>
+  .provider-nav-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .provider-nav-scroll::-webkit-scrollbar {
+    display: none;
+  }
+</style>
