@@ -62,6 +62,26 @@ const DAX_METRIC_TO_SCRIPT_PHASE: Partial<Record<DaxPhaseKey, string>> = {
   typecheckMs: "typecheck",
 };
 
+// Phase timing keys in script execution order (excluding totalMs which is
+// wall-clock, not a script phase). Used to determine which phase failed in
+// an errored iteration — the last phase with a non-null timing is the one
+// that emitted BENCH_PHASE before the error was detected.
+const DAX_PHASE_ORDER: DaxPhaseKey[] = ["prepareMs", "bunDownloadMs", "bunUnpackMs", "cloneMs", "installMs", "typecheckMs"];
+
+type DaxIteration = NonNullable<DaxResult["iterations"]>[0];
+
+function failedPhaseKey(it: DaxIteration | undefined): DaxPhaseKey | null {
+  if (!it || !it.error) return null;
+  // sentinelFailedPhase already handles the "phase: reason" error format;
+  // for other errors, find the last phase with a non-null timing.
+  if (sentinelFailedPhase(it)) return null;
+  for (let i = DAX_PHASE_ORDER.length - 1; i >= 0; i--) {
+    const key = DAX_PHASE_ORDER[i];
+    if (it[key] != null) return key;
+  }
+  return null;
+}
+
 function percentile(sorted: number[], p: number): number {
   if (sorted.length === 0) return 0;
   const idx = Math.min(sorted.length - 1, Math.ceil((p / 100) * sorted.length) - 1);
@@ -84,6 +104,10 @@ function daxPhaseStats(iterations: DaxResult["iterations"], key: DaxPhaseKey): {
       if (it[key] == null) return false;
       if (key !== "totalMs" && (it[key] as number) > it.totalMs) return false;
       if (scriptPhase && sentinelFailedPhase(it) === scriptPhase) return false;
+      // Exclude the failed phase's timing for any errored iteration. The script
+      // emits BENCH_PHASE with a near-zero duration before detecting the error,
+      // so that timing is an artifact, not a real measurement.
+      if (key !== "totalMs" && failedPhaseKey(it) === key) return false;
       return true;
     })
     .map((it) => it[key] as number);
@@ -568,7 +592,17 @@ export async function fetchLatestDaxResults(): Promise<DaxResult[]> {
     .sort((a, b) => {
       const phaseDiff = (b.phasesCompleted ?? 0) - (a.phasesCompleted ?? 0);
       if (phaseDiff !== 0) return phaseDiff;
-      return a.summary.totalMs.median - b.summary.totalMs.median;
+      // Among providers with the same (incomplete) phase count, don't use
+      // totalMs as a tiebreaker — a faster failure isn't "better". Sort by
+      // success rate (desc) then alphabetically. Only use totalMs for
+      // providers that completed all phases (where it's a real comparison).
+      const aComplete = (a.phasesCompleted ?? 0) >= (a.phasesTotal ?? DAX_PHASES_TOTAL);
+      const bComplete = (b.phasesCompleted ?? 0) >= (b.phasesTotal ?? DAX_PHASES_TOTAL);
+      if (aComplete && bComplete) return a.summary.totalMs.median - b.summary.totalMs.median;
+      if (aComplete !== bComplete) return aComplete ? -1 : 1;
+      const srDiff = (b.successRate ?? 0) - (a.successRate ?? 0);
+      if (srDiff !== 0) return srDiff;
+      return a.provider.localeCompare(b.provider);
     });
 }
 
