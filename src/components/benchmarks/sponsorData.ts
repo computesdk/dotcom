@@ -112,14 +112,14 @@ export const TIERS: TierConfig[] = [
     logoHeight: "h-12",
     slotHeight: "h-12",
   },
-  // {
-  //   key: "platform",
-  //   label: "BENCHMARKS POWERED BY:",
-  //   lineColor: "bg-emerald-600 dark:bg-emerald-400",
-  //   textColor: "text-emerald-600 dark:text-emerald-400",
-  //   logoHeight: "h-10",
-  //   slotHeight: "h-10",
-  // },
+  {
+    key: "platform",
+    label: "BENCHMARKS POWERED BY:",
+    lineColor: "bg-emerald-600 dark:bg-emerald-400",
+    textColor: "text-emerald-600 dark:text-emerald-400",
+    logoHeight: "h-10",
+    slotHeight: "h-10",
+  },
 ];
 
 // Mobile banner rotation order: gold, silver, bronze, platform (tier order), preserving

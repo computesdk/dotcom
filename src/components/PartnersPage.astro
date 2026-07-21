@@ -1,7 +1,20 @@
 ---
-type Partner = { name: string; href: string; logo: string; logoDark?: string }
+import { SPONSORS, type Sponsor, type Tier } from "./benchmarks/sponsorData"
 
-const TIERS = [
+type TierDisplay = {
+  key: Tier
+  label: string
+  lineColor: string
+  textColor: string
+  borderHover: string
+  bgHover: string
+  logoHeight: string
+  logoMaxWidth: string
+  cols: string
+  cardPadding: string
+}
+
+const TIER_DISPLAY: TierDisplay[] = [
   {
     key: "gold",
     label: "★ GOLD",
@@ -10,10 +23,9 @@ const TIERS = [
     borderHover: "hover:border-yellow-400 dark:hover:border-yellow-600",
     bgHover: "hover:bg-yellow-50/50 dark:hover:bg-yellow-950/20",
     logoHeight: "h-12",
+    logoMaxWidth: "max-w-40",
     cols: "sm:grid-cols-2",
-    cardPadding: "p-10",
-    partners: [
-    ] as Partner[],
+    cardPadding: "p-4",
   },
   {
     key: "silver",
@@ -22,22 +34,10 @@ const TIERS = [
     textColor: "text-[#6e7781] dark:text-[#c0c0c0]",
     borderHover: "hover:border-gray-400 dark:hover:border-gray-500",
     bgHover: "hover:bg-gray-50 dark:hover:bg-gray-800/50",
-    logoHeight: "h-10",
+    logoHeight: "h-18",
+    logoMaxWidth: "max-w-36",
     cols: "sm:grid-cols-2",
-    cardPadding: "p-8",
-    partners: [
-      {
-        name: "Latitude",
-        href: "https://latitude.sh/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
-        logo: "/latitude-logo.svg",
-      },
-      {
-        name: "Google Cloud Run",
-        href: "https://cloud.google.com/run?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
-        logo: "/benchmarks/normal-google-cloud-run-light.svg",
-        logoDark: "/benchmarks/normal-google-cloud-run-dark.svg",
-      },
-    ] as Partner[],
+    cardPadding: "p-4",
   },
   {
     key: "bronze",
@@ -46,34 +46,29 @@ const TIERS = [
     textColor: "text-[#854d22] dark:text-[#cd7f32]",
     borderHover: "hover:border-amber-500 dark:hover:border-amber-700",
     bgHover: "hover:bg-amber-50/50 dark:hover:bg-amber-950/20",
-    logoHeight: "h-8",
+    logoHeight: "h-10",
+    logoMaxWidth: "max-w-28",
     cols: "sm:grid-cols-2 lg:grid-cols-3",
-    cardPadding: "p-6",
-    partners: [
-      {
-        name: "Browserbase",
-        href: "https://www.browserbase.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
-        logo: "/browserbase-logo.svg",
-        logoDark: "/browserbase-logo-dark.svg",
-      },
-      {
-        name: "Tigris",
-        href: "https://www.tigrisdata.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
-        logo: "/tigris-logo.svg",
-      },
-      {
-        name: "Neon",
-        href: "https://neon.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
-        logo: "/neon-logo-light.svg",
-      },
-      {
-        name: "Gitbook",
-        href: "https://www.gitbook.com/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=sponsor-link",
-        logo: "/gitbook-logo-light.svg",
-      },
-    ] as Partner[],
+    cardPadding: "p-4",
+  },
+  {
+    key: "platform",
+    label: "BENCHMARKS POWERED BY:",
+    lineColor: "bg-emerald-600 dark:bg-emerald-400",
+    textColor: "text-emerald-600 dark:text-emerald-400",
+    borderHover: "hover:border-emerald-400 dark:hover:border-emerald-600",
+    bgHover: "hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20",
+    logoHeight: "h-14",
+    logoMaxWidth: "max-w-48",
+    cols: "sm:grid-cols-2",
+    cardPadding: "p-4",
   },
 ]
+
+const TIERS = TIER_DISPLAY.map((tier) => ({
+  ...tier,
+  partners: SPONSORS.filter((s) => s.tier === tier.key) as Sponsor[],
+}))
 ---
 
 <div class="bg-white dark:bg-gray-950 min-h-screen">
@@ -113,14 +108,10 @@ const TIERS = [
               rel="noopener noreferrer"
               class={`group flex items-center justify-center rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 ${tier.cardPadding} no-underline ${tier.borderHover} ${tier.bgHover} transition-all duration-200`}
             >
-              {partner.logoDark ? (
-                <>
-                  <img src={partner.logo} alt={partner.name} class={`${tier.logoHeight} w-auto object-contain dark:hidden`} />
-                  <img src={partner.logoDark} alt={partner.name} class={`${tier.logoHeight} w-auto object-contain hidden dark:block`} />
-                </>
-              ) : (
-                <img src={partner.logo} alt={partner.name} class={`${tier.logoHeight} w-auto object-contain dark:invert`} />
-              )}
+              <div class={`flex items-center justify-center ${tier.logoHeight} ${tier.logoMaxWidth} w-full`} style={partner.scale ? `transform: scale(${partner.scale})` : undefined}>
+                <img src={partner.logo} alt={partner.name} loading="lazy" decoding="async" class="h-full w-full object-contain dark:hidden" />
+                <img src={partner.logoDark} alt={partner.name} loading="lazy" decoding="async" class="h-full w-full object-contain hidden dark:block" />
+              </div>
             </a>
           ))}
         </div>
