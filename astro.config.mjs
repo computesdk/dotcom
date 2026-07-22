@@ -237,8 +237,8 @@ export default defineConfig({
                }
             ],
             promote: ['docs/start/introduction*', 'docs/start/quick-start*', 'docs/reference/index*'],
-            demote: ['contact', 'benchmarks/sandboxes', 'benchmarks/storage', 'benchmarks/browsers', 'blog/**', 'privacy', 'terms'],
-            exclude: ['contact*', 'benchmarks/sandboxes*', 'benchmarks/storage*', 'benchmarks/browsers*', 'blog/**', 'privacy', 'terms'],
+            demote: ['contact', 'benchmarks/sandboxes', 'benchmarks/storage', 'benchmarks/browsers', 'benchmarks/ai-gateway', 'blog/**', 'privacy', 'terms'],
+            exclude: ['contact*', 'benchmarks/sandboxes*', 'benchmarks/storage*', 'benchmarks/browsers*', 'benchmarks/ai-gateway*', 'blog/**', 'privacy', 'terms'],
             minify: {
               note: true,
               tip: false,

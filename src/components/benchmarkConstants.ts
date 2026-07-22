@@ -425,6 +425,89 @@ export function getDaxDiskUsage(iterations: DaxResult["iterations"]): { afterClo
   }
 }
 
+export interface AIGatewayPhaseStat {
+  median: number
+  p95: number
+  p99: number
+}
+
+export interface AIGatewayResult {
+  provider: string
+  mode?: string
+  model?: string
+  summary: {
+    dnsMs: AIGatewayPhaseStat
+    tcpMs: AIGatewayPhaseStat
+    tlsMs: AIGatewayPhaseStat
+    coldTtfbMs: AIGatewayPhaseStat
+    coldTtftMs: AIGatewayPhaseStat
+    coldE2eMs: AIGatewayPhaseStat
+    warmTtfbMs: AIGatewayPhaseStat
+    warmTtftMs: AIGatewayPhaseStat
+    outputTokensPerSec: AIGatewayPhaseStat
+  }
+  compositeScore?: number
+  successRate?: number
+  skipped?: boolean
+  skipReason?: string
+  iterations?: Array<{
+    mode: "cold" | "warm"
+    dnsMs?: number
+    tcpMs?: number
+    tlsMs?: number
+    ttfbMs: number
+    ttftMs: number
+    coldE2eMs?: number
+    outputTokens?: number
+    outputTokensPerSec?: number
+    receipts?: Record<string, string>
+    error?: string
+  }>
+}
+
+export interface AIGatewayHistoryPoint {
+  date: string
+  dateTs?: number
+  [key: string]: number | string | undefined
+}
+
+// The one non-gateway participant — a direct-to-Anthropic control used to
+// measure how much latency each gateway adds on top of the underlying
+// provider. Shown on the site (per methodology, transparency matters more
+// than a clean leaderboard) but excluded from "N providers" style counts
+// and visually marked as a baseline rather than a competitor.
+export const AI_GATEWAY_BASELINE_PROVIDER = "anthropic-direct"
+
+export function isAIGatewayBaseline(provider: string): boolean {
+  return provider === AI_GATEWAY_BASELINE_PROVIDER
+}
+
+export const AI_GATEWAY_PROVIDER_COLORS: Record<string, string> = {
+  openrouter: "#6467f2",         // OpenRouter indigo
+  "vercel-ai-gateway": "#71717a", // Zinc (matches Vercel Blob elsewhere)
+  "cloudflare-ai-gateway": "#f59e0b", // Amber (matches Cloudflare R2 elsewhere)
+  "anthropic-direct": "#a3a3a3", // Neutral gray — baseline, not a competitor
+}
+
+export type AIGatewayMetric =
+  | "compositeScore"
+  | "coldE2eMs"
+  | "warmTtftMs"
+  | "outputTokensPerSec"
+  | "dnsMs"
+  | "tcpMs"
+  | "tlsMs"
+
+export const AI_GATEWAY_METRIC_LABELS: Record<AIGatewayMetric, string> = {
+  compositeScore: "Composite Score",
+  coldE2eMs: "Cold E2E",
+  warmTtftMs: "Warm TTFT",
+  outputTokensPerSec: "Tokens/sec",
+  dnsMs: "DNS",
+  tcpMs: "TCP",
+  tlsMs: "TLS",
+}
+
 // Some sandbox providers publish results under a "-sandbox" suffixed slug
 // (e.g. "createos-sandbox") while the site keys logos/colors/names/URLs on the
 // bare name. Strip the suffix so everything lines up now and keeps working once
@@ -465,5 +548,9 @@ export function capitalize(s: string): string {
   if (s === "steel") return "Steel"
   if (s === "cloud-run") return "Cloud Run"
   if (s === "lightning") return "Lightning AI"
+  if (s === "openrouter") return "OpenRouter"
+  if (s === "vercel-ai-gateway") return "Vercel AI Gateway"
+  if (s === "cloudflare-ai-gateway") return "Cloudflare AI Gateway"
+  if (s === "anthropic-direct") return "Anthropic (Direct)"
   return s.charAt(0).toUpperCase() + s.slice(1)
 }

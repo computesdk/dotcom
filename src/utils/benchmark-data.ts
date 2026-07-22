@@ -10,6 +10,8 @@ import type {
   SnapshotForkHistoryPoint,
   DaxResult,
   DaxHistoryPoint,
+  AIGatewayResult,
+  AIGatewayHistoryPoint,
 } from "../components/benchmarkConstants";
 import { normalizeProvider, DAX_PHASES_TOTAL } from "../components/benchmarkConstants";
 
@@ -320,6 +322,97 @@ export async function fetchStorageHistoryData(
           point[`${r.provider}_uploadMs`] = Math.round(r.summary.uploadMs.median);
           point[`${r.provider}_downloadMs`] = Math.round(r.summary.downloadMs.median);
           point[`${r.provider}_throughputMbps`] = Math.round(r.summary.throughputMbps.median * 10) / 10;
+          if (r.compositeScore != null) {
+            point[`${r.provider}_compositeScore`] = r.compositeScore;
+          }
+        }
+      }
+      if (Object.keys(point).length > 1) {
+        history.push(point);
+      }
+    }
+  }
+
+  return { history, timestamp };
+}
+
+export async function fetchLatestAIGatewayResults(): Promise<AIGatewayResult[]> {
+  const res = await fetch(`${BASE_URL}/ai-gateway/latest.json`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ai-gateway`);
+  const data = await res.json();
+  return (data.results as AIGatewayResult[])
+    .filter((r) => !r.skipped && r.summary?.coldE2eMs?.median != null)
+    .sort((a, b) => (b.compositeScore ?? 0) - (a.compositeScore ?? 0));
+}
+
+export async function fetchAIGatewayHistoryData(): Promise<{
+  history: AIGatewayHistoryPoint[];
+  timestamp: string;
+}> {
+  const githubHeaders: Record<string, string> = {
+    Accept: "application/vnd.github.v3+json",
+  };
+  const githubToken = import.meta.env.GITHUB_TOKEN;
+  if (githubToken) {
+    githubHeaders["Authorization"] = `Bearer ${githubToken}`;
+  }
+
+  const latestRes = await fetch(`${BASE_URL}/ai-gateway/latest.json`);
+  if (!latestRes.ok) throw new Error(`HTTP ${latestRes.status}`);
+  const latestData = await latestRes.json();
+  const timestamp = new Date(latestData.timestamp).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+  });
+
+  const listRes = await fetch(`${API_URL}/ai-gateway`, {
+    headers: githubHeaders,
+  });
+  if (!listRes.ok) return { history: [], timestamp };
+
+  const files = (await listRes.json()) as Array<{
+    name: string;
+    download_url: string;
+  }>;
+  const jsonFiles = files
+    .filter(
+      (f) =>
+        f.name.endsWith(".json") &&
+        f.name !== "latest.json" &&
+        f.name !== ".gitkeep",
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const history: AIGatewayHistoryPoint[] = [];
+
+  for (let i = 0; i < jsonFiles.length; i += HISTORY_BATCH_SIZE) {
+    const batch = jsonFiles.slice(i, i + HISTORY_BATCH_SIZE);
+    const batchResults = await Promise.all(
+      batch.map(async (file) => {
+        try {
+          const fileRes = await fetch(file.download_url);
+          if (!fileRes.ok) return null;
+          return await fileRes.json();
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    for (const fileData of batchResults) {
+      if (!fileData) continue;
+      const ts = fileData.timestamp as string;
+      const point: AIGatewayHistoryPoint = {
+        date: new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      };
+      for (const r of fileData.results as AIGatewayResult[]) {
+        if (!r.skipped && r.summary?.coldE2eMs?.median != null) {
+          point[`${r.provider}_coldE2eMs`] = Math.round(r.summary.coldE2eMs.median);
+          point[`${r.provider}_warmTtftMs`] = Math.round(r.summary.warmTtftMs.median);
+          point[`${r.provider}_outputTokensPerSec`] = Math.round(r.summary.outputTokensPerSec.median * 10) / 10;
+          point[`${r.provider}_dnsMs`] = Math.round(r.summary.dnsMs.median * 10) / 10;
+          point[`${r.provider}_tcpMs`] = Math.round(r.summary.tcpMs.median * 10) / 10;
+          point[`${r.provider}_tlsMs`] = Math.round(r.summary.tlsMs.median * 10) / 10;
           if (r.compositeScore != null) {
             point[`${r.provider}_compositeScore`] = r.compositeScore;
           }

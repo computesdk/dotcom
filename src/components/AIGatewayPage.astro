@@ -1,0 +1,143 @@
+---
+import { AIGatewayDashboard } from "./AIGatewayDashboard";
+import { fetchLatestAIGatewayResults, fetchAIGatewayHistoryData } from "../utils/benchmark-data";
+import type { AIGatewayResult, AIGatewayHistoryPoint } from "./benchmarkConstants";
+import Breadcrumbs from "./Breadcrumbs.astro";
+
+const LOGO_API = "https://logos.computesdk.com/api/svg";
+const logoUrl = (brandId: string, variant: "logo-light" | "logo-dark") =>
+  `${LOGO_API}/${brandId}/normalized/${variant}`;
+
+const providerLogos: Record<string, string> = {
+  openrouter: logoUrl("openrouter", "logo-light"),
+  "vercel-ai-gateway": logoUrl("vercel", "logo-light"),
+  "cloudflare-ai-gateway": logoUrl("cloudflare", "logo-light"),
+  "anthropic-direct": logoUrl("anthropic", "logo-light"),
+};
+
+const providerLogosDark: Record<string, string> = {
+  openrouter: logoUrl("openrouter", "logo-dark"),
+  "vercel-ai-gateway": logoUrl("vercel", "logo-dark"),
+  "cloudflare-ai-gateway": logoUrl("cloudflare", "logo-dark"),
+  "anthropic-direct": logoUrl("anthropic", "logo-dark"),
+};
+
+let fetchError = false;
+let active: AIGatewayResult[] = [];
+let historyData: AIGatewayHistoryPoint[] = [];
+let timestamp = "";
+
+try {
+  const [results, historyResult] = await Promise.all([
+    fetchLatestAIGatewayResults(),
+    fetchAIGatewayHistoryData(),
+  ]);
+  active = results;
+  historyData = historyResult.history;
+  timestamp = historyResult.timestamp;
+} catch {
+  fetchError = true;
+}
+
+const aiGatewayData = { active, historyData, timestamp };
+---
+
+<div class="relative isolate bg-transparent dark:bg-transparent min-h-screen">
+  <!-- Sticky header -->
+  <header class="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
+    <div class="border-b border-gray-200/50 dark:border-gray-700/50">
+      <div class="md:max-w-7xl md:mx-auto py-10 px-4 md:pb-12 md:pt-6 md:px-6">
+        <Breadcrumbs items={[
+          { label: "Benchmarks", href: "/benchmarks" },
+          { label: "AI Gateway Benchmarks" },
+        ]} />
+        <div class="sm:flex sm:flex-row items-center md:justify-between gap-3">
+          <div>
+            <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">AI Gateway Benchmarks</h1>
+            <p class="my-2 text-sm text-gray-700 dark:text-gray-400">Benchmark AI gateway latency and token throughput, measured against a direct Anthropic baseline. Inspired by <a href="https://github.com/rbadillap/ai-gateways-benchmark" target="_blank">this benchmark</a> from <a href="https://x.com/rbadillap/status/2079641802332660196?s=20" target="_blank">Ronny Badilla</a>.</p>
+          </div>
+          <div class="m-0 text-left md:text-right">
+            <div class="items-center">
+              <a
+                href="https://github.com/computesdk/benchmarks"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center h-8 gap-1.5 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-xs md:text-sm font-medium text-gray-900 dark:text-white transition-all no-underline"
+              >
+                <svg class="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z" /></svg>
+                View on Github
+              </a>
+            </div>
+            {timestamp && (
+              <span class="text-xs text-gray-700 dark:text-gray-400">Last run: {timestamp}</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {fetchError ? (
+    <div class="max-w-4xl mx-auto my-0 py-16 text-center">
+      <p class="text-gray-500 dark:text-gray-400">Benchmark data is currently unavailable. Please check back later.</p>
+    </div>
+  ) : (
+    <div class="mt-0">
+      <AIGatewayDashboard
+        client:visible
+        data={aiGatewayData}
+        providerLogos={providerLogos}
+        providerLogosDark={providerLogosDark}
+      />
+
+      <div class="md:max-w-7xl md:mx-auto px-4 md:px-6">
+        <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+          Want to see a gateway added?
+        </p>
+        <p class="text-center mt-1">
+          <a href="https://x.com/computesdk" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 bg-black dark:bg-white text-white dark:text-black text-sm font-medium rounded-full hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+            Let us know on X
+            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            </svg>
+          </a>
+        </p>
+      </div>
+    </div>
+  )}
+
+  <!-- Methodology -->
+  <div id="methodology" class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-6 scroll-mt-16">
+    <h2 class="text-base text-md font-semibold text-gray-900 dark:text-white mb-6">Methodology</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+      <div class="mt-0">
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">What We Measure</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          Every gateway is hit directly with the same prompt and model (Claude Haiku 4.5), addressed the way each API expects it to be addressed — no gateway is proxied through another. Each request is either <strong class="text-gray-900 dark:text-white">cold</strong> (a brand-new TCP+TLS connection, opened from scratch) or <strong class="text-gray-900 dark:text-white">warm</strong> (a second request reusing an already-open keep-alive connection).
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          Cold requests are broken into <strong class="text-gray-900 dark:text-white">DNS</strong>, <strong class="text-gray-900 dark:text-white">TCP</strong>, and <strong class="text-gray-900 dark:text-white">TLS</strong> phases (real socket timestamps, not estimates), plus time to first response byte and first streamed token. Every request also records <strong class="text-gray-900 dark:text-white">output tokens/sec</strong> and success/failure.
+        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          <strong class="text-gray-900 dark:text-white">Anthropic (Direct)</strong> is a no-gateway control, not a competing participant — it isolates how much latency each gateway adds on top of the underlying model provider. Full methodology, including how "cold" and "warm" are defined and their limitations, is documented in the <a href="https://github.com/computesdk/benchmarks/blob/master/AI_GATEWAYS.md" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">public benchmarks repo</a>.
+        </p>
+      </div>
+
+      <div class="mt-0">
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">How We Score</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+          The <strong class="text-gray-900 dark:text-white">Composite Score</strong> combines cold end-to-end latency and warm time-to-first-token — the short-lived-process case and the steady-state case — with generation throughput, all multiplied by success rate.
+        </p>
+        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1.5 list-none p-0 m-0">
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Cold E2E median: 30%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Warm TTFT median: 30%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Cold E2E P95: 15%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Warm TTFT P95: 15%</strong></li>
+          <li class="flex gap-2"><span class="text-gray-400 dark:text-gray-500 shrink-0">&bull;</span> <strong class="text-gray-900 dark:text-white">Tokens/sec: 10%</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
