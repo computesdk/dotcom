@@ -486,6 +486,7 @@ export const AI_GATEWAY_PROVIDER_COLORS: Record<string, string> = {
   openrouter: "#6467f2",         // OpenRouter indigo
   "vercel-ai-gateway": "#71717a", // Zinc (matches Vercel Blob elsewhere)
   "cloudflare-ai-gateway": "#f59e0b", // Amber (matches Cloudflare R2 elsewhere)
+  llmgateway: "#10b981",         // Emerald
   "anthropic-direct": "#a3a3a3", // Neutral gray — baseline, not a competitor
 }
 
@@ -551,6 +552,7 @@ export function capitalize(s: string): string {
   if (s === "openrouter") return "OpenRouter"
   if (s === "vercel-ai-gateway") return "Vercel AI Gateway"
   if (s === "cloudflare-ai-gateway") return "Cloudflare AI Gateway"
+  if (s === "llmgateway") return "LLMgateway"
   if (s === "anthropic-direct") return "Anthropic (Direct)"
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
