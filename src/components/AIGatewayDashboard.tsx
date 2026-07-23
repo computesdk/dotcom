@@ -457,7 +457,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
         {/* Performance Over Time */}
         {filteredHistory.length > 0 && (
           <div className="border-b border-gray-200/50 dark:border-gray-700/50 py-6 md:py-8">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
               <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
                 Performance Over Time
               </h2>
