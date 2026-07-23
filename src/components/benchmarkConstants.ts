@@ -487,6 +487,7 @@ export const AI_GATEWAY_PROVIDER_COLORS: Record<string, string> = {
   "vercel-ai-gateway": "#71717a", // Zinc (matches Vercel Blob elsewhere)
   "cloudflare-ai-gateway": "#f59e0b", // Amber (matches Cloudflare R2 elsewhere)
   llmgateway: "#10b981",         // Emerald
+  "pydantic-ai-gateway": "#e520c0", // Pydantic pink/magenta
   "anthropic-direct": "#a3a3a3", // Neutral gray — baseline, not a competitor
 }
 
@@ -553,6 +554,7 @@ export function capitalize(s: string): string {
   if (s === "vercel-ai-gateway") return "Vercel AI Gateway"
   if (s === "cloudflare-ai-gateway") return "Cloudflare AI Gateway"
   if (s === "llmgateway") return "LLMgateway"
+  if (s === "pydantic-ai-gateway") return "Pydantic AI Gateway"
   if (s === "anthropic-direct") return "Anthropic (Direct)"
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
