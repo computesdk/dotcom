@@ -101,6 +101,7 @@ export const BROWSER_PROVIDER_COLORS: Record<string, string> = {
   notte: "#f43f5e",         // Rose
   "browser-use": "#06b6d4", // Cyan
   browseruse: "#06b6d4",    // Cyan
+  tilion: "#eab308",        // Yellow
 }
 
 export const BROWSER_THROUGHPUT_PROVIDER_COLORS: Record<string, string> = {
@@ -110,6 +111,7 @@ export const BROWSER_THROUGHPUT_PROVIDER_COLORS: Record<string, string> = {
   steel: "#8b5cf6",         // Purple
   notte: "#f43f5e",         // Rose
   "browser-use": "#06b6d4", // Cyan
+  tilion: "#eab308",        // Yellow
 }
 
 export type ActionType = "navigate" | "waitForSelector" | "screenshot" | "textContent" | "click" | "goBack"
@@ -208,6 +210,7 @@ export const PROVIDER_COLORS: Record<string, string> = {
   tenki: "#0ea5e9",
   lelantos: "#7c3aed",
   lightning: "#facc15",
+  opencomputer: "#84cc16",
 }
 
 export type Metric = "median" | "p95" | "p99" | "compositeScore"
@@ -550,6 +553,7 @@ export function capitalize(s: string): string {
   if (s === "steel") return "Steel"
   if (s === "cloud-run") return "Cloud Run"
   if (s === "lightning") return "Lightning AI"
+  if (s === "opencomputer") return "OpenComputer"
   if (s === "openrouter") return "OpenRouter"
   if (s === "vercel-ai-gateway") return "Vercel AI Gateway"
   if (s === "cloudflare-ai-gateway") return "Cloudflare AI Gateway"
