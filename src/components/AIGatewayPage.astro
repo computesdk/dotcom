@@ -62,14 +62,14 @@ const aiGatewayData = { active, historyData, timestamp };
                 href="https://github.com/computesdk/benchmarks"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center h-8 gap-1.5 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-xs md:text-sm font-medium text-gray-900 dark:text-white transition-all no-underline"
+                class="inline-flex items-center min-w-40 h-8 gap-1.5 px-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-xs md:text-sm font-medium text-gray-900 dark:text-white transition-all no-underline"
               >
                 <svg class="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z" /></svg>
                 View on Github
               </a>
             </div>
             {timestamp && (
-              <span class="text-xs text-gray-700 dark:text-gray-400">Last run: {timestamp}</span>
+              <a href="https://github.com/computesdk/benchmarks/blob/master/results/ai-gateway/latest.json" target="_blank"><span class="text-xs text-gray-700 dark:text-gray-400">Last run: {timestamp}</span></a>
             )}
           </div>
         </div>
@@ -109,6 +109,16 @@ const aiGatewayData = { active, historyData, timestamp };
   <!-- Methodology -->
   <div id="methodology" class="md:max-w-7xl md:mx-auto px-4 md:px-6 py-6 scroll-mt-16">
     <h2 class="text-base text-md font-semibold text-gray-900 dark:text-white mb-6">Methodology</h2>
+
+    <div class="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 px-4 py-3 mb-8">
+      <svg class="size-4 mt-0.5 shrink-0 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+      </svg>
+      <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed m-0">
+        Every run executes on a <strong class="text-gray-900 dark:text-white">GitHub Actions</strong> runner hosted by <strong class="text-gray-900 dark:text-white">Namespace</strong>, physically located in <strong class="text-gray-900 dark:text-white">Northern Virginia, US</strong>. Since results are a property of the network they're measured from, treat rankings as relative to that vantage point rather than a universal number — see Limitations in the <a href="https://github.com/computesdk/benchmarks/blob/master/AI_GATEWAYS.md" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:text-gray-900 dark:hover:text-white transition-colors">full methodology</a>.
+      </p>
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
       <div class="mt-0">

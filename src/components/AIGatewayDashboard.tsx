@@ -106,7 +106,7 @@ function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
 
 function BaselineBadge() {
   return (
-    <span className="ml-4 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+    <span className="ml-4 inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
       Baseline
     </span>
   )
@@ -380,11 +380,21 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
             </h2>
           </div>
           {(() => {
-            const ranked = [...data.active]
+            // Anthropic (the no-gateway baseline) is listed first but isn't part
+            // of the competitive ranking — it gets no rank number, and the real
+            // gateways are numbered 1..N among themselves regardless of where
+            // the baseline's own metric value would otherwise place it.
+            const baselineResult = data.active.find((r) => isAIGatewayBaseline(r.provider))
+            const competitorsRanked = data.active
+              .filter((r) => !isAIGatewayBaseline(r.provider))
               .map((r) => ({ ...r, metricValue: getMetricValue(r, selectedMetric) }))
               .sort((a, b) => isHigher ? b.metricValue - a.metricValue : a.metricValue - b.metricValue)
+            const ranked = [
+              ...(baselineResult ? [{ ...baselineResult, metricValue: getMetricValue(baselineResult, selectedMetric), rank: null as number | null }] : []),
+              ...competitorsRanked.map((r, i) => ({ ...r, rank: i + 1 })),
+            ]
             const midpoint = Math.ceil(ranked.length / 2)
-            const renderCard = (result: typeof ranked[0], index: number) => {
+            const renderCard = (result: typeof ranked[0]) => {
               const logoLight = providerLogos[result.provider]
               const logoDark = providerLogosDark[result.provider]
               const baseline = isAIGatewayBaseline(result.provider)
@@ -395,14 +405,14 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border hover:bg-gray-50 hover:shadow-sm dark:hover:bg-gray-800/50 transition-colors no-underline cursor-pointer ${
                     baseline
                       ? "bg-gray-50/70 dark:bg-gray-800/30 border-dashed border-gray-300 dark:border-gray-700"
-                      : index === 0
+                      : result.rank === 1
                         ? "dark:bg-gray-700/50 border-gray-200 dark:border-gray-700/50 shadow-sm"
                         : "bg-white/50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-700/50"
                   }`}
                 >
                   <div className="shrink-0 w-6 text-center">
                     <span className="text-sm font-mono font-medium text-gray-500 dark:text-gray-400">
-                      {index + 1}
+                      {result.rank ?? "—"}
                     </span>
                   </div>
                   <div className="shrink-0 w-40 flex items-center">
@@ -439,10 +449,10 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
             return (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 px-4 md:px-6">
                 <div className="flex flex-col gap-2">
-                  {ranked.slice(0, midpoint).map((r, i) => renderCard(r, i))}
+                  {ranked.slice(0, midpoint).map((r) => renderCard(r))}
                 </div>
                 <div className="flex flex-col gap-2">
-                  {ranked.slice(midpoint).map((r, i) => renderCard(r, midpoint + i))}
+                  {ranked.slice(midpoint).map((r) => renderCard(r))}
                 </div>
               </div>
             )

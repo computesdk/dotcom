@@ -246,7 +246,7 @@ export function AIGatewayProviderDetailDashboard({
                 <div className="flex items-center gap-2">
                   <h2 className="text-base font-semibold text-gray-900 dark:text-white m-0">Request Latency</h2>
                   {baseline && (
-                    <span className="ml-4 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                    <span className="ml-4 inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
                       Baseline
                     </span>
                   )}
