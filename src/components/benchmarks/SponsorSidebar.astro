@@ -40,7 +40,7 @@ const MAX_HEIGHT_FROM_HEIGHT: Record<string, string> = {
       const tierSponsors = SPONSORS.filter((s) => s.tier === tier.key);
       return (
         <div class="flex flex-col gap-1 mt-0">
-          <div class="flex items-center gap-">
+          <div class="flex items-center gap-2">
             <span class={`h-px flex-1 ${tier.lineColor} opacity-60`} />
             <span class={`text-[9px] font-bold tracking-widest shrink-0 ${tier.textColor}`}>
               {tier.label}
