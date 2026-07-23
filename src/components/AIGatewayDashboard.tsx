@@ -106,7 +106,7 @@ function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
 
 function BaselineBadge() {
   return (
-    <span className="ml-4 inline-flex items-center px-1 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+    <span className="inline-flex items-center text-[10px] font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
       Baseline
     </span>
   )
@@ -415,11 +415,11 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
                       {result.rank ?? "—"}
                     </span>
                   </div>
-                  <div className="shrink-0 w-40 flex items-center">
+                  <div className="shrink-0 w-40 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                     {logoLight ? (
                       <>
-                        <img src={logoLight} alt={`${capitalize(result.provider)} logo`} className="w-full h-full object-contain dark:hidden" />
-                        <img src={logoDark || logoLight} alt="" className="w-full h-full object-contain hidden dark:block" />
+                        <img src={logoLight} alt={`${capitalize(result.provider)} logo`} className="h-6 max-w-full object-contain dark:hidden" />
+                        <img src={logoDark || logoLight} alt="" className="h-6 max-w-full object-contain hidden dark:block" />
                       </>
                     ) : (
                       <div className="flex items-center gap-2">
