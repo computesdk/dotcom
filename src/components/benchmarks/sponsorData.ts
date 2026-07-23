@@ -10,7 +10,7 @@ export interface Sponsor {
   scale?: number;
 }
 
-const UTM = "?utm_source=computesdk.com&utm_medium=referral&utm_campaign=scale-invitational-sponsor-link";
+const UTM = "?utm_source=computesdk.com&utm_medium=referral&utm_campaign=benchmark-sponsor-link";
 
 export type LogoFormat = "raw" | "bounded" | "normalized";
 

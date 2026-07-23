@@ -8,6 +8,10 @@ const LOGO_API = "https://logos.computesdk.com/api/svg";
 const logoUrl = (brandId: string, variant: "logo-light" | "logo-dark") =>
   `${LOGO_API}/${brandId}/normalized/${variant}`;
 
+const NAMESPACE_URL = "https://namespace.so/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=benchmark-sponsor-link";
+const namespaceLogomarkUrl = (variant: "logomark-light" | "logomark-dark") =>
+  `${LOGO_API}/namespace/normalized/${variant}`;
+
 const providerLogos: Record<string, string> = {
   openrouter: logoUrl("openrouter", "logo-light"),
   "vercel-ai-gateway": logoUrl("vercel", "logo-light"),
@@ -55,6 +59,21 @@ const aiGatewayData = { active, historyData, timestamp };
           <div>
             <h1 class="text-3xl md:text-5xl font-semibold tracking-tight text-gray-900 dark:text-white">AI Gateway Benchmarks</h1>
             <p class="my-2 text-sm text-gray-700 dark:text-gray-400">Benchmark AI gateway latency and token throughput, measured against a direct Anthropic baseline. Inspired by <a href="https://github.com/rbadillap/ai-gateways-benchmark" target="_blank">this benchmark</a> from <a href="https://x.com/rbadillap/status/2079641802332660196?s=20" target="_blank">Ronny Badilla</a>.</p>
+            <a
+              href={NAMESPACE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mt-1 inline-flex w-fit items-center gap-1.5 sm:gap-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 px-2.5 py-1.5 text-[11px] sm:text-xs text-gray-600 dark:text-gray-400 no-underline transition-colors hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-900 dark:hover:text-white"
+            >
+              <span class="shrink-0">Powered by</span>
+              <span class="inline-flex shrink-0 items-center gap-1 text-gray-700 dark:text-gray-300">
+                <img src={namespaceLogomarkUrl("logomark-light")} alt="" class="h-3.5 w-auto object-contain dark:hidden" />
+                <img src={namespaceLogomarkUrl("logomark-dark")} alt="" class="h-3.5 w-auto object-contain hidden dark:block" />
+                Namespace
+              </span>
+              <span class="text-gray-400 dark:text-gray-500">&middot;</span>
+              <span class="font-mono">4 vCPU / 16GB RAM &middot; Northern Virginia, US</span>
+            </a>
           </div>
           <div class="m-0 text-left md:text-right">
             <div class="items-center">
