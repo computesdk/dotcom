@@ -336,7 +336,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
       {/* Sticky metric selector */}
       <div className={`${isStuck ? "fixed top-0 left-0 right-0 z-50" : ""} bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700/50`}>
         <div className="md:max-w-7xl md:mx-auto py-3 px-4 md:px-6 flex items-center gap-3">
-          <div className="hidden sm:inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
+          <div className="hidden lg:inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-gray-500 dark:text-gray-400">
             {METRICS.map((metric) => (
               <button
                 key={metric}
@@ -352,8 +352,8 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
               </button>
             ))}
           </div>
-          {/* Mobile: dropdown */}
-          <div className="sm:hidden">
+          {/* Compact dropdown — used until the button row has room to breathe at lg */}
+          <div className="lg:hidden">
             <select
               value={selectedMetric}
               onChange={(e) => setSelectedMetric(e.target.value as AIGatewayMetric)}
@@ -364,7 +364,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
               ))}
             </select>
           </div>
-          <a href="#methodology" className="hidden sm:inline-flex items-center gap-1 text-xs text-gray-900 hover:text-gray-400 dark:hover:text-gray-300 transition-colors underline">
+          <a href="#methodology" className="hidden lg:inline-flex items-center gap-1 text-xs text-gray-900 hover:text-gray-400 dark:hover:text-gray-300 transition-colors underline">
             <Info size={14} />
             Details
           </a>

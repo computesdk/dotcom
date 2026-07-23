@@ -23,14 +23,14 @@ const logoUrl = (brandId: string, format: LogoFormat, variant: string) =>
   `${LOGO_API}/${brandId}/${format}/${variant}`;
 
 export const SPONSORS: Sponsor[] = [
-  {
-    name: "Namespace",
-    tier: "platform",
-    href: `https://namespace.so/${UTM}`,
-    logo: logoUrl("namespace", "bounded", "logo-light"),
-    logoDark: logoUrl("namespace", "bounded", "logo-dark"),
-    scale: 0.6,
-  },
+  // {
+  //   name: "Namespace",
+  //   tier: "platform",
+  //   href: `https://namespace.so/${UTM}`,
+  //   logo: logoUrl("namespace", "bounded", "logo-light"),
+  //   logoDark: logoUrl("namespace", "bounded", "logo-dark"),
+  //   scale: 0.6,
+  // },
   {
     name: "Latitude",
     tier: "silver",
