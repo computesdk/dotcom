@@ -415,7 +415,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
                       {result.rank ?? "—"}
                     </span>
                   </div>
-                  <div className="shrink-0 w-40 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                  <div className="shrink-0 w-40 flex flex-wrap items-center gap-x-2 gap-y-0">
                     {logoLight ? (
                       <>
                         <img src={logoLight} alt={`${capitalize(result.provider)} logo`} className="h-6 max-w-full object-contain dark:hidden" />
