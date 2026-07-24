@@ -508,7 +508,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, pro
       </div>
 
       {/* Provider Leaderboard — delta-vs-baseline bar chart */}
-      <div className="border-b border-gray-200/50 dark:border-gray-700/50">
+      <div className="border-b border-gray-200/50 dark:border-gray-700/50 overflow-x-hidden">
         <div className="md:max-w-7xl md:mx-auto py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3 mb-4 px-4 md:px-6">
             <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
@@ -531,7 +531,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, pro
                 vs. baseline
               </div>
               <div className="shrink-0 w-px h-3 mx-1 sm:mx-2" />
-              <div className="shrink-0 w-12 sm:w-20 text-right text-[9px] sm:text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500">
+              <div className="shrink-0 w-8 lg:w-20 text-right text-[9px] sm:text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500">
                 actual
               </div>
             </div>
@@ -577,7 +577,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, pro
                       </div>
                     )}
                   </div>
-                  <div className="relative flex-1 h-6 min-w-0">
+                  <div className="relative flex-1 h-6 min-w-0 overflow-hidden">
                     <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-200 dark:bg-gray-700" />
                     {row.isBaseline ? (
                       <>
@@ -597,7 +597,9 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, pro
                         />
                         <span
                           className={`absolute top-1/2 -translate-y-1/2 text-[11px] sm:text-xs font-semibold whitespace-nowrap text-gray-900 dark:text-gray-50 ${isPositive ? "text-left" : "text-right"}`}
-                          style={isPositive ? { left: `calc(50% + ${barPercent}% + 8px)` } : { right: `calc(50% + ${barPercent}% + 8px)` }}
+                          style={isPositive
+                            ? { left: `min(calc(50% + ${barPercent}% + 8px), calc(100% - 56px))` }
+                            : { right: `min(calc(50% + ${barPercent}% + 8px), calc(100% - 56px))` }}
                         >
                           {formatDeltaLabel(row.rawDelta, selectedMetric)}
                         </span>
@@ -605,7 +607,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, pro
                     )}
                   </div>
                   <div className="shrink-0 w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1 sm:mx-2" />
-                  <div className="shrink-0 w-4 lg:w-16 text-right text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                  <div className="shrink-0 w-8 lg:w-20 text-right text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap">
                     {formatAIGatewayValue(row.value, selectedMetric)}
                   </div>
                 </a>
