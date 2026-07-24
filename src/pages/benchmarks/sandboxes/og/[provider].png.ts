@@ -1,47 +1,53 @@
 import type { APIRoute, GetStaticPaths } from "astro";
-import { fetchLatestResults } from "../../../../utils/benchmark-data";
-import { generateProviderOgImage } from "../../../../utils/og-image";
+import { fetchLatestResults, fetchLatestTimestamp } from "../../../../utils/benchmark-data";
+import { generateProviderOgImage, formatMs, type StatItem } from "../../../../utils/og-image";
+import { logomarkSlug } from "../../../../components/benchmarkConstants";
 
-const TEST_TYPES = ["sequential_tti", "burst_tti", "staggered_tti"] as const;
+type ProviderResults = Awaited<ReturnType<typeof fetchLatestResults>>;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const [sequential, burst, staggered] = await Promise.all(
-    TEST_TYPES.map((t) => fetchLatestResults(t)),
-  );
+  const [sequential, burst, staggered, timestamp] = await Promise.all([
+    fetchLatestResults("sequential_tti"),
+    fetchLatestResults("burst_tti"),
+    fetchLatestResults("staggered_tti"),
+    fetchLatestTimestamp("sequential_tti"),
+  ]);
 
-  const timestamp = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-  });
+  const medianFor = (results: ProviderResults, provider: string) =>
+    results.find((p) => p.provider === provider)?.summary.ttiMs.median ?? 0;
 
   // Use sequential results as the canonical provider list
   return sequential.map((r) => {
-    const findStats = (results: typeof sequential) => {
-      const match = results.find((p) => p.provider === r.provider);
-      return match
-        ? {
-            median: match.summary.ttiMs.median,
-            p95: match.summary.ttiMs.p95,
-            p99: match.summary.ttiMs.p99,
-          }
-        : { median: 0, p95: 0, p99: 0 };
-    };
+    const metrics: StatItem[] = [
+      { label: "Sequential", value: formatMs(medianFor(sequential, r.provider)) },
+      { label: "Burst", value: formatMs(medianFor(burst, r.provider)) },
+      { label: "Staggered", value: formatMs(medianFor(staggered, r.provider)) },
+    ];
 
     return {
       params: { provider: r.provider },
       props: {
         provider: r.provider,
-        sequential: findStats(sequential),
-        burst: findStats(burst),
-        staggered: findStats(staggered),
         timestamp,
+        metrics,
       },
     };
   });
 };
 
 export const GET: APIRoute = async ({ props }) => {
-  const png = await generateProviderOgImage(props as any);
+  const { provider, timestamp, metrics } = props as {
+    provider: string;
+    timestamp: string;
+    metrics: StatItem[];
+  };
+  const png = await generateProviderOgImage({
+    provider,
+    categoryLabel: "Sandbox Benchmarks",
+    timestamp,
+    logoSrc: `/benchmarks/normal-${logomarkSlug(provider)}-dark.svg`,
+    metrics,
+  });
   return new Response(png as unknown as BodyInit, {
     headers: { "Content-Type": "image/png" },
   });

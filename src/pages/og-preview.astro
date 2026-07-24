@@ -1,20 +1,59 @@
 ---
-import { fetchLatestResults } from "../utils/benchmark-data";
+import {
+  fetchLatestResults,
+  fetchLatestStorageResults,
+  fetchLatestBrowserResults,
+  fetchLatestAIGatewayResults,
+} from "../utils/benchmark-data";
 
-const TEST_TYPES = [
+const SANDBOX_TEST_TYPES = [
   { slug: "sequential-tti", label: "Sequential TTI" },
   { slug: "burst-tti",      label: "Burst TTI"       },
   { slug: "staggered-tti",  label: "Staggered TTI"   },
 ];
 
-let providers: string[] = [];
-try {
-  const results = await fetchLatestResults("sequential_tti");
-  providers = results.map((r) => r.provider);
-} catch {
-  // fallback to known providers if fetch fails at build time
-  providers = ["e2b", "modal", "daytona", "vercel", "namespace", "blaxel", "codesandbox", "hopx", "runloop", "cloudflare"];
+const FILE_SIZE = "10mb";
+
+async function safeFetch<T>(fn: () => Promise<T[]>, fallback: string[]): Promise<string[]> {
+  try {
+    const results = await fn();
+    return (results as any[]).map((r) => r.provider);
+  } catch {
+    return fallback;
+  }
 }
+
+const sandboxProviders = await safeFetch(
+  () => fetchLatestResults("sequential_tti"),
+  ["e2b", "modal", "daytona", "vercel", "namespace", "blaxel", "codesandbox", "hopx", "runloop", "cloudflare"],
+);
+const storageProviders = await safeFetch(
+  () => fetchLatestStorageResults(FILE_SIZE),
+  ["aws-s3", "cloudflare-r2", "tigris", "azure-blob", "vercel-blob"],
+);
+const browserProviders = await safeFetch(
+  () => fetchLatestBrowserResults(),
+  ["browserbase", "kernel", "hyperbrowser", "steel", "tilion"],
+);
+const aiGatewayProviders = await safeFetch(
+  () => fetchLatestAIGatewayResults(),
+  ["openrouter", "vercel-ai-gateway", "cloudflare-ai-gateway", "llmgateway", "pydantic-ai-gateway", "anthropic-direct"],
+);
+
+interface Tab {
+  id: string;
+  label: string;
+  leaderboardSrc: string;
+  providers: string[];
+  ogBase: string;
+}
+
+const tabs: Tab[] = [
+  { id: "sandbox", label: "Sandbox", leaderboardSrc: "/benchmarks/sandboxes/og/index.png", providers: sandboxProviders, ogBase: "/benchmarks/sandboxes/og" },
+  { id: "storage", label: "Storage", leaderboardSrc: "/benchmarks/storage/og/index.png", providers: storageProviders, ogBase: "/benchmarks/storage/og" },
+  { id: "browser", label: "Browser", leaderboardSrc: "/benchmarks/browsers/og/index.png", providers: browserProviders, ogBase: "/benchmarks/browsers/og" },
+  { id: "ai-gateway", label: "AI Gateway", leaderboardSrc: "/benchmarks/ai-gateway/og/index.png", providers: aiGatewayProviders, ogBase: "/benchmarks/ai-gateway/og" },
+];
 ---
 
 <!DOCTYPE html>
@@ -93,85 +132,148 @@ try {
       background: #1e293b;
       margin: 2rem 0 3rem;
     }
+    .general-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid #1e293b;
+      margin-bottom: 2rem;
+    }
+    .tab-button {
+      appearance: none;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #64748b;
+      font: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.75rem 0.25rem;
+      margin-right: 1.5rem;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-button:hover {
+      color: #e2e8f0;
+    }
+    .tab-button[aria-selected="true"] {
+      color: #ffffff;
+      border-bottom-color: #3b82f6;
+    }
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel[data-active="true"] {
+      display: block;
+    }
   </style>
 </head>
 <body>
   <h1>OG Image Preview</h1>
   <p class="subtitle">Non-indexed internal page. All OG images for computesdk.com.</p>
 
-  <!-- Static default (Starlight / docs pages) -->
+  <!-- Sitewide defaults -->
   <section>
-    <p class="section-label">Default (All Starlight / Docs Pages)</p>
-    <a href="/og-preview-image.png" target="_blank" rel="noopener noreferrer">
-      <img
-        src="/og-preview-image.png"
-        width={1200}
-        height={630}
-        alt="Default OG"
-        class="og-img"
-      />
-    </a>
+    <p class="section-label">General</p>
+    <div class="general-row">
+      <div class="card">
+        <p class="card-label">Default (All Starlight / Docs Pages)</p>
+        <a href="/og-preview-image.png" target="_blank" rel="noopener noreferrer">
+          <img src="/og-preview-image.png" width={1200} height={630} alt="Default OG" class="og-img" />
+        </a>
+      </div>
+      <div class="card">
+        <p class="card-label">Scale Invitational</p>
+        <a href="/benchmarks/scale-invitational-og.png" target="_blank" rel="noopener noreferrer">
+          <img src="/benchmarks/scale-invitational-og.png" width={1200} height={630} alt="Scale Invitational OG" class="og-img" />
+        </a>
+      </div>
+    </div>
   </section>
 
   <div class="divider"></div>
 
-  <!-- Benchmark leaderboard -->
-  <section>
-    <p class="section-label">Benchmarks — Leaderboard</p>
-    <a href="/benchmarks/sandboxes/og/index.png" target="_blank" rel="noopener noreferrer">
-      <img
-        src="/benchmarks/sandboxes/og/index.png"
-        width={1200}
-        height={630}
-        alt="Benchmarks leaderboard OG"
-        class="og-img"
-      />
-    </a>
-  </section>
+  <!-- Benchmark categories -->
+  <div class="tab-bar" role="tablist">
+    {tabs.map((tab, i) => (
+      <button
+        class="tab-button"
+        role="tab"
+        type="button"
+        data-tab-target={tab.id}
+        aria-selected={i === 0 ? "true" : "false"}
+      >
+        {tab.label}
+      </button>
+    ))}
+  </div>
 
-  <div class="divider"></div>
+  {tabs.map((tab, i) => (
+    <div class="tab-panel" data-tab-panel={tab.id} data-active={i === 0 ? "true" : "false"}>
+      <section>
+        <p class="section-label">{tab.label} Benchmarks — Leaderboard</p>
+        <a href={tab.leaderboardSrc} target="_blank" rel="noopener noreferrer">
+          <img src={tab.leaderboardSrc} width={1200} height={630} alt={`${tab.label} leaderboard OG`} class="og-img" />
+        </a>
+      </section>
 
-  <!-- Per-provider -->
-  {providers.map((provider) => (
-    <section>
-      <p class="provider-label">{provider}</p>
+      <div class="divider"></div>
 
-      <!-- Summary card (all test types) -->
-      <div class="grid" style="margin-bottom: 1.5rem;">
-        <div class="card">
-          <p class="card-label">All Test Types (Summary)</p>
-          <a href={`/benchmarks/sandboxes/og/${provider}.png`} target="_blank" rel="noopener noreferrer">
-            <img
-              src={`/benchmarks/sandboxes/og/${provider}.png`}
-              width={1200}
-              height={630}
-              alt={`${provider} summary OG`}
-              class="og-img"
-            />
-          </a>
-        </div>
-      </div>
+      {tab.providers.map((provider, idx) => (
+        <section>
+          <p class="provider-label">{provider}</p>
 
-      <!-- Per-test-type cards -->
-      <div class="grid">
-        {TEST_TYPES.map(({ slug, label }) => (
-          <div class="card">
-            <p class="card-label">{label}</p>
-            <a href={`/benchmarks/sandboxes/og/${provider}/${slug}.png`} target="_blank" rel="noopener noreferrer">
-              <img
-                src={`/benchmarks/sandboxes/og/${provider}/${slug}.png`}
-                width={1200}
-                height={630}
-                alt={`${provider} ${label} OG`}
-                class="og-img"
-              />
-            </a>
-          </div>
-        ))}
-      </div>
+          {tab.id === "sandbox" ? (
+            <>
+              <div class="grid" style="margin-bottom: 1.5rem;">
+                <div class="card">
+                  <p class="card-label">All Test Types (Summary)</p>
+                  <a href={`${tab.ogBase}/${provider}.png`} target="_blank" rel="noopener noreferrer">
+                    <img src={`${tab.ogBase}/${provider}.png`} width={1200} height={630} alt={`${provider} summary OG`} class="og-img" />
+                  </a>
+                </div>
+              </div>
+              <div class="grid">
+                {SANDBOX_TEST_TYPES.map(({ slug, label }) => (
+                  <div class="card">
+                    <p class="card-label">{label}</p>
+                    <a href={`${tab.ogBase}/${provider}/${slug}.png`} target="_blank" rel="noopener noreferrer">
+                      <img src={`${tab.ogBase}/${provider}/${slug}.png`} width={1200} height={630} alt={`${provider} ${label} OG`} class="og-img" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div class="grid">
+              <div class="card">
+                <a href={`${tab.ogBase}/${provider}.png`} target="_blank" rel="noopener noreferrer">
+                  <img src={`${tab.ogBase}/${provider}.png`} width={1200} height={630} alt={`${provider} OG`} class="og-img" />
+                </a>
+              </div>
+            </div>
+          )}
 
-      {providers.indexOf(provider) < providers.length - 1 && <div class="divider" />}
-    </section>
+          {idx < tab.providers.length - 1 && <div class="divider" />}
+        </section>
+      ))}
+    </div>
   ))}
+
+  <script>
+    const buttons = document.querySelectorAll<HTMLButtonElement>(".tab-button");
+    const panels = document.querySelectorAll<HTMLDivElement>(".tab-panel");
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const target = button.dataset.tabTarget;
+        buttons.forEach((b) => b.setAttribute("aria-selected", String(b === button)));
+        panels.forEach((p) => p.setAttribute("data-active", String(p.dataset.tabPanel === target)));
+      });
+    });
+  </script>
 </body>
 </html>

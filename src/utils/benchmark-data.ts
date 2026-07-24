@@ -145,6 +145,18 @@ export interface HistoryPoint {
   providers: Record<string, number>; // provider -> median TTI
 }
 
+// Shared by OG image routes, which only need the run date, not the full
+// history payload that fetchHistoryData/fetchStorageHistoryData/etc pull down.
+export async function fetchLatestTimestamp(resultsPath: string): Promise<string> {
+  const res = await fetch(`${BASE_URL}/${resultsPath}/latest.json`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${resultsPath}/latest.json`);
+  const data = await res.json();
+  return new Date(data.timestamp).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+  });
+}
+
 export async function fetchLatestResults(
   testType: string,
 ): Promise<ProviderResult[]> {

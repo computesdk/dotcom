@@ -1,6 +1,7 @@
 import type { APIRoute, GetStaticPaths } from "astro";
-import { fetchLatestResults } from "../../../../../utils/benchmark-data";
-import { generateProviderOgImage } from "../../../../../utils/og-image";
+import { fetchLatestResults, fetchLatestTimestamp } from "../../../../../utils/benchmark-data";
+import { generateProviderOgImage, formatMs, type StatItem } from "../../../../../utils/og-image";
+import { logomarkSlug } from "../../../../../components/benchmarkConstants";
 
 const TEST_TYPES_MAP: Record<
   string,
@@ -12,54 +13,34 @@ const TEST_TYPES_MAP: Record<
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const [sequential, burst, staggered] = await Promise.all([
+  const [sequential, burst, staggered, timestamp] = await Promise.all([
     fetchLatestResults("sequential_tti"),
     fetchLatestResults("burst_tti"),
     fetchLatestResults("staggered_tti"),
+    fetchLatestTimestamp("sequential_tti"),
   ]);
 
-  const timestamp = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-  });
-
+  const sourceByKey = { sequential_tti: sequential, burst_tti: burst, staggered_tti: staggered };
   const testTypeSlugs = Object.keys(TEST_TYPES_MAP);
 
   return sequential.flatMap((r) =>
     testTypeSlugs.map((testType) => {
       const { key, label } = TEST_TYPES_MAP[testType];
-      const source =
-        key === "sequential_tti"
-          ? sequential
-          : key === "burst_tti"
-            ? burst
-            : staggered;
-      const match = source.find((p) => p.provider === r.provider);
-      const stats = match
-        ? {
-            median: match.summary.ttiMs.median,
-            p95: match.summary.ttiMs.p95,
-            p99: match.summary.ttiMs.p99,
-          }
-        : { median: 0, p95: 0, p99: 0 };
+      const match = sourceByKey[key].find((p) => p.provider === r.provider);
 
-      const findStats = (results: typeof sequential) => {
-        const m = results.find((p) => p.provider === r.provider);
-        return m
-          ? { median: m.summary.ttiMs.median, p95: m.summary.ttiMs.p95, p99: m.summary.ttiMs.p99 }
-          : { median: 0, p95: 0, p99: 0 };
-      };
+      const metrics: StatItem[] = [
+        { label: "Median", value: formatMs(match?.summary.ttiMs.median ?? 0) },
+        { label: "P95", value: formatMs(match?.summary.ttiMs.p95 ?? 0) },
+        { label: "P99", value: formatMs(match?.summary.ttiMs.p99 ?? 0) },
+      ];
 
       return {
         params: { provider: r.provider, testType },
         props: {
           provider: r.provider,
-          sequential: findStats(sequential),
-          burst: findStats(burst),
-          staggered: findStats(staggered),
           timestamp,
           testTypeLabel: label,
-          stats,
+          metrics,
         },
       };
     }),
@@ -67,8 +48,21 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const GET: APIRoute = async ({ props }) => {
-  const png = await generateProviderOgImage(props as any);
-  return new Response(png, {
+  const { provider, timestamp, testTypeLabel, metrics } = props as {
+    provider: string;
+    timestamp: string;
+    testTypeLabel: string;
+    metrics: StatItem[];
+  };
+  const png = await generateProviderOgImage({
+    provider,
+    categoryLabel: "Sandbox Benchmarks",
+    timestamp,
+    logoSrc: `/benchmarks/normal-${logomarkSlug(provider)}-dark.svg`,
+    testTypeLabel,
+    metrics,
+  });
+  return new Response(png as unknown as BodyInit, {
     headers: { "Content-Type": "image/png" },
   });
 };

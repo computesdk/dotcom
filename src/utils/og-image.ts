@@ -5,29 +5,44 @@ import { capitalize } from "../components/benchmarkConstants";
 
 const PUBLIC_DIR = resolve(process.cwd(), "public");
 
-interface TestStats {
-  median: number;
-  p95: number;
-  p99: number;
+export interface StatItem {
+  label: string;
+  value: string;
 }
 
 interface ProviderOgProps {
   provider: string;
-  sequential: TestStats;
-  burst: TestStats;
-  staggered: TestStats;
+  categoryLabel: string;
   timestamp: string;
+  /** Local path under /public (e.g. "/benchmarks/normal-e2b-dark.svg") or a remote SVG URL. */
+  logoSrc?: string;
   testTypeLabel?: string;
-  stats?: TestStats;
+  metrics?: StatItem[];
 }
 
 interface LeaderboardOgProps {
   timestamp: string;
+  titleLines: [string, string];
+  subtitle: string;
 }
 
 function readSvgContent(filePath: string): string | null {
   if (!existsSync(filePath)) return null;
   return readFileSync(filePath, "utf-8");
+}
+
+async function resolveWordmarkSvg(logoSrc?: string): Promise<string | null> {
+  if (!logoSrc) return null;
+  if (/^https?:\/\//.test(logoSrc)) {
+    try {
+      const res = await fetch(logoSrc);
+      if (!res.ok) return null;
+      return await res.text();
+    } catch {
+      return null;
+    }
+  }
+  return readSvgContent(resolve(PUBLIC_DIR, logoSrc.replace(/^\//, "")));
 }
 
 function extractViewBox(svg: string): { width: number; height: number } {
@@ -52,19 +67,19 @@ function extractSvgInner(svg: string): string {
   return inner.trim();
 }
 
-function scaleSvg(
+function scaledGroup(
   svg: string,
-  targetWidth: number,
-  targetHeight: number,
-  x: number,
-  y: number,
+  targetX: number,
+  targetY: number,
+  maxWidth: number,
+  maxHeight: number,
 ): string {
   const vb = extractViewBox(svg);
-  const scaleX = targetWidth / vb.width;
-  const scaleY = targetHeight / vb.height;
+  const scaleX = maxWidth / vb.width;
+  const scaleY = maxHeight / vb.height;
   const scale = Math.min(scaleX, scaleY);
   const inner = extractSvgInner(svg);
-  return `<g transform="translate(${x}, ${y}) scale(${scale})">${inner}</g>`;
+  return `<g transform="translate(${targetX}, ${targetY}) scale(${scale})">${inner}</g>`;
 }
 
 function backgroundLayer(): string {
@@ -92,30 +107,18 @@ function backgroundLayer(): string {
   `;
 }
 
-function providerWordmark(provider: string, x: number, y: number, maxWidth: number, maxHeight: number): string {
-  const normalPath = resolve(PUBLIC_DIR, `benchmarks/normal-${provider}-dark.svg`);
-  const svgContent = readSvgContent(normalPath);
-  if (!svgContent) return "";
-
-  const vb = extractViewBox(svgContent);
-  const scaleX = maxWidth / vb.width;
-  const scaleY = maxHeight / vb.height;
-  const scale = Math.min(scaleX, scaleY);
-  const inner = extractSvgInner(svgContent);
-  return `<g transform="translate(${x}, ${y}) scale(${scale})">${inner}</g>`;
-}
-
-function formatMs(ms: number): string {
+export function formatMs(ms: number): string {
   if (ms >= 10000) return `${(ms / 1000).toFixed(1)}s`;
   return `${Math.round(ms).toLocaleString("en-US")}ms`;
 }
 
 export async function generateProviderOgImage(props: ProviderOgProps): Promise<Buffer> {
-  const { provider, timestamp, testTypeLabel, stats } = props;
+  const { provider, categoryLabel, timestamp, logoSrc, testTypeLabel, metrics } = props;
   const displayName = capitalize(provider);
   const FONT = "Liberation Sans, Arial, Helvetica, sans-serif";
 
-  const wordmark = providerWordmark(provider, 80, 160, 600, 100);
+  const wordmarkSvg = await resolveWordmarkSvg(logoSrc);
+  const wordmark = wordmarkSvg ? scaledGroup(wordmarkSvg, 80, 160, 600, 100) : "";
   const hasWordmark = wordmark.length > 0;
 
   // If no wordmark SVG, fall back to text
@@ -130,18 +133,13 @@ export async function generateProviderOgImage(props: ProviderOgProps): Promise<B
   if (testTypeLabel) {
     testTypeContent += `<text x="80" y="${subtitleY + 45}" font-family="${FONT}" font-size="24" fill="#94a3b8">${testTypeLabel}</text>`;
   }
-  if (stats) {
+  if (metrics && metrics.length > 0) {
     const statsY = testTypeLabel ? subtitleY + 100 : subtitleY + 60;
-    const statItems = [
-      { label: "Median", value: formatMs(stats.median) },
-      { label: "P95", value: formatMs(stats.p95) },
-      { label: "P99", value: formatMs(stats.p99) },
-    ];
-    for (let i = 0; i < statItems.length; i++) {
+    for (let i = 0; i < metrics.length; i++) {
       const x = 80 + i * 220;
       testTypeContent += `
-        <text x="${x}" y="${statsY}" font-family="${FONT}" font-size="14" fill="#64748b" text-transform="uppercase" letter-spacing="1">${statItems[i].label}</text>
-        <text x="${x}" y="${statsY + 32}" font-family="${FONT}" font-size="28" font-weight="bold" fill="white">${statItems[i].value}</text>
+        <text x="${x}" y="${statsY}" font-family="${FONT}" font-size="14" fill="#64748b" letter-spacing="1">${metrics[i].label.toUpperCase()}</text>
+        <text x="${x}" y="${statsY + 32}" font-family="${FONT}" font-size="28" font-weight="bold" fill="white">${metrics[i].value}</text>
       `;
     }
   }
@@ -150,7 +148,7 @@ export async function generateProviderOgImage(props: ProviderOgProps): Promise<B
     ${backgroundLayer()}
     ${wordmark}
     ${providerNameFallback}
-    <text x="80" y="${subtitleY}" font-family="${FONT}" font-size="32" font-weight="bold" fill="white">Sandbox Benchmarks</text>
+    <text x="80" y="${subtitleY}" font-family="${FONT}" font-size="32" font-weight="bold" fill="white">${categoryLabel}</text>
     ${testTypeContent}
     <text x="80" y="560" font-family="${FONT}" font-size="22" font-weight="bold" fill="white">Last run ${timestamp}</text>
     <text x="1120" y="560" font-family="${FONT}" font-size="26" font-weight="bold" fill="white" text-anchor="end">ComputeSDK</text>
@@ -221,7 +219,7 @@ function renderDecorativeChart(
 export async function generateLeaderboardOgImage(
   props: LeaderboardOgProps,
 ): Promise<Buffer> {
-  const { timestamp } = props;
+  const { timestamp, titleLines, subtitle } = props;
   const FONT = "Liberation Sans, Arial, Helvetica, sans-serif";
 
   // Decorative chart fills the background, text overlays on top
@@ -233,9 +231,9 @@ export async function generateLeaderboardOgImage(
   const svg = `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
     <rect width="1200" height="630" fill="#0a0a0f" />
     ${chartLines}
-    <text x="60" y="100" font-family="${FONT}" font-size="72" font-weight="bold" fill="white">Sandbox</text>
-    <text x="60" y="180" font-family="${FONT}" font-size="72" font-weight="bold" fill="white">Benchmarks</text>
-    <text x="60" y="225" font-family="${FONT}" font-size="20" fill="#94a3b8">Independently verified sandbox benchmarks run daily across providers.</text>
+    <text x="60" y="100" font-family="${FONT}" font-size="72" font-weight="bold" fill="white">${titleLines[0]}</text>
+    <text x="60" y="180" font-family="${FONT}" font-size="72" font-weight="bold" fill="white">${titleLines[1]}</text>
+    <text x="60" y="225" font-family="${FONT}" font-size="20" fill="#94a3b8">${subtitle}</text>
     <line x1="0" y1="540" x2="1200" y2="540" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
     <text x="60" y="580" font-family="${FONT}" font-size="22" font-weight="bold" fill="white">Last run: ${timestamp}</text>
     <text x="1140" y="580" font-family="${FONT}" font-size="26" font-weight="bold" fill="white" text-anchor="end">ComputeSDK</text>
