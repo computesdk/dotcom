@@ -513,25 +513,20 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, pro
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3 mb-4 px-4 md:px-6">
             <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
               Provider Variance
-              <span className="ml-2 text-xs font-normal text-gray-400 dark:text-gray-500">
+              <span className="ml-2 text-xs font-normal text-gray-700 dark:text-gray-400">
                 {AI_GATEWAY_METRIC_LABELS[selectedMetric]}
               </span>
             </h2>
-            {leaderboardDelta.baselineName && (
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                vs. {leaderboardDelta.baselineName} · <span className="font-mono">{formatAIGatewayValue(leaderboardDelta.baselineValue, selectedMetric)}</span>
-              </span>
-            )}
           </div>
           <div className="flex flex-col gap-2 px-4 md:px-6">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="shrink-0 w-4 sm:w-5" />
               <div className="shrink-0 w-16 sm:w-24 lg:w-36" />
-              <div className="flex-1 text-center text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500">
+              <div className="flex-1 text-center text-[10px] uppercase tracking-wide text-gray-600 dark:text-gray-400">
                 vs. baseline
               </div>
               <div className="shrink-0 w-px h-3 mx-1 sm:mx-2" />
-              <div className="shrink-0 w-8 lg:w-20 text-right text-[9px] sm:text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500">
+              <div className="shrink-0 w-8 lg:w-20 text-right text-[9px] sm:text-[10px] uppercase tracking-wide text-gray-600 dark:text-gray-400">
                 actual
               </div>
             </div>
@@ -546,7 +541,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, pro
                 <a
                   key={row.provider}
                   href={`/benchmarks/ai-gateway/${row.provider}`}
-                  className={`flex items-center gap-2 sm:gap-3 -mx-2 py-2 px-2 rounded-md no-underline group transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 ${row.isBaseline ? "opacity-60" : ""}`}
+                  className={`flex items-center gap-2 sm:gap-3 -mx-2 py-2 px-2 rounded-md no-underline group transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 ${row.isBaseline ? "opacity-100" : ""}`}
                 >
                   <div className="shrink-0 w-4 sm:w-5 text-center text-xs text-gray-400 dark:text-gray-500">
                     {row.rank ?? "—"}
@@ -606,8 +601,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, pro
                       </>
                     )}
                   </div>
-                  <div className="shrink-0 w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1 sm:mx-2" />
-                  <div className="shrink-0 w-8 lg:w-20 text-right text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                  <div className="shrink-0 w-8 lg:w-20 text-right text-[10px] sm:text-xs text-gray-700 dark:text-gray-300 whitespace-nowrap">
                     {formatAIGatewayValue(row.value, selectedMetric)}
                   </div>
                 </a>
@@ -666,7 +660,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, pro
                 </div>
               </div>
             </div>
-            <ChartContainer config={lineChartConfig} className="aspect-auto h-[300px] w-full min-h-[300px] min-w-0">
+            <ChartContainer config={lineChartConfig} className="aspect-auto h-75 w-full min-h-75 min-w-0">
               <LineChart data={filteredHistory} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis
