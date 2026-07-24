@@ -48,6 +48,8 @@ interface AIGatewayDashboardProps {
   data: AIGatewayData
   providerLogos: Record<string, string>
   providerLogosDark: Record<string, string>
+  providerLogomarks?: Record<string, string>
+  providerLogomarksDark?: Record<string, string>
 }
 
 const METRICS: AIGatewayMetric[] = ["compositeScore", "coldE2eMs", "warmTtftMs", "outputTokensPerSec", "dnsMs", "tcpMs", "tlsMs"]
@@ -75,6 +77,15 @@ function formatAIGatewayValue(value: number, metric: AIGatewayMetric): string {
   if (metric === "outputTokensPerSec") return `${value.toFixed(0)} tok/s`
   if (isConnectionPhaseMetric(metric)) return `${value.toFixed(2)}ms`
   return `${(value / 1000).toFixed(2)}s`
+}
+
+// Literal signed difference (value - baseline) in the metric's own units —
+// not the "better/worse" normalized delta used for bar direction. For
+// latency this means faster shows as "−0.16s" and slower as "+0.12s", which
+// reads correctly as a time difference rather than implying "+" is worse.
+function formatDeltaLabel(rawDelta: number, metric: AIGatewayMetric): string {
+  const magnitude = formatAIGatewayValue(Math.abs(rawDelta), metric)
+  return `${rawDelta >= 0 ? "+" : "−"}${magnitude}`
 }
 
 function getMetricValue(r: AIGatewayResult, metric: AIGatewayMetric): number {
@@ -112,7 +123,7 @@ function BaselineBadge() {
   )
 }
 
-export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: AIGatewayDashboardProps) {
+export function AIGatewayDashboard({ data, providerLogos, providerLogosDark, providerLogomarks, providerLogomarksDark }: AIGatewayDashboardProps) {
   const [selectedMetric, setSelectedMetric] = useState<AIGatewayMetric>("compositeScore")
   const [hiddenProviders, setHiddenProviders] = useState<Set<string>>(new Set())
   const [timeRange, setTimeRange] = useState<TimeRange>("all")
@@ -194,10 +205,10 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
       .map((r) => {
         const value = getMetricValue(r, selectedMetric)
         const delta = isHigher ? value - baselineValue : baselineValue - value
-        return { provider: r.provider, displayName: capitalize(r.provider), value, delta, isBaseline: false }
+        return { provider: r.provider, displayName: capitalize(r.provider), value, delta, rawDelta: value - baselineValue, isBaseline: false }
       })
     const baselineRow = baselineResult
-      ? { provider: baselineResult.provider, displayName: capitalize(baselineResult.provider), value: baselineValue, delta: 0, isBaseline: true }
+      ? { provider: baselineResult.provider, displayName: capitalize(baselineResult.provider), value: baselineValue, delta: 0, rawDelta: 0, isBaseline: true }
       : null
     // Baseline sorts into its natural position by delta (always 0) rather than
     // being pinned to the top — it just never receives a rank number.
@@ -455,7 +466,7 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
                     {logoLight ? (
                       <>
                         <img src={logoLight} alt={`${capitalize(result.provider)} logo`} className="h-6 max-w-full object-contain dark:hidden" />
-                        <img src={logoDark || logoLight} alt="" className="h-6 max-w-full object-contain hidden dark:block" />
+                        <img src={logoDark || logoLight} alt="" className="h-6 max-w-full object-contain hidden dark:block mt-0" />
                       </>
                     ) : (
                       <div className="flex items-center gap-2">
@@ -475,9 +486,6 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
                         {AI_GATEWAY_METRIC_LABELS[selectedMetric]}
                       </span>
                     </div>
-                    <svg className="size-4 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                    </svg>
                   </div>
                 </a>
               )
@@ -532,20 +540,35 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
               const barPercent = row.isBaseline ? 0 : Math.max((Math.abs(row.delta) / leaderboardDelta.axisMax) * 50, 2)
               const logoLight = providerLogos[row.provider]
               const logoDark = providerLogosDark[row.provider]
+              const logomarkLight = providerLogomarks?.[row.provider]
+              const logomarkDark = providerLogomarksDark?.[row.provider]
               return (
                 <a
                   key={row.provider}
                   href={`/benchmarks/ai-gateway/${row.provider}`}
-                  className={`flex items-center gap-2 sm:gap-3 -mx-2 px-2 py-2 rounded-md no-underline group transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 ${row.isBaseline ? "opacity-60" : ""}`}
+                  className={`flex items-center gap-2 sm:gap-3 -mx-2 py-2 px-2 rounded-md no-underline group transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 ${row.isBaseline ? "opacity-60" : ""}`}
                 >
                   <div className="shrink-0 w-4 sm:w-5 text-center text-xs text-gray-400 dark:text-gray-500">
                     {row.rank ?? "—"}
                   </div>
-                  <div className="shrink-0 w-16 sm:w-24 lg:w-36 flex items-center min-w-0">
+                  <div className="shrink-0 w-6 sm:w-24 lg:w-36 flex items-center min-w-0">
                     {logoLight ? (
                       <>
-                        <img src={logoLight} alt={`${row.displayName} logo`} className="h-4 sm:h-5 max-w-full object-contain object-left dark:hidden" />
-                        <img src={logoDark || logoLight} alt="" className="h-4 sm:h-5 max-w-full object-contain object-left hidden dark:block" />
+                        {/* Icon-only mark below sm — the full wordmark doesn't leave enough room for the bar */}
+                        <div className="sm:hidden">
+                          {logomarkLight ? (
+                            <>
+                              <img src={logomarkLight} alt={`${row.displayName} logo`} className="h-5 w-5 object-contain dark:hidden" />
+                              <img src={logomarkDark || logomarkLight} alt="" className="h-5 w-5 object-contain hidden dark:block mt-0" />
+                            </>
+                          ) : (
+                            <img src={logoLight} alt={`${row.displayName} logo`} className="h-4 max-w-full object-contain object-left dark:hidden" />
+                          )}
+                        </div>
+                        <div className="hidden sm:block">
+                          <img src={logoLight} alt={`${row.displayName} logo`} className="h-5 max-w-full object-contain object-left dark:hidden" />
+                          <img src={logoDark || logoLight} alt="" className="h-5 max-w-full object-contain object-left hidden dark:block mt-0" />
+                        </div>
                       </>
                     ) : (
                       <div className="flex items-center gap-1.5 min-w-0">
@@ -576,13 +599,13 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
                           className={`absolute top-1/2 -translate-y-1/2 text-[11px] sm:text-xs font-semibold whitespace-nowrap text-gray-900 dark:text-gray-50 ${isPositive ? "text-left" : "text-right"}`}
                           style={isPositive ? { left: `calc(50% + ${barPercent}% + 8px)` } : { right: `calc(50% + ${barPercent}% + 8px)` }}
                         >
-                          {isPositive ? "+" : "−"}{formatAIGatewayValue(Math.abs(row.delta), selectedMetric)}
+                          {formatDeltaLabel(row.rawDelta, selectedMetric)}
                         </span>
                       </>
                     )}
                   </div>
                   <div className="shrink-0 w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1 sm:mx-2" />
-                  <div className="shrink-0 w-12 sm:w-20 text-right text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                  <div className="shrink-0 w-4 lg:w-16 text-right text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap">
                     {formatAIGatewayValue(row.value, selectedMetric)}
                   </div>
                 </a>

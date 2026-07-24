@@ -5,7 +5,7 @@ import type { AIGatewayResult, AIGatewayHistoryPoint } from "./benchmarkConstant
 import Breadcrumbs from "./Breadcrumbs.astro";
 
 const LOGO_API = "https://logos.computesdk.com/api/svg";
-const logoUrl = (brandId: string, variant: "logo-light" | "logo-dark") =>
+const logoUrl = (brandId: string, variant: "logo-light" | "logo-dark" | "logomark-light" | "logomark-dark") =>
   `${LOGO_API}/${brandId}/normalized/${variant}`;
 
 const NAMESPACE_URL = "https://namespace.so/?utm_source=computesdk.com&utm_medium=referral&utm_campaign=benchmark-sponsor-link";
@@ -28,6 +28,26 @@ const providerLogosDark: Record<string, string> = {
   llmgateway: logoUrl("llm-gateway", "logo-dark"),
   "pydantic-ai-gateway": logoUrl("pydantic", "logo-dark"),
   "anthropic-direct": logoUrl("anthropic", "logo-dark"),
+};
+
+// Icon-only marks — used on narrow viewports where the full wordmark logo
+// doesn't leave enough room for the leaderboard's bar chart.
+const providerLogomarks: Record<string, string> = {
+  openrouter: logoUrl("openrouter", "logomark-light"),
+  "vercel-ai-gateway": logoUrl("vercel", "logomark-light"),
+  "cloudflare-ai-gateway": logoUrl("cloudflare", "logomark-light"),
+  llmgateway: logoUrl("llm-gateway", "logomark-light"),
+  "pydantic-ai-gateway": logoUrl("pydantic", "logomark-light"),
+  "anthropic-direct": logoUrl("anthropic", "logomark-light"),
+};
+
+const providerLogomarksDark: Record<string, string> = {
+  openrouter: logoUrl("openrouter", "logomark-dark"),
+  "vercel-ai-gateway": logoUrl("vercel", "logomark-dark"),
+  "cloudflare-ai-gateway": logoUrl("cloudflare", "logomark-dark"),
+  llmgateway: logoUrl("llm-gateway", "logomark-dark"),
+  "pydantic-ai-gateway": logoUrl("pydantic", "logomark-dark"),
+  "anthropic-direct": logoUrl("anthropic", "logomark-dark"),
 };
 
 let fetchError = false;
@@ -111,6 +131,8 @@ const aiGatewayData = { active, historyData, timestamp };
         data={aiGatewayData}
         providerLogos={providerLogos}
         providerLogosDark={providerLogosDark}
+        providerLogomarks={providerLogomarks}
+        providerLogomarksDark={providerLogomarksDark}
       />
 
       <div class="md:max-w-7xl md:mx-auto px-4 md:px-6">
