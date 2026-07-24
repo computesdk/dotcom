@@ -73,7 +73,7 @@ function isHigherBetter(metric: AIGatewayMetric): boolean {
 function formatAIGatewayValue(value: number, metric: AIGatewayMetric): string {
   if (metric === "compositeScore") return value.toFixed(1)
   if (metric === "outputTokensPerSec") return `${value.toFixed(0)} tok/s`
-  if (isConnectionPhaseMetric(metric)) return `${value.toFixed(1)}ms`
+  if (isConnectionPhaseMetric(metric)) return `${value.toFixed(2)}ms`
   return `${(value / 1000).toFixed(2)}s`
 }
 
@@ -181,6 +181,40 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
 
   const maxBarValue = useMemo(() => Math.max(...chartData.map((d) => d.value)), [chartData])
   const barChartHeight = Math.max(200, chartData.length * 50 + 60)
+
+  // --- Provider leaderboard (delta-vs-baseline bar chart) ---
+  // Delta is normalized so "positive/blue" always means "better than baseline",
+  // regardless of whether the underlying metric is higher-is-better (composite
+  // score, tokens/sec) or lower-is-better (latency in ms).
+  const leaderboardDelta = useMemo(() => {
+    const baselineResult = data.active.find((r) => isAIGatewayBaseline(r.provider))
+    const baselineValue = baselineResult ? getMetricValue(baselineResult, selectedMetric) : 0
+    const competitors = data.active
+      .filter((r) => !isAIGatewayBaseline(r.provider))
+      .map((r) => {
+        const value = getMetricValue(r, selectedMetric)
+        const delta = isHigher ? value - baselineValue : baselineValue - value
+        return { provider: r.provider, displayName: capitalize(r.provider), value, delta, isBaseline: false }
+      })
+    const baselineRow = baselineResult
+      ? { provider: baselineResult.provider, displayName: capitalize(baselineResult.provider), value: baselineValue, delta: 0, isBaseline: true }
+      : null
+    // Baseline sorts into its natural position by delta (always 0) rather than
+    // being pinned to the top — it just never receives a rank number.
+    const combined = baselineRow ? [...competitors, baselineRow] : competitors
+    let rankCounter = 0
+    const rows = combined
+      .sort((a, b) => b.delta - a.delta)
+      .map((r) => (r.isBaseline ? { ...r, rank: null as number | null } : { ...r, rank: ++rankCounter }))
+    const maxAbsDelta = Math.max(...competitors.map((r) => Math.abs(r.delta)), 0.1)
+    const axisMax = maxAbsDelta * 1.5
+    return {
+      rows,
+      baselineName: baselineResult ? capitalize(baselineResult.provider) : "",
+      baselineValue,
+      axisMax,
+    }
+  }, [data.active, selectedMetric, isHigher])
 
   // --- Line chart ---
   const lineChartConfig = useMemo(() => {
@@ -290,21 +324,21 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
         id: "dnsMs",
         accessorFn: (r) => r.summary.dnsMs.median,
         header: "DNS (med)",
-        cell: ({ getValue }) => <span className="font-mono text-xs text-gray-500 dark:text-gray-400">{(getValue() as number).toFixed(1)}ms</span>,
+        cell: ({ getValue }) => <span className="font-mono text-xs text-gray-500 dark:text-gray-400">{(getValue() as number).toFixed(2)}ms</span>,
         size: 90,
       },
       {
         id: "tcpMs",
         accessorFn: (r) => r.summary.tcpMs.median,
         header: "TCP (med)",
-        cell: ({ getValue }) => <span className="font-mono text-xs text-gray-500 dark:text-gray-400">{(getValue() as number).toFixed(1)}ms</span>,
+        cell: ({ getValue }) => <span className="font-mono text-xs text-gray-500 dark:text-gray-400">{(getValue() as number).toFixed(2)}ms</span>,
         size: 90,
       },
       {
         id: "tlsMs",
         accessorFn: (r) => r.summary.tlsMs.median,
         header: "TLS (med)",
-        cell: ({ getValue }) => <span className="font-mono text-xs text-gray-500 dark:text-gray-400">{(getValue() as number).toFixed(1)}ms</span>,
+        cell: ({ getValue }) => <span className="font-mono text-xs text-gray-500 dark:text-gray-400">{(getValue() as number).toFixed(2)}ms</span>,
         size: 90,
       },
       {
@@ -380,19 +414,21 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
             </h2>
           </div>
           {(() => {
-            // Anthropic (the no-gateway baseline) is listed first but isn't part
-            // of the competitive ranking — it gets no rank number, and the real
-            // gateways are numbered 1..N among themselves regardless of where
-            // the baseline's own metric value would otherwise place it.
+            // Anthropic (the no-gateway baseline) sorts into its natural position
+            // by metric value rather than being pinned to the top — it just never
+            // receives a rank number, since it isn't part of the competitive ranking.
             const baselineResult = data.active.find((r) => isAIGatewayBaseline(r.provider))
-            const competitorsRanked = data.active
+            const competitors = data.active
               .filter((r) => !isAIGatewayBaseline(r.provider))
-              .map((r) => ({ ...r, metricValue: getMetricValue(r, selectedMetric) }))
+              .map((r) => ({ ...r, metricValue: getMetricValue(r, selectedMetric), isBaselineRow: false }))
+            const baselineEntry = baselineResult
+              ? { ...baselineResult, metricValue: getMetricValue(baselineResult, selectedMetric), isBaselineRow: true }
+              : null
+            const combined = baselineEntry ? [...competitors, baselineEntry] : competitors
+            let rankCounter = 0
+            const ranked = combined
               .sort((a, b) => isHigher ? b.metricValue - a.metricValue : a.metricValue - b.metricValue)
-            const ranked = [
-              ...(baselineResult ? [{ ...baselineResult, metricValue: getMetricValue(baselineResult, selectedMetric), rank: null as number | null }] : []),
-              ...competitorsRanked.map((r, i) => ({ ...r, rank: i + 1 })),
-            ]
+              .map((r) => (r.isBaselineRow ? { ...r, rank: null as number | null } : { ...r, rank: ++rankCounter }))
             const midpoint = Math.ceil(ranked.length / 2)
             const renderCard = (result: typeof ranked[0]) => {
               const logoLight = providerLogos[result.provider]
@@ -459,6 +495,102 @@ export function AIGatewayDashboard({ data, providerLogos, providerLogosDark }: A
           })()}
           <p className="px-4 md:px-6 mt-3 text-xs text-gray-500 dark:text-gray-400">
             "Anthropic (Direct)" is a no-gateway control, not a competing gateway — it isolates how much latency each gateway adds on top of the underlying model provider.
+          </p>
+        </div>
+      </div>
+
+      {/* Provider Leaderboard — delta-vs-baseline bar chart */}
+      <div className="border-b border-gray-200/50 dark:border-gray-700/50">
+        <div className="md:max-w-7xl md:mx-auto py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3 mb-4 px-4 md:px-6">
+            <h2 className="text-base md:text-md font-semibold text-gray-900 dark:text-white">
+              Provider Variance
+              <span className="ml-2 text-xs font-normal text-gray-400 dark:text-gray-500">
+                {AI_GATEWAY_METRIC_LABELS[selectedMetric]}
+              </span>
+            </h2>
+            {leaderboardDelta.baselineName && (
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                vs. {leaderboardDelta.baselineName} · <span className="font-mono">{formatAIGatewayValue(leaderboardDelta.baselineValue, selectedMetric)}</span>
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col gap-2 px-4 md:px-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="shrink-0 w-4 sm:w-5" />
+              <div className="shrink-0 w-16 sm:w-24 lg:w-36" />
+              <div className="flex-1 text-center text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                vs. baseline
+              </div>
+              <div className="shrink-0 w-px h-3 mx-1 sm:mx-2" />
+              <div className="shrink-0 w-12 sm:w-20 text-right text-[9px] sm:text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                actual
+              </div>
+            </div>
+            {leaderboardDelta.rows.map((row) => {
+              const isPositive = row.delta >= 0
+              const barPercent = row.isBaseline ? 0 : Math.max((Math.abs(row.delta) / leaderboardDelta.axisMax) * 50, 2)
+              const logoLight = providerLogos[row.provider]
+              const logoDark = providerLogosDark[row.provider]
+              return (
+                <a
+                  key={row.provider}
+                  href={`/benchmarks/ai-gateway/${row.provider}`}
+                  className={`flex items-center gap-2 sm:gap-3 -mx-2 px-2 py-2 rounded-md no-underline group transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 ${row.isBaseline ? "opacity-60" : ""}`}
+                >
+                  <div className="shrink-0 w-4 sm:w-5 text-center text-xs text-gray-400 dark:text-gray-500">
+                    {row.rank ?? "—"}
+                  </div>
+                  <div className="shrink-0 w-16 sm:w-24 lg:w-36 flex items-center min-w-0">
+                    {logoLight ? (
+                      <>
+                        <img src={logoLight} alt={`${row.displayName} logo`} className="h-4 sm:h-5 max-w-full object-contain object-left dark:hidden" />
+                        <img src={logoDark || logoLight} alt="" className="h-4 sm:h-5 max-w-full object-contain object-left hidden dark:block" />
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: AI_GATEWAY_PROVIDER_COLORS[row.provider] || "#6b7280" }} />
+                        <span className="text-xs font-medium text-gray-900 dark:text-white truncate">{row.displayName}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="relative flex-1 h-6 min-w-0">
+                    <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-200 dark:bg-gray-700" />
+                    {row.isBaseline ? (
+                      <>
+                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border-2 border-gray-400 dark:border-gray-500 bg-white dark:bg-gray-900" />
+                        <span
+                          className="absolute top-1/2 -translate-y-1/2 text-left text-[11px] sm:text-xs whitespace-nowrap text-gray-500 dark:text-gray-400"
+                          style={{ left: "calc(50% + 10px)" }}
+                        >
+                          {formatAIGatewayValue(row.value, selectedMetric)}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <div
+                          className={`absolute top-1 bottom-1 rounded-sm transition-opacity group-hover:opacity-80 ${isPositive ? "bg-blue-500" : "bg-red-700"}`}
+                          style={isPositive ? { left: "50%", width: `${barPercent}%` } : { right: "50%", width: `${barPercent}%` }}
+                        />
+                        <span
+                          className={`absolute top-1/2 -translate-y-1/2 text-[11px] sm:text-xs font-semibold whitespace-nowrap text-gray-900 dark:text-gray-50 ${isPositive ? "text-left" : "text-right"}`}
+                          style={isPositive ? { left: `calc(50% + ${barPercent}% + 8px)` } : { right: `calc(50% + ${barPercent}% + 8px)` }}
+                        >
+                          {isPositive ? "+" : "−"}{formatAIGatewayValue(Math.abs(row.delta), selectedMetric)}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <div className="shrink-0 w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1 sm:mx-2" />
+                  <div className="shrink-0 w-12 sm:w-20 text-right text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                    {formatAIGatewayValue(row.value, selectedMetric)}
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+          <p className="px-4 md:px-6 mt-3 text-xs text-gray-500 dark:text-gray-400">
+            "Anthropic (Direct)" is a no-gateway control, not a competing gateway. <br /> Delta vs. the {leaderboardDelta.baselineName || "baseline"}'s {AI_GATEWAY_METRIC_LABELS[selectedMetric].toLowerCase()}. Positive is better than baseline; negative is worse.
           </p>
         </div>
       </div>
